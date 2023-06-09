@@ -1,0 +1,47 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: ${CONTEXT-PATH:/api/finance-control}
+  compression:
+    enabled: true
+  error:
+    include-message: always
+  spring:
+    url: ${SPRING-URL:localhost:8080}
+
+spring:
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  datasource:
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jooq:
+    sql-dialect: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: ${APPLICATION_NAME:finance-control}
+  main:
+    web-application-type: servlet
+  web:
+    locale: pt_BR
+    locale-resolver: fixed
+
+springdoc:
+  override-with-generic-response: false
+  api-docs:
+    enabled: true
+  swagger-ui:
+    server:
+      list: http://localhost:${server.port}${server.servlet.context-path}
+    path: /swagger-ui
+    enabled: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+    filter: true
+    disable-swagger-default-url: true
+    csrf:
+      enabled: false
+    doc-expansion: none
+  default-produces-media-type: application/json
