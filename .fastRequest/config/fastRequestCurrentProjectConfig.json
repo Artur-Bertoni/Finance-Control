@@ -3,20 +3,20 @@
 		{
 			"hostGroup":[
 				{
-					"env":"prd",
-					"url":"http://localhost:8081/api/finance-control"
-				},
-				{
 					"env":"dev",
 					"url":"http://localhost:8080/dev-finance-control"
+				},
+				{
+					"env":"prd",
+					"url":"http://localhost:8081/api/finance-control"
 				}
 			],
 			"name":"finance-control"
 		}
 	],
 	"envList":[
-		"prd",
-		"dev"
+		"dev",
+		"prd"
 	],
 	"headerList":[],
 	"postScript":"",
