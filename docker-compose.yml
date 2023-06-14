@@ -1,13 +1,13 @@
 version: '3.1'
 
 services:
-  postgres-prod:
+  postgres:
     container_name: postgres
     image: postgres
     restart: always
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_DB=finance-control
+      - POSTGRES_DB=finance-control-prd
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=pass
