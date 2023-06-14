@@ -2,14 +2,7 @@ spring:
   jpa:
     open-in-view: true
   datasource:
-    url: jdbc:postgresql://postgres:5432/finance-control-prd
-  flyway:
-    url: ${spring.datasource.url}
-    user: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    locations: classpath:db/migration
-    enabled: true
-    validate-on-migrate: true
+    url: jdbc:postgresql://localhost:5432/finance-control-prd
 
 server:
   port: 8081

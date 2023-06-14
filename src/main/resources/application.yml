@@ -13,11 +13,13 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
   datasource:
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:pass}
+    url: ${spring.datasource.url:jdbc:postgresql://localhost:5432/finance-control-dev}
+    driver-class-name: org.postgresql.Driver
   jooq:
     sql-dialect: org.hibernate.dialect.PostgreSQLDialect
   application:
@@ -27,6 +29,26 @@ spring:
   web:
     locale: pt_BR
     locale-resolver: fixed
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase/db.changelog-master.xml
+    default-schema: public
+    driver-class-name: ${spring.datasource.driver-class-name}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    url: ${spring.datasource.url}
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_absent
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
 
 springdoc:
   override-with-generic-response: false

@@ -1,0 +1,2 @@
+--liquibase formatted sql
+--changeset artur.bertoni:1

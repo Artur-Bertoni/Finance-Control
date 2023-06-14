@@ -2,9 +2,7 @@ spring:
   jpa:
     open-in-view: true
   datasource:
-    url: jdbc:postgresql://postgres:5432/finance-control-dev
-  flyway:
-    enabled: false
+    url: jdbc:postgresql://localhost:5432/finance-control-dev
 
 server:
   port: 8080
