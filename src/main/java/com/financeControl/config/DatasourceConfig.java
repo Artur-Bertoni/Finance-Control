@@ -22,11 +22,6 @@ public class DatasourceConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        System.out.println(env.getProperty("spring.datasource.driver-class-name"));
-        System.out.println(env.getProperty("spring.datasource.url"));
-        System.out.println(env.getProperty("spring.datasource.username"));
-        System.out.println(env.getProperty("spring.datasource.password"));
-
         dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
         dataSource.setUrl(env.getProperty("spring.datasource.url"));
         dataSource.setUsername(env.getProperty("spring.datasource.username"));
@@ -42,6 +37,7 @@ public class DatasourceConfig {
         liquibase.setChangeLog(env.getProperty("spring.liquibase.change-log"));
         liquibase.setDataSource(dataSource());
         liquibase.setLiquibaseSchema(env.getProperty("spring.liquibase.default-schema"));
+
         return liquibase;
     }
 

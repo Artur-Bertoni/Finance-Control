@@ -8,7 +8,7 @@
 				},
 				{
 					"env":"prd",
-					"url":"http://localhost:8081/api/finance-control"
+					"url":"http://localhost:8081/prd-finance-control"
 				}
 			],
 			"name":"finance-control"

@@ -1,13 +1,13 @@
 server:
-  port: ${PORT:8080}
+  port: ${server.port:8080}
   servlet:
-    context-path: ${CONTEXT-PATH:/api/finance-control}
+    context-path: ${server.servlet.context-path:/dev-finance-control}
   compression:
     enabled: true
   error:
     include-message: always
   spring:
-    url: ${SPRING-URL:localhost:8080}
+    url: localhost:${server.port:8080}
 
 spring:
   jpa:
@@ -33,11 +33,6 @@ spring:
     enabled: true
     change-log: classpath:liquibase/db.changelog-master.xml
     default-schema: public
-    driver-class-name: ${spring.datasource.driver-class-name}
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
-    url: ${spring.datasource.url}
-
   jackson:
     serialization:
       write-dates-as-timestamps: false
