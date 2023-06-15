@@ -1,6 +1,4 @@
 spring:
-  jpa:
-    open-in-view: true
   datasource:
     url: jdbc:postgresql://localhost:5432/finance-control-dev
 
@@ -8,9 +6,3 @@ server:
   port: 8080
   servlet:
     context-path: /dev-finance-control
-  compression:
-    enabled: true
-  error:
-    include-message: always
-  spring:
-    url: ${SPRING-URL:localhost:8080}
