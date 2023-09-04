@@ -1,0 +1,184 @@
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Home Page</title>
+	<link rel=stylesheet href=https://fonts.googleapis.com/css?family=Acme&display=swap>
+	<link rel=stylesheet href=../styles/styles.css>
+</head>
+<body>
+<div id=page-wrapper>
+	<img id=logo-img src=../images/logo.png alt=Logo>
+	
+	<ul id=navigation-menu-btn-gp>
+		<li>
+			<button id=profile-btn class=img-btn name="Navigate do Profile" type=button>
+				<img id=profile-btn-img src=../images/user.png alt="Profile Picture">
+			</button>
+		</li>
+	</ul>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<table>
+				<tr>
+					<td></td>
+					<td>
+						<h1 id=title>
+							Últimas Transações
+						</h1>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<ul>
+							<li>
+								<button id=new-transaction-btn class='home-page-btn colorful-button'
+										name="Post Transaction" type=button>
+									Nova Transação
+								</button>
+							</li>
+							
+							<li>
+								<button id=new-transaction-locale-btn class='home-page-btn colorful-button'
+										name="Post Transaction Locale"
+										type=button>
+									Novo Local de Transação
+								</button>
+							</li>
+							
+							<li>
+								<button id=new-finance-institution-btn class='home-page-btn colorful-button'
+										name="Post Finance Institution" type=button>
+									Nova Instituição Financeira
+								</button>
+							</li>
+							
+							<li>
+								<button id=new-account-btn class='home-page-btn colorful-button' name="Post Account"
+										type=button>
+									Nova Conta de Transação
+								</button>
+							</li>
+							
+							<li>
+								<button id=new-category-btn class='home-page-btn colorful-button' name="Post Category"
+										type=button>
+									Nova Categoria de Transação
+								</button>
+							</li>
+							
+							<li>
+								<div id=home-total-box></div>
+							</li>
+						</ul>
+					</td>
+					<td>
+						<div id=list-bkg>
+							<div id=last-transaction-list></div>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+
+<script>
+    <!--TODO Posteriormente transferir para script em .js-->
+    class Transaction {
+        constructor(category, account, type, transactionLocale, date, value, isInstallments, installmentsNumber, lastCharge) {
+            this.category = category
+            this.account = account
+            this.type = type
+            this.transactionLocale = transactionLocale
+            this.date = date
+            this.value = value
+            this.isInstallments = isInstallments
+            this.intallmentsNumber = installmentsNumber
+            this.lastCharge = lastCharge
+        }
+    }
+
+    let data = [new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, false),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, false),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'C', 'Local de Gasto', "01/01/2023", 100, false),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, false),
+        new Transaction('Categoria exemplo', 'Cartão Crédito', 'D', 'Local de Gasto', "01/01/2023", 100, true, 3, '01/03/2023'),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, false),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, false)
+    ]
+
+    let list = document.getElementById('last-transaction-list')
+	let totalValue = 0
+
+    for (let i = 0; i < 30; i++) {
+        let button = document.createElement('button')
+        button.classList.add('transaction-item-btn')
+        button.classList.add('colorful-button')
+
+        if (data[i].type === 'D' && data[i].isInstallments === false)
+            button.style.backgroundColor = '#C04C4CCC'
+        else if (data[i].type === 'D' && data[i].isInstallments === true)
+            button.style.backgroundColor = '#0085b6'
+        else
+            button.style.backgroundColor = '#4BAE50FF'
+
+        let grid = document.createElement('div')
+        grid.classList.add('transaction-grid')
+
+        let categoryLabel = document.createElement('span')
+        categoryLabel.classList.add('grid-label')
+        categoryLabel.innerText = `${data[i].category}`
+        grid.appendChild(categoryLabel)
+
+        let accountLabel = document.createElement('span')
+        accountLabel.classList.add('grid-label')
+        accountLabel.innerText = `${data[i].account}`
+        grid.appendChild(accountLabel)
+
+        let localeLabel = document.createElement('span')
+        localeLabel.classList.add('grid-label')
+        localeLabel.innerText = `${data[i].transactionLocale}`
+        grid.appendChild(localeLabel)
+
+        let dateLabel = document.createElement('span')
+        dateLabel.classList.add('grid-label')
+        dateLabel.innerText = `Data: ${data[i].date}`
+        grid.appendChild(dateLabel)
+
+        let valueLabel = document.createElement('span')
+        valueLabel.classList.add('grid-label')
+		
+		if (data[i].type === 'D') {
+            valueLabel.innerText = `- $ ${data[i].value.toFixed(2)}`
+			
+			if (data[i].isInstallments === false)
+                totalValue -= data[i].value
+		} else {
+            valueLabel.innerText = `+ $ ${data[i].value.toFixed(2)}`
+			totalValue += data[i].value
+		}
+        
+        grid.appendChild(valueLabel)
+
+        if (data[i].isInstallments === true) {
+            let installmentsNumber = document.createElement('span')
+            installmentsNumber.classList.add('grid-label')
+            installmentsNumber.innerText = `N° parcelas: ${data[i].intallmentsNumber}`
+            grid.appendChild(installmentsNumber)
+
+            let lastCharge = document.createElement('span')
+            lastCharge.classList.add('grid-label')
+            lastCharge.innerText = `Fechamento: ${data[i].lastCharge}`
+            grid.appendChild(lastCharge)
+        }
+
+        button.appendChild(grid)
+        list.appendChild(button)
+		
+    	document.getElementById('home-total-box').innerHTML = `Valor total em conta <br>$ ${totalValue.toFixed(2)}`
+    }
+	
+</script>
+</html>

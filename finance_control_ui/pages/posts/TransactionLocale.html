@@ -1,0 +1,61 @@
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Transaction Locale Post</title>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../../styles/styles.css rel=stylesheet>
+</head>
+<body>
+<div id=page-wrapper>
+	<img alt=Logo id=logo-img src=../../images/logo.png>
+	
+	<ul id=navigation-menu-btn-gp>
+		<li>
+			<button class=img-btn id=profile-btn name="Navigate do Profile" type=button>
+				<img alt="Profile Picture" id=profile-btn-img src=../../images/user.png>
+			</button>
+		</li>
+		<li>
+			<button class=img-btn id=home-btn name="Navigate to Home" type=button>
+				<img alt="Home Picture" id=home-btn-img src=../../images/home-page.png>
+			</button>
+		</li>
+	</ul>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<form>
+				<ul>
+					<li class=form-list-item id=title-in-list>
+						<h1 id=title>Cadastro de Local de Transação</h1>
+					</li>
+					
+					<li class=form-list-item id=fields-in-list>
+						<div class=field>
+							<label for=name-input>Nome *</label>
+							<label id=name-input>
+								<input class=normal-insertion-field name="Name Field" placeholder="Nome do local"
+									   required type=text>
+							</label>
+						</div>
+						
+						<div class=field>
+							<label for=address-input>Endereço</label>
+							<label id=address-input>
+								<input class=normal-insertion-field name="Address Field" placeholder="Endereço do local"
+									   type=text>
+							</label>
+						</div>
+					</li>
+					
+					<li class=form-list-item id=buttons-in-list>
+						<button class=txt-btn id=cancel-btn name="Cancel Button" type=button>Cancelar</button>
+						<button class=txt-btn id=save-btn name="Save Button" type=submit>Salvar</button>
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>
