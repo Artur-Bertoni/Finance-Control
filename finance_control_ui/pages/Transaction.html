@@ -3,28 +3,28 @@
 	<meta charset=utf-8>
 	<title>Transaction Post</title>
 	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
-	<link href=../../styles/styles.css rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
 </head>
 <body>
 <div id=page-wrapper>
-	<img alt=Logo id=logo-img src=../../images/logo.png>
+	<img alt=Logo id=logo-img src=../images/logo.png>
 	
 	<ul id=navigation-menu-btn-gp>
 		<li>
 			<button class=img-btn id=profile-btn name="Navigate do Profile" type=button>
-				<img alt="Profile Picture" id=profile-btn-img src=../../images/user.png>
+				<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
 			</button>
 		</li>
 		<li>
 			<button class=img-btn id=home-btn name="Navigate to Home" type=button>
-				<img alt="Home Picture" id=home-btn-img src=../../images/home-page.png>
+				<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
 			</button>
 		</li>
 	</ul>
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form>
+			<form action=processor/TransactionProcessor method=post>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1>Cadastro de Transação</h1>
@@ -34,33 +34,32 @@
 						<div class=field>
 							<label for=account-input>Conta *</label>
 							<input id=account-input class=normal-insertion-field list=account-list
-								   name="Transaction Locale Field" placeholder="Conta de origem" required>
+								   name="accountField" placeholder="Conta de origem" required>
 							<datalist id=account-list role=listbox></datalist>
 						</div>
 						
 						<div class=field>
 							<label for=category-input>Categoria *</label>
 							<input id=category-input class=normal-insertion-field list=category-list
-								   name="Category Field"
-								   placeholder="Categoria da transação" required type=text>
+								   name="categoryField" placeholder="Categoria da transação" required type=text>
 							<datalist id=category-list role=listbox></datalist>
 						</div>
 						
 						<div class=field>
 							<label for=value-input>Valor *</label>
-							<input id=value-input class=small-insertion-field name="Value Field" placeholder="Valor ($)"
+							<input id=value-input class=small-insertion-field name="valueField" placeholder="Valor ($)"
 								   required type=text>
 						</div>
 						
 						<div class=field>
 							<label for=date-input>Data *</label>
-							<input id=date-input class=small-insertion-field name="Date Field" placeholder="dd/mm/aaaa"
+							<input id=date-input class=small-insertion-field name="dateField" placeholder="dd/mm/aaaa"
 								   required type=text>
 						</div>
 						
 						<div class=field>
 							<label for=type-input>Tipo de Transação *</label>
-							<input id=type-input class=small-insertion-field list=type-list name="Type Field"
+							<input id=type-input class=small-insertion-field list=type-list name="typeField"
 								   placeholder="Débito ou Crédito" required type=text>
 							<datalist id=type-list role=listbox>
 								<option value="Débito"></option>
@@ -71,7 +70,7 @@
 						<div class=field>
 							<label for=installments-number-input>Nº de Parcelas</label>
 							<input id=installments-number-input class=small-insertion-field
-								   name="Installments Number Field"
+								   name="installmentsNumberField"
 								   placeholder="Parcelas"
 								   type=text>
 						</div>
@@ -79,22 +78,22 @@
 						<div class=field>
 							<label for=transaction-locale-input>Local da Transação</label>
 							<input id=transaction-locale-input class=normal-insertion-field list=transaction-locale-list
-								   name="Transaction Locale Field" placeholder="Onde foi realizada">
+								   name="transactionLocaleField" placeholder="Onde foi realizada">
 							<datalist id=transaction-locale-list role=listbox></datalist>
 						</div>
 						
 						
 						<div class=field>
 							<label for=obs-input>Observações</label>
-							<input id=obs-input class=normal-insertion-field name="Obs Field"
+							<input id=obs-input class=normal-insertion-field name="obsField"
 								   placeholder="Observações sobre a transação"
 								   type=text>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="Cancel Button" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="Save Button" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
+						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
 				</ul>
 			</form>
 		</div>

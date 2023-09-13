@@ -3,25 +3,28 @@
 	<meta charset=utf-8>
 	<title>User Post</title>
 	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
-	<link href=../../styles/styles.css rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
 </head>
 <body>
 <div id=page-wrapper>
-	<img alt=Logo id=logo-img src=../../images/logo.png>
+	<img alt=Logo id=logo-img src=../images/logo.png>
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form>
+			<form action=processor/UserProcessor.php method=post>
 				<ul>
 					<li class=form-list-item id=image-in-list>
-						<img alt="Profile Picture" id=form-profile-img src=../../images/user.png>
+						<img alt="Profile Picture" id=form-profile-img src=../images/user.png>
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
+						
+						<input type=hidden name=id value=123>
+						
 						<div class=field>
 							<label for=username-input>Nome de Usuário *</label>
 							<label id=username-input>
-								<input class=normal-insertion-field name="Username Field" placeholder="Preencha com seu nome de usuário"
+								<input class=normal-insertion-field name="usernameField" placeholder="Preencha com seu nome de usuário"
 									   required type=text>
 							</label>
 						</div>
@@ -29,7 +32,7 @@
 						<div class=field>
 							<label for=email-input>Endereço de Email *</label>
 							<label id=email-input>
-								<input class=normal-insertion-field name="Email Field" placeholder="Preencha com seu endereço de email"
+								<input class=normal-insertion-field name="emailField" placeholder="Preencha com seu endereço de email"
 									   required type=text>
 							</label>
 						</div>
@@ -37,7 +40,7 @@
 						<div class=field>
 							<label for=password-input>Senha *</label>
 							<label id=password-input>
-								<input class=normal-insertion-field name="Password Field" placeholder="Preencha com uma senha"
+								<input class=normal-insertion-field name="passwordField" placeholder="Preencha com uma senha"
 									   required type=password>
 							</label>
 						</div>
@@ -45,15 +48,15 @@
 						<div class=field>
 							<label for=password-confirm-input>Confirmar Senha *</label>
 							<label id=password-confirm-input>
-								<input class=normal-insertion-field name="Password Confirmation Field" placeholder="Repita a senha"
+								<input class=normal-insertion-field name="passwordConfirmationField" placeholder="Repita a senha"
 									   required type=password>
 							</label>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="Cancel Button" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="Save Button" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
+						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
 					</li>
 				</ul>
 			</form>
