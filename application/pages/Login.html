@@ -27,7 +27,7 @@
 						
 						<div class=field>
 							<label for=password-input>Senha
-								<img class=password-btn-img src="../images/show_password.png" alt="Show/Hide password">
+								<img id=password-img class=password-btn-img src="../images/hiding.png" alt="Show/Hide password">
 							</label>
 							<input id=password-input class=normal-insertion-field type=password name=passwordField
 								   placeholder="Preencha com a sua senha" required>
@@ -46,11 +46,22 @@
 </body>
 
 <script>
+    let imgSrcArray = ['../images/showing.png', '../images/hiding.png']
+    let currentImgIndex = 0
+
+    function trocar(elementId) {
+        if (currentImgIndex === imgSrcArray.length)
+            currentImgIndex = 0;
+        document.getElementById(elementId).src = imgSrcArray[currentImgIndex];
+        currentImgIndex++;
+    }
+
     let passwordInput = document.getElementById('password-input');
-    let passwordToggle = document.querySelector('.password-btn-img');
+    let passwordToggle = document.querySelector('#password-img');
 
     passwordToggle.addEventListener('click', function () {
         passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text';
+        trocar('password-img')
     });
 </script>
 </html>

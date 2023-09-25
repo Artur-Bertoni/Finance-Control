@@ -212,7 +212,7 @@ input[type="radio"]:checked::before {
     max-height: 100px;
 }
 .password-btn-img {
-    height: 3vmin;
+    height: 2vmin;
     margin-left: 10px;
     cursor: pointer;
 }
