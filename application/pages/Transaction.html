@@ -132,5 +132,9 @@
 
         accountList.appendChild(option)
     }
+
+    let date = document.getElementById('date-input')
+    date.max = new Date().toISOString().split("T")[0]
+	date.value = date.max
 </script>
 </html>
