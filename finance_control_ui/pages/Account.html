@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -24,7 +25,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/AccountProcessor method=post>
+			<form action=processor/AccountProcessor.php method=post>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1 id=title>Cadastro de Conta</h1>
@@ -33,34 +34,37 @@
 					<li class=form-list-item id=fields-in-list>
 						<div class=field>
 							<label for=name-input>Nome *</label>
-							<label id=name-input>
-								<input class=normal-insertion-field name="nameField" placeholder="Nome (apelido)"
-									   required type=text>
-							</label>
+							<input id=name-input class=normal-insertion-field name=nameField
+								   placeholder="Nome (apelido)"
+								   type=text required>
 						</div>
 						
 						<div class=field>
 							<label for=financial-institution-input>Instituição Financeira *</label>
-							<label id=financial-institution-input>
-								<input class=normal-insertion-field list=financial-institution-list name="financialInstitutionField"
-									   placeholder="Instituição à qual a conta está vinculada"
-									   required type=text>
-							</label>
-							<datalist id=financial-institution-list role=listbox></datalist>
+							<select id=financial-institution-input class=normal-insertion-field
+									name=financialInstitutionField required>
+								<option disabled selected value="">Instituição à qual a conta está vinculada</option>
+							</select>
 						</div>
 						
 						<div class=field>
-							<label for=description-input>Description</label>
-							<label id=description-input>
-								<input class=normal-insertion-field name="contactField" placeholder="Contato da instituição"
-									   type=text>
-							</label>
+							<label for=contact-input>Contato</label>
+							<input id=contact-input class=normal-insertion-field name=contactField
+								   placeholder="Contato da conta"
+								   type=text>
+						</div>
+						
+						<div class=field>
+							<label for=description-input>Descrição</label>
+							<textarea id=description-input class=big-insertion-field name=descriptionField
+									  placeholder="Detalhamento sobre a conta"></textarea>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name=cancelButton type=button formnovalidate>Cancelar
+						</button>
+						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
 				</ul>
 			</form>
@@ -72,11 +76,12 @@
 <script>
     <!--TODO Posteriormente transferir para script em .js-->
     let financialInstitutionData = ['Instituição 1', 'Instituição 2']
-    let financialInstitutionList = document.getElementById('financial-institution-list')
+    let financialInstitutionList = document.getElementById('financial-institution-input')
 
-    for (let i = 0; i < financialInstitutionData.length; i++) {
+    for (const element of financialInstitutionData) {
         let option = document.createElement('option')
-        option.value = financialInstitutionData[i]
+        option.value = element
+        option.innerText = element
 
         financialInstitutionList.appendChild(option)
     }

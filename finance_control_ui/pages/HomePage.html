@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -19,66 +20,68 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<table>
-				<tr>
-					<td></td>
-					<td>
-						<h1 id=title>
-							Últimas Transações
-						</h1>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<ul>
-							<li>
-								<button id=new-transaction-btn class='home-page-btn colorful-button'
-										name="postTransaction" type=button>
-									Nova Transação
-								</button>
-							</li>
-							
-							<li>
-								<button id=new-transaction-locale-btn class='home-page-btn colorful-button'
-										name="postTransactionLocale"
-										type=button>
-									Novo Local de Transação
-								</button>
-							</li>
-							
-							<li>
-								<button id=new-finance-institution-btn class='home-page-btn colorful-button'
-										name="postFinanceInstitution" type=button>
-									Nova Instituição Financeira
-								</button>
-							</li>
-							
-							<li>
-								<button id=new-account-btn class='home-page-btn colorful-button' name="postAccount"
-										type=button>
-									Nova Conta de Transação
-								</button>
-							</li>
-							
-							<li>
-								<button id=new-category-btn class='home-page-btn colorful-button' name="postCategory"
-										type=button>
-									Nova Categoria de Transação
-								</button>
-							</li>
-							
-							<li>
-								<div id=home-total-box></div>
-							</li>
-						</ul>
-					</td>
-					<td>
-						<div id=list-bkg>
-							<div id=last-transaction-list></div>
-						</div>
-					</td>
-				</tr>
-			</table>
+			<form id=home-page-form action=processor/HomePageProcessor.php method=post>
+				<table>
+					<caption></caption>
+					<tr>
+						<th></th>
+						<th>
+							<h1 id=title>
+								Últimas Transações
+							</h1>
+						</th>
+					</tr>
+					<tr>
+						<td>
+							<ul>
+								<li>
+									<button id=new-transaction-btn class='home-page-btn colorful-button'
+											name=postTransaction type=button>
+										Nova Transação
+									</button>
+								</li>
+								
+								<li>
+									<button id=new-transaction-locale-btn class='home-page-btn colorful-button'
+											name=postTransactionLocale type=button>
+										Novo Local de Transação
+									</button>
+								</li>
+								
+								<li>
+									<button id=new-financial-institution-btn class='home-page-btn colorful-button'
+											name=postFinancialInstitution type=button>
+										Nova Instituição Financeira
+									</button>
+								</li>
+								
+								<li>
+									<button id=new-account-btn class='home-page-btn colorful-button' name=postAccount
+											type=button>
+										Nova Conta de Transação
+									</button>
+								</li>
+								
+								<li>
+									<button id=new-category-btn class='home-page-btn colorful-button' name=postCategory
+											type=button>
+										Nova Categoria de Transação
+									</button>
+								</li>
+								
+								<li>
+									<div id=home-total-box></div>
+								</li>
+							</ul>
+						</td>
+						<td>
+							<div id=list-bkg>
+								<div id=last-transaction-list></div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</div>
 </div>
@@ -110,7 +113,7 @@
     ]
 
     let list = document.getElementById('last-transaction-list')
-	let totalValue = 0
+    let totalValue = 0
 
     for (let i = 0; i < 30; i++) {
         let button = document.createElement('button')
@@ -149,17 +152,17 @@
 
         let valueLabel = document.createElement('span')
         valueLabel.classList.add('grid-label')
-		
-		if (data[i].type === 'D') {
+
+        if (data[i].type === 'D') {
             valueLabel.innerText = `- $ ${data[i].value.toFixed(2)}`
-			
-			if (data[i].isInstallments === false)
+
+            if (data[i].isInstallments === false)
                 totalValue -= data[i].value
-		} else {
+        } else {
             valueLabel.innerText = `+ $ ${data[i].value.toFixed(2)}`
-			totalValue += data[i].value
-		}
-        
+            totalValue += data[i].value
+        }
+
         grid.appendChild(valueLabel)
 
         if (data[i].isInstallments === true) {
@@ -176,9 +179,9 @@
 
         button.appendChild(grid)
         list.appendChild(button)
-		
-    	document.getElementById('home-total-box').innerHTML = `Valor total em conta <br>$ ${totalValue.toFixed(2)}`
+
+        document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
     }
-	
+
 </script>
 </html>

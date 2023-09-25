@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -20,23 +21,22 @@
 					<li id=fields-in-list class=form-list-item>
 						<div class=field>
 							<label for=username-input>Nome de Usuário</label>
-							<label id=username-input>
-								<input class=normal-insertion-field type=text name="usernameField"
-									   placeholder="Preencha com o seu nome de usuário" required>
-							</label>
+							<input id=username-input class=normal-insertion-field type=text name=usernameField
+								   placeholder="Preencha com o seu nome de usuário" required>
 						</div>
 						
 						<div class=field>
-							<label for=password-input>Senha</label>
-							<label id=password-input>
-								<input class=normal-insertion-field type=password name="passwordField"
-									   placeholder="Preencha com a sua senha" required>
+							<label for=password-input>Senha
+								<img class=password-btn-img src="../images/show_password.png" alt="Show/Hide password">
 							</label>
+							<input id=password-input class=normal-insertion-field type=password name=passwordField
+								   placeholder="Preencha com a sua senha" required>
 						</div>
 					</li>
 					<li id=buttons-in-list class=form-list-item>
-						<button id=register-btn class=txt-btn name="registerButton" type=button>Cadastrar</button>
-						<button id=login-btn class=txt-btn name="loginButton" type=submit>Login</button>
+						<button id=register-btn class=txt-btn name=registerButton type=submit formnovalidate>Cadastrar
+						</button>
+						<button id=login-btn class=txt-btn name=loginButton type=submit>Login</button>
 					</li>
 				</ul>
 			</form>
@@ -44,4 +44,13 @@
 	</div>
 </div>
 </body>
+
+<script>
+    let passwordInput = document.getElementById('password-input');
+    let passwordToggle = document.querySelector('.password-btn-img');
+
+    passwordToggle.addEventListener('click', function () {
+        passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text';
+    });
+</script>
 </html>

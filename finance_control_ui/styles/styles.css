@@ -39,6 +39,29 @@ button {
 ul {
     list-style: none;
 }
+select {
+    appearance: none;
+    cursor: pointer;
+}
+input[type="radio"] {
+    display: grid;
+    place-content: center;
+}
+input[type="radio"]::before {
+    content: "";
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--green);
+}
+input[type="radio"]:checked::before {
+    transform: scale(1);
+}
+#password-input img {
+    cursor: pointer;
+}
 
 /* general/COMPONENTS */
 #title {
@@ -145,14 +168,14 @@ ul {
     border-radius: 2vmin;
     text-align: center;
 }
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder {
     color: var(--black);
-    opacity: 1; /* Firefox */
+    opacity: 1;
 }
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
+:-ms-input-placeholder {
     color: var(--black);
 }
-::-ms-input-placeholder { /* Microsoft Edge */
+::-ms-input-placeholder {
     color: var(--black);
 }
 
@@ -188,9 +211,18 @@ ul {
     max-width: 100px;
     max-height: 100px;
 }
+.password-btn-img {
+    height: 3vmin;
+    margin-left: 10px;
+    cursor: pointer;
+}
 /* ---- general/components/IMAGES ---- */
 
 /* general/components/FORM */
+#home-page-form {
+    max-height: none;
+    max-width: none;
+}
 #title-in-list {
     margin-top: 0;
 }
@@ -208,6 +240,18 @@ ul {
 }
 #description-input, #obs-input {
     min-height: 10vmin;
+}
+.big-insertion-field {
+    background-color: var(--green);
+    display: flex;
+    border-radius: 2vmin;
+    font-size: 1.5vmin;
+    text-align: center;
+    min-width: 35vmax;
+    min-height: 5vmin;
+    max-width: 35vmax;
+    max-height: 5vmin;
+    outline: 0;
 }
 .normal-insertion-field {
     background-color: var(--green);
@@ -327,11 +371,11 @@ button:hover {
 .colorful-button:hover {
     filter: contrast(2);
 }
-input:hover {
+input:hover, textarea:hover, select:hover {
     transition: 0.25s;
     transform: scale(1.05);
 }
-input:focus {
+input:focus, textarea:focus, select:focus {
     transition: 0.25s;
     transform: scale(1.05);
 }

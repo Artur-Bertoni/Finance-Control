@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -21,10 +22,9 @@
 			</button>
 		</li>
 	</ul>
-	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/TransactionProcessor method=post>
+			<form action=processor/TransactionProcessor.php method=post>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1>Cadastro de Transação</h1>
@@ -33,67 +33,64 @@
 					<li class=form-list-item id=fields-in-list>
 						<div class=field>
 							<label for=account-input>Conta *</label>
-							<input id=account-input class=normal-insertion-field list=account-list
-								   name="accountField" placeholder="Conta de origem" required>
-							<datalist id=account-list role=listbox></datalist>
+							<select id=account-input class=normal-insertion-field name=accountField required>
+								<option disabled selected value="">Conta de origem</option>
+							</select>
 						</div>
 						
 						<div class=field>
 							<label for=category-input>Categoria *</label>
-							<input id=category-input class=normal-insertion-field list=category-list
-								   name="categoryField" placeholder="Categoria da transação" required type=text>
-							<datalist id=category-list role=listbox></datalist>
+							<select id=category-input class=normal-insertion-field name=categoryField required>
+								<option disabled selected value="">Categoria da transação</option>
+							</select>
 						</div>
 						
 						<div class=field>
-							<label for=value-input>Valor *</label>
-							<input id=value-input class=small-insertion-field name="valueField" placeholder="Valor ($)"
-								   required type=text>
+							<label>Tipo de Transação *</label>
+							<label >
+								<input class=radio-label type=radio name=transaction-type value=debit required>Débito
+							</label>
+							<label class=radio-label>
+								<input type=radio name=transaction-type value=credit>Crédito
+							</label>
 						</div>
 						
 						<div class=field>
 							<label for=date-input>Data *</label>
-							<input id=date-input class=small-insertion-field name="dateField" placeholder="dd/mm/aaaa"
-								   required type=text>
+							<input id=date-input class=small-insertion-field name=dateField type=date required>
 						</div>
 						
 						<div class=field>
-							<label for=type-input>Tipo de Transação *</label>
-							<input id=type-input class=small-insertion-field list=type-list name="typeField"
-								   placeholder="Débito ou Crédito" required type=text>
-							<datalist id=type-list role=listbox>
-								<option value="Débito"></option>
-								<option value="Crédito"></option>
-							</datalist>
+							<label for=value-input>Valor *</label>
+							<input id=value-input class=small-insertion-field name=valueField placeholder="Valor ($)"
+								   type=number required>
 						</div>
 						
 						<div class=field>
 							<label for=installments-number-input>Nº de Parcelas</label>
-							<input id=installments-number-input class=small-insertion-field
-								   name="installmentsNumberField"
-								   placeholder="Parcelas"
-								   type=text>
+							<input id=installments-number-input class=small-insertion-field name=installmentsNumberField
+								   placeholder="Parcelas" type=number>
 						</div>
 						
 						<div class=field>
 							<label for=transaction-locale-input>Local da Transação</label>
-							<input id=transaction-locale-input class=normal-insertion-field list=transaction-locale-list
-								   name="transactionLocaleField" placeholder="Onde foi realizada">
-							<datalist id=transaction-locale-list role=listbox></datalist>
+							<select id=transaction-locale-input class=normal-insertion-field name=transactionLocaleField>
+								<option disabled selected value="">Onde foi realizada</option>
+							</select>
 						</div>
 						
 						
 						<div class=field>
 							<label for=obs-input>Observações</label>
-							<input id=obs-input class=normal-insertion-field name="obsField"
-								   placeholder="Observações sobre a transação"
-								   type=text>
+							<textarea id=obs-input class=big-insertion-field name=obsField
+									  placeholder="Observações sobre a transação"></textarea>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name=cancelButton type=button formnovalidate>Cancelar
+						</button>
+						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 				</ul>
 			</form>
 		</div>
@@ -104,31 +101,34 @@
 <script>
     <!--TODO Posteriormente transferir para script em .js-->
     let categoryData = ['Cinema', 'Alimentação']
-    let categoryList = document.getElementById('category-list')
+    let categoryList = document.getElementById('category-input')
 
     for (const element of categoryData) {
         let option = document.createElement('option')
         option.value = element
+        option.innerText = element
 
         categoryList.appendChild(option)
     }
 
     let transactionLocaleData = ['Local 1', 'Local 2']
-    let transactionLocaleList = document.getElementById('transaction-locale-list')
+    let transactionLocaleList = document.getElementById('transaction-locale-input')
 
     for (const element of transactionLocaleData) {
         let option = document.createElement('option')
         option.value = element
+        option.innerText = element
 
         transactionLocaleList.appendChild(option)
     }
 
     let accountData = ['Conta Corrente', 'Cartão Crédito']
-    let accountList = document.getElementById('account-list')
+    let accountList = document.getElementById('account-input')
 
     for (const element of accountData) {
         let option = document.createElement('option')
         option.value = element
+        option.innerText = element
 
         accountList.appendChild(option)
     }

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -24,7 +25,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/TransactionLocaleProcessor method=post>
+			<form action=processor/TransactionLocaleProcessor.php method=post>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1 id=title>Cadastro de Local de Transação</h1>
@@ -33,24 +34,21 @@
 					<li class=form-list-item id=fields-in-list>
 						<div class=field>
 							<label for=name-input>Nome *</label>
-							<label id=name-input>
-								<input class=normal-insertion-field name="nameField" placeholder="Nome do local"
-									   required type=text>
-							</label>
+							<input id=name-input class=normal-insertion-field name=nameField placeholder="Nome do local"
+								   type=text required>
 						</div>
 						
 						<div class=field>
 							<label for=address-input>Endereço</label>
-							<label id=address-input>
-								<input class=normal-insertion-field name="addressField" placeholder="Endereço do local"
-									   type=text>
-							</label>
+							<input id=address-input class=normal-insertion-field name=addressField
+								   placeholder="Endereço do local"
+								   type=text>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name=cancelButton type=button>Cancelar</button>
+						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
 				</ul>
 			</form>

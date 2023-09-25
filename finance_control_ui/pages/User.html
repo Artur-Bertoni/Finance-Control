@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang=en>
 <head>
 	<meta charset=utf-8>
@@ -23,40 +24,41 @@
 						
 						<div class=field>
 							<label for=username-input>Nome de Usuário *</label>
-							<label id=username-input>
-								<input class=normal-insertion-field name="usernameField" placeholder="Preencha com seu nome de usuário"
-									   required type=text>
-							</label>
+							<input id=username-input class=normal-insertion-field name=usernameField
+								   placeholder="Preencha com seu nome de usuário"
+								   type=text required>
 						</div>
 						
 						<div class=field>
 							<label for=email-input>Endereço de Email *</label>
-							<label id=email-input>
-								<input class=normal-insertion-field name="emailField" placeholder="Preencha com seu endereço de email"
-									   required type=text>
-							</label>
+							<input id=email-input class=normal-insertion-field name=emailField
+								   placeholder="Preencha com seu endereço de email"
+								   type=email required>
 						</div>
 						
 						<div class=field>
-							<label for=password-input>Senha *</label>
-							<label id=password-input>
-								<input class=normal-insertion-field name="passwordField" placeholder="Preencha com uma senha"
-									   required type=password>
+							<label for=password-input>Senha *
+								<img id=password-img class=password-btn-img src="../images/show_password.png"
+									 alt="Show/Hide password">
 							</label>
+							<input id=password-input class=normal-insertion-field type=password name=passwordField
+								   placeholder="Preencha com uma senha" required>
 						</div>
 						
 						<div class=field>
-							<label for=password-confirm-input>Confirmar Senha *</label>
-							<label id=password-confirm-input>
-								<input class=normal-insertion-field name="passwordConfirmationField" placeholder="Repita a senha"
-									   required type=password>
+							<label for=password-confirm-input>Confirmar Senha *
+								<img id=password-confirm-img class=password-btn-img src="../images/show_password.png"
+									 alt="Show/Hide password">
 							</label>
+							<input id=password-confirm-input class=normal-insertion-field type=password
+								   name=passwordConfirmationField
+								   placeholder="Repita a senha" required>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name="cancelButton" type=button>Cancelar</button>
-						<button class=txt-btn id=save-btn name="saveButton" type=submit>Salvar</button>
+						<button class=txt-btn id=cancel-btn name=cancelButton type=button>Cancelar</button>
+						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
 				</ul>
 			</form>
@@ -64,4 +66,20 @@
 	</div>
 </div>
 </body>
+
+<script>
+    let passwordInput = document.getElementById('password-input');
+    let passwordToggle = document.querySelector('#password-img');
+
+    passwordToggle.addEventListener('click', function () {
+        passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text';
+    });
+
+    let passwordConfirmInput = document.getElementById('password-confirm-input');
+    let passwordConfirmToggle = document.querySelector('#password-confirm-img');
+
+    passwordConfirmToggle.addEventListener('click', function () {
+        passwordConfirmInput.type = passwordConfirmInput.type === 'text' ? 'password' : 'text';
+    });
+</script>
 </html>
