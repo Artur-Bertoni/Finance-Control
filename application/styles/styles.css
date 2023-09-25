@@ -59,6 +59,10 @@ input[type="radio"]::before {
 input[type="radio"]:checked::before {
     transform: scale(1);
 }
+input[type=number]::-webkit-inner-spin-button {
+    filter: sepia(200%) hue-rotate(90deg);
+    cursor: pointer;
+}
 #password-input img {
     cursor: pointer;
 }
