@@ -12,10 +12,14 @@ if (array_key_exists('postFinancialInstitution', $_POST)) {
     header("Location: ../FinancialInstitution.html");
 }
 
-if (array_key_exists('postAccount', $_POST)) {
+if (array_key_exists('postAccount', $_GET)) {
     header("Location: ../Account.html");
 }
 
 if (array_key_exists('postCategory', $_POST)) {
     header("Location: ../Category.html");
+}
+
+if (array_key_exists('itemButton', $_POST)) {
+    header("Location: ../Transaction.html");
 }

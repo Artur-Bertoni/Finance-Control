@@ -36,35 +36,35 @@
 							<ul>
 								<li>
 									<button id=new-transaction-btn class='home-page-btn colorful-button'
-											name=postTransaction type=button>
+											name=postTransaction type=submit>
 										Nova Transação
 									</button>
 								</li>
 								
 								<li>
 									<button id=new-transaction-locale-btn class='home-page-btn colorful-button'
-											name=postTransactionLocale type=button>
+											name=postTransactionLocale type=submit>
 										Novo Local de Transação
 									</button>
 								</li>
 								
 								<li>
 									<button id=new-financial-institution-btn class='home-page-btn colorful-button'
-											name=postFinancialInstitution type=button>
+											name=postFinancialInstitution type=submit>
 										Nova Instituição Financeira
 									</button>
 								</li>
 								
 								<li>
 									<button id=new-account-btn class='home-page-btn colorful-button' name=postAccount
-											type=button>
+											type=submit>
 										Nova Conta de Transação
 									</button>
 								</li>
 								
 								<li>
 									<button id=new-category-btn class='home-page-btn colorful-button' name=postCategory
-											type=button>
+											type=submit>
 										Nova Categoria de Transação
 									</button>
 								</li>
@@ -119,6 +119,8 @@
         let button = document.createElement('button')
         button.classList.add('transaction-item-btn')
         button.classList.add('colorful-button')
+		button.type = "submit"
+		button.name = "itemButton"
 
         if (data[i].type === 'D' && data[i].isInstallments === false)
             button.style.backgroundColor = '#C04C4CCC'
