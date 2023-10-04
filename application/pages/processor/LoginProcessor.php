@@ -14,10 +14,11 @@ if (($userUsername == $fixedUsername) && ($userPassword == $fixedPassword)) {
     header("Location: ../HomePage.html");
 }
 else {
-    echo '<script>alert("Usuário e senha incorretos")</script>';
-    header("Location: ../Login.html");
+    echo "<script>alert('Usuário e senha incorretos');location.href=\"../Login.html\";</script>";
 }
 
 if (array_key_exists('registerButton', $_POST)) {
+    session_start();
+
     header("Location: ../User.html");
 }

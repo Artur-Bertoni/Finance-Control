@@ -12,7 +12,7 @@ if (array_key_exists('postFinancialInstitution', $_POST)) {
     header("Location: ../FinancialInstitution.html");
 }
 
-if (array_key_exists('postAccount', $_GET)) {
+if (array_key_exists('postAccount', $_POST)) {
     header("Location: ../Account.html");
 }
 
