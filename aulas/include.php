@@ -1,6 +1,6 @@
 <?php
 
-include '../application/utils/util.php';
+include '../src/utils/util.php';
 escrever();
 ler();
 $sol =  calcula(15,5);

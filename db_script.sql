@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS artur_account
     user_id                  INT         NOT NULL,
     financial_institution_id INT         NOT NULL,
     name                     VARCHAR(50) NOT NULL,
+    contect                  VARCHAR(100),
     description              VARCHAR(150),
 
     PRIMARY KEY (id),
@@ -63,13 +64,13 @@ CREATE TABLE IF NOT EXISTS artur_category
 CREATE TABLE IF NOT EXISTS artur_transaction
 (
     id                    INT AUTO_INCREMENT,
-    user_id               INT          NOT NULL,
-    account_id            INT          NOT NULL,
+    user_id               INT         NOT NULL,
+    account_id            INT         NOT NULL,
+    category_id           INT         NOT NULL,
     transaction_locale_id INT,
-    category              VARCHAR(100) NOT NULL,
-    value                 DOUBLE       NOT NULL,
-    date                  DATE         NOT NULL,
-    type                  VARCHAR(10)  NOT NULL,
+    value                 DOUBLE      NOT NULL,
+    date                  DATE        NOT NULL,
+    type                  VARCHAR(10) NOT NULL,
     plots_number          INT,
     obs                   VARCHAR(255),
     is_installments       BOOLEAN DEFAULT FALSE,
@@ -78,5 +79,6 @@ CREATE TABLE IF NOT EXISTS artur_transaction
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES artur_user (id),
     FOREIGN KEY (account_id) REFERENCES artur_account (id),
+    FOREIGN KEY (category_id) REFERENCES artur_category (id),
     FOREIGN KEY (transaction_locale_id) REFERENCES artur_transaction_locale (id)
 );
