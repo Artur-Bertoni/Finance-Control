@@ -2,6 +2,8 @@
 
 include "../../backend/services/UserService.php";
 
+session_start();
+
 if (isset($_POST['registerButton'])) {
     header("Location: ../User.html");
     exit;
@@ -12,12 +14,15 @@ $service = new UserService();
 $email = $_POST["emailField"];
 $password = $_POST["passwordField"];
 
-if ($user = $service->login($email, $password)) {
-    $_SESSION["username"] = $user->getUsername();
-    $_SESSION["email"] = $email;
-    $_SESSION["password"] = $password;
-    header("Location: ../HomePage.html");
+$result = $service->login($email, $password);
+
+if (!$result instanceof User) {
+    echo "<script>alert('".$result."');location.href=\"../Login.html\";</script>";
+    exit;
 }
+
+$_SESSION["userId"] = $result->getId();
+header("Location: ../HomePage.html");
 
 $email = $_POST["emailField"];
 $password = $_POST["passwordField"];

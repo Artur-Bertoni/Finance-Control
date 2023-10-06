@@ -31,6 +31,8 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
+						<input type=hidden name=transactionId value="">
+						
 						<div class=field>
 							<label for=account-input>Conta *</label>
 							<select id=account-input class=normal-insertion-field name=accountField required>
@@ -48,10 +50,10 @@
 						<div class=field>
 							<label>Tipo de Transação *</label>
 							<label>
-								<input type=radio name=transaction-type value=debit required>Débito
+								<input type=radio name=typeRadio value=debit required>Débito
 							</label>
 							<label>
-								<input type=radio name=transaction-type value=credit>Crédito
+								<input type=radio name=typeRadio value=credit>Crédito
 							</label>
 						</div>
 						
@@ -97,44 +99,5 @@
 	</div>
 </div>
 </body>
-
-<script>
-    <!--TODO Posteriormente transferir para script em .js-->
-    let categoryData = ['Cinema', 'Alimentação']
-    let categoryList = document.getElementById('category-input')
-
-    for (const element of categoryData) {
-        let option = document.createElement('option')
-        option.value = element
-        option.innerText = element
-
-        categoryList.appendChild(option)
-    }
-
-    let transactionLocaleData = ['Local 1', 'Local 2']
-    let transactionLocaleList = document.getElementById('transaction-locale-input')
-
-    for (const element of transactionLocaleData) {
-        let option = document.createElement('option')
-        option.value = element
-        option.innerText = element
-
-        transactionLocaleList.appendChild(option)
-    }
-
-    let accountData = ['Conta Corrente', 'Cartão Crédito']
-    let accountList = document.getElementById('account-input')
-
-    for (const element of accountData) {
-        let option = document.createElement('option')
-        option.value = element
-        option.innerText = element
-
-        accountList.appendChild(option)
-    }
-
-    let date = document.getElementById('date-input')
-    date.max = new Date().toISOString().split("T")[0]
-	date.value = date.max
-</script>
+<script src=js/Transaction.js></script>
 </html>

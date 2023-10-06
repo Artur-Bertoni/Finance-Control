@@ -1,6 +1,6 @@
 <?php
-session_name('meucontador');
-session_start();
+//session_name('meucontador');
+//session_start();
 
 if(isset($_SESSION['contador'])){
      $_SESSION['contador']++;
