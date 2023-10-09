@@ -39,7 +39,7 @@ function save(TransactionRequestDTO $transactionRequestDTO) {
         $lastInsertedId = $stmt->insert_id;
         $stmt->close();
 
-        return $this->findById($lastInsertedId);
+        return findById($lastInsertedId);
     } else
         die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 }
@@ -88,17 +88,28 @@ function update($id, TransactionRequestDTO $transactionRequestDTO) {
 function findById($id) {
     global $db;
 
-    $transaction = $db->query("SELECT * FROM artur_transaction WHERE id = $id")->fetch_assoc();
-    return new Transaction(
-        $transaction['id'],
-        $transaction['userId'],
-        $transaction['accountId'],
-        $transaction['categoryId'],
-        $transaction['transactionLocaleId'],
-        $transaction['value'],
-        $transaction['date'],
-        $transaction['type'],
-        $transaction['installmentsNumber'],
-        $transaction['obs']
-    );
+    $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
+
+    if ($result->num_rows > 0) {
+        $transaction = $result->fetch_assoc();
+        return new Transaction(
+            $transaction['id'],
+            $transaction['userId'],
+            $transaction['accountId'],
+            $transaction['categoryId'],
+            $transaction['transactionLocaleId'],
+            $transaction['value'],
+            $transaction['date'],
+            $transaction['type'],
+            $transaction['installmentsNumber'],
+            $transaction['obs']
+        );
+    }
+    return false;
+}
+
+function delete($id) {
+    global $db;
+
+    $db->query("delete from artur_transaction where id = $id");
 }

@@ -1,24 +1,24 @@
 class Transaction {
-    constructor(category, account, type, transactionLocale, date, value, isInstallments, installmentsNumber, lastCharge) {
+    constructor(category, account, type, transactionLocale, date, value, installmentsNumber) {
         this.category = category
         this.account = account
         this.type = type
         this.transactionLocale = transactionLocale
         this.date = date
         this.value = value
-        this.intallmentsNumber = installmentsNumber
+        this.installmentsNumber = installmentsNumber
     }
 }
 
 let data =
 
-    [ new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100),
-        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100),
-        new Transaction('Categoria exemplo', 'Conta Corrente', 'C', 'Local de Gasto', "01/01/2023", 100),
-        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100),
+    [ new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, 0),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, 0),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'C', 'Local de Gasto', "01/01/2023", 100, 0),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, 0),
         new Transaction('Categoria exemplo', 'Cartão Crédito', 'D', 'Local de Gasto', "01/01/2023", 100, 3),
-        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100),
-        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100)
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, 0),
+        new Transaction('Categoria exemplo', 'Conta Corrente', 'D', 'Local de Gasto', "01/01/2023", 100, 0)
     ]
 
 let list = document.getElementById('last-transaction-list')
@@ -67,7 +67,7 @@ for (let i = 0; i < 30; i++) {
     if (data[i].type === 'D') {
         valueLabel.innerText = `- $ ${data[i].value.toFixed(2)}`
 
-        if (data[i].isInstallments === false)
+        if (data[i].installmentsNumber === 0)
             totalValue -= data[i].value
     } else {
         valueLabel.innerText = `+ $ ${data[i].value.toFixed(2)}`
@@ -79,7 +79,7 @@ for (let i = 0; i < 30; i++) {
     if (data[i].installmentsNumber > 0) {
         let installmentsNumber = document.createElement('span')
         installmentsNumber.classList.add('grid-label')
-        installmentsNumber.innerText = `N° parcelas: ${data[i].intallmentsNumber}`
+        installmentsNumber.innerText = `N° parcelas: ${data[i].installmentsNumber}`
         grid.appendChild(installmentsNumber)
     }
 
