@@ -11,7 +11,7 @@ if (isset($_POST['cancelButton'])) {
 
 $service = new TransactionLocaleService();
 
-$transactionLocaleId = $_POST['$transactionLocaleId'];
+$transactionLocaleId = $_POST['transactionLocaleId'];
 $userId = $_SESSION['userId'];
 $name = $_POST["nameField"];
 $address = $_POST["addressField"];

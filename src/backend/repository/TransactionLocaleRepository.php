@@ -3,7 +3,7 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/TransactionLocale.php";
 
-function save(TransactionLocaleRequestDTO $transactionLocaleRequestDTO) {
+function save(TransactionLocaleRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("insert into artur_transaction_locale
@@ -12,9 +12,9 @@ function save(TransactionLocaleRequestDTO $transactionLocaleRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $userId = $transactionLocaleRequestDTO->getUserId();
-    $name = $transactionLocaleRequestDTO->getName();
-    $address = $transactionLocaleRequestDTO->getAddress();
+    $userId = $requestDTO->getUserId();
+    $name = $requestDTO->getName();
+    $address = $requestDTO->getAddress();
 
     $stmt->bind_param("iss",
         $userId, $name, $address
@@ -29,7 +29,7 @@ function save(TransactionLocaleRequestDTO $transactionLocaleRequestDTO) {
         die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 }
 
-function update($id, TransactionLocaleRequestDTO $transactionLocaleRequestDTO) {
+function update($id, TransactionLocaleRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("update artur_transaction_locale set
@@ -38,9 +38,9 @@ function update($id, TransactionLocaleRequestDTO $transactionLocaleRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $userId = $transactionLocaleRequestDTO->getUserId();
-    $name = $transactionLocaleRequestDTO->getName();
-    $address = $transactionLocaleRequestDTO->getAddress();
+    $userId = $requestDTO->getUserId();
+    $name = $requestDTO->getName();
+    $address = $requestDTO->getAddress();
 
     $stmt->bind_param("issi",
         $userId, $name, $address, $id

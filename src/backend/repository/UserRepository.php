@@ -3,7 +3,7 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/User.php";
 
-function save(UserRequestDTO $userRequestDTO) {
+function save(UserRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("insert into artur_user
@@ -12,9 +12,9 @@ function save(UserRequestDTO $userRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $username = $userRequestDTO->getUsername();
-    $email = $userRequestDTO->getEmail();
-    $password = $userRequestDTO->getPassword();
+    $username = $requestDTO->getUsername();
+    $email = $requestDTO->getEmail();
+    $password = $requestDTO->getPassword();
 
     $stmt->bind_param("sss",
         $username, $email, $password
@@ -51,7 +51,7 @@ function findByEmailAndPassword($email, $password) {
     return false;
 }
 
-function update($id, UserRequestDTO $userRequestDTO) {
+function update($id, UserRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("update artur_user set
@@ -60,9 +60,9 @@ function update($id, UserRequestDTO $userRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $username = $userRequestDTO->getUsername();
-    $email = $userRequestDTO->getEmail();
-    $password = $userRequestDTO->getPassword();
+    $username = $requestDTO->getUsername();
+    $email = $requestDTO->getEmail();
+    $password = $requestDTO->getPassword();
 
     $stmt->bind_param("sssi",
         $username, $email, $password, $id

@@ -3,7 +3,7 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/Transaction.php";
 
-function save(TransactionRequestDTO $transactionRequestDTO) {
+function save(TransactionRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("insert into artur_transaction
@@ -13,15 +13,15 @@ function save(TransactionRequestDTO $transactionRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $userId = $transactionRequestDTO->getUserId();
-    $accountId = $transactionRequestDTO->getAccountId();
-    $categoryId = $transactionRequestDTO->getCategoryId();
-    $transactionLocaleId = $transactionRequestDTO->getTransactionLocaleId();
-    $value = $transactionRequestDTO->getValue();
-    $date = $transactionRequestDTO->getDate();
-    $type = $transactionRequestDTO->getType();
-    $installmentsNumber = $transactionRequestDTO->getInstallmentsNumber();
-    $obs = $transactionRequestDTO->getObs();
+    $userId = $requestDTO->getUserId();
+    $accountId = $requestDTO->getAccountId();
+    $categoryId = $requestDTO->getCategoryId();
+    $transactionLocaleId = $requestDTO->getTransactionLocaleId();
+    $value = $requestDTO->getValue();
+    $date = $requestDTO->getDate();
+    $type = $requestDTO->getType();
+    $installmentsNumber = $requestDTO->getInstallmentsNumber();
+    $obs = $requestDTO->getObs();
 
     $stmt->bind_param("iiiidssis",
         $userId,
@@ -44,7 +44,7 @@ function save(TransactionRequestDTO $transactionRequestDTO) {
         die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 }
 
-function update($id, TransactionRequestDTO $transactionRequestDTO) {
+function update($id, TransactionRequestDTO $requestDTO) {
     global $db;
 
     $stmt = $db->prepare("update artur_transaction set
@@ -54,15 +54,15 @@ function update($id, TransactionRequestDTO $transactionRequestDTO) {
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-    $userId = $transactionRequestDTO->getUserId();
-    $accountId = $transactionRequestDTO->getAccountId();
-    $categoryId = $transactionRequestDTO->getCategoryId();
-    $transactionLocaleId = $transactionRequestDTO->getTransactionLocaleId();
-    $value = $transactionRequestDTO->getValue();
-    $date = $transactionRequestDTO->getDate();
-    $type = $transactionRequestDTO->getType();
-    $installmentsNumber = $transactionRequestDTO->getInstallmentsNumber();
-    $obs = $transactionRequestDTO->getObs();
+    $userId = $requestDTO->getUserId();
+    $accountId = $requestDTO->getAccountId();
+    $categoryId = $requestDTO->getCategoryId();
+    $transactionLocaleId = $requestDTO->getTransactionLocaleId();
+    $value = $requestDTO->getValue();
+    $date = $requestDTO->getDate();
+    $type = $requestDTO->getType();
+    $installmentsNumber = $requestDTO->getInstallmentsNumber();
+    $obs = $requestDTO->getObs();
 
     $stmt->bind_param("iiiidssisi",
         $userId,
