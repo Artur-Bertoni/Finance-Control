@@ -63,7 +63,7 @@ function findById($id) {
         $transactionLocale = $result->fetch_assoc();
         return new TransactionLocale(
             $transactionLocale['id'],
-            $transactionLocale['userId'],
+            $transactionLocale['user_id'],
             $transactionLocale['name'],
             $transactionLocale['address']
         );

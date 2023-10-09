@@ -94,14 +94,14 @@ function findById($id) {
         $transaction = $result->fetch_assoc();
         return new Transaction(
             $transaction['id'],
-            $transaction['userId'],
-            $transaction['accountId'],
-            $transaction['categoryId'],
-            $transaction['transactionLocaleId'],
+            $transaction['user_id'],
+            $transaction['account_id'],
+            $transaction['category_id'],
+            $transaction['transaction_locale_id'],
             $transaction['value'],
             $transaction['date'],
             $transaction['type'],
-            $transaction['installmentsNumber'],
+            $transaction['installments_number'],
             $transaction['obs']
         );
     }

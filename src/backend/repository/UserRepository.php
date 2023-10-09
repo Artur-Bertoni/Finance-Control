@@ -84,7 +84,12 @@ function findById($id) {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        return new User($user['id'], $user['username'], $user['email'], $user['password']);
+        return new User(
+            $user['id'],
+            $user['username'],
+            $user['email'],
+            $user['password']
+        );
     }
     return false;
 }

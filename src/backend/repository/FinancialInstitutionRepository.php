@@ -65,7 +65,7 @@ function findById($id) {
         $financialInstitution = $result->fetch_assoc();
         return new FinancialInstitution(
             $financialInstitution['id'],
-            $financialInstitution['userId'],
+            $financialInstitution['user_id'],
             $financialInstitution['name'],
             $financialInstitution['address'],
             $financialInstitution['contact']

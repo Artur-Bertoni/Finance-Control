@@ -1,7 +1,39 @@
 <?php
 
-header("Location: ../HomePage.html");
+include "../../backend/services/AccountService.php";
 
-if (array_key_exists('cancelButton', $_POST)) {
+session_start();
+
+if (isset($_POST['cancelButton'])) {
     header("Location: ../HomePage.html");
+    exit;
 }
+
+$service = new AccountService();
+
+$accountId = $_POST['accountId'];
+$userId = $_SESSION['userId'];
+$financialInstitutionId = $_POST['financialInstitutionField'];
+$name = $_POST["nameField"];
+$contact = $_POST["contactField"];
+$description = $_POST["descriptionField"];
+
+if ($accountId != "") {
+    $service->update($accountId, new AccountRequestDTO(
+        $userId,
+        $financialInstitutionId,
+        $name,
+        $contact,
+        $description
+    ));
+} else {
+    $service->create(new AccountRequestDTO(
+        $userId,
+        $financialInstitutionId,
+        $name,
+        $contact,
+        $description
+    ));
+}
+
+header("Location: ../HomePage.html");

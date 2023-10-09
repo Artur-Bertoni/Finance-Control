@@ -32,6 +32,8 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
+						<input type=hidden name=accountId value="">
+						
 						<div class=field>
 							<label for=name-input>Nome *</label>
 							<input id=name-input class=normal-insertion-field name=nameField
@@ -72,18 +74,5 @@
 	</div>
 </div>
 </body>
-
-<script>
-    <!--TODO Posteriormente transferir para script em .js-->
-    let financialInstitutionData = ['Instituição 1', 'Instituição 2']
-    let financialInstitutionList = document.getElementById('financial-institution-input')
-
-    for (const element of financialInstitutionData) {
-        let option = document.createElement('option')
-        option.value = element
-        option.innerText = element
-
-        financialInstitutionList.appendChild(option)
-    }
-</script>
+<script src=js/Account.js></script>
 </html>
