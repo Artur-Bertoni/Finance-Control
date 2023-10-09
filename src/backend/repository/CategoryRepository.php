@@ -1,25 +1,23 @@
 <?php
 
 include_once "../../utils/db_connection.php";
-include_once "../../backend/entities/Account.php";
+include_once "../../backend/entities/Category.php";
 
-function save(AccountRequestDTO $requestDTO) {
+function save(CategoryRequestDTO $requestDTO) {
     global $db;
 
-    $stmt = $db->prepare("insert into artur_account
-    (user_id, financial_institution_id, name, contact, description) values(?, ?, ?, ?, ?)");
+    $stmt = $db->prepare("insert into artur_category
+    (user_id, name, description) values(?, ?, ?)");
 
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
     $userId = $requestDTO->getUserId();
-    $financialInstitutionId = $requestDTO->getFinancialInstitutionId();
     $name = $requestDTO->getName();
-    $contact = $requestDTO->getContact();
     $description = $requestDTO->getDescription();
 
-    $stmt->bind_param("iisss",
-        $userId, $financialInstitutionId, $name, $contact, $description
+    $stmt->bind_param("iss",
+        $userId, $name, $description
     );
 
     if ($stmt->execute()) {
@@ -31,23 +29,21 @@ function save(AccountRequestDTO $requestDTO) {
         die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 }
 
-function update($id, AccountRequestDTO $requestDTO) {
+function update($id, CategoryRequestDTO $requestDTO) {
     global $db;
 
-    $stmt = $db->prepare("update artur_account set
-    user_id = ?, financial_institution_id = ?, name = ?, contact = ?, description = ? where id = ?");
+    $stmt = $db->prepare("update artur_category set
+    user_id = ?, name = ?, description = ? where id = ?");
 
     if (!$stmt)
         die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
     $userId = $requestDTO->getUserId();
-    $financialInstitutionId = $requestDTO->getFinancialInstitutionId();
     $name = $requestDTO->getName();
-    $contact = $requestDTO->getContact();
     $description = $requestDTO->getDescription();
 
-    $stmt->bind_param("iisssi",
-        $userId, $financialInstitutionId, $name, $contact, $description, $id
+    $stmt->bind_param("issi",
+        $userId, $name, $description, $id
     );
 
     if ($stmt->execute()) {
@@ -61,16 +57,14 @@ function update($id, AccountRequestDTO $requestDTO) {
 function findById($id) {
     global $db;
 
-    $result = $db->query("SELECT * FROM artur_account WHERE id = $id");
+    $result = $db->query("SELECT * FROM artur_category WHERE id = $id");
 
     if ($result->num_rows > 0) {
         $account = $result->fetch_assoc();
-        return new Account(
+        return new Category(
             $account['id'],
             $account['user_id'],
-            $account['financial_institution_id'],
             $account['name'],
-            $account['contact'],
             $account['description']
         );
     }
@@ -80,5 +74,5 @@ function findById($id) {
 function delete($id) {
     global $db;
 
-    $db->query("delete from artur_account where id = $id");
+    $db->query("delete from artur_category where id = $id");
 }
