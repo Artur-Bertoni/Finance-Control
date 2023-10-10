@@ -3,12 +3,16 @@
 include_once "../../backend/repository/FinancialInstitutionRepository.php";
 include_once "../../backend/dto/FinancialInstitutionRequestDTO.php";
 
+global $repository;
+$repository = new FinancialInstitutionRepository();
 class FinancialInstitutionService {
     public function create(FinancialInstitutionRequestDTO $requestDTO) {
-        return save($requestDTO);
+        global $repository;
+        return $repository->save($requestDTO);
     }
 
     public function update($id, FinancialInstitutionRequestDTO $requestDTO) {
-        return update($id, $requestDTO);
+        global $repository;
+        return $repository->update($id, $requestDTO);
     }
 }

@@ -3,19 +3,24 @@
 include_once "../../backend/repository/UserRepository.php";
 include_once "../../backend/dto/UserRequestDTO.php";
 
+global $repository;
+$repository = new UserRepository();
+
 class UserService {
     public function create(UserRequestDTO $requestDTO) {
+        global $repository;
         if (findByEmail($requestDTO->getEmail())) {
             if ($this->verifyPasswordsEquality($requestDTO->getPassword(), $requestDTO->getPasswordConfirmation()))
-                return save($requestDTO);
+                return $repository->save($requestDTO);
             else return "As senhas devem ser iguais";
         } else return "Email Já cadastrado";
     }
 
     public function update($id, UserRequestDTO $requestDTO) {
+        global $repository;
         if (findByEmail($requestDTO->getEmail())) {
             if ($this->verifyPasswordsEquality($requestDTO->getPassword(), $requestDTO->getPasswordConfirmation()))
-                return update($id, $requestDTO);
+                return $repository->update($id, $requestDTO);
             else return "As senhas devem ser iguais";
         } else return "Email Já cadastrado";
     }
@@ -25,7 +30,8 @@ class UserService {
     }
 
     public function login($userEmail, $userPassword) {
-        if ($user = findByEmailAndPassword($userEmail, $userPassword))
+        global $repository;
+        if ($user = $repository->findByEmailAndPassword($userEmail, $userPassword))
             return $user;
         else return "Email e/ou senha incorreto(s)";
     }
