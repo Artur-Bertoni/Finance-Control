@@ -11,7 +11,6 @@ $.ajax({
     success: function (response) {
         data = JSON.parse(response);
         financialInstitutions = processData(data);
-        console.log(financialInstitutions)
     },
     error: function (error) {
         console.error(error);
