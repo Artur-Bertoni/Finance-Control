@@ -27,7 +27,7 @@ function addCategories() {
 }
 
 function addTransactionLocales() {
-    let transactionLocales = processCategory(doRequest(
+    let transactionLocales = processTransactionLocale(doRequest(
         'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
         {findAllByUser: true}));
 
@@ -43,7 +43,7 @@ function addTransactionLocales() {
 }
 
 function addAccounts() {
-    let accounts = processCategory(doRequest(
+    let accounts = processAccount(doRequest(
         'http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {findAllByUser: true}));
 

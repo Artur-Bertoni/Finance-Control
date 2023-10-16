@@ -75,6 +75,24 @@ class FinancialInstitutionRepository {
         return false;
     }
 
+    public function findAllByUserId($userId): array {
+        global $db;
+
+        $result = $db->query("select * from artur_financial_institution where user_id = $userId");
+
+        $financialInstitution = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $financialInstitution[] = new FinancialInstitution(
+                $row['id'],
+                $row['user_id'],
+                $row['name'],
+                $row['address'],
+                $row['contact']
+            );
+        }
+        return $financialInstitution;
+    }
+
     public function delete($id) {
         global $db;
 
