@@ -1,5 +1,9 @@
 <?php
 
+include "../../backend/services/TransactionService.php";
+
+$service = new TransactionService();
+
 if (array_key_exists('postTransaction', $_POST)) {
     header("Location: ../Transaction.html");
 }

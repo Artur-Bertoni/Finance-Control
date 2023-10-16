@@ -5,6 +5,7 @@ include_once "../../backend/repository/AccountRepository.php";
 include_once "../../backend/repository/TransactionLocaleRepository.php";
 include_once "../../backend/repository/CategoryRepository.php";
 include_once "../../backend/dto/TransactionRequestDTO.php";
+include_once "../../backend/dto/TransactionDTO.php";
 
 global $repository, $accountRepository, $categoryRepository, $transactionLocaleRepository;
 $repository = new TransactionRepository();
@@ -24,32 +25,44 @@ class TransactionService {
     }
 
     public function findAllByUser($userId) {
-        global $repository, $accountRepository, $categoryRepository, $transactionLocaleRepository;
+        global $repository;
         $transactions = $repository->findAllByUserId($userId);
         $transactionDTOs = [];
 
         foreach ($transactions as $transaction) {
-            $accountId = $transaction->getAccountId();
-            $categoryId = $transaction->getCategoryId();
-            $transactionLocaleId = $transaction->getTransactionLocaleId();
-
-            $account = $accountRepository->findById($accountId);
-            $category = $categoryRepository->findById($categoryId);
-            $transactionLocale = $transactionLocaleRepository->findById($transactionLocaleId);
-
-            $transactionDTO = new TransactionDTO(
-                $account,
-                $category,
-                $transactionLocale,
-                $transaction->getValue(),
-                $transaction->getDate(),
-                $transaction->getType(),
-                $transaction->getInstallmentsNumber()
-            );
-
-            $transactionDTOs[] = $transactionDTO;
+            $transactionDTOs[] = $this->buildTransaction($transaction);
         }
 
-        echo json_encode(['result' => $transactionDTOs]);
+        echo json_encode($transactionDTOs);
+    }
+
+    public function findById($id) {
+        global $repository;
+        $transaction = $repository->findById($id);
+        echo json_encode($this->buildTransaction($transaction));
+    }
+
+    private function buildTransaction($transaction): TransactionDTO {
+        global $accountRepository, $categoryRepository, $transactionLocaleRepository;
+
+        $id = $transaction->getId();
+        $accountId = $transaction->getAccountId();
+        $categoryId = $transaction->getCategoryId();
+        $transactionLocaleId = $transaction->getTransactionLocaleId();
+
+        $account = $accountRepository->findById($accountId);
+        $category = $categoryRepository->findById($categoryId);
+        $transactionLocale = $transactionLocaleRepository->findById($transactionLocaleId);
+
+        return new TransactionDTO(
+            $id,
+            $account,
+            $category,
+            $transactionLocale,
+            $transaction->getValue(),
+            $transaction->getDate(),
+            $transaction->getType(),
+            $transaction->getInstallmentsNumber()
+        );
     }
 }

@@ -72,6 +72,23 @@ class TransactionLocaleRepository {
         return false;
     }
 
+    public function findAllByUserId($userId): array {
+        global $db;
+
+        $result = $db->query("select * from artur_transaction_locale where user_id = $userId");
+
+        $transactionLocales = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $transactionLocales[] = new TransactionLocale(
+                $row['id'],
+                $row['user_id'],
+                $row['name'],
+                $row['address']
+            );
+        }
+        return $transactionLocales;
+    }
+
     public function delete($id) {
         global $db;
 

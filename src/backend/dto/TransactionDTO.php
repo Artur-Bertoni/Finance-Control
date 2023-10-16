@@ -1,6 +1,7 @@
 <?php
 
 class TransactionDTO implements JsonSerializable {
+    private $id;
     private $account;
     private $category;
     private $transactionLocale;
@@ -9,7 +10,8 @@ class TransactionDTO implements JsonSerializable {
     private $type;
     private $installmentsNumber;
 
-    public function __construct($account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber) {
+    public function __construct($id, $account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber) {
+        $this->id = $id;
         $this->account = $account;
         $this->category = $category;
         $this->transactionLocale = $transactionLocale;
@@ -17,6 +19,14 @@ class TransactionDTO implements JsonSerializable {
         $this->date = $date;
         $this->type = $type;
         $this->installmentsNumber = $installmentsNumber;
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function setId($id) {
+        $this->id = $id;
     }
 
     public function getAccount() {
@@ -77,6 +87,7 @@ class TransactionDTO implements JsonSerializable {
 
     public function jsonSerialize(): array {
         return array(
+            'id'=>$this->id,
             'account'=>$this->account,
             'category'=>$this->category,
             'transactionLocale'=>$this->transactionLocale,

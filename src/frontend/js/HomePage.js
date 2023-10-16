@@ -1,48 +1,41 @@
-class Transaction {
-    constructor(account, category, transactionLocale, value, date, type, installmentsNumber) {
-        this.account = account
-        this.category = category
-        this.transactionLocale = transactionLocale
-        this.value = value
-        this.date = date
-        this.type = type
-        this.installmentsNumber = installmentsNumber
-    }
-}
+import {Transaction} from "./class/TransactionClass.js";
 
 let data;
 let transactions = [];
 
-jQuery.ajax({
-    url: '../../backend/services/TransactionService.php',
-    method: 'POST',
-    data: {action: 'findAllByUser', arguments: [12]},
+$.ajax({
+    url: 'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
+    type: 'POST',
+    async: false,
+    data: {findAllByUser: true},
     success: function (response) {
-        data = JSON.parse(response).result;
-        processData(data);
+        data = JSON.parse(response);
+        transactions = processData(data);
     },
     error: function (error) {
-        //TODo descobrir origem do erro (404) e concertar
-        console.log('O código JavaScript está sendo executado.');
         console.error(error);
     }
 });
 
 function processData(data) {
+    let array = [];
     for (const element of data) {
         const transactionData = element;
         const transaction = new Transaction(
-            transactionData.category,
-            transactionData.account,
-            transactionData.type,
-            transactionData.transactionLocale,
+            Number(transactionData.id),
+            transactionData.account.name,
+            transactionData.category.name,
+            transactionData.transactionLocale.name,
+            Number(transactionData.value),
             transactionData.date,
-            transactionData.value,
-            transactionData.installmentsNumber
+            transactionData.type,
+            Number(transactionData.installmentsNumber)
         );
 
-        transactions.push(transaction);
+        array.push(transaction);
     }
+
+    return array;
 }
 
 let list = document.getElementById('last-transaction-list')
@@ -55,9 +48,9 @@ for (const element of transactions) {
     button.type = "submit"
     button.name = "itemButton"
 
-    if (element.type === 'D' && element.installmentsNumber === 0)
+    if (element.type === 'debit' && element.installmentsNumber === 0)
         button.style.backgroundColor = '#C04C4CCC'
-    else if (element.type === 'D' && element.installmentsNumber > 0)
+    else if (element.type === 'debit' && element.installmentsNumber > 0)
         button.style.backgroundColor = '#0085b6'
     else
         button.style.backgroundColor = '#4BAE50FF'
@@ -67,17 +60,17 @@ for (const element of transactions) {
 
     let categoryLabel = document.createElement('span')
     categoryLabel.classList.add('grid-label')
-    categoryLabel.innerText = `${element.category}`
+    categoryLabel.innerText = `Categoria: ${element.category}`
     grid.appendChild(categoryLabel)
 
     let accountLabel = document.createElement('span')
     accountLabel.classList.add('grid-label')
-    accountLabel.innerText = `${element.account}`
+    accountLabel.innerText = `Conta: ${element.account}`
     grid.appendChild(accountLabel)
 
     let localeLabel = document.createElement('span')
     localeLabel.classList.add('grid-label')
-    localeLabel.innerText = `${element.transactionLocale}`
+    localeLabel.innerText = `Local: ${element.transactionLocale}`
     grid.appendChild(localeLabel)
 
     let dateLabel = document.createElement('span')
@@ -88,13 +81,13 @@ for (const element of transactions) {
     let valueLabel = document.createElement('span')
     valueLabel.classList.add('grid-label')
 
-    if (element.type === 'D') {
-        valueLabel.innerText = `- $ ${element.value.toFixed(2)}`
+    if (element.type === 'debit') {
+        valueLabel.innerText = `Valor: - $ ${element.value.toFixed(2)}`
 
         if (element.installmentsNumber === 0)
             totalValue -= element.value
     } else {
-        valueLabel.innerText = `+ $ ${element.value.toFixed(2)}`
+        valueLabel.innerText = `Valor: + $ ${element.value.toFixed(2)}`
         totalValue += element.value
     }
 
@@ -107,7 +100,13 @@ for (const element of transactions) {
         grid.appendChild(installmentsNumber)
     }
 
+    let idLabel = document.createElement('input')
+    idLabel.type = 'hidden'
+    idLabel.name = 'transactionId'
+    idLabel.value = '' + element.id
+
     button.appendChild(grid)
+    button.appendChild(idLabel)
     list.appendChild(button)
 
     document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`

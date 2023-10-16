@@ -78,6 +78,25 @@ class AccountRepository {
         return false;
     }
 
+    public function findAllByUserId($userId): array {
+        global $db;
+
+        $result = $db->query("select * from artur_account where user_id = $userId");
+
+        $accounts = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $accounts[] = new Account(
+                $row['id'],
+                $row['user_id'],
+                $row['financial_institution_id'],
+                $row['name'],
+                $row['contact'],
+                $row['description']
+            );
+        }
+        return $accounts;
+    }
+
     public function delete($id) {
         global $db;
 

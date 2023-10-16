@@ -73,6 +73,23 @@ class CategoryRepository
         return false;
     }
 
+    public function findAllByUserId($userId): array {
+        global $db;
+
+        $result = $db->query("select * from artur_category where user_id = $userId");
+
+        $categories = array();
+        while ($row = mysqli_fetch_array($result)) {
+            $categories[] = new Category(
+                $row['id'],
+                $row['user_id'],
+                $row['name'],
+                $row['description']
+            );
+        }
+        return $categories;
+    }
+
     public function delete($id) {
         global $db;
 
