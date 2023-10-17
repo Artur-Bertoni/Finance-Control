@@ -105,7 +105,7 @@ class Transaction implements JsonSerializable {
         $this->obs = $obs;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): array {
         return array(
             'id'=>$this->id,
             'userId'=>$this->userId,

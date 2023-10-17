@@ -9,3 +9,6 @@ if (!$db) {
     echo "Erro: " . mysqli_connect_errno() . PHP_EOL;
     exit;
 }
+
+//TODO implementar fechamento de conexão ao encerrar a aplicação
+

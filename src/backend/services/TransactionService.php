@@ -45,24 +45,16 @@ class TransactionService {
     private function buildTransaction($transaction): TransactionDTO {
         global $accountRepository, $categoryRepository, $transactionLocaleRepository;
 
-        $id = $transaction->getId();
-        $accountId = $transaction->getAccountId();
-        $categoryId = $transaction->getCategoryId();
-        $transactionLocaleId = $transaction->getTransactionLocaleId();
-
-        $account = $accountRepository->findById($accountId);
-        $category = $categoryRepository->findById($categoryId);
-        $transactionLocale = $transactionLocaleRepository->findById($transactionLocaleId);
-
         return new TransactionDTO(
-            $id,
-            $account,
-            $category,
-            $transactionLocale,
+            $transaction->getId(),
+            $accountRepository->findById($transaction->getAccountId()),
+            $categoryRepository->findById($transaction->getCategoryId()),
+            $transactionLocaleRepository->findById($transaction->getTransactionLocaleId()),
             $transaction->getValue(),
             $transaction->getDate(),
             $transaction->getType(),
-            $transaction->getInstallmentsNumber()
+            $transaction->getInstallmentsNumber(),
+            $transaction->getObs()
         );
     }
 }

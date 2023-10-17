@@ -1,6 +1,7 @@
 import {Category} from "./class/CategoryClass.js";
 import {TransactionLocale} from "./class/TransactionlocaleClass.js";
 import {Account} from "./class/AccountClass.js";
+import {Transaction} from "./class/TransactionClass.js";
 
 addCategories();
 addTransactionLocales();
@@ -10,8 +11,73 @@ let date = document.getElementById('date-input')
 date.max = new Date().toISOString().split("T")[0]
 date.value = date.max
 
+tryToPopulateWithData();
+
+function tryToPopulateWithData() {
+    //TODO implementar criação do botão DELETE se o item estiver presente (for update)
+    let response = doRequest(
+        'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
+        {findById: true})
+
+    console.log(response)
+
+    if (response !== undefined) {
+        let transaction = processTransaction(response)
+        let accountInput = document.getElementById('account-input')
+        let categoryInput = document.getElementById('category-input')
+        let typeRadioDebit = document.querySelector('input[name="typeRadio"][value="debit"]');
+        let typeRadioCredit = document.querySelector('input[name="typeRadio"][value="credit"]');
+        let dateInput = document.getElementById('date-input');
+        let valueInput = document.getElementById('value-input');
+        let installmentsNumberInput = document.getElementById('installments-number-input');
+        let transactionLocaleInput = document.getElementById('transaction-locale-input');
+        let obsInput = document.getElementById('obs-input');
+
+        if (transaction.type !== undefined) {
+            typeRadioDebit.checked = transaction.type === "debit";
+            typeRadioCredit.checked = transaction.type === "credit";
+        }
+        if (transaction.date !== undefined) {
+            dateInput.value = transaction.date;
+        }
+        if (transaction.value !== undefined) {
+            valueInput.value = transaction.value;
+        }
+        if (transaction.installmentsNumber !== undefined) {
+            installmentsNumberInput.value = transaction.installmentsNumber;
+        }
+        if (transaction.obs !== undefined) {
+            obsInput.value = transaction.obs;
+        }
+
+        let accountOptions = accountInput.options;
+        for (const element of accountOptions) {
+            if (element.innerText === transaction.account) {
+                element.selected = true;
+                break;
+            }
+        }
+
+        let categoryOptions = categoryInput.options;
+        for (const element of categoryOptions) {
+            if (element.innerText === transaction.category) {
+                element.selected = true;
+                break;
+            }
+        }
+
+        let localeOptions = transactionLocaleInput.options;
+        for (const element of localeOptions) {
+            if (element.innerText === transaction.transactionLocale) {
+                element.selected = true;
+                break;
+            }
+        }
+    }
+}
+
 function addCategories() {
-    let categories = processCategory(doRequest(
+    let categories = processCategories(doRequest(
         'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
         {findAllByUser: true}));
 
@@ -27,7 +93,7 @@ function addCategories() {
 }
 
 function addTransactionLocales() {
-    let transactionLocales = processTransactionLocale(doRequest(
+    let transactionLocales = processTransactionLocales(doRequest(
         'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
         {findAllByUser: true}));
 
@@ -43,7 +109,7 @@ function addTransactionLocales() {
 }
 
 function addAccounts() {
-    let accounts = processAccount(doRequest(
+    let accounts = processAccounts(doRequest(
         'http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {findAllByUser: true}));
 
@@ -58,7 +124,7 @@ function addAccounts() {
     }
 }
 
-function processCategory(data) {
+function processCategories(data) {
     let array = [];
     for (const element of data) {
         const categoryData = element;
@@ -69,13 +135,12 @@ function processCategory(data) {
         );
 
         array.push(category);
-        console.log(category)
     }
 
     return array;
 }
 
-function processTransactionLocale(data) {
+function processTransactionLocales(data) {
     let array = [];
     for (const element of data) {
         const transactionLocaleData = element;
@@ -86,13 +151,12 @@ function processTransactionLocale(data) {
         );
 
         array.push(transactionLocale);
-        console.log(transactionLocale)
     }
 
     return array;
 }
 
-function processAccount(data) {
+function processAccounts(data) {
     let array = [];
     for (const element of data) {
         const accountData = element;
@@ -105,10 +169,23 @@ function processAccount(data) {
         );
 
         array.push(account);
-        console.log(account)
     }
 
     return array;
+}
+
+function processTransaction(data) {
+    return new Transaction(
+        Number(data.id),
+        data.account.name,
+        data.category.name,
+        data.transactionLocale.name,
+        Number(data.value),
+        data.date,
+        data.type,
+        Number(data.installmentsNumber),
+        data.obs
+    );
 }
 
 function doRequest(url, method) {

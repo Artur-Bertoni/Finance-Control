@@ -2,9 +2,12 @@
 
 include "../../backend/services/TransactionService.php";
 
+session_start();
+
 $service = new TransactionService();
 
 if (array_key_exists('postTransaction', $_POST)) {
+    $_SESSION['transactionId'] = "";
     header("Location: ../Transaction.html");
 }
 
@@ -25,5 +28,7 @@ if (array_key_exists('postCategory', $_POST)) {
 }
 
 if (array_key_exists('itemButton', $_POST)) {
+    //TODO remover adaptar para pegar o id do item clicado, ao invés do último criado
+    $_SESSION['transactionId'] = $_POST['transactionId'];
     header("Location: ../Transaction.html");
 }

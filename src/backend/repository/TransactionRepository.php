@@ -40,7 +40,8 @@ class TransactionRepository {
             $lastInsertedId = $stmt->insert_id;
             $stmt->close();
 
-            return findById($lastInsertedId);
+            return $this->findById($lastInsertedId);
+            //TODO implementar conceito de transação, para cancelar caso ocorra erro ao invés de cadastrar 2x
         } else
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }

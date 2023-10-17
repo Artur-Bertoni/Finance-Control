@@ -1,5 +1,5 @@
 export class Transaction {
-    constructor(id, account, category, transactionLocale, value, date, type, installmentsNumber) {
+    constructor(id, account, category, transactionLocale, value, date, type, installmentsNumber, obs) {
         this.id = id
         this.account = account
         this.category = category
@@ -8,5 +8,6 @@ export class Transaction {
         this.date = date
         this.type = type
         this.installmentsNumber = installmentsNumber
+        this.obs = obs
     }
 }
