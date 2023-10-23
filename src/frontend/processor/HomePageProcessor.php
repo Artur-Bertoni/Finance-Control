@@ -28,7 +28,6 @@ if (array_key_exists('postCategory', $_POST)) {
 }
 
 if (array_key_exists('itemButton', $_POST)) {
-    //TODO remover adaptar para pegar o id do item clicado, ao invés do último criado
-    $_SESSION['transactionId'] = $_POST['transactionId'];
+    $_SESSION['transactionId'] = $_POST['itemButton'];
     header("Location: ../Transaction.html");
 }

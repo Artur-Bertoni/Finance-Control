@@ -47,6 +47,7 @@ for (const element of transactions) {
     button.classList.add('colorful-button')
     button.type = "submit"
     button.name = "itemButton"
+    button.value = element.id
 
     if (element.type === 'debit' && element.installmentsNumber === 0)
         button.style.backgroundColor = '#C04C4CCC'
@@ -100,13 +101,7 @@ for (const element of transactions) {
         grid.appendChild(installmentsNumber)
     }
 
-    let idLabel = document.createElement('input')
-    idLabel.type = 'hidden'
-    idLabel.name = 'transactionId'
-    idLabel.value = '' + element.id
-
     button.appendChild(grid)
-    button.appendChild(idLabel)
     list.appendChild(button)
 
     document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
