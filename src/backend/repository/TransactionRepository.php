@@ -3,50 +3,61 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/Transaction.php";
 
-class TransactionRepository {
-    public function save(TransactionRequestDTO $requestDTO) {
-        global $db;
+class TransactionRepository
+{
+    public function save(TransactionRequestDTO $requestDTO)
+    {
+        try {
+            global $db;
+            $db->begin_transaction();
 
-        $stmt = $db->prepare("insert into artur_transaction
-        (user_id, account_id, category_id, transaction_locale_id, value, date, type, installments_number, obs)
-        values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db->prepare("insert into artur_transaction
+            (user_id, account_id, category_id, transaction_locale_id, value, date, type, installments_number, obs)
+            values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        if (!$stmt)
-            die("Prepare failed: (" . $db->errno . ") " . $db->error);
+            if (!$stmt)
+                die("Prepare failed: (" . $db->errno . ") " . $db->error);
 
-        $userId = $requestDTO->getUserId();
-        $accountId = $requestDTO->getAccountId();
-        $categoryId = $requestDTO->getCategoryId();
-        $transactionLocaleId = $requestDTO->getTransactionLocaleId();
-        $value = $requestDTO->getValue();
-        $date = $requestDTO->getDate();
-        $type = $requestDTO->getType();
-        $installmentsNumber = $requestDTO->getInstallmentsNumber();
-        $obs = $requestDTO->getObs();
+            $userId = $requestDTO->getUserId();
+            $accountId = $requestDTO->getAccountId();
+            $categoryId = $requestDTO->getCategoryId();
+            $transactionLocaleId = $requestDTO->getTransactionLocaleId();
+            $value = $requestDTO->getValue();
+            $date = $requestDTO->getDate();
+            $type = $requestDTO->getType();
+            $installmentsNumber = $requestDTO->getInstallmentsNumber();
+            $obs = $requestDTO->getObs();
 
-        $stmt->bind_param("iiiidssis",
-            $userId,
-            $accountId,
-            $categoryId,
-            $transactionLocaleId,
-            $value,
-            $date,
-            $type,
-            $installmentsNumber,
-            $obs
-        );
+            $stmt->bind_param("iiiidssis",
+                $userId,
+                $accountId,
+                $categoryId,
+                $transactionLocaleId,
+                $value,
+                $date,
+                $type,
+                $installmentsNumber,
+                $obs
+            );
 
-        if ($stmt->execute()) {
-            $lastInsertedId = $stmt->insert_id;
-            $stmt->close();
+            if ($stmt->execute()) {
+                $lastInsertedId = $stmt->insert_id;
+                $stmt->close();
 
-            return $this->findById($lastInsertedId);
-            //TODO implementar conceito de transação, para cancelar caso ocorra erro ao invés de cadastrar 2x
-        } else
-            die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+                $db->commit();
+
+                return $this->findById($lastInsertedId);
+            } else {
+                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+            }
+        } catch (Exception $err) {
+            $db->rollback();
+            die("Erro: " . $err);
+        }
     }
 
-    public function update($id, TransactionRequestDTO $requestDTO) {
+    public function update($id, TransactionRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_transaction set
@@ -87,7 +98,8 @@ class TransactionRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
@@ -110,13 +122,15 @@ class TransactionRepository {
         return false;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_transaction where id = $id");
     }
 
-    public function findAllByUserId($userId): array {
+    public function findAllByUserId($userId): array
+    {
         global $db;
 
         $result = $db->query("select * from artur_transaction where user_id = $userId");
