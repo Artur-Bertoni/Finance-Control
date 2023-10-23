@@ -10,22 +10,21 @@
 <div id=page-wrapper>
 	<img alt=Logo id=logo-img src=../images/logo.png>
 	
-	<ul id=navigation-menu-btn-gp>
-		<li>
-			<button class=img-btn id=profile-btn name="Navigate do Profile" type=button>
-				<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
-			</button>
-		</li>
-		<li>
-			<button class=img-btn id=home-btn name="Navigate to Home" type=button>
-				<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
-			</button>
-		</li>
-	</ul>
-	
 	<div id=content-wrapper>
 		<div id=background>
 			<form action=processor/TransactionLocaleProcessor.php method=post>
+				<ul id=navigation-menu-btn-gp>
+					<li>
+						<button class=img-btn id=profile-btn name="Navigate do Profile" type=submit>
+							<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
+						</button>
+					</li>
+					<li>
+						<button class=img-btn id=home-btn name="Navigate to Home" type=submit>
+							<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
+						</button>
+					</li>
+				</ul>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1 id=title>Local de Transação</h1>
@@ -49,7 +48,8 @@
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar</button>
+						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar
+						</button>
 						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
 				</ul>

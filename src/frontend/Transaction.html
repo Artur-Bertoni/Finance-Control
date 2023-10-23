@@ -10,21 +10,21 @@
 <div id=page-wrapper>
 	<img alt=Logo id=logo-img src=../images/logo.png>
 	
-	<ul id=navigation-menu-btn-gp>
-		<li>
-			<button class=img-btn id=profile-btn name="Navigate do Profile" type=button>
-				<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
-			</button>
-		</li>
-		<li>
-			<button class=img-btn id=home-btn name="Navigate to Home" type=button>
-				<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
-			</button>
-		</li>
-	</ul>
 	<div id=content-wrapper>
 		<div id=background>
 			<form action=processor/TransactionProcessor.php method=post>
+				<ul id=navigation-menu-btn-gp>
+					<li>
+						<button class=img-btn id=profile-btn name="profileButton" type=submit>
+							<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
+						</button>
+					</li>
+					<li>
+						<button class=img-btn id=home-btn name="HomeButton" type=submit>
+							<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
+						</button>
+					</li>
+				</ul>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1>Transação</h1>
@@ -76,7 +76,8 @@
 						
 						<div class=field>
 							<label for=transaction-locale-input>Local da Transação</label>
-							<select id=transaction-locale-input class=normal-insertion-field name=transactionLocaleField>
+							<select id=transaction-locale-input class=normal-insertion-field
+									name=transactionLocaleField>
 								<option disabled selected value="">Onde foi realizada</option>
 							</select>
 						</div>

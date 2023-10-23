@@ -14,7 +14,21 @@ date.value = date.max
 tryToPopulateWithData();
 
 function tryToPopulateWithData() {
-    //TODO implementar criação do botão DELETE se o item estiver presente (for update)
+    let deleteImg = document.createElement('img')
+    deleteImg.alt = 'Delete Picture'
+    deleteImg.id = 'delete-btn-img'
+    deleteImg.src = '../images/delete.png'
+
+    let deleteButton = document.createElement('button')
+    deleteButton.classList.add('img-btn')
+    deleteButton.id = 'delete-btn'
+    deleteButton.name = 'deleteButton'
+    deleteButton.type = 'submit'
+
+    deleteButton.appendChild(deleteImg)
+    let iconButtonList = document.getElementById('navigation-menu-btn-gp')
+    iconButtonList.appendChild(deleteButton)
+
     let response = doRequest(
         'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
         {findById: true})

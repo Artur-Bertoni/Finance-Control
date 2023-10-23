@@ -57,4 +57,9 @@ class TransactionService {
             $transaction->getObs()
         );
     }
+
+    public function delete($id) {
+        global $repository;
+        $repository->delete($id);
+    }
 }

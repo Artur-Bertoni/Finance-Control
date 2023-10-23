@@ -4,12 +4,18 @@ include "../../backend/services/TransactionService.php";
 
 session_start();
 
+$service = new TransactionService();
+
 if (isset($_POST['cancelButton'])) {
     header("Location: ../HomePage.html");
     exit;
 }
 
-$service = new TransactionService();
+if (isset($_POST['deleteButton'])) {
+    $service->delete($_SESSION['transactionId']);
+    header("Location: ../HomePage.html");
+    exit;
+}
 
 $transactionId = $_POST['transactionId'];
 $userId = $_SESSION['userId'];
