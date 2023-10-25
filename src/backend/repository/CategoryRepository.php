@@ -5,7 +5,8 @@ include_once "../../backend/entities/Category.php";
 
 class CategoryRepository
 {
-    public function save(CategoryRequestDTO $requestDTO) {
+    public function save(CategoryRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("insert into artur_category
@@ -31,7 +32,8 @@ class CategoryRepository
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function update($id, CategoryRequestDTO $requestDTO) {
+    public function update($id, CategoryRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_category set
@@ -56,7 +58,8 @@ class CategoryRepository
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_category WHERE id = $id");
@@ -73,7 +76,8 @@ class CategoryRepository
         return false;
     }
 
-    public function findAllByUserId($userId): array {
+    public function findAllByUserId($userId): array
+    {
         global $db;
 
         $result = $db->query("select * from artur_category where user_id = $userId");
@@ -90,7 +94,8 @@ class CategoryRepository
         return $categories;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_category where id = $id");

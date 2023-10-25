@@ -31,18 +31,18 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
-						<input type=hidden name=accountId value="">
+						<input name=accountId type=hidden value="">
 						
 						<div class=field>
 							<label for=name-input>Nome *</label>
-							<input id=name-input class=normal-insertion-field name=nameField
+							<input class=normal-insertion-field id=name-input name=nameField
 								   placeholder="Nome (apelido)"
-								   type=text required>
+								   required type=text>
 						</div>
 						
 						<div class=field>
 							<label for=financial-institution-input>Instituição Financeira *</label>
-							<select id=financial-institution-input class=normal-insertion-field
+							<select class=normal-insertion-field id=financial-institution-input
 									name=financialInstitutionField required>
 								<option disabled selected value="">Instituição à qual a conta está vinculada</option>
 							</select>
@@ -50,20 +50,20 @@
 						
 						<div class=field>
 							<label for=contact-input>Contato</label>
-							<input id=contact-input class=normal-insertion-field name=contactField
+							<input class=normal-insertion-field id=contact-input name=contactField
 								   placeholder="Contato da conta"
 								   type=text>
 						</div>
 						
 						<div class=field>
 							<label for=description-input>Descrição</label>
-							<textarea id=description-input class=big-insertion-field name=descriptionField
+							<textarea class=big-insertion-field id=description-input name=descriptionField
 									  placeholder="Detalhamento sobre a conta"></textarea>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
 						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
@@ -74,5 +74,5 @@
 </div>
 </body>
 <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<script type=module src=js/Account.js></script>
+<script src=js/Account.js type=module></script>
 </html>

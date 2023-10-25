@@ -3,8 +3,10 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/TransactionLocale.php";
 
-class TransactionLocaleRepository {
-    public function save(TransactionLocaleRequestDTO $requestDTO) {
+class TransactionLocaleRepository
+{
+    public function save(TransactionLocaleRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("insert into artur_transaction_locale
@@ -30,7 +32,8 @@ class TransactionLocaleRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function update($id, TransactionLocaleRequestDTO $requestDTO) {
+    public function update($id, TransactionLocaleRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_transaction_locale set
@@ -55,7 +58,8 @@ class TransactionLocaleRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_transaction_locale WHERE id = $id");
@@ -72,7 +76,8 @@ class TransactionLocaleRepository {
         return false;
     }
 
-    public function findAllByUserId($userId): array {
+    public function findAllByUserId($userId): array
+    {
         global $db;
 
         $result = $db->query("select * from artur_transaction_locale where user_id = $userId");
@@ -89,7 +94,8 @@ class TransactionLocaleRepository {
         return $transactionLocales;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_transaction_locale where id = $id");

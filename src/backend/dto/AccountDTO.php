@@ -1,13 +1,15 @@
 <?php
 
-class AccountDTO implements JsonSerializable {
+class AccountDTO implements JsonSerializable
+{
     private $id;
     private $financialInstitution;
     private $name;
     private $contact;
     private $description;
 
-    public function __construct($id, $financialInstitution, $name, $contact, $description) {
+    public function __construct($id, $financialInstitution, $name, $contact, $description)
+    {
         $this->id = $id;
         $this->financialInstitution = $financialInstitution;
         $this->name = $name;
@@ -15,53 +17,64 @@ class AccountDTO implements JsonSerializable {
         $this->description = $description;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getFinancialInstitution() {
+    public function getFinancialInstitution()
+    {
         return $this->financialInstitution;
     }
 
-    public function setFinancialInstitution($financialInstitution) {
+    public function setFinancialInstitution($financialInstitution)
+    {
         $this->financialInstitution = $financialInstitution;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function getContact() {
+    public function getContact()
+    {
         return $this->contact;
     }
 
-    public function setContact($contact) {
+    public function setContact($contact)
+    {
         $this->contact = $contact;
     }
 
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return array(
-            'id'=>$this->id,
-            'financialInstitution'=>$this->financialInstitution,
-            'name'=>$this->name,
-            'contact'=>$this->contact,
-            'description'=>$this->description
+            'id' => $this->id,
+            'financialInstitution' => $this->financialInstitution,
+            'name' => $this->name,
+            'contact' => $this->contact,
+            'description' => $this->description
         );
     }
 }

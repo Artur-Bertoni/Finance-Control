@@ -9,18 +9,22 @@ global $repository, $financialInstitutionRepository;
 $repository = new AccountRepository();
 $financialInstitutionRepository = new FinancialInstitutionRepository();
 
-class AccountService {
-    public function create(AccountRequestDTO $requestDTO) {
+class AccountService
+{
+    public function create(AccountRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, AccountRequestDTO $requestDTO) {
+    public function update($id, AccountRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId) {
+    public function findAllByUser($userId)
+    {
         global $repository;
         $accounts = $repository->findAllByUserId($userId);
         $accountDTOs = [];
@@ -32,13 +36,8 @@ class AccountService {
         echo json_encode($accountDTOs);
     }
 
-    public function findById($id) {
-        global $repository;
-        $account = $repository->findById($id);
-        echo json_encode($this->buildAccountDTO($account));
-    }
-
-    private function buildAccountDTO($account): AccountDTO {
+    private function buildAccountDTO($account): AccountDTO
+    {
         global $financialInstitutionRepository;
 
         return new AccountDTO(
@@ -48,5 +47,12 @@ class AccountService {
             $account->getContact(),
             $account->getDescription()
         );
+    }
+
+    public function findById($id)
+    {
+        global $repository;
+        $account = $repository->findById($id);
+        echo json_encode($this->buildAccountDTO($account));
     }
 }

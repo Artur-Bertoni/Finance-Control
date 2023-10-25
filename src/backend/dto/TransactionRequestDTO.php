@@ -1,6 +1,7 @@
 <?php
 
-class TransactionRequestDTO {
+class TransactionRequestDTO
+{
     private $userId;
     private $accountId;
     private $categoryId;
@@ -11,7 +12,8 @@ class TransactionRequestDTO {
     private $installmentsNumber;
     private $obs;
 
-    public function __construct($userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs) {
+    public function __construct($userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs)
+    {
         $this->userId = $userId;
         $this->accountId = $accountId;
         $this->categoryId = $categoryId;
@@ -23,75 +25,93 @@ class TransactionRequestDTO {
         $this->obs = $obs;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getAccountId() {
+    public function getAccountId()
+    {
         return $this->accountId;
     }
 
-    public function setAccountId($accountId) {
+    public function setAccountId($accountId)
+    {
         $this->accountId = $accountId;
     }
 
-    public function getCategoryId() {
+    public function getCategoryId()
+    {
         return $this->categoryId;
     }
 
-    public function setCategoryId($categoryId) {
+    public function setCategoryId($categoryId)
+    {
         $this->categoryId = $categoryId;
     }
 
-    public function getTransactionLocaleId() {
+    public function getTransactionLocaleId()
+    {
         return $this->transactionLocaleId;
     }
 
-    public function setTransactionLocaleId($transactionLocaleId) {
+    public function setTransactionLocaleId($transactionLocaleId)
+    {
         $this->transactionLocaleId = $transactionLocaleId;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
-    public function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = $date;
     }
 
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
     }
 
-    public function getInstallmentsNumber() {
+    public function getInstallmentsNumber()
+    {
         return $this->installmentsNumber;
     }
 
-    public function setInstallmentsNumber($installmentsNumber) {
+    public function setInstallmentsNumber($installmentsNumber)
+    {
         $this->installmentsNumber = $installmentsNumber;
     }
 
-    public function getObs() {
+    public function getObs()
+    {
         return $this->obs;
     }
 
-    public function setObs($obs) {
+    public function setObs($obs)
+    {
         $this->obs = $obs;
     }
 }

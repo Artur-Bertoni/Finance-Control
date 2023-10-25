@@ -6,18 +6,23 @@ include_once "../../backend/dto/FinancialInstitutionDTO.php";
 
 global $repository;
 $repository = new FinancialInstitutionRepository();
-class FinancialInstitutionService {
-    public function create(FinancialInstitutionRequestDTO $requestDTO) {
+
+class FinancialInstitutionService
+{
+    public function create(FinancialInstitutionRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, FinancialInstitutionRequestDTO $requestDTO) {
+    public function update($id, FinancialInstitutionRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId) {
+    public function findAllByUser($userId)
+    {
         global $repository;
         $financialInstitutions = $repository->findAllByUserId($userId);
         $financialInstitutionDTOs = [];

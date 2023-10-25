@@ -3,8 +3,10 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/User.php";
 
-class UserRepository {
-    public function save(UserRequestDTO $requestDTO) {
+class UserRepository
+{
+    public function save(UserRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("insert into artur_user
@@ -30,7 +32,8 @@ class UserRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findByEmail($email) {
+    public function findByEmail($email)
+    {
         global $db;
         $result = $db->query("select * from artur_user where email = '" . $email . "'");
 
@@ -41,7 +44,8 @@ class UserRepository {
         return false;
     }
 
-    public function findByEmailAndPassword($email, $password) {
+    public function findByEmailAndPassword($email, $password)
+    {
         global $db;
         $result = $db->query("select * from artur_user where email = '" . $email . "' and password like '" . $password . "'");
 
@@ -52,7 +56,8 @@ class UserRepository {
         return false;
     }
 
-    public function update($id, UserRequestDTO $requestDTO) {
+    public function update($id, UserRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_user set
@@ -78,7 +83,8 @@ class UserRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_user WHERE id = $id");
@@ -95,7 +101,8 @@ class UserRepository {
         return false;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_user where id = $id");

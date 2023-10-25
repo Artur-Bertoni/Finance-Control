@@ -1,37 +1,45 @@
 <?php
 
-class CategoryRequestDTO {
+class CategoryRequestDTO
+{
     private $userId;
     private $name;
     private $description;
 
-    public function __construct($userId, $name, $description) {
+    public function __construct($userId, $name, $description)
+    {
         $this->userId = $userId;
         $this->name = $name;
         $this->description = $description;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 }

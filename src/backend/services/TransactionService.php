@@ -13,18 +13,22 @@ $accountRepository = new AccountRepository();
 $transactionLocaleRepository = new TransactionLocaleRepository();
 $categoryRepository = new CategoryRepository();
 
-class TransactionService {
-    public function create(TransactionRequestDTO $requestDTO) {
+class TransactionService
+{
+    public function create(TransactionRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, TransactionRequestDTO $requestDTO) {
+    public function update($id, TransactionRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId) {
+    public function findAllByUser($userId)
+    {
         global $repository;
         $transactions = $repository->findAllByUserId($userId);
         $transactionDTOs = [];
@@ -36,13 +40,8 @@ class TransactionService {
         echo json_encode($transactionDTOs);
     }
 
-    public function findById($id) {
-        global $repository;
-        $transaction = $repository->findById($id);
-        echo json_encode($this->buildTransaction($transaction));
-    }
-
-    private function buildTransaction($transaction): TransactionDTO {
+    private function buildTransaction($transaction): TransactionDTO
+    {
         global $accountRepository, $categoryRepository, $transactionLocaleRepository;
 
         return new TransactionDTO(
@@ -58,7 +57,15 @@ class TransactionService {
         );
     }
 
-    public function delete($id) {
+    public function findById($id)
+    {
+        global $repository;
+        $transaction = $repository->findById($id);
+        echo json_encode($this->buildTransaction($transaction));
+    }
+
+    public function delete($id)
+    {
         global $repository;
         $repository->delete($id);
     }

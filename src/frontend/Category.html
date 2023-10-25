@@ -31,24 +31,24 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
-						<input type=hidden name=categoryId value="">
+						<input name=categoryId type=hidden value="">
 						
 						<div class=field>
 							<label for=name-input>Nome *</label>
-							<input id=name-input class=normal-insertion-field name=nameField
+							<input class=normal-insertion-field id=name-input name=nameField
 								   placeholder="Nome (apelido)"
-								   type=text required>
+								   required type=text>
 						</div>
 						
 						<div class=field>
 							<label for=description-input>Descrição</label>
-							<textarea id=description-input class=big-insertion-field name=descriptionField
+							<textarea class=big-insertion-field id=description-input name=descriptionField
 									  placeholder="Detalhamento sobre a categoria"></textarea>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
 						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>

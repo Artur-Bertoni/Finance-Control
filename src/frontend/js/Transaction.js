@@ -1,7 +1,4 @@
-import {
-    addDeleteIcon,
-    doRequest
-} from "../../utils/functions.js";
+import {addDeleteIcon, doRequest} from "../../utils/functions.js";
 import {Account} from "./class/AccountClass.js";
 import {Category} from "./class/CategoryClass.js";
 import {TransactionLocale} from "./class/TransactionLocaleClass.js";

@@ -34,7 +34,7 @@ if ($userId != "") {
 }
 
 if (!$result instanceof User) {
-    echo "<script>alert('".$result."');location.href=\"../User.html\";</script>";
+    echo "<script>alert('" . $result . "');location.href=\"../User.html\";</script>";
     exit;
 }
 

@@ -1,47 +1,57 @@
 <?php
 
-class UserRequestDTO {
+class UserRequestDTO
+{
     private $username;
     private $email;
     private $password;
     private $passwordConfirmation;
 
-    public function __construct($username, $email, $password, $passwordConfirmation) {
+    public function __construct($username, $email, $password, $passwordConfirmation)
+    {
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
         $this->passwordConfirmation = $passwordConfirmation;
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
     }
 
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = $email;
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
     }
 
-    public function getPasswordConfirmation() {
+    public function getPasswordConfirmation()
+    {
         return $this->passwordConfirmation;
     }
 
-    public function setPasswordConfirmation($passwordConfirmation) {
+    public function setPasswordConfirmation($passwordConfirmation)
+    {
         $this->passwordConfirmation = $passwordConfirmation;
     }
 }

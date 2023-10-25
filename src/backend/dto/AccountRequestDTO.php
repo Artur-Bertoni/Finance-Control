@@ -1,13 +1,15 @@
 <?php
 
-class AccountRequestDTO {
+class AccountRequestDTO
+{
     private $userId;
     private $financialInstitutionId;
     private $name;
     private $contact;
     private $description;
 
-    public function __construct($userId, $financialInstitutionId, $name, $contact, $description) {
+    public function __construct($userId, $financialInstitutionId, $name, $contact, $description)
+    {
         $this->userId = $userId;
         $this->financialInstitutionId = $financialInstitutionId;
         $this->name = $name;
@@ -15,43 +17,53 @@ class AccountRequestDTO {
         $this->description = $description;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getFinancialInstitutionId() {
+    public function getFinancialInstitutionId()
+    {
         return $this->financialInstitutionId;
     }
 
-    public function setFinancialInstitutionId($financialInstitutionId) {
+    public function setFinancialInstitutionId($financialInstitutionId)
+    {
         $this->financialInstitutionId = $financialInstitutionId;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function getContact() {
+    public function getContact()
+    {
         return $this->contact;
     }
 
-    public function setContact($contact) {
+    public function setContact($contact)
+    {
         $this->contact = $contact;
     }
 }

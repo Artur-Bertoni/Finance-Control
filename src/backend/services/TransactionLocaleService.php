@@ -6,18 +6,23 @@ include_once "../../backend/dto/TransactionLocaleDTO.php";
 
 global $repository;
 $repository = new TransactionLocaleRepository();
-class TransactionLocaleService {
-    public function create(TransactionLocaleRequestDTO $requestDTO) {
+
+class TransactionLocaleService
+{
+    public function create(TransactionLocaleRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, TransactionLocaleRequestDTO $requestDTO) {
+    public function update($id, TransactionLocaleRequestDTO $requestDTO)
+    {
         global $repository;
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId) {
+    public function findAllByUser($userId)
+    {
         global $repository;
         $transactionLocales = $repository->findAllByUserId($userId);
         $transactionLocaleDTOs = [];

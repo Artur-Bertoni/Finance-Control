@@ -7,25 +7,31 @@
     border-style: none;
     word-spacing: 5px;
 }
+
 body {
     background-color: var(--darkgray);
 }
+
 h1 {
     text-align: center;
 }
+
 form {
     max-height: 50%;
     max-width: 35vmax;
 }
+
 table {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 label {
     display: flex;
     font-size: 2vmin;
 }
+
 button {
     background-color: var(--darkgray);
     border-radius: 2vmin;
@@ -36,17 +42,21 @@ button {
     cursor: pointer;
     justify-content: center;
 }
+
 ul {
     list-style: none;
 }
+
 select {
     appearance: none;
     cursor: pointer;
 }
+
 input[type="radio"] {
     display: grid;
     place-content: center;
 }
+
 input[type="radio"]::before {
     content: "";
     width: 1em;
@@ -56,13 +66,16 @@ input[type="radio"]::before {
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em var(--green);
 }
+
 input[type="radio"]:checked::before {
     transform: scale(1);
 }
+
 input[type=number]::-webkit-inner-spin-button {
     filter: sepia(200%) hue-rotate(90deg);
     cursor: pointer;
 }
+
 #password-input img {
     cursor: pointer;
 }
@@ -72,16 +85,19 @@ input[type=number]::-webkit-inner-spin-button {
     text-align: center;
     font-size: 4vmin;
 }
+
 #page-wrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
+
 #content-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
+
 #background {
     padding: 2vmin;
     background-color: var(--white);
@@ -92,6 +108,7 @@ input[type=number]::-webkit-inner-spin-button {
     justify-content: center;
     align-items: center;
 }
+
 #background-item-page {
     padding: 20vmin 2vmin 2vmin;
     background-color: var(--white);
@@ -101,6 +118,7 @@ input[type=number]::-webkit-inner-spin-button {
     display: flex;
     justify-content: center;
 }
+
 .item-bkg {
     background-color: var(--darkgray);
     padding: 2vmin;
@@ -111,6 +129,7 @@ input[type=number]::-webkit-inner-spin-button {
     align-items: center;
     margin: 2vmin;
 }
+
 #list-bkg {
     background-color: var(--darkgray);
     padding: 3vh;
@@ -120,6 +139,7 @@ input[type=number]::-webkit-inner-spin-button {
     width: 50vw;
     height: 50vmin;
 }
+
 .item-key, .item-value, .item-obs-value, .item-obs-key {
     background-color: var(--green);
     border-radius: 20px;
@@ -127,42 +147,51 @@ input[type=number]::-webkit-inner-spin-button {
     min-width: 25vw;
     margin: 10px;
 }
+
 .item {
     padding-left: 1vmin;
     margin: 10px
 }
+
 .item-value {
     min-height: 4vmin;
     text-align: left;
     margin: 0;
     font-size: 2vmin;
 }
+
 .item-obs-key {
     text-align: center;
 }
+
 .item-obs-value {
     min-height: 30vmin;
     text-align: center;
     margin: 0;
     font-size: 2vmin;
 }
+
 #item-obs {
     min-height: 30vmin;
 }
+
 #item-attributes-list {
     justify-content: center;
     align-content: center;
 }
+
 #item-body {
     min-height: 50vmin;
     justify-content: center;
     align-content: center;
 }
+
 #home-head {
     font-size: 4vmin;
     display: flex;
     justify-content: center;
 }
+
 #home-total-box {
     background: var(--light-green);
     width: 20vmin;
@@ -172,13 +201,16 @@ input[type=number]::-webkit-inner-spin-button {
     border-radius: 2vmin;
     text-align: center;
 }
+
 ::placeholder {
     color: var(--black);
     opacity: 1;
 }
+
 :-ms-input-placeholder {
     color: var(--black);
 }
+
 ::-ms-input-placeholder {
     color: var(--black);
 }
@@ -190,31 +222,37 @@ input[type=number]::-webkit-inner-spin-button {
     top: 2vmin;
     position: absolute;
 }
+
 #form-profile-img {
     height: 20vmin;
     max-width: 300px;
     max-height: 300px;
 }
+
 #profile-btn-img {
     height: 6vmin;
     max-width: 100px;
     max-height: 100px;
 }
+
 #home-btn-img {
     height: 5vmin;
     max-width: 100px;
     max-height: 100px;
 }
+
 #delete-btn-img {
     height: 5vmin;
     max-width: 100px;
     max-height: 100px;
 }
+
 .password-btn-img {
     height: 2vmin;
     margin-left: 10px;
     cursor: pointer;
 }
+
 /* ---- general/components/IMAGES ---- */
 
 /* general/components/FORM */
@@ -222,24 +260,30 @@ input[type=number]::-webkit-inner-spin-button {
     max-height: none;
     max-width: none;
 }
+
 #title-in-list {
     margin-top: 0;
 }
+
 #image-in-list {
     margin-top: 0;
     display: flex;
     flex-wrap: wrap;
 }
+
 .form-list-item {
     margin-top: 5vh;
     justify-content: center;
 }
+
 .field {
     margin: 1vmin;
 }
+
 #description-input, #obs-input {
     min-height: 10vmin;
 }
+
 .big-insertion-field {
     background-color: var(--green);
     display: flex;
@@ -252,6 +296,7 @@ input[type=number]::-webkit-inner-spin-button {
     max-height: 5vmin;
     outline: 0;
 }
+
 .normal-insertion-field {
     background-color: var(--green);
     display: flex;
@@ -261,6 +306,7 @@ input[type=number]::-webkit-inner-spin-button {
     font-size: 1.5vmin;
     text-align: center;
 }
+
 .small-insertion-field {
     background-color: var(--green);
     display: flex;
@@ -269,10 +315,12 @@ input[type=number]::-webkit-inner-spin-button {
     font-size: 1.5vmin;
     text-align: center;
 }
+
 #fields-in-list {
     display: flex;
     flex-wrap: wrap;
 }
+
 /* ---- general/components/FORM ---- */
 
 /* general/components/GRID */
@@ -282,17 +330,19 @@ input[type=number]::-webkit-inner-spin-button {
     justify-content: center;
     align-items: center;
 }
+
 .grid-label {
     margin: 2vmin;
 }
+
 #last-transaction-list {
     font-size: 3vmin;
     text-align: center;
 }
+
 /* ---- general/components/GRID ---- */
 /* ---- general/COMPONENTS ---- */
 /* ---- GENERAL ---- */
-
 
 
 /* BUTTONS */
@@ -300,9 +350,11 @@ input[type=number]::-webkit-inner-spin-button {
     min-width: 15vmin;
     min-height: 7vmin;
 }
+
 #buttons-in-list {
     display: flex;
 }
+
 .img-btn {
     background: none;
     margin: 5px;
@@ -315,17 +367,20 @@ input[type=number]::-webkit-inner-spin-button {
     top: 4vmin;
     right: 4vmin;
 }
+
 #navigation-item-btn-gp {
     position: absolute;
     top: 25vmin;
     right: 7vmin;
 }
+
 #profile-btn, #home-btn, #delete-btn {
     border-radius: 50%;
     cursor: pointer;
     padding: 0;
     width: 5vmax;
 }
+
 /* ---- buttons/MENU PICTURE ---- */
 
 /* buttons/HOME PAGE */
@@ -337,6 +392,7 @@ input[type=number]::-webkit-inner-spin-button {
     min-height: 5vmin;
     border-radius: 2vmin;
 }
+
 .transaction-item-btn {
     display: flex;
     min-width: 99%;
@@ -347,12 +403,13 @@ input[type=number]::-webkit-inner-spin-button {
     font-size: 2vmin;
     line-height: 0;
 }
+
 #new-transaction-btn {
     min-height: 10vmin;
 }
+
 /* ---- buttons/HOME PAGE ---- */
 /* ---- BUTTONS ----*/
-
 
 
 /* EFFECTS */
@@ -361,39 +418,45 @@ button:hover {
     filter: brightness(0.6);
     transform: scale(1.05);
 }
+
 .colorful-button:hover {
     filter: contrast(2);
 }
+
 input:hover, textarea:hover, select:hover {
     transition: 0.25s;
     transform: scale(1.05);
 }
+
 input:focus, textarea:focus, select:focus {
     transition: 0.25s;
     transform: scale(1.05);
 }
+
 ::-webkit-scrollbar-thumb:hover {
     transition: 0.25s;
     background: var(--light-green);
 }
-/* ---- EFFECTS ---- */
 
+/* ---- EFFECTS ---- */
 
 
 /* WEBKITS */
 ::-webkit-scrollbar {
     width: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
     background: var(--green);
     border-radius: 20px;
 }
+
 ::-webkit-scrollbar-track {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-/* ---- WEBKITS ---- */
 
+/* ---- WEBKITS ---- */
 
 
 /* VARIABLES */
@@ -405,4 +468,5 @@ input:focus, textarea:focus, select:focus {
     --darkgray: rgb(169, 169, 169, 100);
     --black: black;
 }
+
 /* ---- VARIABLES ---- */

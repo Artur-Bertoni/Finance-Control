@@ -56,6 +56,30 @@ class TransactionRepository
         }
     }
 
+    public function findById($id)
+    {
+        global $db;
+
+        $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
+
+        if ($result->num_rows > 0) {
+            $transaction = $result->fetch_assoc();
+            return new Transaction(
+                $transaction['id'],
+                $transaction['user_id'],
+                $transaction['account_id'],
+                $transaction['category_id'],
+                $transaction['transaction_locale_id'],
+                $transaction['value'],
+                $transaction['date'],
+                $transaction['type'],
+                $transaction['installments_number'],
+                $transaction['obs']
+            );
+        }
+        return false;
+    }
+
     public function update($id, TransactionRequestDTO $requestDTO)
     {
         global $db;
@@ -96,30 +120,6 @@ class TransactionRepository
             return $this->findById($id);
         } else
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-    }
-
-    public function findById($id)
-    {
-        global $db;
-
-        $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
-
-        if ($result->num_rows > 0) {
-            $transaction = $result->fetch_assoc();
-            return new Transaction(
-                $transaction['id'],
-                $transaction['user_id'],
-                $transaction['account_id'],
-                $transaction['category_id'],
-                $transaction['transaction_locale_id'],
-                $transaction['value'],
-                $transaction['date'],
-                $transaction['type'],
-                $transaction['installments_number'],
-                $transaction['obs']
-            );
-        }
-        return false;
     }
 
     public function delete($id)

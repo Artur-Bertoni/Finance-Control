@@ -3,8 +3,10 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/Account.php";
 
-class AccountRepository {
-    public function save(AccountRequestDTO $requestDTO) {
+class AccountRepository
+{
+    public function save(AccountRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("insert into artur_account
@@ -32,7 +34,8 @@ class AccountRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function update($id, AccountRequestDTO $requestDTO) {
+    public function update($id, AccountRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_account set
@@ -59,7 +62,8 @@ class AccountRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_account WHERE id = $id");
@@ -78,7 +82,8 @@ class AccountRepository {
         return false;
     }
 
-    public function findAllByUserId($userId): array {
+    public function findAllByUserId($userId): array
+    {
         global $db;
 
         $result = $db->query("select * from artur_account where user_id = $userId");
@@ -97,7 +102,8 @@ class AccountRepository {
         return $accounts;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_account where id = $id");

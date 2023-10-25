@@ -3,20 +3,20 @@
 <head>
 	<meta charset=utf-8>
 	<title>Home Page</title>
-	<link rel=stylesheet href=https://fonts.googleapis.com/css?family=Acme&display=swap>
-	<link rel=stylesheet href=../styles/styles.css>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
 </head>
 <body>
 <div id=page-wrapper>
-	<img id=logo-img src=../images/logo.png alt=Logo>
+	<img alt=Logo id=logo-img src=../images/logo.png>
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form id=home-page-form action=processor/HomePageProcessor.php method=post>
+			<form action=processor/HomePageProcessor.php id=home-page-form method=post>
 				<ul id=navigation-menu-btn-gp>
 					<li>
-						<button id=profile-btn class=img-btn name="Navigate do Profile" type=button>
-							<img id=profile-btn-img src=../images/user.png alt="Profile Picture">
+						<button class=img-btn id=profile-btn name="Navigate do Profile" type=button>
+							<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
 						</button>
 					</li>
 				</ul>
@@ -34,35 +34,35 @@
 						<td>
 							<ul>
 								<li>
-									<button id=new-transaction-btn class='home-page-btn colorful-button'
+									<button class='home-page-btn colorful-button' id=new-transaction-btn
 											name=postTransaction type=submit>
 										Nova Transação
 									</button>
 								</li>
 								
 								<li>
-									<button id=new-transaction-locale-btn class='home-page-btn colorful-button'
+									<button class='home-page-btn colorful-button' id=new-transaction-locale-btn
 											name=postTransactionLocale type=submit>
 										Novo Local de Transação
 									</button>
 								</li>
 								
 								<li>
-									<button id=new-financial-institution-btn class='home-page-btn colorful-button'
+									<button class='home-page-btn colorful-button' id=new-financial-institution-btn
 											name=postFinancialInstitution type=submit>
 										Nova Instituição Financeira
 									</button>
 								</li>
 								
 								<li>
-									<button id=new-account-btn class='home-page-btn colorful-button' name=postAccount
+									<button class='home-page-btn colorful-button' id=new-account-btn name=postAccount
 											type=submit>
 										Nova Conta de Transação
 									</button>
 								</li>
 								
 								<li>
-									<button id=new-category-btn class='home-page-btn colorful-button' name=postCategory
+									<button class='home-page-btn colorful-button' id=new-category-btn name=postCategory
 											type=submit>
 										Nova Categoria de Transação
 									</button>
@@ -85,6 +85,6 @@
 	</div>
 </div>
 <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<script type=module src=js/HomePage.js></script>
+<script src=js/HomePage.js type=module></script>
 </body>
 </html>

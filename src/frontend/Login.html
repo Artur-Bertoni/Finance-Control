@@ -3,40 +3,41 @@
 <head>
 	<meta charset=utf-8>
 	<title>Login Page</title>
-	<link rel=stylesheet href=https://fonts.googleapis.com/css?family=Acme&display=swap>
-	<link rel=stylesheet href=../styles/styles.css>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
 </head>
 <body>
 <div id=page-wrapper>
-	<img id=logo-img src=../images/logo.png alt=Logo>
+	<img alt=Logo id=logo-img src=../images/logo.png>
 	
 	<div id=content-wrapper>
 		<div id=background>
 			<form action=processor/LoginProcessor.php method=post>
 				<ul>
-					<li id=title-in-list class=form-list-item>
+					<li class=form-list-item id=title-in-list>
 						<h1 id=title>Bem Vindo(a)!</h1>
 					</li>
 					
-					<li id=fields-in-list class=form-list-item>
+					<li class=form-list-item id=fields-in-list>
 						<div class=field>
 							<label for=email-input>Email</label>
-							<input id=email-input class=normal-insertion-field type=email name=emailField
-								   placeholder="Preencha com o seu email" required>
+							<input class=normal-insertion-field id=email-input name=emailField placeholder="Preencha com o seu email"
+								   required type=email>
 						</div>
 						
 						<div class=field>
 							<label for=password-input>Senha
-								<img id=password-img class=password-btn-img src="../images/hiding.png" alt="Show/Hide password">
+								<img alt="Show/Hide password" class=password-btn-img id=password-img
+									 src="../images/hiding.png">
 							</label>
-							<input id=password-input class=normal-insertion-field type=password name=passwordField
-								   placeholder="Preencha com a sua senha" required>
+							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com a sua senha"
+								   required type=password>
 						</div>
 					</li>
-					<li id=buttons-in-list class=form-list-item>
-						<button id=register-btn class=txt-btn name=registerButton type=submit formnovalidate>Cadastrar
+					<li class=form-list-item id=buttons-in-list>
+						<button class=txt-btn formnovalidate id=register-btn name=registerButton type=submit>Cadastrar
 						</button>
-						<button id=login-btn class=txt-btn name=loginButton type=submit>Login</button>
+						<button class=txt-btn id=login-btn name=loginButton type=submit>Login</button>
 					</li>
 				</ul>
 			</form>

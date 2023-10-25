@@ -17,7 +17,7 @@ $password = $_POST["passwordField"];
 $result = $service->login($email, $password);
 
 if (!$result instanceof User) {
-    echo "<script>alert('".$result."');location.href=\"../Login.html\";</script>";
+    echo "<script>alert('" . $result . "');location.href=\"../Login.html\";</script>";
     exit;
 }
 

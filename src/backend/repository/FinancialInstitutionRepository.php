@@ -3,8 +3,10 @@
 include_once "../../utils/db_connection.php";
 include_once "../../backend/entities/FinancialInstitution.php";
 
-class FinancialInstitutionRepository {
-    public function save(FinancialInstitutionRequestDTO $requestDTO) {
+class FinancialInstitutionRepository
+{
+    public function save(FinancialInstitutionRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("insert into artur_financial_institution
@@ -31,7 +33,8 @@ class FinancialInstitutionRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function update($id, FinancialInstitutionRequestDTO $requestDTO) {
+    public function update($id, FinancialInstitutionRequestDTO $requestDTO)
+    {
         global $db;
 
         $stmt = $db->prepare("update artur_financial_institution set
@@ -57,7 +60,8 @@ class FinancialInstitutionRepository {
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         global $db;
 
         $result = $db->query("SELECT * FROM artur_financial_institution WHERE id = $id");
@@ -75,7 +79,8 @@ class FinancialInstitutionRepository {
         return false;
     }
 
-    public function findAllByUserId($userId): array {
+    public function findAllByUserId($userId): array
+    {
         global $db;
 
         $result = $db->query("select * from artur_financial_institution where user_id = $userId");
@@ -93,7 +98,8 @@ class FinancialInstitutionRepository {
         return $financialInstitution;
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         global $db;
 
         $db->query("delete from artur_financial_institution where id = $id");

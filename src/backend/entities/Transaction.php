@@ -1,6 +1,7 @@
 <?php
 
-class Transaction implements JsonSerializable {
+class Transaction implements JsonSerializable
+{
     private $id;
     private $userId;
     private $accountId;
@@ -12,7 +13,8 @@ class Transaction implements JsonSerializable {
     private $installmentsNumber;
     private $obs;
 
-    public function __construct($id, $userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs) {
+    public function __construct($id, $userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs)
+    {
         $this->id = $id;
         $this->userId = $userId;
         $this->accountId = $accountId;
@@ -25,98 +27,119 @@ class Transaction implements JsonSerializable {
         $this->obs = $obs;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getAccountId() {
+    public function getAccountId()
+    {
         return $this->accountId;
     }
 
-    public function setAccountId($accountId) {
+    public function setAccountId($accountId)
+    {
         $this->accountId = $accountId;
     }
 
-    public function getCategoryId() {
+    public function getCategoryId()
+    {
         return $this->categoryId;
     }
 
-    public function setCategoryId($categoryId) {
+    public function setCategoryId($categoryId)
+    {
         $this->categoryId = $categoryId;
     }
 
-    public function getTransactionLocaleId() {
+    public function getTransactionLocaleId()
+    {
         return $this->transactionLocaleId;
     }
 
-    public function setTransactionLocaleId($transactionLocaleId) {
+    public function setTransactionLocaleId($transactionLocaleId)
+    {
         $this->transactionLocaleId = $transactionLocaleId;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
-    public function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = $date;
     }
 
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
     }
 
-    public function getInstallmentsNumber() {
+    public function getInstallmentsNumber()
+    {
         return $this->installmentsNumber;
     }
 
-    public function setInstallmentsNumber($installmentsNumber) {
+    public function setInstallmentsNumber($installmentsNumber)
+    {
         $this->installmentsNumber = $installmentsNumber;
     }
 
-    public function getObs() {
+    public function getObs()
+    {
         return $this->obs;
     }
 
-    public function setObs($obs) {
+    public function setObs($obs)
+    {
         $this->obs = $obs;
     }
 
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return array(
-            'id'=>$this->id,
-            'userId'=>$this->userId,
-            'accountId'=>$this->accountId,
-            'categoryId'=>$this->categoryId,
-            'transactionLocaleId'=>$this->transactionLocaleId,
-            'value'=>$this->value,
-            'date'=>$this->date,
-            'type'=>$this->type,
-            'installmentsNumber'=>$this->installmentsNumber,
-            'obs'=>$this->obs
+            'id' => $this->id,
+            'userId' => $this->userId,
+            'accountId' => $this->accountId,
+            'categoryId' => $this->categoryId,
+            'transactionLocaleId' => $this->transactionLocaleId,
+            'value' => $this->value,
+            'date' => $this->date,
+            'type' => $this->type,
+            'installmentsNumber' => $this->installmentsNumber,
+            'obs' => $this->obs
         );
     }
 }

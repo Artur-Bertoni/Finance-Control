@@ -31,18 +31,18 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
-						<input type=hidden name=transactionId value="">
+						<input name=transactionId type=hidden value="">
 						
 						<div class=field>
 							<label for=account-input>Conta *</label>
-							<select id=account-input class=normal-insertion-field name=accountField required>
+							<select class=normal-insertion-field id=account-input name=accountField required>
 								<option disabled selected value="">Conta de origem</option>
 							</select>
 						</div>
 						
 						<div class=field>
 							<label for=category-input>Categoria *</label>
-							<select id=category-input class=normal-insertion-field name=categoryField required>
+							<select class=normal-insertion-field id=category-input name=categoryField required>
 								<option disabled selected value="">Categoria da transação</option>
 							</select>
 						</div>
@@ -50,33 +50,33 @@
 						<div class=field>
 							<label>Tipo de Transação *</label>
 							<label>
-								<input type=radio name=typeRadio value=debit required>Débito
+								<input name=typeRadio required type=radio value=debit>Débito
 							</label>
 							<label>
-								<input type=radio name=typeRadio value=credit>Crédito
+								<input name=typeRadio type=radio value=credit>Crédito
 							</label>
 						</div>
 						
 						<div class=field>
 							<label for=date-input>Data *</label>
-							<input id=date-input class=small-insertion-field name=dateField type=date required>
+							<input class=small-insertion-field id=date-input name=dateField required type=date>
 						</div>
 						
 						<div class=field>
 							<label for=value-input>Valor *</label>
-							<input id=value-input class=small-insertion-field name=valueField placeholder="Valor ($)"
-								   type=number required>
+							<input class=small-insertion-field id=value-input name=valueField placeholder="Valor ($)"
+								   required type=number>
 						</div>
 						
 						<div class=field>
 							<label for=installments-number-input>Nº de Parcelas</label>
-							<input id=installments-number-input class=small-insertion-field name=installmentsNumberField
+							<input class=small-insertion-field id=installments-number-input name=installmentsNumberField
 								   placeholder="Parcelas" type=number>
 						</div>
 						
 						<div class=field>
 							<label for=transaction-locale-input>Local da Transação</label>
-							<select id=transaction-locale-input class=normal-insertion-field
+							<select class=normal-insertion-field id=transaction-locale-input
 									name=transactionLocaleField>
 								<option disabled selected value="">Onde foi realizada</option>
 							</select>
@@ -85,13 +85,13 @@
 						
 						<div class=field>
 							<label for=obs-input>Observações</label>
-							<textarea id=obs-input class=big-insertion-field name=obsField
+							<textarea class=big-insertion-field id=obs-input name=obsField
 									  placeholder="Observações sobre a transação"></textarea>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
 						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 				</ul>
@@ -101,5 +101,5 @@
 </div>
 </body>
 <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<script type=module src=js/Transaction.js></script>
+<script src=js/Transaction.js type=module></script>
 </html>

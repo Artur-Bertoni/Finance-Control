@@ -19,44 +19,45 @@
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
-						<input type=hidden name=userId value="">
+						<input name=userId type=hidden value="">
 						
 						<div class=field>
 							<label for=username-input>Nome de Usuário *</label>
-							<input id=username-input class=normal-insertion-field name=usernameField
+							<input class=normal-insertion-field id=username-input name=usernameField
 								   placeholder="Preencha com seu nome de usuário"
-								   type=text required>
+								   required type=text>
 						</div>
 						
 						<div class=field>
 							<label for=email-input>Endereço de Email *</label>
-							<input id=email-input class=normal-insertion-field name=emailField
+							<input class=normal-insertion-field id=email-input name=emailField
 								   placeholder="Preencha com seu endereço de email"
-								   type=email required>
+								   required type=email>
 						</div>
 						
 						<div class=field>
 							<label for=password-input>Senha *
-								<img id=password-img class=password-btn-img src="../images/hiding.png"
-									 alt="Show/Hide password">
+								<img alt="Show/Hide password" class=password-btn-img id=password-img
+									 src="../images/hiding.png">
 							</label>
-							<input id=password-input class=normal-insertion-field type=password name=passwordField
-								   placeholder="Preencha com uma senha" required>
+							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com uma senha"
+								   required type=password>
 						</div>
 						
 						<div class=field>
 							<label for=password-confirm-input>Confirmar Senha *
-								<img id=password-confirm-img class=password-btn-img src="../images/hiding.png"
-									 alt="Show/Hide password">
+								<img alt="Show/Hide password" class=password-btn-img id=password-confirm-img
+									 src="../images/hiding.png">
 							</label>
-							<input id=password-confirm-input class=normal-insertion-field type=password
-								   name=passwordConfirmationField
-								   placeholder="Repita a senha" required>
+							<input class=normal-insertion-field id=password-confirm-input name=passwordConfirmationField
+								   placeholder="Repita a senha"
+								   required type=password>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn id=cancel-btn name=cancelButton type=submit formnovalidate>Cancelar</button>
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
+						</button>
 						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
 					</li>
 				</ul>

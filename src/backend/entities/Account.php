@@ -1,6 +1,7 @@
 <?php
 
-class Account implements JsonSerializable {
+class Account implements JsonSerializable
+{
     private $id;
     private $userId;
     private $financialInstitutionId;
@@ -8,7 +9,8 @@ class Account implements JsonSerializable {
     private $contact;
     private $description;
 
-    public function __construct($id, $userId, $financialInstitutionId, $name, $contact, $description) {
+    public function __construct($id, $userId, $financialInstitutionId, $name, $contact, $description)
+    {
         $this->id = $id;
         $this->userId = $userId;
         $this->financialInstitutionId = $financialInstitutionId;
@@ -17,62 +19,75 @@ class Account implements JsonSerializable {
         $this->description = $description;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getFinancialInstitutionId() {
+    public function getFinancialInstitutionId()
+    {
         return $this->financialInstitutionId;
     }
 
-    public function setFinancialInstitutionId($financialInstitutionId) {
+    public function setFinancialInstitutionId($financialInstitutionId)
+    {
         $this->financialInstitutionId = $financialInstitutionId;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function getContact() {
+    public function getContact()
+    {
         return $this->contact;
     }
 
-    public function setContact($contact) {
+    public function setContact($contact)
+    {
         $this->contact = $contact;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return array(
-            'id'=>$this->id,
-            'userId'=>$this->userId,
-            'financialInstitutionId'=>$this->financialInstitutionId,
-            'name'=>$this->name,
-            'contact'=>$this->contact,
-            'description'=>$this->description
+            'id' => $this->id,
+            'userId' => $this->userId,
+            'financialInstitutionId' => $this->financialInstitutionId,
+            'name' => $this->name,
+            'contact' => $this->contact,
+            'description' => $this->description
         );
     }
 }

@@ -1,47 +1,57 @@
 <?php
 
-class FinancialInstitutionRequestDTO {
+class FinancialInstitutionRequestDTO
+{
     private $userId;
     private $name;
     private $address;
     private $contact;
 
-    public function __construct($userId, $name, $address, $contact) {
+    public function __construct($userId, $name, $address, $contact)
+    {
         $this->userId = $userId;
         $this->name = $name;
         $this->address = $address;
         $this->contact = $contact;
     }
 
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
-    public function setUserId($userId) {
+    public function setUserId($userId)
+    {
         $this->userId = $userId;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getAddress() {
+    public function getAddress()
+    {
         return $this->address;
     }
 
-    public function setAddress($address) {
+    public function setAddress($address)
+    {
         $this->address = $address;
     }
 
-    public function getContact() {
+    public function getContact()
+    {
         return $this->contact;
     }
 
-    public function setContact($contact) {
+    public function setContact($contact)
+    {
         $this->contact = $contact;
     }
 }

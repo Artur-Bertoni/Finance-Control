@@ -1,6 +1,7 @@
 <?php
 
-class TransactionDTO implements JsonSerializable {
+class TransactionDTO implements JsonSerializable
+{
     private $id;
     private $account;
     private $category;
@@ -11,7 +12,8 @@ class TransactionDTO implements JsonSerializable {
     private $installmentsNumber;
     private $obs;
 
-    public function __construct($id, $account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber, $obs) {
+    public function __construct($id, $account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber, $obs)
+    {
         $this->id = $id;
         $this->account = $account;
         $this->category = $category;
@@ -23,89 +25,108 @@ class TransactionDTO implements JsonSerializable {
         $this->obs = $obs;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getAccount() {
+    public function getAccount()
+    {
         return $this->account;
     }
 
-    public function setAccount($account) {
+    public function setAccount($account)
+    {
         $this->account = $account;
     }
 
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->category;
     }
 
-    public function setCategory($category) {
+    public function setCategory($category)
+    {
         $this->category = $category;
     }
 
-    public function getTransactionLocale() {
+    public function getTransactionLocale()
+    {
         return $this->transactionLocale;
     }
 
-    public function setTransactionLocale($transactionLocale) {
+    public function setTransactionLocale($transactionLocale)
+    {
         $this->transactionLocale = $transactionLocale;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
-    public function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = $date;
     }
 
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
     }
 
-    public function getInstallmentsNumber() {
+    public function getInstallmentsNumber()
+    {
         return $this->installmentsNumber;
     }
 
-    public function setInstallmentsNumber($installmentsNumber) {
+    public function setInstallmentsNumber($installmentsNumber)
+    {
         $this->installmentsNumber = $installmentsNumber;
     }
 
-    public function getObs() {
+    public function getObs()
+    {
         return $this->obs;
     }
 
-    public function setObs($obs): void {
+    public function setObs($obs): void
+    {
         $this->obs = $obs;
     }
 
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return array(
-            'id'=>$this->id,
-            'account'=>$this->account,
-            'category'=>$this->category,
-            'transactionLocale'=>$this->transactionLocale,
-            'value'=>$this->value,
-            'date'=>$this->date,
-            'type'=>$this->type,
-            'installmentsNumber'=>$this->installmentsNumber,
-            'obs'=>$this->obs
+            'id' => $this->id,
+            'account' => $this->account,
+            'category' => $this->category,
+            'transactionLocale' => $this->transactionLocale,
+            'value' => $this->value,
+            'date' => $this->date,
+            'type' => $this->type,
+            'installmentsNumber' => $this->installmentsNumber,
+            'obs' => $this->obs
         );
     }
 }

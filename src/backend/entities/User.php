@@ -1,56 +1,67 @@
 <?php
 
-class User implements JsonSerializable {
+class User implements JsonSerializable
+{
     private $id;
     private $username;
     private $email;
     private $password;
 
-    public function __construct($id, $username, $email, $password) {
+    public function __construct($id, $username, $email, $password)
+    {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
     }
 
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = $email;
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return array(
-            'id'=>$this->id,
-            'username'=>$this->username,
-            'email'=>$this->email,
-            'password'=>$this->password
+            'id' => $this->id,
+            'username' => $this->username,
+            'email' => $this->email,
+            'password' => $this->password
         );
     }
 }
