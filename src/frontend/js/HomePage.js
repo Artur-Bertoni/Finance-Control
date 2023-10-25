@@ -1,41 +1,20 @@
+import {doRequest} from "../../utils/functions.js";
 import {Transaction} from "./class/TransactionClass.js";
 
 let data;
 let transactions = [];
 
-$.ajax({
-    url: 'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
-    type: 'POST',
-    async: false,
-    data: {findAllByUser: true},
-    success: function (response) {
-        data = JSON.parse(response);
-        transactions = processData(data);
-    },
-    error: function (error) {
-        console.error(error);
-    }
-});
+data = doRequest('http://localhost/finance-control/src/backend/resources/TransactionResource.php',
+    {findAllByUser: true})
 
-function processData(data) {
-    let array = [];
+transactions = []
+try {
     for (const element of data) {
-        const transactionData = element;
-        const transaction = new Transaction(
-            Number(transactionData.id),
-            transactionData.account.name,
-            transactionData.category.name,
-            transactionData.transactionLocale.name,
-            Number(transactionData.value),
-            transactionData.date,
-            transactionData.type,
-            Number(transactionData.installmentsNumber)
-        );
-
-        array.push(transaction);
+        const transaction = Transaction.processTransaction(element)
+        transactions.push(transaction)
     }
-
-    return array;
+} catch (e) {
+    console.log('No transactions recovered from DB: ' + e)
 }
 
 let list = document.getElementById('last-transaction-list')

@@ -10,4 +10,18 @@ export class Transaction {
         this.installmentsNumber = installmentsNumber
         this.obs = obs
     }
+
+    static processTransaction(data) {
+        return new Transaction(
+            Number(data.id),
+            data.account.name,
+            data.category.name,
+            data.transactionLocale.name,
+            Number(data.value),
+            data.date,
+            data.type,
+            Number(data.installmentsNumber),
+            data.obs
+        );
+    }
 }
