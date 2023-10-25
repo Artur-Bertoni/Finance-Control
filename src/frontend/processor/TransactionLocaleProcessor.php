@@ -4,14 +4,20 @@ include "../../backend/services/TransactionLocaleService.php";
 
 session_start();
 
+$service = new TransactionLocaleService();
+
 if (isset($_POST['cancelButton'])) {
     header("Location: ../HomePage.html");
     exit;
 }
 
-$service = new TransactionLocaleService();
+if (isset($_POST['deleteButton'])) {
+    $service->delete($_SESSION['transactionLocaleId']);
+    header("Location: ../HomePage.html");
+    exit;
+}
 
-$transactionLocaleId = $_POST['transactionLocaleId'];
+$transactionLocaleId = $_SESSION['transactionLocaleId'];
 $userId = $_SESSION['userId'];
 $name = $_POST["nameField"];
 $address = $_POST["addressField"];
@@ -30,4 +36,4 @@ if ($transactionLocaleId != "") {
     ));
 }
 
-header("Location: ../HomePage.html");
+header("Location: ../TransactionLocaleDashboard.html");

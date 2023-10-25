@@ -8,34 +8,28 @@ export class TransactionLocale {
     }
 
     static addTransactionLocales() {
-        let transactionLocales = this.processTransactionLocales(doRequest(
+        let transactionLocales = doRequest(
             'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
-            {findAllByUser: true}));
+            {findAllByUser: true}
+        );
 
         let transactionLocaleList = document.getElementById('transaction-locale-input')
 
         for (const element of transactionLocales) {
+            let transactionLocale = this.processTransactionLocale(element)
             let option = document.createElement('option')
-            option.value = element.id
-            option.innerText = element.name
+            option.value = transactionLocale.id
+            option.innerText = transactionLocale.name
 
             transactionLocaleList.appendChild(option)
         }
     }
 
-    static processTransactionLocales(data) {
-        let array = [];
-        for (const element of data) {
-            const transactionLocaleData = element;
-            const transactionLocale = new TransactionLocale(
-                Number(transactionLocaleData.id),
-                transactionLocaleData.name,
-                transactionLocaleData.address
-            );
-
-            array.push(transactionLocale);
-        }
-
-        return array;
+    static processTransactionLocale(data) {
+        return new TransactionLocale(
+            Number(data.id),
+            data.name,
+            data.address
+        );
     }
 }

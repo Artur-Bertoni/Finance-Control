@@ -28,13 +28,31 @@ class TransactionLocaleService
         $transactionLocaleDTOs = [];
 
         foreach ($transactionLocales as $transactionLocale) {
-            $transactionLocaleDTOs[] = new TransactionLocaleDTO(
-                $transactionLocale->getId(),
-                $transactionLocale->getName(),
-                $transactionLocale->getAddress()
-            );
+            $transactionLocaleDTOs[] = $this->buildTransactionLocale($transactionLocale);
         }
 
         echo json_encode($transactionLocaleDTOs);
+    }
+
+    public function findById($id)
+    {
+        global $repository;
+        $transactionLocale = $repository->findById($id);
+        echo json_encode($this->buildTransactionLocale($transactionLocale));
+    }
+
+    private function buildTransactionLocale($transactionLocale): TransactionLocaleDTO
+    {
+        return new TransactionLocaleDTO(
+            $transactionLocale->getId(),
+            $transactionLocale->getName(),
+            $transactionLocale->getAddress()
+        );
+    }
+
+    public function delete($id)
+    {
+        global $repository;
+        $repository->delete($id);
     }
 }

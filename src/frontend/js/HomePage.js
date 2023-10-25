@@ -7,7 +7,6 @@ let transactions = [];
 data = doRequest('http://localhost/finance-control/src/backend/resources/TransactionResource.php',
     {findAllByUser: true})
 
-transactions = []
 try {
     for (const element of data) {
         const transaction = Transaction.processTransaction(element)
@@ -22,7 +21,7 @@ let totalValue = 0
 
 for (const element of transactions) {
     let button = document.createElement('button')
-    button.classList.add('transaction-item-btn')
+    button.classList.add('dashboard-item-btn')
     button.classList.add('colorful-button')
     button.type = "submit"
     button.name = "itemButton"

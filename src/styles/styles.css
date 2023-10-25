@@ -256,7 +256,7 @@ input[type=number]::-webkit-inner-spin-button {
 /* ---- general/components/IMAGES ---- */
 
 /* general/components/FORM */
-#home-page-form {
+#dashboard-form {
     max-height: none;
     max-width: none;
 }
@@ -335,7 +335,7 @@ input[type=number]::-webkit-inner-spin-button {
     margin: 2vmin;
 }
 
-#last-transaction-list {
+#last-transaction-list, #transaction-locales-list {
     font-size: 3vmin;
     text-align: center;
 }
@@ -384,7 +384,8 @@ input[type=number]::-webkit-inner-spin-button {
 /* ---- buttons/MENU PICTURE ---- */
 
 /* buttons/HOME PAGE */
-.home-page-btn {
+.dashboard-btn {
+    /*TODO ajustar pasa conteúdo não ultrapassar as bordas*/
     background: var(--green);
     width: 20vmin;
     margin: 2vmin;
@@ -393,7 +394,7 @@ input[type=number]::-webkit-inner-spin-button {
     border-radius: 2vmin;
 }
 
-.transaction-item-btn {
+.dashboard-item-btn {
     display: flex;
     min-width: 99%;
     max-width: 99%;
@@ -402,9 +403,10 @@ input[type=number]::-webkit-inner-spin-button {
     white-space: pre;
     font-size: 2vmin;
     line-height: 0;
+    padding: 20px;
 }
 
-#new-transaction-btn {
+#main-dashboard-btn {
     min-height: 10vmin;
 }
 

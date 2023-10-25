@@ -17,7 +17,7 @@ if (isset($_POST['deleteButton'])) {
     exit;
 }
 
-$transactionId = $_POST['transactionId'];
+$transactionId = $_SESSION['transactionId'];
 $userId = $_SESSION['userId'];
 $accountId = $_POST["accountField"];
 $categoryId = $_POST["categoryField"];

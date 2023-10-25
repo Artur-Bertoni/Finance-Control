@@ -11,8 +11,8 @@ if (array_key_exists('postTransaction', $_POST)) {
     header("Location: ../Transaction.html");
 }
 
-if (array_key_exists('postTransactionLocale', $_POST)) {
-    header("Location: ../TransactionLocale.html");
+if (array_key_exists('transactionLocales', $_POST)) {
+    header("Location: ../TransactionLocaleDashboard.html");
 }
 
 if (array_key_exists('postFinancialInstitution', $_POST)) {
