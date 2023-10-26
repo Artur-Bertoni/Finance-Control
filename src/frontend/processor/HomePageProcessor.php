@@ -37,3 +37,8 @@ if (array_key_exists('itemButton', $_POST)) {
     header("Location: ../Transaction.html");
     exit;
 }
+
+if (array_key_exists('profileButton', $_POST)) {
+    header("Location: ../User.html");
+    exit;
+}
