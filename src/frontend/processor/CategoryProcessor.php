@@ -6,13 +6,24 @@ session_start();
 
 $service = new CategoryService();
 
-if (isset($_POST['homeButton']) || isset($_POST['cancelButton'])) {
+if (isset($_POST['homeButton'])) {
     header("Location: ../HomePage.html");
+    exit;
+}
+
+if (isset($_POST['cancelButton'])) {
+    header("Location: ../CategoryDashboard.html");
     exit;
 }
 
 if (isset($_POST['profileButton'])) {
     header("Location: ../User.html");
+    exit;
+}
+
+if (isset($_POST['deleteButton'])) {
+    $service->delete($_SESSION['categoryId']);
+    header("Location: ../CategoryDashboard.html");
     exit;
 }
 
@@ -35,4 +46,4 @@ if ($categoryId != "") {
     ));
 }
 
-header("Location: ../HomePage.html");
+header("Location: ../CategoryDashboard.html");

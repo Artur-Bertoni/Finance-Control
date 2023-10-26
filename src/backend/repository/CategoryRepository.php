@@ -27,7 +27,7 @@ class CategoryRepository
             $lastInsertedId = $stmt->insert_id;
             $stmt->close();
 
-            return findById($lastInsertedId);
+            return $this->findById($lastInsertedId);
         } else
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
@@ -58,7 +58,7 @@ class CategoryRepository
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id)
+    public function findById($id): bool|Category
     {
         global $db;
 
@@ -94,7 +94,7 @@ class CategoryRepository
         return $categories;
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $db;
 

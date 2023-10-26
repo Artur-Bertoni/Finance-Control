@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Home Page</title>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
+</head>
+<body>
+<div id=page-wrapper>
+	<img alt=Logo id=logo-img src=../images/logo.png>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<form action=processor/CategoryDashboardProcessor.php id=dashboard-form method=post>
+				<ul id=navigation-menu-btn-gp>
+					<li>
+						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
+							<img alt="Profile Picture" id=profile-btn-img src=../images/user.png>
+						</button>
+					</li>
+					<li>
+						<button class=img-btn id=home-btn name="homeButton" type=submit formnovalidate>
+							<img alt="Home Picture" id=home-btn-img src=../images/home-page.png>
+						</button>
+					</li>
+				</ul>
+				<table>
+					<caption></caption>
+					<tr>
+						<th></th>
+						<th>
+							<h1 id=title>
+								Categorias Cadastrados
+							</h1>
+						</th>
+					</tr>
+					<tr>
+						<td>
+							<ul>
+								<li>
+									<button class='dashboard-btn colorful-button' id=main-dashboard-btn
+											name=postCategory type=submit>
+										Cadastrar Nova Categoria
+									</button>
+								</li>
+							</ul>
+						</td>
+						<td>
+							<div id=list-bkg>
+								<div id=categories-list></div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+<script src=js/CategoryDashboard.js type=module></script>
+</body>
+</html>

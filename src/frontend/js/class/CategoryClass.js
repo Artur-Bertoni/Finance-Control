@@ -8,34 +8,28 @@ export class Category {
     }
 
     static addCategories() {
-        let categories = this.processCategories(doRequest(
+        let categories = doRequest(
             'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
-            {findAllByUser: true}));
+            {findAllByUser: true}
+        );
 
         let categoryList = document.getElementById('category-input')
 
         for (const element of categories) {
+            let category = this.processCategory(element)
             let option = document.createElement('option')
-            option.value = element.id
-            option.innerText = element.name
+            option.value = category.id
+            option.innerText = category.name
 
             categoryList.appendChild(option)
         }
     }
 
-    static processCategories(data) {
-        let array = [];
-        for (const element of data) {
-            const categoryData = element;
-            const category = new Category(
-                Number(categoryData.id),
-                categoryData.name,
-                categoryData.description
-            );
-
-            array.push(category);
-        }
-
-        return array;
+    static processCategory(data) {
+        return new Category(
+            Number(data.id),
+            data.name,
+            data.description
+        );
     }
 }

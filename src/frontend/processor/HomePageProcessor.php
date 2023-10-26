@@ -27,8 +27,8 @@ if (array_key_exists('accounts', $_POST)) {
     exit;
 }
 
-if (array_key_exists('postCategory', $_POST)) {
-    header("Location: ../Category.html");
+if (array_key_exists('categories', $_POST)) {
+    header("Location: ../CategoryDashboard.html");
     exit;
 }
 

@@ -21,20 +21,38 @@ class CategoryService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId)
+    public function findAllByUser($userId): void
     {
         global $repository;
         $categories = $repository->findAllByUserId($userId);
         $categoryDTOs = [];
 
         foreach ($categories as $category) {
-            $categoryDTOs[] = new CategoryDTO(
-                $category->getId(),
-                $category->getName(),
-                $category->getDescription()
-            );
+            $categoryDTOs[] = $this->buildCategoryDTO($category);
         }
 
         echo json_encode($categoryDTOs);
+    }
+
+    public function findById($id): void
+    {
+        global $repository;
+        $category = $repository->findById($id);
+        echo json_encode($this->buildCategoryDTO($category));
+    }
+
+    private function buildCategoryDTO($category): CategoryDTO
+    {
+        return new CategoryDTO(
+            $category->getId(),
+            $category->getName(),
+            $category->getDescription()
+        );
+    }
+
+    public function delete($id): void
+    {
+        global $repository;
+        $repository->delete($id);
     }
 }
