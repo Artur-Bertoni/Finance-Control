@@ -1,5 +1,5 @@
-import {doRequest} from "../../utils/functions.js";
-import {Transaction} from "./class/TransactionClass.js";
+import {doRequest} from "../../../utils/functions.js";
+import {Transaction} from "../class/TransactionClass.js";
 
 let data;
 let transactions = [];

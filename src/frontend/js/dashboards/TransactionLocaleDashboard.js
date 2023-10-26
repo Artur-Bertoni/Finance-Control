@@ -1,24 +1,24 @@
-import {doRequest} from "../../utils/functions.js";
-import {FinancialInstitution} from "./class/FinancialInstitutionClass.js";
+import {doRequest} from "../../../utils/functions.js";
+import {TransactionLocale} from "../class/TransactionLocaleClass.js";
 
 let data;
-let financialInstitutions = []
+let transactionLocales = []
 
-data = doRequest('http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
+data = doRequest('http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
     {findAllByUser: true})
 
 try {
     for (const element of data) {
-        const financialInstitution = FinancialInstitution.processFinancialInstitution(element)
-        financialInstitutions.push(financialInstitution)
+        const transactionLocale = TransactionLocale.processTransactionLocale(element)
+        transactionLocales.push(transactionLocale)
     }
 } catch(e) {
-    console.log('No financial institutions recovered from DB: ' + e)
+    console.log('No transaction locales recovered from DB: ' + e)
 }
 
-let list = document.getElementById('financial-institutions-list')
+let list = document.getElementById('transaction-locales-list')
 
-for (const element of financialInstitutions) {
+for (const element of transactionLocales) {
     let button = document.createElement('button')
     button.classList.add('dashboard-item-btn')
     button.classList.add('colorful-button')
@@ -39,11 +39,6 @@ for (const element of financialInstitutions) {
     addressLabel.classList.add('grid-label')
     addressLabel.innerText = `Endereço: ${element.address}`
     grid.appendChild(addressLabel)
-
-    let contactLabel = document.createElement('span')
-    contactLabel.classList.add('grid-label')
-    contactLabel.innerText = `Contato: ${element.contact}`
-    grid.appendChild(contactLabel)
 
     button.appendChild(grid)
     list.appendChild(button)
