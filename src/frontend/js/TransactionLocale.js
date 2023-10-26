@@ -8,9 +8,9 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
         {findById: true})
 
-    addDeleteIcon()
-
     if (response !== undefined) {
+        addDeleteIcon()
+
         let transactionLocale = TransactionLocale.processTransactionLocale(response)
         let nameInput = document.getElementById('name-input')
         let addressInput = document.getElementById('address-input')

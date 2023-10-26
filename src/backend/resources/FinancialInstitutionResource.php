@@ -6,7 +6,7 @@ session_start();
 
 $service = new FinancialInstitutionService();
 
-if ($_POST['findAllByUser']) {
+if (array_key_exists('findAllByUser', $_POST)) {
     $service->findAllByUser($_SESSION['userId']);
 }
 

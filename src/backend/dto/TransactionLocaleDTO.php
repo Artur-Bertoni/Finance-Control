@@ -43,7 +43,7 @@ class TransactionLocaleDTO implements JsonSerializable
         $this->address = $address;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return array(
             'id' => $this->id,

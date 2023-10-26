@@ -50,7 +50,7 @@ class TransactionLocaleService
         );
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $repository;
         $repository->delete($id);

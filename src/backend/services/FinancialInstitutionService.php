@@ -21,7 +21,7 @@ class FinancialInstitutionService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId)
+    public function findAllByUser($userId): void
     {
         global $repository;
         $financialInstitutions = $repository->findAllByUserId($userId);
@@ -56,7 +56,7 @@ class FinancialInstitutionService
         );
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $repository;
         $repository->delete($id);

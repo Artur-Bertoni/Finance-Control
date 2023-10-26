@@ -8,9 +8,9 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
         {findById: true})
 
-    addDeleteIcon()
-
     if (response !== undefined) {
+        addDeleteIcon()
+
         let financialInstitution = FinancialInstitution.processFinancialInstitution(response)
         let nameInput = document.getElementById('name-input')
         let addressInput = document.getElementById('address-input')
