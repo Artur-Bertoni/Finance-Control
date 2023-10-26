@@ -4,14 +4,30 @@ include "../../backend/services/FinancialInstitutionService.php";
 
 session_start();
 
-if (isset($_POST['cancelButton'])) {
+$service = new FinancialInstitutionService();
+
+if (isset($_POST['homeButton'])) {
     header("Location: ../HomePage.html");
     exit;
 }
 
-$service = new FinancialInstitutionService();
+if (isset($_POST['cancelButton'])) {
+    header("Location: ../FinancialInstitutionDashboard.html");
+    exit;
+}
 
-$financialInstitutionId = $_POST['financialInstitutionId'];
+if (isset($_POST['profileButton'])) {
+    header("Location: ../User.html");
+    exit;
+}
+
+if (isset($_POST['deleteButton'])) {
+    $service->delete($_SESSION['financialInstitutionId']);
+    header("Location: ../FinancialInstitutionDashboard.html");
+    exit;
+}
+
+$financialInstitutionId = $_SESSION['financialInstitutionId'];
 $userId = $_SESSION['userId'];
 $name = $_POST["nameField"];
 $address = $_POST["addressField"];
@@ -33,4 +49,4 @@ if ($financialInstitutionId != "") {
     ));
 }
 
-header("Location: ../HomePage.html");
+header("Location: ../FinancialInstitutionDashboard.html");

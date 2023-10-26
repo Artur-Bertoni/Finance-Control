@@ -6,14 +6,24 @@ session_start();
 
 $service = new TransactionLocaleService();
 
-if (isset($_POST['cancelButton'])) {
+if (isset($_POST['homeButton'])) {
     header("Location: ../HomePage.html");
+    exit;
+}
+
+if (isset($_POST['cancelButton'])) {
+    header("Location: ../TransactionLocaleDashboard.html");
+    exit;
+}
+
+if (isset($_POST['profileButton'])) {
+    header("Location: ../User.html");
     exit;
 }
 
 if (isset($_POST['deleteButton'])) {
     $service->delete($_SESSION['transactionLocaleId']);
-    header("Location: ../HomePage.html");
+    header("Location: ../TransactionLocaleDashboard.html");
     exit;
 }
 

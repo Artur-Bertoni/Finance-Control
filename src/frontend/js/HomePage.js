@@ -35,7 +35,7 @@ for (const element of transactions) {
         button.style.backgroundColor = '#4BAE50FF'
 
     let grid = document.createElement('div')
-    grid.classList.add('transaction-grid')
+    grid.classList.add('dashboard-grid')
 
     let categoryLabel = document.createElement('span')
     categoryLabel.classList.add('grid-label')

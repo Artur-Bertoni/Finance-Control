@@ -324,7 +324,7 @@ input[type=number]::-webkit-inner-spin-button {
 /* ---- general/components/FORM ---- */
 
 /* general/components/GRID */
-.transaction-grid {
+.dashboard-grid {
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -385,7 +385,6 @@ input[type=number]::-webkit-inner-spin-button {
 
 /* buttons/HOME PAGE */
 .dashboard-btn {
-    /*TODO ajustar pasa conteúdo não ultrapassar as bordas*/
     background: var(--green);
     width: 20vmin;
     margin: 2vmin;
@@ -403,7 +402,7 @@ input[type=number]::-webkit-inner-spin-button {
     white-space: pre;
     font-size: 2vmin;
     line-height: 0;
-    padding: 20px;
+    padding: 10px;
 }
 
 #main-dashboard-btn {

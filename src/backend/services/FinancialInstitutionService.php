@@ -38,4 +38,27 @@ class FinancialInstitutionService
 
         echo json_encode($financialInstitutionDTOs);
     }
+
+    public function findById($id): void
+    {
+        global $repository;
+        $financialInstitution = $repository->findById($id);
+        echo json_encode($this->buildFinancialInstitutionDTO($financialInstitution));
+    }
+
+    private function buildFinancialInstitutionDTO($financialInstitution): FinancialInstitutionDTO
+    {
+        return new FinancialInstitutionDTO(
+            $financialInstitution->getId(),
+            $financialInstitution->getName(),
+            $financialInstitution->getAddress(),
+            $financialInstitution->getContact()
+        );
+    }
+
+    public function delete($id)
+    {
+        global $repository;
+        $repository->delete($id);
+    }
 }

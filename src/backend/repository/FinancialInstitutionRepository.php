@@ -28,7 +28,7 @@ class FinancialInstitutionRepository
             $lastInsertedId = $stmt->insert_id;
             $stmt->close();
 
-            return findById($lastInsertedId);
+            return $this->findById($lastInsertedId);
         } else
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
@@ -60,7 +60,7 @@ class FinancialInstitutionRepository
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id)
+    public function findById($id): FinancialInstitution|false
     {
         global $db;
 
@@ -98,7 +98,7 @@ class FinancialInstitutionRepository
         return $financialInstitution;
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $db;
 

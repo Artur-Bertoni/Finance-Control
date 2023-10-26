@@ -4,14 +4,14 @@ include "../../backend/services/UserService.php";
 
 session_start();
 
-if (isset($_POST['cancelButton'])) {
-    header("Location: ../Login.html");
+$service = new UserService();
+
+if (isset($_POST['homeButton']) || isset($_POST['cancelButton'])) {
+    header("Location: ../HomePage.html");
     exit;
 }
 
-$service = new UserService();
-
-$userId = $_POST['userId'];
+$userId = $_SESSION['userId'];
 $username = $_POST["usernameField"];
 $email = $_POST["emailField"];
 $password = $_POST["passwordField"];

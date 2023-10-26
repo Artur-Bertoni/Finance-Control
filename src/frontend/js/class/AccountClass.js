@@ -10,36 +10,30 @@ export class Account {
     }
 
     static addAccounts() {
-        let accounts = this.processAccounts(doRequest(
+        let accounts = doRequest(
             'http://localhost/finance-control/src/backend/resources/AccountResource.php',
-            {findAllByUser: true}));
+            {findAllByUser: true}
+        );
 
         let accountList = document.getElementById('account-input')
 
         for (const element of accounts) {
+            let account = this.processAccount(element)
             let option = document.createElement('option')
-            option.value = element.id
-            option.innerText = element.name
+            option.value = account.id
+            option.innerText = account.name
 
             accountList.appendChild(option)
         }
     }
 
-    static processAccounts(data) {
-        let array = [];
-        for (const element of data) {
-            const accountData = element;
-            const account = new Account(
-                Number(accountData.id),
-                accountData.name,
-                accountData.financialInstitution.name,
-                accountData.contact,
-                accountData.description
-            );
-
-            array.push(account);
-        }
-
-        return array;
+    static processAccount(data) {
+        return new Account(
+            Number(data.id),
+            data.name,
+            data.financialInstitution.name,
+            data.contact,
+            data.description
+        );
     }
 }

@@ -4,12 +4,12 @@ include "../../backend/services/UserService.php";
 
 session_start();
 
+$service = new UserService();
+
 if (isset($_POST['registerButton'])) {
     header("Location: ../User.html");
     exit;
 }
-
-$service = new UserService();
 
 $email = $_POST["emailField"];
 $password = $_POST["passwordField"];

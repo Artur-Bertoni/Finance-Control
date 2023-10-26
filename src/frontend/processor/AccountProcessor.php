@@ -4,14 +4,19 @@ include "../../backend/services/AccountService.php";
 
 session_start();
 
-if (isset($_POST['cancelButton'])) {
+$service = new AccountService();
+
+if (isset($_POST['homeButton']) || isset($_POST['cancelButton'])) {
     header("Location: ../HomePage.html");
     exit;
 }
 
-$service = new AccountService();
+if (isset($_POST['profileButton'])) {
+    header("Location: ../User.html");
+    exit;
+}
 
-$accountId = $_POST['accountId'];
+$accountId = $_SESSION['accountId'];
 $userId = $_SESSION['userId'];
 $financialInstitutionId = $_POST['financialInstitutionField'];
 $name = $_POST["nameField"];

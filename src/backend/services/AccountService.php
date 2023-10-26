@@ -23,7 +23,7 @@ class AccountService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId)
+    public function findAllByUser($userId): void
     {
         global $repository;
         $accounts = $repository->findAllByUserId($userId);
@@ -49,10 +49,16 @@ class AccountService
         );
     }
 
-    public function findById($id)
+    public function findById($id): void
     {
         global $repository;
         $account = $repository->findById($id);
         echo json_encode($this->buildAccountDTO($account));
+    }
+
+    public function delete($id): void
+    {
+        global $repository;
+        $repository->delete($id);
     }
 }

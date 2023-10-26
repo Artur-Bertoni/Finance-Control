@@ -6,8 +6,13 @@ session_start();
 
 $service = new TransactionService();
 
-if (isset($_POST['cancelButton'])) {
+if (isset($_POST['homeButton']) || isset($_POST['cancelButton'])) {
     header("Location: ../HomePage.html");
+    exit;
+}
+
+if (isset($_POST['profileButton'])) {
+    header("Location: ../User.html");
     exit;
 }
 

@@ -27,7 +27,7 @@ class TransactionService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId)
+    public function findAllByUser($userId): void
     {
         global $repository;
         $transactions = $repository->findAllByUserId($userId);
@@ -57,14 +57,14 @@ class TransactionService
         );
     }
 
-    public function findById($id)
+    public function findById($id): void
     {
         global $repository;
         $transaction = $repository->findById($id);
         echo json_encode($this->buildTransaction($transaction));
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $repository;
         $repository->delete($id);

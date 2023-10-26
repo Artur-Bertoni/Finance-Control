@@ -9,35 +9,29 @@ export class FinancialInstitution {
     }
 
     static addFinancialInstitutions() {
-        let financialInstitutions = this.processFinancialInstitution(doRequest(
+        let financialInstitutions = doRequest(
             'http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
-            {findAllByUser: true}));
+            {findAllByUser: true}
+        );
 
         let financialInstitutionList = document.getElementById('financial-institution-input')
 
         for (const element of financialInstitutions) {
+            let financialInstitution = this.processFinancialInstitution(element)
             let option = document.createElement('option')
-            option.value = element.id
-            option.innerText = element.name
+            option.value = financialInstitution.id
+            option.innerText = financialInstitution.name
 
             financialInstitutionList.appendChild(option)
         }
     }
 
     static processFinancialInstitution(data) {
-        let array = [];
-        for (const element of data) {
-            const financialInstitutionData = element;
-            const financialInstitution = new FinancialInstitution(
-                Number(financialInstitutionData.id),
-                financialInstitutionData.name,
-                financialInstitutionData.address,
-                financialInstitutionData.contact
-            );
-
-            array.push(financialInstitution);
-        }
-
-        return array;
+        return new FinancialInstitution(
+            Number(data.id),
+            data.name,
+            data.address,
+            data.contact
+        );
     }
 }

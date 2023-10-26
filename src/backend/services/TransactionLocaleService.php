@@ -21,27 +21,27 @@ class TransactionLocaleService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId)
+    public function findAllByUser($userId): void
     {
         global $repository;
         $transactionLocales = $repository->findAllByUserId($userId);
         $transactionLocaleDTOs = [];
 
         foreach ($transactionLocales as $transactionLocale) {
-            $transactionLocaleDTOs[] = $this->buildTransactionLocale($transactionLocale);
+            $transactionLocaleDTOs[] = $this->buildTransactionLocaleDTO($transactionLocale);
         }
 
         echo json_encode($transactionLocaleDTOs);
     }
 
-    public function findById($id)
+    public function findById($id): void
     {
         global $repository;
         $transactionLocale = $repository->findById($id);
-        echo json_encode($this->buildTransactionLocale($transactionLocale));
+        echo json_encode($this->buildTransactionLocaleDTO($transactionLocale));
     }
 
-    private function buildTransactionLocale($transactionLocale): TransactionLocaleDTO
+    private function buildTransactionLocaleDTO($transactionLocale): TransactionLocaleDTO
     {
         return new TransactionLocaleDTO(
             $transactionLocale->getId(),

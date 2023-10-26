@@ -62,7 +62,7 @@ class AccountRepository
             die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
     }
 
-    public function findById($id)
+    public function findById($id): false|Account
     {
         global $db;
 
@@ -102,7 +102,7 @@ class AccountRepository
         return $accounts;
     }
 
-    public function delete($id)
+    public function delete($id): void
     {
         global $db;
 
