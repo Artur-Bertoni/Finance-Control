@@ -1,5 +1,5 @@
-import {doRequest} from "../../../utils/functions.js";
-import {Account} from "../class/AccountClass.js";
+import {doRequest} from "../../utils/functions.js";
+import {Account} from "./class/AccountClass.js";
 
 let data;
 let accounts = []
