@@ -22,28 +22,42 @@ if (isset($_POST['profileButton'])) {
 }
 
 if (isset($_POST['deleteButton'])) {
-    $service->delete($_SESSION['categoryId']);
+    $result = $service->delete($_SESSION['categoryId']);
+
+    if ($result != null) {
+        echo "<script>alert('" . $result . "');location.href=\"../Category.html\";</script>";
+        exit;
+    }
+
     header("Location: ../CategoryDashboard.html");
     exit;
 }
 
-$categoryId = $_SESSION['categoryId'];
-$userId = $_SESSION['userId'];
-$name = $_POST["nameField"];
-$description = $_POST["descriptionField"];
+if (isset($_POST['saveButton'])) {
+    $categoryId = $_SESSION['categoryId'];
+    $userId = $_SESSION['userId'];
+    $name = $_POST["nameField"];
+    $description = $_POST["descriptionField"];
 
-if ($categoryId != "") {
-    $service->update($categoryId, new CategoryRequestDTO(
-        $userId,
-        $name,
-        $description
-    ));
-} else {
-    $service->create(new CategoryRequestDTO(
-        $userId,
-        $name,
-        $description
-    ));
+    if ($categoryId != "") {
+        $result = $service->update($categoryId, new CategoryRequestDTO(
+            $userId,
+            $name,
+            $description
+        ));
+    } else {
+        $result = $service->create(new CategoryRequestDTO(
+            $userId,
+            $name,
+            $description
+        ));
+    }
+
+    if (!$result instanceof Category) {
+        echo "<script>alert('" . $result . "');location.href=\"../Category.html\";</script>";
+        exit;
+    }
+
+    header("Location: ../CategoryDashboard.html");
+    exit;
 }
-
-header("Location: ../CategoryDashboard.html");

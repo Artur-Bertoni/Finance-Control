@@ -9,10 +9,33 @@ export function addDeleteIcon() {
     deleteButton.id = 'delete-btn'
     deleteButton.name = 'deleteButton'
     deleteButton.type = 'submit'
-
     deleteButton.appendChild(deleteImg)
+
+    let li = document.createElement('li')
+    li.appendChild(deleteButton)
+
     let iconButtonList = document.getElementById('navigation-menu-btn-gp')
-    iconButtonList.appendChild(deleteButton)
+    iconButtonList.appendChild(li)
+}
+
+export function addHomePageIcon() {
+    let homePageImg = document.createElement('img')
+    homePageImg.alt = 'Home Page Picture'
+    homePageImg.id = 'home-btn-img'
+    homePageImg.src = '../images/home-page.png'
+
+    let homePageButton = document.createElement('button')
+    homePageButton.classList.add('img-btn')
+    homePageButton.id = 'home-btn'
+    homePageButton.name = 'homeButton'
+    homePageButton.type = 'submit'
+    homePageButton.appendChild(homePageImg)
+
+    let li = document.createElement('li')
+    li.appendChild(homePageButton)
+
+    let iconButtonList = document.getElementById('navigation-menu-btn-gp')
+    iconButtonList.appendChild(li)
 }
 
 export function doRequest(url, method) {

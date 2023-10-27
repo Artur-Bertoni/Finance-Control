@@ -13,6 +13,8 @@
 	<div id=content-wrapper>
 		<div id=background>
 			<form action=processor/UserProcessor.php method=post>
+				<ul id=navigation-menu-btn-gp>
+				</ul>
 				<ul>
 					<li class=form-list-item id=image-in-list>
 						<img alt="Profile Picture" id=form-profile-img src=../images/user.png>
@@ -64,32 +66,6 @@
 	</div>
 </div>
 </body>
-
-<script>
-    let imgSrcArray = ['../images/showing.png', '../images/hiding.png']
-    let currentImgIndex = 0
-
-    function trocar(elementId) {
-        if (currentImgIndex === imgSrcArray.length)
-            currentImgIndex = 0;
-        document.getElementById(elementId).src = imgSrcArray[currentImgIndex];
-        currentImgIndex++;
-    }
-
-    let passwordInput = document.getElementById('password-input');
-    let passwordToggle = document.querySelector('#password-img');
-
-    passwordToggle.addEventListener('click', function () {
-        passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text';
-        trocar('password-img')
-    });
-
-    let passwordConfirmInput = document.getElementById('password-confirm-input');
-    let passwordConfirmToggle = document.querySelector('#password-confirm-img');
-
-    passwordConfirmToggle.addEventListener('click', function () {
-        passwordConfirmInput.type = passwordConfirmInput.type === 'text' ? 'password' : 'text';
-        trocar('password-confirm-img')
-    });
-</script>
+<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+<script src=js/User.js type=module></script>
 </html>

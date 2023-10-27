@@ -22,28 +22,42 @@ if (isset($_POST['profileButton'])) {
 }
 
 if (isset($_POST['deleteButton'])) {
-    $service->delete($_SESSION['transactionLocaleId']);
+    $result = $service->delete($_SESSION['transactionLocaleId']);
+
+    if ($result != null) {
+        echo "<script>alert('" . $result . "');location.href=\"../TransactionLocale.html\";</script>";
+        exit;
+    }
+
     header("Location: ../TransactionLocaleDashboard.html");
     exit;
 }
 
-$transactionLocaleId = $_SESSION['transactionLocaleId'];
-$userId = $_SESSION['userId'];
-$name = $_POST["nameField"];
-$address = $_POST["addressField"];
+if (isset($_POST['saveButton'])) {
+    $transactionLocaleId = $_SESSION['transactionLocaleId'];
+    $userId = $_SESSION['userId'];
+    $name = $_POST["nameField"];
+    $address = $_POST["addressField"];
 
-if ($transactionLocaleId != "") {
-    $service->update($transactionLocaleId, new TransactionLocaleRequestDTO(
-        $userId,
-        $name,
-        $address
-    ));
-} else {
-    $service->create(new TransactionLocaleRequestDTO(
-        $userId,
-        $name,
-        $address
-    ));
+    if ($transactionLocaleId != "") {
+        $result = $service->update($transactionLocaleId, new TransactionLocaleRequestDTO(
+            $userId,
+            $name,
+            $address
+        ));
+    } else {
+        $result = $service->create(new TransactionLocaleRequestDTO(
+            $userId,
+            $name,
+            $address
+        ));
+    }
+
+    if (!$result instanceof TransactionLocale) {
+        echo "<script>alert('" . $result . "');location.href=\"../TransactionLocale.html\";</script>";
+        exit;
+    }
+
+    header("Location: ../TransactionLocaleDashboard.html");
+    exit;
 }
-
-header("Location: ../TransactionLocaleDashboard.html");

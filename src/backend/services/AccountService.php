@@ -11,13 +11,13 @@ $financialInstitutionRepository = new FinancialInstitutionRepository();
 
 class AccountService
 {
-    public function create(AccountRequestDTO $requestDTO)
+    public function create(AccountRequestDTO $requestDTO): Account|string
     {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, AccountRequestDTO $requestDTO)
+    public function update($id, AccountRequestDTO $requestDTO): Account|string
     {
         global $repository;
         return $repository->update($id, $requestDTO);
@@ -29,9 +29,8 @@ class AccountService
         $accounts = $repository->findAllByUserId($userId);
         $accountDTOs = [];
 
-        foreach ($accounts as $account) {
+        foreach ($accounts as $account)
             $accountDTOs[] = $this->buildAccountDTO($account);
-        }
 
         echo json_encode($accountDTOs);
     }
@@ -56,9 +55,9 @@ class AccountService
         echo json_encode($this->buildAccountDTO($account));
     }
 
-    public function delete($id): void
+    public function delete($id): ?string
     {
         global $repository;
-        $repository->delete($id);
+        return $repository->delete($id);
     }
 }

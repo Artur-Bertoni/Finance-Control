@@ -9,13 +9,13 @@ $repository = new TransactionLocaleRepository();
 
 class TransactionLocaleService
 {
-    public function create(TransactionLocaleRequestDTO $requestDTO)
+    public function create(TransactionLocaleRequestDTO $requestDTO): TransactionLocale|string
     {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, TransactionLocaleRequestDTO $requestDTO)
+    public function update($id, TransactionLocaleRequestDTO $requestDTO): TransactionLocale|string
     {
         global $repository;
         return $repository->update($id, $requestDTO);
@@ -27,9 +27,8 @@ class TransactionLocaleService
         $transactionLocales = $repository->findAllByUserId($userId);
         $transactionLocaleDTOs = [];
 
-        foreach ($transactionLocales as $transactionLocale) {
+        foreach ($transactionLocales as $transactionLocale)
             $transactionLocaleDTOs[] = $this->buildTransactionLocaleDTO($transactionLocale);
-        }
 
         echo json_encode($transactionLocaleDTOs);
     }
@@ -41,6 +40,12 @@ class TransactionLocaleService
         echo json_encode($this->buildTransactionLocaleDTO($transactionLocale));
     }
 
+    public function delete($id): ?string
+    {
+        global $repository;
+        return $repository->delete($id);
+    }
+
     private function buildTransactionLocaleDTO($transactionLocale): TransactionLocaleDTO
     {
         return new TransactionLocaleDTO(
@@ -48,11 +53,5 @@ class TransactionLocaleService
             $transactionLocale->getName(),
             $transactionLocale->getAddress()
         );
-    }
-
-    public function delete($id): void
-    {
-        global $repository;
-        $repository->delete($id);
     }
 }

@@ -9,13 +9,13 @@ $repository = new FinancialInstitutionRepository();
 
 class FinancialInstitutionService
 {
-    public function create(FinancialInstitutionRequestDTO $requestDTO)
+    public function create(FinancialInstitutionRequestDTO $requestDTO): FinancialInstitution|string
     {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, FinancialInstitutionRequestDTO $requestDTO)
+    public function update($id, FinancialInstitutionRequestDTO $requestDTO): FinancialInstitution|string
     {
         global $repository;
         return $repository->update($id, $requestDTO);
@@ -27,14 +27,8 @@ class FinancialInstitutionService
         $financialInstitutions = $repository->findAllByUserId($userId);
         $financialInstitutionDTOs = [];
 
-        foreach ($financialInstitutions as $financialInstitution) {
-            $financialInstitutionDTOs[] = new FinancialInstitutionDTO(
-                $financialInstitution->getId(),
-                $financialInstitution->getName(),
-                $financialInstitution->getAddress(),
-                $financialInstitution->getContact()
-            );
-        }
+        foreach ($financialInstitutions as $financialInstitution)
+            $financialInstitutionDTOs[] = $this->buildFinancialInstitutionDTO($financialInstitution);
 
         echo json_encode($financialInstitutionDTOs);
     }
@@ -46,6 +40,12 @@ class FinancialInstitutionService
         echo json_encode($this->buildFinancialInstitutionDTO($financialInstitution));
     }
 
+    public function delete($id): ?string
+    {
+        global $repository;
+        return $repository->delete($id);
+    }
+
     private function buildFinancialInstitutionDTO($financialInstitution): FinancialInstitutionDTO
     {
         return new FinancialInstitutionDTO(
@@ -54,11 +54,5 @@ class FinancialInstitutionService
             $financialInstitution->getAddress(),
             $financialInstitution->getContact()
         );
-    }
-
-    public function delete($id): void
-    {
-        global $repository;
-        $repository->delete($id);
     }
 }

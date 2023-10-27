@@ -15,13 +15,13 @@ $categoryRepository = new CategoryRepository();
 
 class TransactionService
 {
-    public function create(TransactionRequestDTO $requestDTO)
+    public function create(TransactionRequestDTO $requestDTO): Transaction|string
     {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, TransactionRequestDTO $requestDTO)
+    public function update($id, TransactionRequestDTO $requestDTO): Transaction|string
     {
         global $repository;
         return $repository->update($id, $requestDTO);
@@ -33,14 +33,26 @@ class TransactionService
         $transactions = $repository->findAllByUserId($userId);
         $transactionDTOs = [];
 
-        foreach ($transactions as $transaction) {
-            $transactionDTOs[] = $this->buildTransaction($transaction);
-        }
+        foreach ($transactions as $transaction)
+            $transactionDTOs[] = $this->buildTransactionDTO($transaction);
 
         echo json_encode($transactionDTOs);
     }
 
-    private function buildTransaction($transaction): TransactionDTO
+    public function findById($id): void
+    {
+        global $repository;
+        $transaction = $repository->findById($id);
+        echo json_encode($this->buildTransactionDTO($transaction));
+    }
+
+    public function delete($id): ?string
+    {
+        global $repository;
+        return $repository->delete($id);
+    }
+
+    private function buildTransactionDTO($transaction): TransactionDTO
     {
         global $accountRepository, $categoryRepository, $transactionLocaleRepository;
 
@@ -55,18 +67,5 @@ class TransactionService
             $transaction->getInstallmentsNumber(),
             $transaction->getObs()
         );
-    }
-
-    public function findById($id): void
-    {
-        global $repository;
-        $transaction = $repository->findById($id);
-        echo json_encode($this->buildTransaction($transaction));
-    }
-
-    public function delete($id): void
-    {
-        global $repository;
-        $repository->delete($id);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class User implements JsonSerializable
+class UserDTO implements JsonSerializable
 {
     private $id;
     private $username;
@@ -55,7 +55,7 @@ class User implements JsonSerializable
         $this->password = $password;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
         return array(
             'id' => $this->id,

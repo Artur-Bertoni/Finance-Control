@@ -1,14 +1,13 @@
 <?php
 
-include_once "../../utils/db_connection.php";
+include_once "../../utils/DBConnection.php";
 include_once "../../backend/entities/Category.php";
 
 class CategoryRepository
 {
-    public function save(CategoryRequestDTO $requestDTO)
+    public function save(CategoryRequestDTO $requestDTO): Category|bool|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -16,7 +15,7 @@ class CategoryRepository
             (user_id, name, description) values(?, ?, ?)");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
@@ -30,22 +29,21 @@ class CategoryRepository
                 $lastInsertedId = $stmt->insert_id;
                 $stmt->close();
 
-                return $this->findById($lastInsertedId);
+                $category = $this->findById($lastInsertedId);
+
+                $db->commit();
+                return $category;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function update($id, CategoryRequestDTO $requestDTO)
+    public function update($id, CategoryRequestDTO $requestDTO): Category|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -53,7 +51,7 @@ class CategoryRepository
             user_id = ?, name = ?, description = ? where id = ?");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
@@ -66,24 +64,22 @@ class CategoryRepository
             if ($stmt->execute()) {
                 $stmt->close();
 
-                return $this->findById($id);
+                $category = $this->findById($id);
+
+                $db->commit();
+                return $category;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findById($id): bool|Category
+    public function findById($id): Category|string
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
             $result = $db->query("SELECT * FROM artur_category WHERE id = $id");
 
@@ -96,22 +92,16 @@ class CategoryRepository
                     $account['description']
                 );
             }
-            return false;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Categoria de id " . $id . " não encontrada";
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findAllByUserId($userId): array
+    public function findAllByUserId($userId): array|string
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
             $result = $db->query("select * from artur_category where user_id = $userId");
 
@@ -125,29 +115,24 @@ class CategoryRepository
                 );
             }
             return $categories;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function delete($id): void
+    public function delete($id): ?string
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
+            $db->begin_transaction();
             $db->query("delete from artur_category where id = $id");
-        } catch (Exception $e) {
-            global $db;
+            $db->commit();
+
+            return null;
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 }

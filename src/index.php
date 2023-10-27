@@ -1,6 +1,6 @@
 <?php
 
-include 'utils/db_connection.php';
+include 'utils/DBConnection.php';
 
 session_start();
 

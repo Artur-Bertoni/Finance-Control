@@ -1,14 +1,13 @@
 <?php
 
-include_once "../../utils/db_connection.php";
+include_once "../../utils/DBConnection.php";
 include_once "../../backend/entities/Transaction.php";
 
 class TransactionRepository
 {
-    public function save(TransactionRequestDTO $requestDTO)
+    public function save(TransactionRequestDTO $requestDTO): Transaction|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -17,7 +16,7 @@ class TransactionRepository
             values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $accountId = $requestDTO->getAccountId();
@@ -45,59 +44,22 @@ class TransactionRepository
                 $lastInsertedId = $stmt->insert_id;
                 $stmt->close();
 
+                $transaction = $this->findById($lastInsertedId);
+
                 $db->commit();
-
-                return $this->findById($lastInsertedId);
+                return $transaction;
             } else {
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
             }
-        } catch (Exception $e) {
-            global $db;
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findById($id): Transaction|bool
+    public function update($id, TransactionRequestDTO $requestDTO): Transaction|string
     {
         try {
-            openConnection();
-            global $db;
-            $db->begin_transaction();
-
-            $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
-
-            if ($result->num_rows > 0) {
-                $transaction = $result->fetch_assoc();
-                return new Transaction(
-                    $transaction['id'],
-                    $transaction['user_id'],
-                    $transaction['account_id'],
-                    $transaction['category_id'],
-                    $transaction['transaction_locale_id'],
-                    $transaction['value'],
-                    $transaction['date'],
-                    $transaction['type'],
-                    $transaction['installments_number'],
-                    $transaction['obs']
-                );
-            }
-            return false;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
-        }
-    }
-
-    public function update($id, TransactionRequestDTO $requestDTO)
-    {
-        try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -106,7 +68,7 @@ class TransactionRepository
             where id = ?");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $accountId = $requestDTO->getAccountId();
@@ -134,43 +96,51 @@ class TransactionRepository
             if ($stmt->execute()) {
                 $stmt->close();
 
-                return $this->findById($id);
+                $transaction = $this->findById($id);
+                $db->commit();
+
+                return $transaction;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-
-
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function delete($id): void
+    public function findById($id): Transaction|string
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
-            $db->query("delete from artur_transaction where id = $id");
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
+
+            if ($result->num_rows > 0) {
+                $transaction = $result->fetch_assoc();
+                return new Transaction(
+                    $transaction['id'],
+                    $transaction['user_id'],
+                    $transaction['account_id'],
+                    $transaction['category_id'],
+                    $transaction['transaction_locale_id'],
+                    $transaction['value'],
+                    $transaction['date'],
+                    $transaction['type'],
+                    $transaction['installments_number'],
+                    $transaction['obs']
+                );
+            }
+
+            return "Transação de id " . $id . " não encontrada";
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findAllByUserId($userId): array
+    public function findAllByUserId($userId): array|string
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
             $result = $db->query("select * from artur_transaction where user_id = $userId");
 
@@ -190,12 +160,24 @@ class TransactionRepository
                 );
             }
             return $transactions;
-        } catch (Exception $e) {
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
+        }
+    }
+
+    public function delete($id): null|string
+    {
+        try {
             global $db;
+
+            $db->begin_transaction();
+            $db->query("delete from artur_transaction where id = $id");
+            $db->commit();
+
+            return null;
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 }

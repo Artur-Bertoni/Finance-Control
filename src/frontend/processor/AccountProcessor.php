@@ -6,8 +6,13 @@ session_start();
 
 $service = new AccountService();
 
-if (isset($_POST['homeButton']) || isset($_POST['cancelButton'])) {
+if (isset($_POST['homeButton'])) {
     header("Location: ../HomePage.html");
+    exit;
+}
+
+if (isset($_POST['cancelButton'])) {
+    header("Location: ../AccountDashboard.html");
     exit;
 }
 
@@ -16,29 +21,37 @@ if (isset($_POST['profileButton'])) {
     exit;
 }
 
-$accountId = $_SESSION['accountId'];
-$userId = $_SESSION['userId'];
-$financialInstitutionId = $_POST['financialInstitutionField'];
-$name = $_POST["nameField"];
-$contact = $_POST["contactField"];
-$description = $_POST["descriptionField"];
+if (isset($_POST['saveButton'])) {
+    $accountId = $_SESSION['accountId'];
+    $userId = $_SESSION['userId'];
+    $financialInstitutionId = $_POST['financialInstitutionField'];
+    $name = $_POST["nameField"];
+    $contact = $_POST["contactField"];
+    $description = $_POST["descriptionField"];
 
-if ($accountId != "") {
-    $service->update($accountId, new AccountRequestDTO(
-        $userId,
-        $financialInstitutionId,
-        $name,
-        $contact,
-        $description
-    ));
-} else {
-    $service->create(new AccountRequestDTO(
-        $userId,
-        $financialInstitutionId,
-        $name,
-        $contact,
-        $description
-    ));
+    if ($accountId != "") {
+        $result = $service->update($accountId, new AccountRequestDTO(
+            $userId,
+            $financialInstitutionId,
+            $name,
+            $contact,
+            $description
+        ));
+    } else {
+        $result = $service->create(new AccountRequestDTO(
+            $userId,
+            $financialInstitutionId,
+            $name,
+            $contact,
+            $description
+        ));
+    }
+
+    if (!$result instanceof Account) {
+        echo "<script>alert('" . $result . "');location.href=\"../Account.html\";</script>";
+        exit;
+    }
+
+    header("Location: ../AccountDashboard.html");
+    exit;
 }
-
-header("Location: ../HomePage.html");

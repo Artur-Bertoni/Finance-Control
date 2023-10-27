@@ -1,14 +1,13 @@
 <?php
 
-include_once "../../utils/db_connection.php";
+include_once "../../utils/DBConnection.php";
 include_once "../../backend/entities/FinancialInstitution.php";
 
 class FinancialInstitutionRepository
 {
-    public function save(FinancialInstitutionRequestDTO $requestDTO)
+    public function save(FinancialInstitutionRequestDTO $requestDTO): FinancialInstitution|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -16,7 +15,7 @@ class FinancialInstitutionRepository
             (user_id, name, address, contact) values(?, ?, ?, ?)");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
@@ -31,22 +30,21 @@ class FinancialInstitutionRepository
                 $lastInsertedId = $stmt->insert_id;
                 $stmt->close();
 
-                return $this->findById($lastInsertedId);
+                $financialInstitution = $this->findById($lastInsertedId);
+
+                $db->commit();
+                return $financialInstitution;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function update($id, FinancialInstitutionRequestDTO $requestDTO)
+    public function update($id, FinancialInstitutionRequestDTO $requestDTO): FinancialInstitution|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -54,7 +52,7 @@ class FinancialInstitutionRepository
             user_id = ?, name = ?, address = ?, contact = ? where id = ?");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
@@ -68,24 +66,22 @@ class FinancialInstitutionRepository
             if ($stmt->execute()) {
                 $stmt->close();
 
-                return $this->findById($id);
+                $financialInstitution = $this->findById($id);
+
+                $db->commit();
+                return $financialInstitution;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
     public function findById($id): FinancialInstitution|false
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
             $result = $db->query("SELECT * FROM artur_financial_institution WHERE id = $id");
 
@@ -99,20 +95,15 @@ class FinancialInstitutionRepository
                     $financialInstitution['contact']
                 );
             }
-            return false;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Instituição Financeira de id " . $id . " não encontrada";
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findAllByUserId($userId): array
+    public function findAllByUserId($userId): array|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -129,29 +120,25 @@ class FinancialInstitutionRepository
                 );
             }
             return $financialInstitution;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function delete($id): void
+    public function delete($id): ?string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
+            $db->begin_transaction();
             $db->query("delete from artur_financial_institution where id = $id");
-        } catch (Exception $e) {
-            global $db;
+            $db->commit();
+
+            return null;
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 }

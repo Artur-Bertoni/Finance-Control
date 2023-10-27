@@ -1,14 +1,13 @@
 <?php
 
-include_once "../../utils/db_connection.php";
+include_once "../../utils/DBConnection.php";
 include_once "../../backend/entities/TransactionLocale.php";
 
 class TransactionLocaleRepository
 {
-    public function save(TransactionLocaleRequestDTO $requestDTO)
+    public function save(TransactionLocaleRequestDTO $requestDTO): TransactionLocale|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -16,36 +15,37 @@ class TransactionLocaleRepository
             (user_id, name, address) values(?, ?, ?)");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
             $address = $requestDTO->getAddress();
 
             $stmt->bind_param("iss",
-                $userId, $name, $address
+                $userId,
+                $name,
+                $address
             );
 
             if ($stmt->execute()) {
                 $lastInsertedId = $stmt->insert_id;
                 $stmt->close();
 
-                return $this->findById($lastInsertedId);
+                $transactionLocale = $this->findById($lastInsertedId);
+
+                $db->commit();
+                return $transactionLocale;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function update($id, TransactionLocaleRequestDTO $requestDTO)
+    public function update($id, TransactionLocaleRequestDTO $requestDTO): TransactionLocale|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -53,37 +53,38 @@ class TransactionLocaleRepository
             user_id = ?, name = ?, address = ? where id = ?");
 
             if (!$stmt)
-                die("Prepare failed: (" . $db->errno . ") " . $db->error);
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
 
             $userId = $requestDTO->getUserId();
             $name = $requestDTO->getName();
             $address = $requestDTO->getAddress();
 
             $stmt->bind_param("issi",
-                $userId, $name, $address, $id
+                $userId,
+                $name,
+                $address,
+                $id
             );
 
             if ($stmt->execute()) {
                 $stmt->close();
 
-                return $this->findById($id);
+                $transactionLocale = $this->findById($id);
+
+                $db->commit();
+                return $transactionLocale;
             } else
-                die("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
-        } catch (Exception $e) {
-            global $db;
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 
     public function findById($id): TransactionLocale|false
     {
         try {
-            openConnection();
             global $db;
-            $db->begin_transaction();
 
             $result = $db->query("SELECT * FROM artur_transaction_locale WHERE id = $id");
 
@@ -96,20 +97,16 @@ class TransactionLocaleRepository
                     $transactionLocale['address']
                 );
             }
-            return false;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+
+            return "Local de Transação de id " . $id . " não encontrada";
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function findAllByUserId($userId): array
+    public function findAllByUserId($userId): array|string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
@@ -125,29 +122,25 @@ class TransactionLocaleRepository
                 );
             }
             return $transactionLocales;
-        } catch (Exception $e) {
-            global $db;
-            $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
         }
     }
 
-    public function delete($id): void
+    public function delete($id): ?string
     {
         try {
-            openConnection();
             global $db;
             $db->begin_transaction();
 
+            $db->begin_transaction();
             $db->query("delete from artur_transaction_locale where id = $id");
-        } catch (Exception $e) {
-            global $db;
+            $db->commit();
+
+            return null;
+        } catch (Error|Throwable $e) {
             $db->rollback();
-            die("Erro: " . $e);
-        } finally {
-            closeConnection();
+            return "Erro: " . $e->getMessage();
         }
     }
 }

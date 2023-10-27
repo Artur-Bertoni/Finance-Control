@@ -9,13 +9,13 @@ $repository = new CategoryRepository();
 
 class CategoryService
 {
-    public function create(CategoryRequestDTO $requestDTO)
+    public function create(CategoryRequestDTO $requestDTO): Category|bool|string
     {
         global $repository;
         return $repository->save($requestDTO);
     }
 
-    public function update($id, CategoryRequestDTO $requestDTO)
+    public function update($id, CategoryRequestDTO $requestDTO): Category|string
     {
         global $repository;
         return $repository->update($id, $requestDTO);
@@ -27,9 +27,8 @@ class CategoryService
         $categories = $repository->findAllByUserId($userId);
         $categoryDTOs = [];
 
-        foreach ($categories as $category) {
+        foreach ($categories as $category)
             $categoryDTOs[] = $this->buildCategoryDTO($category);
-        }
 
         echo json_encode($categoryDTOs);
     }
@@ -50,9 +49,9 @@ class CategoryService
         );
     }
 
-    public function delete($id): void
+    public function delete($id): ?string
     {
         global $repository;
-        $repository->delete($id);
+        return $repository->delete($id);
     }
 }

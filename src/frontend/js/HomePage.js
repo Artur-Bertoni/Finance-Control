@@ -82,5 +82,6 @@ for (const element of transactions) {
     button.appendChild(grid)
     list.appendChild(button)
 
-    document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
 }
+
+document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
