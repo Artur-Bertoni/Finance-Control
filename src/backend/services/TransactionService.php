@@ -56,16 +56,21 @@ class TransactionService
     {
         global $accountRepository, $categoryRepository, $transactionLocaleRepository;
 
-        return new TransactionDTO(
+        $transactionDTO = new TransactionDTO(
             $transaction->getId(),
             $accountRepository->findById($transaction->getAccountId()),
             $categoryRepository->findById($transaction->getCategoryId()),
-            $transactionLocaleRepository->findById($transaction->getTransactionLocaleId()),
+            '-',
             $transaction->getValue(),
             $transaction->getDate(),
             $transaction->getType(),
             $transaction->getInstallmentsNumber(),
             $transaction->getObs()
         );
+
+        if ($transaction->getTransactionLocaleId() != null)
+            $transactionDTO->setTransactionLocale($transactionLocaleRepository->findById($transaction->getTransactionLocaleId()));
+
+        return $transactionDTO;
     }
 }

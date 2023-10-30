@@ -49,7 +49,10 @@ for (const element of transactions) {
 
     let localeLabel = document.createElement('span')
     localeLabel.classList.add('grid-label')
-    localeLabel.innerText = `Local: ${element.transactionLocale}`
+    if (element.transactionLocale != undefined)
+        localeLabel.innerText = `Local: ${element.transactionLocale}`
+    else
+        localeLabel.innerText = `Local: Não Informado`
     grid.appendChild(localeLabel)
 
     let dateLabel = document.createElement('span')
