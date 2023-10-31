@@ -1,8 +1,10 @@
 import {doRequest} from "../../utils/FrontendFunctions.js";
 import {Transaction} from "./class/TransactionClass.js";
+import {Category} from "./class/CategoryClass.js";
 
-setDefaultDate()
+configureFilters()
 populateTransactionsList()
+Category.addCategories();
 
 function populateTransactionsList() {
     let data;
@@ -12,7 +14,8 @@ function populateTransactionsList() {
         {findAllByUser: true},
         {
             startDate: document.getElementById('start-date-input').value,
-            endDate: document.getElementById('end-date-input').value
+            endDate: document.getElementById('end-date-input').value,
+            categoryId: document.getElementById('category-input').value
         })
 
     try {
@@ -99,7 +102,7 @@ function populateTransactionsList() {
     document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
 }
 
-function setDefaultDate() {
+function configureFilters() {
     let startDateInput = document.getElementById('start-date-input')
     startDateInput.max = new Date().toISOString().split("T")[0]
     let firstDayOfTheMonth = new Date()
@@ -110,6 +113,13 @@ function setDefaultDate() {
     endDateInput.max = new Date().toISOString().split("T")[0]
     endDateInput.value = endDateInput.max
 
+    let categoryInput = document.getElementById('category-input')
+    let option = document.createElement('option')
+    option.value = "All"
+    option.innerText = "Todas"
+    categoryInput.appendChild(option)
+
+    categoryInput.addEventListener('change', updateTransactionList);
     startDateInput.addEventListener('change', updateTransactionList);
     endDateInput.addEventListener('change', updateTransactionList);
 }
