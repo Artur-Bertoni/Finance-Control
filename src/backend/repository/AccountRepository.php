@@ -109,7 +109,7 @@ class AccountRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_account where user_id = $userId");
+            $result = $db->query("select * from artur_account where user_id = $userId order by id desc");
 
             $accounts = array();
             while ($row = mysqli_fetch_array($result)) {

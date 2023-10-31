@@ -142,7 +142,7 @@ class TransactionRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_transaction where user_id = $userId");
+            $result = $db->query("select * from artur_transaction where user_id = $userId order by id desc");
 
             $transactions = array();
             while ($row = mysqli_fetch_array($result)) {

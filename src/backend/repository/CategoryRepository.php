@@ -103,7 +103,7 @@ class CategoryRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_category where user_id = $userId");
+            $result = $db->query("select * from artur_category where user_id = $userId order by id desc");
 
             $categories = array();
             while ($row = mysqli_fetch_array($result)) {

@@ -107,7 +107,7 @@ class FinancialInstitutionRepository
             global $db;
             $db->begin_transaction();
 
-            $result = $db->query("select * from artur_financial_institution where user_id = $userId");
+            $result = $db->query("select * from artur_financial_institution where user_id = $userId order by id desc");
 
             $financialInstitution = array();
             while ($row = mysqli_fetch_array($result)) {
