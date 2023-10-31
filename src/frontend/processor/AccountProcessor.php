@@ -21,6 +21,18 @@ if (isset($_POST['profileButton'])) {
     exit;
 }
 
+if (isset($_POST['deleteButton'])) {
+    $result = $service->delete($_SESSION['accountId']);
+
+    if ($result != null) {
+        echo "<script>alert('" . $result . "');location.href=\"../Account.html\";</script>";
+        exit;
+    }
+
+    header("Location: ../AccountDashboard.html");
+    exit;
+}
+
 if (isset($_POST['saveButton'])) {
     $accountId = $_SESSION['accountId'];
     $userId = $_SESSION['userId'];
