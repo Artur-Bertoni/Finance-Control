@@ -15,8 +15,6 @@ function populateTransactionsList() {
             endDate: document.getElementById('end-date-input').value
         })
 
-    console.log(data)
-
     try {
         for (const element of data) {
             const transaction = Transaction.processTransaction(element)
@@ -67,8 +65,8 @@ function populateTransactionsList() {
 
         let dateLabel = document.createElement('span')
         dateLabel.classList.add('grid-label')
-        //TODO adicionar formatação para melhor visualização de datas
-        dateLabel.innerText = `Data: ${element.date}`
+        let date = new Date(element.date)
+        dateLabel.innerText = `Data: ${((date.getDate().toString().padStart(2, '0'))) + "/" + ((date.getMonth() + 1)) + "/" + date.getFullYear()}`
         grid.appendChild(dateLabel)
 
         let valueLabel = document.createElement('span')
