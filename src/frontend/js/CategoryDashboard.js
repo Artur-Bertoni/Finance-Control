@@ -1,4 +1,4 @@
-import {doRequest} from "../../utils/functions.js";
+import {doRequest} from "../../utils/FrontendFunctions.js";
 import {Category} from "./class/CategoryClass.js";
 
 let data;

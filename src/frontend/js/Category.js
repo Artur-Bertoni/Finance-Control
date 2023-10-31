@@ -1,4 +1,4 @@
-import {addDeleteIcon, doRequest} from "../../utils/functions.js";
+import {addDeleteIcon, doRequest} from "../../utils/FrontendFunctions.js";
 import {Category} from "./class/CategoryClass.js";
 
 tryToPopulateWithData();

@@ -38,14 +38,14 @@ export function addHomePageIcon() {
     iconButtonList.appendChild(li)
 }
 
-export function doRequest(url, method) {
-    let data;
+export function doRequest(url, method, ...extraParams) {
+    let data = {...method, ...Object.assign({}, ...extraParams)};
 
     $.ajax({
         url: url,
         type: 'POST',
         async: false,
-        data: method,
+        data: data,
         success: function (response) {
             data = JSON.parse(response);
         },

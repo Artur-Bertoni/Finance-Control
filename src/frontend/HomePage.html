@@ -70,6 +70,7 @@
 								
 								<li>
 									<div id=home-total-box></div>
+									<!--TODO adicionar campo de total baseado na filtragem-->
 								</li>
 							</ul>
 						</td>
@@ -77,6 +78,33 @@
 							<div id=list-bkg>
 								<div id=last-transaction-list></div>
 							</div>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<table>
+								<caption></caption>
+								<tr>
+									<th></th>
+									<td>
+										<div class=field>
+											<label for=start-date-input>Data de Início</label>
+											<input class=small-insertion-field id=start-date-input name=startDateField
+												   required type=date>
+										</div>
+									</td>
+									<td>
+										<div class=field>
+											<label for=end-date-input>Data de Fim</label>
+											<input class=small-insertion-field id=end-date-input name=endDateField
+												   required
+												   type=date>
+										</div>
+									</td>
+									<!--TODO adicionar outras filtragens (categoria, conta e tipo (parcelamentos e a vista))-->
+								</tr>
+							</table>
 						</td>
 					</tr>
 				</table>

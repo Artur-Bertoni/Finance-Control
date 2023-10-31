@@ -1,4 +1,4 @@
-import {doRequest} from "../../../utils/functions.js";
+import {doRequest} from "../../../utils/FrontendFunctions.js";
 
 export class Account {
     constructor(id, name, financialInstitution, contact, description) {

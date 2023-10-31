@@ -7,7 +7,7 @@ session_start();
 $service = new TransactionService();
 
 if (array_key_exists('findAllByUser', $_POST)) {
-    $service->findAllByUser($_SESSION['userId']);
+    $service->findAllByUser($_SESSION['userId'], $_POST['startDate'], $_POST['endDate']);
 }
 
 if (array_key_exists('findById', $_POST) && $_SESSION['transactionId'] != "") {

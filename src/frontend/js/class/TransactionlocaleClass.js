@@ -1,4 +1,4 @@
-import {doRequest} from "../../../utils/functions.js";
+import {doRequest} from "../../../utils/FrontendFunctions.js";
 
 export class TransactionLocale {
     constructor(id, name, address) {

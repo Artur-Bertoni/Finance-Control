@@ -1,4 +1,4 @@
-import {doRequest} from "../../utils/functions.js";
+import {doRequest} from "../../utils/FrontendFunctions.js";
 import {FinancialInstitution} from "./class/FinancialInstitutionClass.js";
 
 let data;

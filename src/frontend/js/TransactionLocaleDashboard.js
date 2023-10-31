@@ -1,4 +1,4 @@
-import {doRequest} from "../../utils/functions.js";
+import {doRequest} from "../../utils/FrontendFunctions.js";
 import {TransactionLocale} from "./class/TransactionLocaleClass.js";
 
 let data;

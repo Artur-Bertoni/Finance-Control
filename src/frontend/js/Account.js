@@ -1,5 +1,5 @@
 import {FinancialInstitution} from "./class/FinancialInstitutionClass.js";
-import {addDeleteIcon, doRequest} from "../../utils/functions.js";
+import {addDeleteIcon, doRequest} from "../../utils/FrontendFunctions.js";
 import {Account} from "./class/AccountClass.js";
 
 FinancialInstitution.addFinancialInstitutions();

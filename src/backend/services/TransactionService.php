@@ -27,10 +27,10 @@ class TransactionService
         return $repository->update($id, $requestDTO);
     }
 
-    public function findAllByUser($userId): void
+    public function findAllByUser($userId, $startDate, $endDate): void
     {
         global $repository;
-        $transactions = $repository->findAllByUserId($userId);
+        $transactions = $repository->findAllByUserId($userId, $startDate, $endDate);
         $transactionDTOs = [];
 
         foreach ($transactions as $transaction)

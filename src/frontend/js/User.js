@@ -1,4 +1,4 @@
-import {addDeleteIcon, addHomePageIcon, doRequest} from "../../utils/functions.js";
+import {addDeleteIcon, addHomePageIcon, doRequest} from "../../utils/FrontendFunctions.js";
 import {User} from "./class/UserClass.js";
 
 addPasswordVisualization();
