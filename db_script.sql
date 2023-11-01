@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS artur_account
     name                     VARCHAR(50) NOT NULL,
     contact                  VARCHAR(100),
     description              TINYTEXT,
+    balance                  DOUBLE DEFAULT 0,
 
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE,

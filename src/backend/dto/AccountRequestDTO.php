@@ -7,14 +7,16 @@ class AccountRequestDTO
     private $name;
     private $contact;
     private $description;
+    private $balance;
 
-    public function __construct($userId, $financialInstitutionId, $name, $contact, $description)
+    public function __construct($userId, $financialInstitutionId, $name, $contact, $description, $balance)
     {
         $this->userId = $userId;
         $this->financialInstitutionId = $financialInstitutionId;
         $this->name = $name;
         $this->contact = $contact;
         $this->description = $description;
+        $this->balance = $balance;
     }
 
     public function getUserId()
@@ -65,5 +67,15 @@ class AccountRequestDTO
     public function setContact($contact)
     {
         $this->contact = $contact;
+    }
+
+    public function getBalance()
+    {
+        return $this->balance;
+    }
+
+    public function setBalance($balance): void
+    {
+        $this->balance = $balance;
     }
 }

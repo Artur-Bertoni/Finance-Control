@@ -40,6 +40,7 @@ if (isset($_POST['saveButton'])) {
     $name = $_POST["nameField"];
     $contact = $_POST["contactField"];
     $description = $_POST["descriptionField"];
+    $balance = $_POST["balanceField"];
 
     if ($accountId != "") {
         $result = $service->update($accountId, new AccountRequestDTO(
@@ -47,7 +48,8 @@ if (isset($_POST['saveButton'])) {
             $financialInstitutionId,
             $name,
             $contact,
-            $description
+            $description,
+            $balance
         ));
     } else {
         $result = $service->create(new AccountRequestDTO(
@@ -55,7 +57,8 @@ if (isset($_POST['saveButton'])) {
             $financialInstitutionId,
             $name,
             $contact,
-            $description
+            $description,
+            $balance
         ));
     }
 

@@ -42,8 +42,21 @@ for (const element of accounts) {
 
     let contactLabel = document.createElement('span')
     contactLabel.classList.add('grid-label')
-    contactLabel.innerText = `Contato: ${element.contact}`
+    if (element.contact != "")
+        contactLabel.innerText = `Contato: ${element.contact}`
+    else contactLabel.innerText = `Contato: Não Informado`
     grid.appendChild(contactLabel)
+
+    let balanceLabel = document.createElement('span')
+    balanceLabel.classList.add('grid-label')
+
+    if (element.balance < 0)
+        balanceLabel.innerText = `Saldo: - $ ${element.balance.toFixed(2)}`
+    else if (element.balance > 0)
+        balanceLabel.innerText = `Saldo: + $ ${element.balance.toFixed(2)}`
+    else
+        balanceLabel.innerText = `Saldo: $ ${element.balance.toFixed(2)}`
+    grid.appendChild(balanceLabel)
 
     button.appendChild(grid)
     list.appendChild(button)

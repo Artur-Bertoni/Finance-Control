@@ -19,6 +19,7 @@ function tryToPopulateWithData() {
         let financialInstitutionInput = document.getElementById('financial-institution-input')
         let contactInput = document.getElementById('contact-input')
         let descriptionInput = document.getElementById('description-input')
+        let balanceInput = document.getElementById('balance-input')
 
         if (account.name !== undefined)
             nameInput.value = account.name
@@ -26,6 +27,8 @@ function tryToPopulateWithData() {
             contactInput.value = account.contact
         if (account.description !== undefined)
             descriptionInput.value = account.description
+        if (account.balance !== undefined)
+            descriptionInput.value = account.balance
 
         let financialInstitutionOptions = financialInstitutionInput.options;
         for (const element of financialInstitutionOptions)

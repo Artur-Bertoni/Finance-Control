@@ -1,12 +1,13 @@
 import {doRequest} from "../../../utils/FrontendFunctions.js";
 
 export class Account {
-    constructor(id, name, financialInstitution, contact, description) {
+    constructor(id, name, financialInstitution, contact, description, balance) {
         this.id = id
         this.name = name
         this.financialInstitution = financialInstitution
         this.contact = contact
         this.description = description
+        this.balance = balance
     }
 
     static addAccounts() {
@@ -33,7 +34,8 @@ export class Account {
             data.name,
             data.financialInstitution.name,
             data.contact,
-            data.description
+            data.description,
+            Number(data.balance)
         );
     }
 }

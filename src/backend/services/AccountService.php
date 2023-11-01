@@ -44,7 +44,8 @@ class AccountService
             $financialInstitutionRepository->findById($account->getFinancialInstitutionId()),
             $account->getName(),
             $account->getContact(),
-            $account->getDescription()
+            $account->getDescription(),
+            $account->getBalance()
         );
     }
 

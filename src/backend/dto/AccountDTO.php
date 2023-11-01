@@ -7,14 +7,16 @@ class AccountDTO implements JsonSerializable
     private $name;
     private $contact;
     private $description;
+    private $balance;
 
-    public function __construct($id, $financialInstitution, $name, $contact, $description)
+    public function __construct($id, $financialInstitution, $name, $contact, $description, $balance)
     {
         $this->id = $id;
         $this->financialInstitution = $financialInstitution;
         $this->name = $name;
         $this->contact = $contact;
         $this->description = $description;
+        $this->balance = $balance;
     }
 
     public function getId()
@@ -67,6 +69,16 @@ class AccountDTO implements JsonSerializable
         $this->contact = $contact;
     }
 
+    public function getBalance()
+    {
+        return $this->balance;
+    }
+
+    public function setBalance($balance): void
+    {
+        $this->balance = $balance;
+    }
+
     public function jsonSerialize(): array
     {
         return array(
@@ -74,7 +86,8 @@ class AccountDTO implements JsonSerializable
             'financialInstitution' => $this->financialInstitution,
             'name' => $this->name,
             'contact' => $this->contact,
-            'description' => $this->description
+            'description' => $this->description,
+            'balance' =>$this->balance
         );
     }
 }

@@ -12,7 +12,7 @@ class AccountRepository
             $db->begin_transaction();
 
             $stmt = $db->prepare("insert into artur_account
-            (user_id, financial_institution_id, name, contact, description) values(?, ?, ?, ?, ?)");
+            (user_id, financial_institution_id, name, contact, description, balance) values(?, ?, ?, ?, ?, ?)");
 
             if (!$stmt)
                 throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
@@ -22,9 +22,10 @@ class AccountRepository
             $name = $requestDTO->getName();
             $contact = $requestDTO->getContact();
             $description = $requestDTO->getDescription();
+            $balance = $requestDTO->getBalance();
 
-            $stmt->bind_param("iisss",
-                $userId, $financialInstitutionId, $name, $contact, $description
+            $stmt->bind_param("iisssd",
+                $userId, $financialInstitutionId, $name, $contact, $description, $balance
             );
 
             if ($stmt->execute()) {
@@ -50,7 +51,7 @@ class AccountRepository
             $db->begin_transaction();
 
             $stmt = $db->prepare("update artur_account set
-            user_id = ?, financial_institution_id = ?, name = ?, contact = ?, description = ? where id = ?");
+            user_id = ?, financial_institution_id = ?, name = ?, contact = ?, description = ?, balance = ? where id = ?");
 
             if (!$stmt)
                 throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
@@ -60,9 +61,10 @@ class AccountRepository
             $name = $requestDTO->getName();
             $contact = $requestDTO->getContact();
             $description = $requestDTO->getDescription();
+            $balance = $requestDTO->getBalance();
 
-            $stmt->bind_param("iisssi",
-                $userId, $financialInstitutionId, $name, $contact, $description, $id
+            $stmt->bind_param("iisssd",
+                $userId, $financialInstitutionId, $name, $contact, $description, $balance
             );
 
             if ($stmt->execute()) {
@@ -95,7 +97,8 @@ class AccountRepository
                     $account['financial_institution_id'],
                     $account['name'],
                     $account['contact'],
-                    $account['description']
+                    $account['description'],
+                    $account['balance']
                 );
             }
             return "Conta de id " . $id . " não encontrada";
@@ -119,7 +122,8 @@ class AccountRepository
                     $row['financial_institution_id'],
                     $row['name'],
                     $row['contact'],
-                    $row['description']
+                    $row['description'],
+                    $row['balance']
                 );
             }
             return $accounts;
