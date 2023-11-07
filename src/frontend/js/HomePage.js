@@ -106,8 +106,8 @@ function populateTransactionsList() {
         {accountId: document.getElementById('account-input').value}
     );
 
-    document.getElementById('home-total-box').innerHTML = `Saldo em conta(s) <br>$ ${totalValue}`
-    document.getElementById('filtered-total-box').innerHTML = `Valor baseado em filtro <br>$ ${filteredTotal}`
+    document.getElementById('home-total-box').innerHTML = `Saldo em conta(s) <br>$ ${totalValue.toFixed(2)}`
+    document.getElementById('filtered-total-box').innerHTML = `Valor baseado em filtro <br>$ ${filteredTotal.toFixed(2)}`
 }
 
 function configureFilters() {

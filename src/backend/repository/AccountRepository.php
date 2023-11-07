@@ -136,7 +136,6 @@ class AccountRepository
     {
         try {
             global $db;
-            $db->begin_transaction();
 
             $db->begin_transaction();
             $db->query("delete from artur_account where id = $id");
@@ -166,6 +165,30 @@ class AccountRepository
 
             throw new SQLiteException("Erro ao retornar o valor total de conta");
         } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
+        }
+    }
+
+    public function patchBalance($id, $value)
+    {
+        try {
+            global $db;
+
+            $db->begin_transaction();
+            $stmt = $db->prepare("update artur_account set balance = balance + ? where id = ?");
+
+            if (!$stmt)
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
+
+            $stmt->bind_param("di", $value, $id);
+
+            if ($stmt->execute()) {
+                $stmt->close();
+                $db->commit();
+            } else
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+        } catch (Error|Throwable $e) {
+            $db->rollback();
             return "Erro: " . $e->getMessage();
         }
     }

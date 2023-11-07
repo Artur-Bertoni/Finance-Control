@@ -17,8 +17,13 @@ class TransactionService
 {
     public function create(TransactionRequestDTO $requestDTO): Transaction|string
     {
-        global $repository;
-        //TODO implementar atualização de saldo (balance) em contas sempre que uma transação fo realizada
+        global $repository, $accountRepository;
+
+        if ($requestDTO->getType() === 'credit')
+            $accountRepository->patchBalance($requestDTO->getAccountId(), $requestDTO->getValue());
+        else
+            $accountRepository->patchBalance($requestDTO->getAccountId(), -$requestDTO->getValue());
+
         return $repository->save($requestDTO);
     }
 
