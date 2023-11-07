@@ -61,4 +61,10 @@ class AccountService
         global $repository;
         return $repository->delete($id);
     }
+
+    public function totalAccountsValue($accountId): void
+    {
+        global $repository;
+        echo $repository->totalAccountsValue($accountId);
+    }
 }

@@ -9,7 +9,11 @@ $service = new AccountService();
 if (array_key_exists('findAllByUser', $_POST)) {
     $service->findAllByUser($_SESSION['userId']);
 }
+
 if (array_key_exists('findById', $_POST) && $_SESSION['accountId'] != "") {
     $service->findById($_SESSION['accountId']);
 }
 
+if (array_key_exists('totalAccountsValue', $_POST)) {
+    $service->totalAccountsValue($_POST['accountId']);
+}

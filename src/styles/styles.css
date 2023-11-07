@@ -192,7 +192,7 @@ input[type=number]::-webkit-inner-spin-button {
     justify-content: center;
 }
 
-#home-total-box {
+.total-box {
     background: var(--light-green);
     width: 20vmin;
     margin: 2vmin;

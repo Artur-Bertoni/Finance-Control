@@ -31,7 +31,7 @@ function populateTransactionsList() {
     }
 
     let list = document.getElementById('last-transaction-list')
-    let totalValue = 0
+    let filteredTotal = 0
 
     for (const element of transactions) {
         let button = document.createElement('button')
@@ -82,10 +82,10 @@ function populateTransactionsList() {
             valueLabel.innerText = `Valor: - $ ${element.value.toFixed(2)}`
 
             if (element.installmentsNumber === 0)
-                totalValue -= element.value
+                filteredTotal -= element.value
         } else {
             valueLabel.innerText = `Valor: + $ ${element.value.toFixed(2)}`
-            totalValue += element.value
+            filteredTotal += element.value
         }
 
         grid.appendChild(valueLabel)
@@ -101,8 +101,13 @@ function populateTransactionsList() {
         list.appendChild(button)
     }
 
-    //TODO ajuste para valor total não variar com base na filtragem
-    document.getElementById('home-total-box').innerHTML = `Saldo total em conta <br>$ ${totalValue.toFixed(2)}`
+    let totalValue = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
+        {totalAccountsValue: true},
+        {accountId: document.getElementById('account-input').value}
+    );
+
+    document.getElementById('home-total-box').innerHTML = `Saldo em conta(s) <br>$ ${totalValue}`
+    document.getElementById('filtered-total-box').innerHTML = `Valor baseado em filtro <br>$ ${filteredTotal}`
 }
 
 function configureFilters() {

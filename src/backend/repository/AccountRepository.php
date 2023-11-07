@@ -148,4 +148,25 @@ class AccountRepository
             return "Erro: " . $e->getMessage();
         }
     }
+
+    public function totalAccountsValue($accountId)
+    {
+        try {
+            global $db;
+
+            $query = "select Sum(balance) as total_value from artur_account ";
+
+            if ($accountId !== '')
+                $query = $query . "where id = $accountId";
+
+            $result = $db->query($query);
+
+            if ($result->num_rows > 0)
+                return $result->fetch_assoc()['total_value'];
+
+            throw new SQLiteException("Erro ao retornar o valor total de conta");
+        } catch (Error|Throwable $e) {
+            return "Erro: " . $e->getMessage();
+        }
+    }
 }
