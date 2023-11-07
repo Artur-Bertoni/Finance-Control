@@ -137,15 +137,17 @@ class TransactionRepository
         }
     }
 
-    public function findAllByUserId($userId, $startDate, $endDate, $categoryId): array|string
+    public function findAllByUserId($userId, $startDate, $endDate, $categoryId, $accountId): array|string
     {
         try {
             global $db;
 
             $query = "select * from artur_transaction where user_id = $userId and date between '$startDate' and '$endDate' ";
 
-            if ($categoryId != "All" && $categoryId != "")
+            if ($categoryId != "")
                 $query = $query . "and category_id = $categoryId ";
+            if ($accountId != "")
+                $query = $query . "and account_id = $accountId ";
 
             $query = $query . "order by id desc";
 

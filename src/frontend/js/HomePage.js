@@ -1,10 +1,12 @@
 import {doRequest} from "../../utils/FrontendFunctions.js";
 import {Transaction} from "./class/TransactionClass.js";
 import {Category} from "./class/CategoryClass.js";
+import {Account} from "./class/AccountClass.js";
 
 configureFilters()
 populateTransactionsList()
 Category.addCategories();
+Account.addAccounts();
 
 function populateTransactionsList() {
     let data;
@@ -15,7 +17,8 @@ function populateTransactionsList() {
         {
             startDate: document.getElementById('start-date-input').value,
             endDate: document.getElementById('end-date-input').value,
-            categoryId: document.getElementById('category-input').value
+            categoryId: document.getElementById('category-input').value,
+            accountId: document.getElementById('account-input').value
         })
 
     try {
@@ -114,12 +117,10 @@ function configureFilters() {
     endDateInput.value = endDateInput.max
 
     let categoryInput = document.getElementById('category-input')
-    let option = document.createElement('option')
-    option.value = "All"
-    option.innerText = "Todas"
-    categoryInput.appendChild(option)
+    let accountInput = document.getElementById('account-input')
 
     categoryInput.addEventListener('change', updateTransactionList);
+    accountInput.addEventListener('change', updateTransactionList);
     startDateInput.addEventListener('change', updateTransactionList);
     endDateInput.addEventListener('change', updateTransactionList);
 }
