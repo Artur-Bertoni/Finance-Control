@@ -4,9 +4,9 @@ import {Category} from "./class/CategoryClass.js";
 import {TransactionLocale} from "./class/TransactionLocaleClass.js";
 import {Transaction} from "./class/TransactionClass.js";
 
-Category.addCategories();
-TransactionLocale.addTransactionLocales();
-Account.addAccounts();
+Category.addCategories('category-input');
+TransactionLocale.addTransactionLocales('transaction-locale-input');
+Account.addAccounts('account-input');
 
 let date = document.getElementById('date-input')
 date.max = new Date().toISOString().split("T")[0]

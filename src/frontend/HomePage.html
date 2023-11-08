@@ -5,6 +5,8 @@
 	<title>Home Page</title>
 	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
 	<link href=../styles/styles.css rel=stylesheet>
+	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+	<script src=js/HomePage.js type=module></script>
 </head>
 <body>
 <div id=page-wrapper>
@@ -67,11 +69,6 @@
 										Categorias
 									</button>
 								</li>
-								
-								<li>
-									<div id=home-total-box class=total-box></div>
-									<div id=filtered-total-box class=total-box></div>
-								</li>
 							</ul>
 						</td>
 						<td>
@@ -79,13 +76,23 @@
 								<div id=last-transaction-list></div>
 							</div>
 						</td>
+						<td>
+							<ul>
+								<li>
+									<div id=home-total-box class=total-box></div>
+								</li>
+								<li>
+									<div id=filtered-total-box class=total-box></div>
+								</li>
+							</ul>
+						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>
 							<table>
 								<caption></caption>
-								<tr>
+								<tr id=home-filters>
 									<th></th>
 									<td>
 										<div class=field>
@@ -129,7 +136,5 @@
 		</div>
 	</div>
 </div>
-<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<script src=js/HomePage.js type=module></script>
 </body>
 </html>

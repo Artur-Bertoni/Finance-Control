@@ -10,13 +10,13 @@ export class Account {
         this.balance = balance
     }
 
-    static addAccounts() {
+    static addAccounts(elementId) {
         let accounts = doRequest(
             'http://localhost/finance-control/src/backend/resources/AccountResource.php',
             {findAllByUser: true}
         );
 
-        let accountList = document.getElementById('account-input')
+        let accountList = document.getElementById(elementId)
 
         for (const element of accounts) {
             let account = this.processAccount(element)

@@ -5,8 +5,8 @@ import {Account} from "./class/AccountClass.js";
 
 configureFilters()
 populateTransactionsList()
-Category.addCategories();
-Account.addAccounts();
+Category.addCategories('category-input');
+Account.addAccounts('account-input');
 
 function populateTransactionsList() {
     let data;
@@ -131,8 +131,6 @@ function configureFilters() {
 }
 
 function updateTransactionList() {
-    let list = document.getElementById('last-transaction-list')
-    list.innerHTML = '';
-
+    document.getElementById('last-transaction-list').innerHTML = '';
     populateTransactionsList()
 }

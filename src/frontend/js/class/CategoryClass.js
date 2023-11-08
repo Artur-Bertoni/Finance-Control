@@ -7,13 +7,13 @@ export class Category {
         this.description = description
     }
 
-    static addCategories() {
+    static addCategories(elementId) {
         let categories = doRequest(
             'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
             {findAllByUser: true}
         );
 
-        let categoryList = document.getElementById('category-input')
+        let categoryList = document.getElementById(elementId)
 
         for (const element of categories) {
             let category = this.processCategory(element)

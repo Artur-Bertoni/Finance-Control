@@ -132,12 +132,19 @@ input[type=number]::-webkit-inner-spin-button {
 
 #list-bkg {
     background-color: var(--darkgray);
-    padding: 3vh;
+    padding: 2vh;
     border-radius: 20px;
     margin: 2vmin;
     overflow-y: scroll;
-    width: 50vw;
+    width: 40vw;
     height: 50vmin;
+}
+
+#home-filters {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 40vw;
+    justify-content: center;
 }
 
 .item-key, .item-value, .item-obs-value, .item-obs-key {
@@ -194,7 +201,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 .total-box {
     background: var(--light-green);
-    width: 20vmin;
+    width: 15vmin;
     margin: 2vmin;
     font-size: 2vmin;
     min-height: 5vmin;
@@ -307,6 +314,16 @@ input[type=number]::-webkit-inner-spin-button {
     text-align: center;
 }
 
+.medium-insertion-field {
+    background-color: var(--green);
+    display: flex;
+    min-width: 20vmax;
+    min-height: 5vmin;
+    border-radius: 2vmin;
+    font-size: 1.5vmin;
+    text-align: center;
+}
+
 .small-insertion-field {
     background-color: var(--green);
     display: flex;
@@ -386,7 +403,7 @@ input[type=number]::-webkit-inner-spin-button {
 /* buttons/HOME PAGE */
 .dashboard-btn {
     background: var(--green);
-    width: 20vmin;
+    width: 15vmin;
     margin: 2vmin;
     font-size: 2vmin;
     min-height: 5vmin;

@@ -7,13 +7,13 @@ export class TransactionLocale {
         this.address = address
     }
 
-    static addTransactionLocales() {
+    static addTransactionLocales(elementId) {
         let transactionLocales = doRequest(
             'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
             {findAllByUser: true}
         );
 
-        let transactionLocaleList = document.getElementById('transaction-locale-input')
+        let transactionLocaleList = document.getElementById(elementId)
 
         for (const element of transactionLocales) {
             let transactionLocale = this.processTransactionLocale(element)

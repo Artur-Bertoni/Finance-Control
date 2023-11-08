@@ -27,3 +27,9 @@ if (isset($_POST['profileButton'])) {
     header("Location: ../User.html");
     exit;
 }
+
+if (isset($_POST['postTransfer'])) {
+    $_SESSION['accountId'] = "";
+    header("Location: ../Transfer.html");
+    exit;
+}

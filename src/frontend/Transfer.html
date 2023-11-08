@@ -2,11 +2,11 @@
 <html lang=en>
 <head>
 	<meta charset=utf-8>
-	<title>Transaction Post</title>
+	<title>Transfer</title>
 	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
 	<link href=../styles/styles.css rel=stylesheet>
 	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-	<script src=js/Transaction.js type=module></script>
+	<script src=js/Transfer.js type=module></script>
 </head>
 <body>
 <div id=page-wrapper>
@@ -14,7 +14,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form id=form action=processor/TransactionProcessor.php method=post>
+			<form id=form action=processor/TransferProcessor.php method=post>
 				<ul id=navigation-menu-btn-gp>
 					<li>
 						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
@@ -29,32 +29,37 @@
 				</ul>
 				<ul>
 					<li class=form-list-item id=title-in-list>
-						<h1>Transação</h1>
+						<h1>Transferência</h1>
 					</li>
 					
 					<li class=form-list-item id=fields-in-list>
 						<div class=field>
-							<label for=account-input>Conta *</label>
-							<select class=normal-insertion-field id=account-input name=accountField required>
-								<option disabled selected value="">Conta de origem</option>
+							<label for=origin-account-input>Conta de Origem *</label>
+							<select class=normal-insertion-field id=origin-account-input name=originAccountField
+									required>
+								<option disabled selected value="">Origem da transferência</option>
+							</select>
+						</div>
+						
+						<div class=field>
+							<label for=destination-account-input>Conta Destino *</label>
+							<select class=normal-insertion-field id=destination-account-input
+									name=destinationAccountField required>
+								<option disabled selected value="">Destino da transferência</option>
 							</select>
 						</div>
 						
 						<div class=field>
 							<label for=category-input>Categoria *</label>
 							<select class=normal-insertion-field id=category-input name=categoryField required>
-								<option disabled selected value="">Categoria da transação</option>
+								<option disabled selected value="">Categoria da transferência</option>
 							</select>
 						</div>
 						
 						<div class=field>
-							<label>Tipo de Transação *</label>
-							<label>
-								<input name=typeRadio required type=radio value=debit>Débito
-							</label>
-							<label>
-								<input name=typeRadio type=radio value=credit>Crédito
-							</label>
+							<label for=value-input>Valor *</label>
+							<input class=normal-insertion-field id=value-input name=valueField placeholder="Valor ($)"
+								   required type=number step=.01 min=0>
 						</div>
 						
 						<div class=field>
@@ -63,21 +68,9 @@
 						</div>
 						
 						<div class=field>
-							<label for=value-input>Valor *</label>
-							<input class=small-insertion-field id=value-input name=valueField placeholder="Valor ($)"
-								   required type=number step=.01 min=0>
-						</div>
-						
-						<div class=field>
-							<label for=installments-number-input>Nº de Parcelas</label>
-							<input class=small-insertion-field id=installments-number-input name=installmentsNumberField
-								   placeholder="Parcelas" type=number>
-						</div>
-						
-						<div class=field>
-							<label for=transaction-locale-input>Local da Transação</label>
-							<select class=normal-insertion-field id=transaction-locale-input
-									name=transactionLocaleField>
+							<label for=transfer-locale-input>Local da Transferência</label>
+							<select class=medium-insertion-field id=transfer-locale-input
+									name=transferLocaleField>
 								<option disabled selected value="">Onde foi realizada</option>
 							</select>
 						</div>
@@ -86,7 +79,7 @@
 						<div class=field>
 							<label for=obs-input>Observações</label>
 							<textarea class=big-insertion-field id=obs-input name=obsField
-									  placeholder="Observações sobre a transação"></textarea>
+									  placeholder="Observações sobre a transferência"></textarea>
 						</div>
 					</li>
 					

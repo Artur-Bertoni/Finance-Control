@@ -5,6 +5,8 @@
 	<title>Home Page</title>
 	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
 	<link href=../styles/styles.css rel=stylesheet>
+	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+	<script src=js/AccountDashboard.js type=module></script>
 </head>
 <body>
 <div id=page-wrapper>
@@ -44,7 +46,12 @@
 										Cadastrar Nova Conta
 									</button>
 								</li>
-								<!--TODO adicionar botão de transferência entre contas-->
+								<li>
+									<button class='dashboard-btn colorful-button' id=new-transfer-btn
+											name=postTransfer type=submit>
+										Nova Transferência entre Contas
+									</button>
+								</li>
 							</ul>
 						</td>
 						<td>
@@ -58,7 +65,5 @@
 		</div>
 	</div>
 </div>
-<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<script src=js/AccountDashboard.js type=module></script>
 </body>
 </html>
