@@ -8,16 +8,14 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
         {findById: true})
 
-    if (response !== undefined) {
-        addDeleteIcon()
+    let category = Category.processCategory(response)
+    let nameInput = document.getElementById('name-input')
+    let descriptionInput = document.getElementById('description-input')
 
-        let category = Category.processCategory(response)
-        let nameInput = document.getElementById('name-input')
-        let descriptionInput = document.getElementById('description-input')
+    if (category.name !== undefined)
+        nameInput.value = category.name
+    if (category.description !== undefined)
+        descriptionInput.value = category.description
 
-        if (category.name !== undefined)
-            nameInput.value = category.name
-        if (category.description !== undefined)
-            descriptionInput.value = category.description
-    }
+    addDeleteIcon()
 }

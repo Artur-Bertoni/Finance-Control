@@ -32,6 +32,7 @@ function populateTransactionsList() {
 
     let list = document.getElementById('last-transaction-list')
     let filteredTotal = 0
+    let totalValue
 
     for (const element of transactions) {
         let button = document.createElement('button')
@@ -101,10 +102,14 @@ function populateTransactionsList() {
         list.appendChild(button)
     }
 
-    let totalValue = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
+    totalValue = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {totalAccountsValue: true},
         {accountId: document.getElementById('account-input').value}
     );
+
+    totalValue = Number(totalValue)
+    if (isNaN(totalValue))
+        totalValue = 0
 
     document.getElementById('home-total-box').innerHTML = `Saldo em conta(s) <br>$ ${totalValue.toFixed(2)}`
     document.getElementById('filtered-total-box').innerHTML = `Valor baseado em filtro <br>$ ${filteredTotal.toFixed(2)}`

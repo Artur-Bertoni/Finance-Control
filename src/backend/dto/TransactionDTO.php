@@ -11,8 +11,9 @@ class TransactionDTO implements JsonSerializable
     private $type;
     private $installmentsNumber;
     private $obs;
+    private $transferPartnerId;
 
-    public function __construct($id, $account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber, $obs)
+    public function __construct($id, $account, $category, $transactionLocale, $value, $date, $type, $installmentsNumber, $obs, $transferPartnerId)
     {
         $this->id = $id;
         $this->account = $account;
@@ -23,6 +24,7 @@ class TransactionDTO implements JsonSerializable
         $this->type = $type;
         $this->installmentsNumber = $installmentsNumber;
         $this->obs = $obs;
+        $this->transferPartnerId = $transferPartnerId;
     }
 
     public function getId()
@@ -115,6 +117,16 @@ class TransactionDTO implements JsonSerializable
         $this->obs = $obs;
     }
 
+    public function getTransferPartnerId()
+    {
+        return $this->transferPartnerId;
+    }
+
+    public function setTransferPartnerId($transferPartnerId): void
+    {
+        $this->transferPartnerId = $transferPartnerId;
+    }
+
     public function jsonSerialize(): array
     {
         return array(
@@ -126,7 +138,8 @@ class TransactionDTO implements JsonSerializable
             'date' => $this->date,
             'type' => $this->type,
             'installmentsNumber' => $this->installmentsNumber,
-            'obs' => $this->obs
+            'obs' => $this->obs,
+            'transferPartnerId' => $this->transferPartnerId
         );
     }
 }

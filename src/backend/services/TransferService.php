@@ -24,7 +24,8 @@ class TransferService
                 $requestDTO->getDate(),
                 'debit',
                 0,
-                $requestDTO->getObs()
+                $requestDTO->getObs(),
+                null
             ));
 
             $destinationAccountTransaction = $transactionService->create(new TransactionRequestDTO(
@@ -36,8 +37,12 @@ class TransferService
                 $requestDTO->getDate(),
                 'credit',
                 0,
-                $requestDTO->getObs()
+                $requestDTO->getObs(),
+                null
             ));
+
+            $transactionService->patchTransferPartner($originAccountTransaction->getId(), $destinationAccountTransaction->getId());
+            $transactionService->patchTransferPartner($destinationAccountTransaction->getId(), $originAccountTransaction->getId());
 
             return new TransferDTO(
                 $requestDTO->getUserId(),

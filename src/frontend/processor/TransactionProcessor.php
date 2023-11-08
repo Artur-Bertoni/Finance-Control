@@ -39,6 +39,7 @@ if (isset($_POST['saveButton'])) {
     $type = $_POST["typeRadio"];
     $installmentsNumber = $_POST["installmentsNumberField"];
     $obs = $_POST["obsField"];
+    $transferPartnerId = $_POST["transferPartnerId"];
 
     if ($transactionId != "") {
         $result = $service->update($transactionId, new TransactionRequestDTO(
@@ -50,7 +51,8 @@ if (isset($_POST['saveButton'])) {
             $date,
             $type,
             $installmentsNumber,
-            $obs
+            $obs,
+            $transferPartnerId
         ));
     } else {
         $result = $service->create(new TransactionRequestDTO(
@@ -62,7 +64,8 @@ if (isset($_POST['saveButton'])) {
             $date,
             $type,
             $installmentsNumber,
-            $obs
+            $obs,
+            $transferPartnerId
         ));
     }
 

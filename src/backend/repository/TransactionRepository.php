@@ -12,8 +12,8 @@ class TransactionRepository
             $db->begin_transaction();
 
             $stmt = $db->prepare("insert into artur_transaction
-            (user_id, account_id, category_id, transaction_locale_id, value, date, type, installments_number, obs)
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (user_id, account_id, category_id, transaction_locale_id, value, date, type, installments_number, obs, transfer_partner_id)
+            values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             if (!$stmt)
                 throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
@@ -27,8 +27,9 @@ class TransactionRepository
             $type = $requestDTO->getType();
             $installmentsNumber = $requestDTO->getInstallmentsNumber();
             $obs = $requestDTO->getObs();
+            $transferPartnerId = $requestDTO->getTransferPartnerId();
 
-            $stmt->bind_param("iiiidssis",
+            $stmt->bind_param("iiiidssisi",
                 $userId,
                 $accountId,
                 $categoryId,
@@ -37,7 +38,8 @@ class TransactionRepository
                 $date,
                 $type,
                 $installmentsNumber,
-                $obs
+                $obs,
+                $transferPartnerId
             );
 
             if ($stmt->execute()) {
@@ -64,7 +66,7 @@ class TransactionRepository
             $db->begin_transaction();
 
             $stmt = $db->prepare("update artur_transaction set
-            user_id = ?, account_id = ?, category_id = ?, transaction_locale_id = ?, value = ?, date = ?, type = ?, installments_number = ?, obs = ?
+            user_id = ?, account_id = ?, category_id = ?, transaction_locale_id = ?, value = ?, date = ?, type = ?, installments_number = ?, obs = ?, transfer_partner_id = ?
             where id = ?");
 
             if (!$stmt)
@@ -79,8 +81,9 @@ class TransactionRepository
             $type = $requestDTO->getType();
             $installmentsNumber = $requestDTO->getInstallmentsNumber();
             $obs = $requestDTO->getObs();
+            $transferPartnerId = $requestDTO->getTransferPartnerId();
 
-            $stmt->bind_param("iiiidssisi",
+            $stmt->bind_param("iiiidssisii",
                 $userId,
                 $accountId,
                 $categoryId,
@@ -90,6 +93,7 @@ class TransactionRepository
                 $type,
                 $installmentsNumber,
                 $obs,
+                $transferPartnerId,
                 $id
             );
 
@@ -127,7 +131,8 @@ class TransactionRepository
                     $transaction['date'],
                     $transaction['type'],
                     $transaction['installments_number'],
-                    $transaction['obs']
+                    $transaction['obs'],
+                    $transaction['transfer_partner_id']
                 );
             }
 
@@ -165,7 +170,8 @@ class TransactionRepository
                     $row['date'],
                     $row['type'],
                     $row['installments_number'],
-                    $row['obs']
+                    $row['obs'],
+                    $row['transfer_partner_id']
                 );
             }
             return $transactions;
@@ -184,6 +190,37 @@ class TransactionRepository
             $db->commit();
 
             return null;
+        } catch (Error|Throwable $e) {
+            $db->rollback();
+            return "Erro: " . $e->getMessage();
+        }
+    }
+
+    public function patchTransferPartner($id, $transferPartnerId): Transaction|string
+    {
+        try {
+            global $db;
+            $db->begin_transaction();
+
+            $stmt = $db->prepare("update artur_transaction set transfer_partner_id = ? where id = ?");
+
+            if (!$stmt)
+                throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
+
+            $stmt->bind_param("ii",
+                $transferPartnerId,
+                $id
+            );
+
+            if ($stmt->execute()) {
+                $stmt->close();
+
+                $transaction = $this->findById($id);
+                $db->commit();
+
+                return $transaction;
+            } else
+                throw new SQLiteException("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
         } catch (Error|Throwable $e) {
             $db->rollback();
             return "Erro: " . $e->getMessage();

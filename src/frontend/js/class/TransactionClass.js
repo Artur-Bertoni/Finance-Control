@@ -1,5 +1,5 @@
 export class Transaction {
-    constructor(id, account, category, transactionLocale, value, date, type, installmentsNumber, obs) {
+    constructor(id, account, category, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId) {
         this.id = id
         this.account = account
         this.category = category
@@ -9,6 +9,7 @@ export class Transaction {
         this.type = type
         this.installmentsNumber = installmentsNumber
         this.obs = obs
+        this.transferPartnerId = transferPartnerId
     }
 
     static processTransaction(data) {
@@ -21,7 +22,8 @@ export class Transaction {
             data.date,
             data.type,
             Number(data.installmentsNumber),
-            data.obs
+            data.obs,
+            Number(data.transferPartnerId)
         );
     }
 }

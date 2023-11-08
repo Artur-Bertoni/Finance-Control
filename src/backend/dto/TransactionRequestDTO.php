@@ -11,8 +11,9 @@ class TransactionRequestDTO
     private $type;
     private $installmentsNumber;
     private $obs;
+    private $transferPartnerId;
 
-    public function __construct($userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs)
+    public function __construct($userId, $accountId, $categoryId, $transactionLocaleId, $value, $date, $type, $installmentsNumber, $obs, $transferPartnerId)
     {
         $this->userId = $userId;
         $this->accountId = $accountId;
@@ -23,6 +24,7 @@ class TransactionRequestDTO
         $this->type = $type;
         $this->installmentsNumber = $installmentsNumber;
         $this->obs = $obs;
+        $this->transferPartnerId = $transferPartnerId;
     }
 
     public function getUserId()
@@ -113,5 +115,15 @@ class TransactionRequestDTO
     public function setObs($obs)
     {
         $this->obs = $obs;
+    }
+
+    public function getTransferPartnerId()
+    {
+        return $this->transferPartnerId;
+    }
+
+    public function setTransferPartnerId($transferPartnerId): void
+    {
+        $this->transferPartnerId = $transferPartnerId;
     }
 }

@@ -63,8 +63,8 @@ class AccountRepository
             $description = $requestDTO->getDescription();
             $balance = $requestDTO->getBalance();
 
-            $stmt->bind_param("iisssd",
-                $userId, $financialInstitutionId, $name, $contact, $description, $balance
+            $stmt->bind_param("iisssdi",
+                $userId, $financialInstitutionId, $name, $contact, $description, $balance, $id
             );
 
             if ($stmt->execute()) {

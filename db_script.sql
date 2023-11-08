@@ -72,10 +72,9 @@ CREATE TABLE IF NOT EXISTS artur_transaction
     value                 DOUBLE      NOT NULL,
     date                  DATE        NOT NULL,
     type                  VARCHAR(10) NOT NULL,
-    installments_number   INT,
+    installments_number   INT DEFAULT 0,
     obs                   TINYTEXT,
-    is_installments       BOOLEAN DEFAULT FALSE,
-    last_charge           DATE,
+    transfer_partner_id   INT DEFAULT NULL,
 
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE,

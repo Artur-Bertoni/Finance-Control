@@ -11,30 +11,28 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {findById: true})
 
+    let account = Account.processAccount(response);
+    let nameInput = document.getElementById('name-input')
+    let financialInstitutionInput = document.getElementById('financial-institution-input')
+    let contactInput = document.getElementById('contact-input')
+    let descriptionInput = document.getElementById('description-input')
+    let balanceInput = document.getElementById('balance-input')
+
+    if (account.name !== undefined)
+        nameInput.value = account.name
+    if (account.contact !== undefined)
+        contactInput.value = account.contact
+    if (account.description !== undefined)
+        descriptionInput.value = account.description
+    if (account.balance !== undefined)
+        balanceInput.value = account.balance
+
+    let financialInstitutionOptions = financialInstitutionInput.options;
+    for (const element of financialInstitutionOptions)
+        if (element.innerText === account.financialInstitution) {
+            element.selected = true;
+            break;
+        }
+
     addDeleteIcon()
-
-    if (response !== undefined) {
-        let account = Account.processAccount(response);
-        let nameInput = document.getElementById('name-input')
-        let financialInstitutionInput = document.getElementById('financial-institution-input')
-        let contactInput = document.getElementById('contact-input')
-        let descriptionInput = document.getElementById('description-input')
-        let balanceInput = document.getElementById('balance-input')
-
-        if (account.name !== undefined)
-            nameInput.value = account.name
-        if (account.contact !== undefined)
-            contactInput.value = account.contact
-        if (account.description !== undefined)
-            descriptionInput.value = account.description
-        if (account.balance !== undefined)
-            descriptionInput.value = account.balance
-
-        let financialInstitutionOptions = financialInstitutionInput.options;
-        for (const element of financialInstitutionOptions)
-            if (element.innerText === account.financialInstitution) {
-                element.selected = true;
-                break;
-            }
-    }
 }

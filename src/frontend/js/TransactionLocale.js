@@ -8,16 +8,14 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
         {findById: true})
 
-    if (response !== undefined) {
-        addDeleteIcon()
+    let transactionLocale = TransactionLocale.processTransactionLocale(response)
+    let nameInput = document.getElementById('name-input')
+    let addressInput = document.getElementById('address-input')
 
-        let transactionLocale = TransactionLocale.processTransactionLocale(response)
-        let nameInput = document.getElementById('name-input')
-        let addressInput = document.getElementById('address-input')
+    if (transactionLocale.name !== undefined)
+        nameInput.value = transactionLocale.name
+    if (transactionLocale.address !== undefined)
+        addressInput.value = transactionLocale.address
 
-        if (transactionLocale.name !== undefined)
-            nameInput.value = transactionLocale.name
-        if (transactionLocale.address !== undefined)
-            addressInput.value = transactionLocale.address
-    }
+    addDeleteIcon()
 }

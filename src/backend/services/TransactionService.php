@@ -29,8 +29,34 @@ class TransactionService
 
     public function update($id, TransactionRequestDTO $requestDTO): Transaction|string
     {
-        global $repository;
-        return $repository->update($id, $requestDTO);
+        global $repository, $accountRepository;
+
+        if ($requestDTO->getType() === 'credit')
+            $accountRepository->patchBalance($requestDTO->getAccountId(),
+                -($repository->findById($id)->getValue() - $requestDTO->getValue()));
+        else
+            $accountRepository->patchBalance($requestDTO->getAccountId(),
+                ($repository->findById($id)->getValue() - $requestDTO->getValue()));
+
+        $result = $repository->update($id, $requestDTO);
+
+        if ($requestDTO->getTransferPartnerId() != 0) {
+            $partner = $repository->findById($requestDTO->getTransferPartnerId());
+
+            if ($partner->getValue() != $requestDTO->getValue()) {
+                $requestDTO->setTransferPartnerId($id);
+                $requestDTO->setAccountId($partner->getAccountId());
+
+                if ($requestDTO->getType() === 'debit')
+                    $requestDTO->setType('credit');
+                else
+                    $requestDTO->setType('debit');
+
+                $this->update($partner->getId(), $requestDTO);
+            }
+        }
+
+        return $result;
     }
 
     public function findAllByUser($userId, $startDate, $endDate, $categoryId, $accountId): void
@@ -54,8 +80,26 @@ class TransactionService
 
     public function delete($id): ?string
     {
-        global $repository;
-        return $repository->delete($id);
+        global $repository, $accountRepository;
+
+        $type = $repository->findById($id)->getType();
+
+        if ($type === 'credit')
+            $accountRepository->patchBalance($repository->findById($id)->getAccountId(), -$repository->findById($id)->getValue());
+        else
+            $accountRepository->patchBalance($repository->findById($id)->getAccountId(), $repository->findById($id)->getValue());
+
+        if ($repository->findById($id)->getTransferPartnerId() != 0) {
+            $partner = $repository->findById($repository->findById($id)->getTransferPartnerId());
+
+            $result = $repository->delete($id);
+
+            if ($partner instanceof  Transaction)
+                $this->delete($partner->getId());
+        } else
+            $result = $repository->delete($id);
+
+        return $result;
     }
 
     private function buildTransactionDTO($transaction): TransactionDTO
@@ -71,12 +115,20 @@ class TransactionService
             $transaction->getDate(),
             $transaction->getType(),
             $transaction->getInstallmentsNumber(),
-            $transaction->getObs()
+            $transaction->getObs(),
+            $transaction->getTransferPartnerId()
         );
 
         if ($transaction->getTransactionLocaleId() != null)
             $transactionDTO->setTransactionLocale($transactionLocaleRepository->findById($transaction->getTransactionLocaleId()));
 
         return $transactionDTO;
+    }
+
+    public function patchTransferPartner($id, $transferPartnerId): Transaction|string
+    {
+        global $repository;
+
+        return $repository->patchTransferPartner($id, $transferPartnerId);
     }
 }

@@ -24,7 +24,6 @@ if (isset($_POST['saveButton'])) {
     $transactionLocaleId = $_POST["transactionLocaleField"];
     $value = $_POST["valueField"];
     $date = $_POST["dateField"];
-    $type = $_POST["typeRadio"];
     $obs = $_POST["obsField"];
 
     $result = $service->create(new TransferRequestDTO(
@@ -35,7 +34,6 @@ if (isset($_POST['saveButton'])) {
         $transactionLocaleId,
         $value,
         $date,
-        $type,
         $obs
     ));
 
