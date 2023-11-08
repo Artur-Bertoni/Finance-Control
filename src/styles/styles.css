@@ -434,7 +434,7 @@ input[type=number]::-webkit-inner-spin-button {
 button:hover {
     transition: 0.25s;
     filter: brightness(0.6);
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .colorful-button:hover {
@@ -443,12 +443,12 @@ button:hover {
 
 input:hover, textarea:hover, select:hover {
     transition: 0.25s;
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 input:focus, textarea:focus, select:focus {
     transition: 0.25s;
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 ::-webkit-scrollbar-thumb:hover {
