@@ -33,40 +33,39 @@ if (isset($_POST['deleteButton'])) {
     exit;
 }
 
-if (isset($_POST['saveButton'])) {
-    $accountId = $_SESSION['accountId'];
-    $userId = $_SESSION['userId'];
-    $financialInstitutionId = $_POST['financialInstitutionField'];
-    $name = $_POST["nameField"];
-    $contact = $_POST["contactField"];
-    $description = $_POST["descriptionField"];
-    $balance = $_POST["balanceField"];
+$accountId = $_SESSION['accountId'];
+$userId = $_SESSION['userId'];
+$financialInstitutionId = $_POST['financialInstitutionField'];
+$name = $_POST["nameField"];
+$contact = $_POST["contactField"];
+$description = $_POST["descriptionField"];
+$balance = $_POST["balanceField"];
 
-    if ($accountId != "") {
-        $result = $service->update($accountId, new AccountRequestDTO(
-            $userId,
-            $financialInstitutionId,
-            $name,
-            $contact,
-            $description,
-            $balance
-        ));
-    } else {
-        $result = $service->create(new AccountRequestDTO(
-            $userId,
-            $financialInstitutionId,
-            $name,
-            $contact,
-            $description,
-            $balance
-        ));
-    }
+if ($accountId != "") {
+    $result = $service->update($accountId, new AccountRequestDTO(
+        $userId,
+        $financialInstitutionId,
+        $name,
+        $contact,
+        $description,
+        $balance
+    ));
+} else {
+    $result = $service->create(new AccountRequestDTO(
+        $userId,
+        $financialInstitutionId,
+        $name,
+        $contact,
+        $description,
+        $balance
+    ));
+}
 
-    if (!$result instanceof Account) {
-        echo "<script>alert('" . $result . "');location.href=\"../Account.html\";</script>";
-        exit;
-    }
-
-    header("Location: ../AccountDashboard.html");
+if (!$result instanceof Account) {
+    echo "<script>alert('" . $result . "');location.href=\"../Account.html\";</script>";
     exit;
 }
+
+header("Location: ../AccountDashboard.html");
+exit;
+

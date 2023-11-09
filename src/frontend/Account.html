@@ -14,7 +14,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/AccountProcessor.php method=post>
+			<form action=processor/AccountProcessor.php method=post name=form>
 				<ul id=navigation-menu-btn-gp>
 					<li>
 						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
@@ -36,14 +36,13 @@
 						<div class=field>
 							<label for=name-input>Nome *</label>
 							<input class=normal-insertion-field id=name-input name=nameField
-								   placeholder="Nome (apelido)"
-								   required type=text>
+								   placeholder="Nome (apelido)" type=text>
 						</div>
 						
 						<div class=field>
 							<label for=financial-institution-input>Instituição Financeira *</label>
 							<select class=normal-insertion-field id=financial-institution-input
-									name=financialInstitutionField required>
+									name=financialInstitutionField>
 								<option disabled selected value="">Instituição à qual a conta está vinculada</option>
 							</select>
 						</div>
@@ -63,15 +62,15 @@
 						
 						<div class=field>
 							<label for=balance-input>Saldo</label>
-							<input class=small-insertion-field id=balance-input name=balanceField placeholder="Saldo Inicial ($)"
-								   required type=number step=.01 min=0>
+							<input class=small-insertion-field id=balance-input name=balanceField
+								   placeholder="Saldo Inicial ($)" type=number step=.01 min=0>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
 						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
-						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
+						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
 					</li>
 				</ul>
 			</form>

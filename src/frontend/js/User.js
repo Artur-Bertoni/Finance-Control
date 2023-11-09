@@ -9,23 +9,25 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/UserResource.php',
         {findById: true})
 
-    let user = User.processUser(response)
-    let usernameInput = document.getElementById('username-input')
-    let emailInput = document.getElementById('email-input')
-    let passwordInput = document.getElementById('password-input')
-    let passwordConfirmInput = document.getElementById('password-confirm-input')
+    if (!response) {
+        let user = User.processUser(response)
+        let usernameInput = document.getElementById('username-input')
+        let emailInput = document.getElementById('email-input')
+        let passwordInput = document.getElementById('password-input')
+        let passwordConfirmInput = document.getElementById('password-confirm-input')
 
-    if (user.username !== undefined)
-        usernameInput.value = user.username
-    if (user.email !== undefined)
-        emailInput.value = user.email
-    if (user.password !== undefined) {
-        passwordInput.value = user.password
-        passwordConfirmInput.value = user.password
+        if (user.username !== undefined)
+            usernameInput.value = user.username
+        if (user.email !== undefined)
+            emailInput.value = user.email
+        if (user.password !== undefined) {
+            passwordInput.value = user.password
+            passwordConfirmInput.value = user.password
+        }
+
+        addHomePageIcon()
+        addDeleteIcon()
     }
-
-    addHomePageIcon()
-    addDeleteIcon()
 }
 
 function addPasswordVisualization() {

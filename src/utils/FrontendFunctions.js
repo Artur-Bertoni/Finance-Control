@@ -47,7 +47,12 @@ export function doRequest(url, method, ...extraParams) {
         async: false,
         data: data,
         success: function (response) {
-            data = JSON.parse(response);
+            try {
+                data = JSON.parse(response);
+            } catch (e) {
+                console.log(e.message)
+                return false;
+            }
         },
         error: function (error) {
             console.error(error);
