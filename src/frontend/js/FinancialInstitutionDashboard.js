@@ -37,12 +37,18 @@ for (const element of financialInstitutions) {
 
     let addressLabel = document.createElement('span')
     addressLabel.classList.add('grid-label')
-    addressLabel.innerText = `Endereço: ${element.address}`
+    if (element.address !== undefined && element.address !== '')
+        addressLabel.innerText = `Endereço: ${element.address}`
+    else
+        addressLabel.innerText = `Endereço: Não Informado`
     grid.appendChild(addressLabel)
 
     let contactLabel = document.createElement('span')
     contactLabel.classList.add('grid-label')
-    contactLabel.innerText = `Contato: ${element.contact}`
+    if (element.contact !== undefined && element.contact !== '')
+        contactLabel.innerText = `Contato: ${element.contact}`
+    else
+        contactLabel.innerText = `Contato: Não Informado`
     grid.appendChild(contactLabel)
 
     button.appendChild(grid)

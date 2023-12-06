@@ -14,7 +14,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/UserProcessor.php method=post>
+			<form action=processor/UserProcessor.php method=post name=form>
 				<ul id=navigation-menu-btn-gp>
 				</ul>
 				<ul>
@@ -27,14 +27,14 @@
 							<label for=username-input>Nome de Usuário *</label>
 							<input class=normal-insertion-field id=username-input name=usernameField
 								   placeholder="Preencha com seu nome de usuário"
-								   required type=text>
+								   type=text>
 						</div>
 						
 						<div class=field>
 							<label for=email-input>Endereço de Email *</label>
 							<input class=normal-insertion-field id=email-input name=emailField
 								   placeholder="Preencha com seu endereço de email"
-								   required type=email>
+								   type=email>
 						</div>
 						
 						<div class=field>
@@ -42,8 +42,9 @@
 								<img alt="Show/Hide password" class=password-btn-img id=password-img
 									 src="../images/hiding.png">
 							</label>
-							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com uma senha"
-								   required type=password>
+							<input class=normal-insertion-field id=password-input name=passwordField
+								   placeholder="Preencha com uma senha"
+								   type=password>
 						</div>
 						
 						<div class=field>
@@ -53,14 +54,14 @@
 							</label>
 							<input class=normal-insertion-field id=password-confirm-input name=passwordConfirmationField
 								   placeholder="Repita a senha"
-								   required type=password>
+								   type=password>
 						</div>
 					</li>
 					
 					<li class=form-list-item id=buttons-in-list>
 						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
-						<button class=txt-btn id=save-btn name=saveButton type=submit>Salvar</button>
+						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
 					</li>
 				</ul>
 			</form>

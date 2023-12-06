@@ -33,34 +33,32 @@ if (isset($_POST['deleteButton'])) {
     exit;
 }
 
-if (isset($_POST['saveButton'])) {
-    $financialInstitutionId = $_SESSION['financialInstitutionId'];
-    $userId = $_SESSION['userId'];
-    $name = $_POST["nameField"];
-    $address = $_POST["addressField"];
-    $contact = $_POST["contactField"];
+$financialInstitutionId = $_SESSION['financialInstitutionId'];
+$userId = $_SESSION['userId'];
+$name = $_POST["nameField"];
+$address = $_POST["addressField"];
+$contact = $_POST["contactField"];
 
-    if ($financialInstitutionId != "") {
-        $result = $service->update($financialInstitutionId, new FinancialInstitutionRequestDTO(
-            $userId,
-            $name,
-            $address,
-            $contact
-        ));
-    } else {
-        $result = $service->create(new FinancialInstitutionRequestDTO(
-            $userId,
-            $name,
-            $address,
-            $contact
-        ));
-    }
+if ($financialInstitutionId != "") {
+    $result = $service->update($financialInstitutionId, new FinancialInstitutionRequestDTO(
+        $userId,
+        $name,
+        $address,
+        $contact
+    ));
+} else {
+    $result = $service->create(new FinancialInstitutionRequestDTO(
+        $userId,
+        $name,
+        $address,
+        $contact
+    ));
+}
 
-    if (!$result instanceof FinancialInstitution) {
-        echo "<script>alert('" . $result . "');location.href=\"../FinancialInstitution.html\";</script>";
-        exit;
-    }
-
-    header("Location: ../FinancialInstitutionDashboard.html");
+if (!$result instanceof FinancialInstitution) {
+    echo "<script>alert('" . $result . "');location.href=\"../FinancialInstitution.html\";</script>";
     exit;
 }
+
+header("Location: ../FinancialInstitutionDashboard.html");
+exit;

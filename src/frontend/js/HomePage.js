@@ -64,7 +64,7 @@ function populateTransactionsList() {
 
         let localeLabel = document.createElement('span')
         localeLabel.classList.add('grid-label')
-        if (element.transactionLocale !== undefined)
+        if (element.transactionLocale !== undefined && element.transactionLocale !== '')
             localeLabel.innerText = `Local: ${element.transactionLocale}`
         else
             localeLabel.innerText = `Local: Não Informado`

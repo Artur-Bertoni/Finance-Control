@@ -14,7 +14,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form id=form action=processor/TransactionProcessor.php method=post>
+			<form action=processor/TransactionProcessor.php method=post name=form>
 				<ul id=navigation-menu-btn-gp>
 					<li>
 						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
@@ -35,14 +35,14 @@
 					<li class=form-list-item id=fields-in-list>
 						<div class=field>
 							<label for=account-input>Conta *</label>
-							<select class=normal-insertion-field id=account-input name=accountField required>
+							<select class=normal-insertion-field id=account-input name=accountField>
 								<option disabled selected value="">Conta de origem</option>
 							</select>
 						</div>
 						
 						<div class=field>
 							<label for=category-input>Categoria *</label>
-							<select class=normal-insertion-field id=category-input name=categoryField required>
+							<select class=normal-insertion-field id=category-input name=categoryField>
 								<option disabled selected value="">Categoria da transação</option>
 							</select>
 						</div>
@@ -50,22 +50,22 @@
 						<div class=field>
 							<label>Tipo de Transação *</label>
 							<label>
-								<input name=typeRadio required type=radio value=debit>Débito
+								<input name=typeRadio type=radio id=debit-radio value=debit>Débito
 							</label>
 							<label>
-								<input name=typeRadio type=radio value=credit>Crédito
+								<input name=typeRadio type=radio id=credit-radio value=credit>Crédito
 							</label>
 						</div>
 						
 						<div class=field>
 							<label for=date-input>Data *</label>
-							<input class=small-insertion-field id=date-input name=dateField required type=date>
+							<input class=small-insertion-field id=date-input name=dateField type=date>
 						</div>
 						
 						<div class=field>
 							<label for=value-input>Valor *</label>
 							<input class=small-insertion-field id=value-input name=valueField placeholder="Valor ($)"
-								   required type=number step=.01 min=0>
+								   type=number step=.01 min=0>
 						</div>
 						
 						<div class=field>
@@ -95,7 +95,7 @@
 					<li class=form-list-item id=buttons-in-list>
 						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
 						</button>
-						<button class=txt-btn id=save-btn name=saveButton form=form type=submit>Salvar</button>
+						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
 				</ul>
 			</form>
 		</div>

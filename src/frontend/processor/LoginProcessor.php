@@ -12,19 +12,16 @@ if (isset($_POST['registerButton'])) {
     exit;
 }
 
-if (isset($_POST['loginButton'])) {
-    $email = $_POST["emailField"];
-    $password = $_POST["passwordField"];
+$email = $_POST["emailField"];
+$password = $_POST["passwordField"];
 
-    $result = $service->login($email, $password);
+$result = $service->login($email, $password);
 
-    if (!$result instanceof User) {
-        echo "<script>alert('" . $result . "');location.href=\"../Login.html\";</script>";
-        exit;
-    }
-
-    $_SESSION["userId"] = $result->getId();
-    header("Location: ../HomePage.html");
+if (!$result instanceof User) {
+    echo "<script>alert('" . $result . "');location.href=\"../Login.html\";</script>";
     exit;
 }
 
+$_SESSION["userId"] = $result->getId();
+header("Location: ../HomePage.html");
+exit;

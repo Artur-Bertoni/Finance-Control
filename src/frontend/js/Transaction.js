@@ -14,12 +14,26 @@ date.value = date.max
 
 tryToPopulateWithData();
 
+document.getElementById('save-btn').addEventListener("click", function () {
+    let accountInput = document.getElementById('account-input').value
+    let categoryInput = document.getElementById('category-input').value
+    let typeRadioDebit = document.getElementById('debit-radio')
+    let typeRadioCredit = document.getElementById('credit-radio')
+    let dateInput = document.getElementById('date-input').value
+    let valueInput = document.getElementById('value-input').value
+
+    if (accountInput === '' || categoryInput === '' || (!typeRadioDebit.checked && !typeRadioCredit.checked) || dateInput === '' || valueInput === '')
+        alert('Os campos Conta, Categoria, Tipo de Transação, Data e Valor devem ser preenchidos!');
+    else
+        document.form.submit();
+});
+
 function tryToPopulateWithData() {
     let response = doRequest(
         'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
         {findById: true})
 
-    if (!response) {
+    if (response) {
         let transaction = Transaction.processTransaction(response)
         let accountInput = document.getElementById('account-input')
         let categoryInput = document.getElementById('category-input')

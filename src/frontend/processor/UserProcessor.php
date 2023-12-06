@@ -27,36 +27,34 @@ if (isset($_POST['deleteButton'])) {
     exit;
 }
 
-if (isset($_POST['saveButton'])) {
-    $userId = $_SESSION['userId'];
-    $username = $_POST["usernameField"];
-    $email = $_POST["emailField"];
-    $password = $_POST["passwordField"];
-    $passwordConfirmation = $_POST["passwordConfirmationField"];
+$userId = $_SESSION['userId'];
+$username = $_POST["usernameField"];
+$email = $_POST["emailField"];
+$password = $_POST["passwordField"];
+$passwordConfirmation = $_POST["passwordConfirmationField"];
 
-    if ($userId != "") {
-        $result = $service->update($userId, new UserRequestDTO(
-            $username,
-            $email,
-            $password,
-            $passwordConfirmation
-        ));
-    } else {
-        $result = $service->create(new UserRequestDTO(
-            $username,
-            $email,
-            $password,
-            $passwordConfirmation
-        ));
-    }
+if ($userId != "") {
+    $result = $service->update($userId, new UserRequestDTO(
+        $username,
+        $email,
+        $password,
+        $passwordConfirmation
+    ));
+} else {
+    $result = $service->create(new UserRequestDTO(
+        $username,
+        $email,
+        $password,
+        $passwordConfirmation
+    ));
+}
 
-    if (!$result instanceof User) {
-        echo "<script>alert('" . $result . "');location.href=\"../User.html\";</script>";
-        exit;
-    }
-
-    $_SESSION["userId"] = $result->getId();
-
-    header("Location: ../HomePage.html");
+if (!$result instanceof User) {
+    echo "<script>alert('" . $result . "');location.href=\"../User.html\";</script>";
     exit;
 }
+
+$_SESSION["userId"] = $result->getId();
+
+header("Location: ../HomePage.html");
+exit;

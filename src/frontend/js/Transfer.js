@@ -14,6 +14,19 @@ date.value = date.max
 
 document.getElementById('origin-account-input').addEventListener('change', setMaxValue)
 
+document.getElementById('save-btn').addEventListener("click", function () {
+    let originAccountInput = document.getElementById('origin-account-input').value
+    let DestinationAccountInput = document.getElementById('destination-account-input').value
+    let categoryInput = document.getElementById('category-input').value
+    let valueInput = document.getElementById('value-input').value
+    let dateInput = document.getElementById('date-input').value
+
+    if (originAccountInput === '' || DestinationAccountInput === '' || categoryInput === '' || dateInput === '' || valueInput === '')
+        alert('Os campos Conta de Origem, Conta Destino, Categoria, Valor e Data devem ser preenchidos!');
+    else
+        document.form.submit();
+});
+
 function setMaxValue() {
     let valueInput = document.getElementById('value-input')
 

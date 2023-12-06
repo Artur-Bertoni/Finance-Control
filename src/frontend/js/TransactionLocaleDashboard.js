@@ -37,7 +37,10 @@ for (const element of transactionLocales) {
 
     let addressLabel = document.createElement('span')
     addressLabel.classList.add('grid-label')
-    addressLabel.innerText = `Endereço: ${element.address}`
+    if (element.address !== undefined && element.address !== '')
+        addressLabel.innerText = `Endereço: ${element.address}`
+    else
+        addressLabel.innerText = `Endereço: Não Informado`
     grid.appendChild(addressLabel)
 
     button.appendChild(grid)

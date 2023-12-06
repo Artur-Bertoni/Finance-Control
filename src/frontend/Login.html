@@ -13,7 +13,7 @@
 	
 	<div id=content-wrapper>
 		<div id=background>
-			<form action=processor/LoginProcessor.php method=post>
+			<form action=processor/LoginProcessor.php method=post name=form>
 				<ul>
 					<li class=form-list-item id=title-in-list>
 						<h1 id=title>Bem Vindo(a)!</h1>
@@ -23,7 +23,7 @@
 						<div class=field>
 							<label for=email-input>Email</label>
 							<input class=normal-insertion-field id=email-input name=emailField placeholder="Preencha com o seu email"
-								   required type=email>
+								   type=email>
 						</div>
 						
 						<div class=field>
@@ -32,13 +32,13 @@
 									 src="../images/hiding.png">
 							</label>
 							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com a sua senha"
-								   required type=password>
+								   type=password>
 						</div>
 					</li>
 					<li class=form-list-item id=buttons-in-list>
 						<button class=txt-btn formnovalidate id=register-btn name=registerButton type=submit>Cadastrar
 						</button>
-						<button class=txt-btn id=login-btn name=loginButton type=submit>Login</button>
+						<button class=txt-btn id=login-btn name=loginButton type=button>Login</button>
 					</li>
 				</ul>
 			</form>

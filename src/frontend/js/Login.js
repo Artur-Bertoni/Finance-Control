@@ -15,3 +15,13 @@ passwordToggle.addEventListener('click', function () {
     passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text';
     trocar('password-img')
 });
+
+document.getElementById('save-btn').addEventListener("click", function () {
+    let emailInput = document.getElementById('email-input').value
+    let passwordInput = document.getElementById('password-input').value
+
+    if (emailInput === '' || passwordInput === '')
+        alert('Os campos Email e Senha devem ser preenchidos!');
+    else
+        document.form.submit();
+});

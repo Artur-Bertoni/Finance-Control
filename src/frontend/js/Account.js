@@ -11,17 +11,10 @@ document.getElementById('save-btn').addEventListener("click", function () {
     let financialInstitutionInput = document.getElementById('financial-institution-input').value
     let balanceInput = document.getElementById('balance-input').value
 
-    if (nameInput === '') {
-        alert('O campo Nome deve ser preenchido!')
-    } else if (financialInstitutionInput === '') {
-        alert('O campo Instituição Financeira deve ser preenchido!')
-    } else if (balanceInput === '') {
-        alert('O campo Saldo deve ser preenchido!')
-    } else {
+    if (nameInput === '' || financialInstitutionInput === '' || balanceInput === '')
+        alert('Os campos Nome, Instituição Financeira e Saldo devem ser preenchidos!');
+    else
         document.form.submit();
-    }
-
-    //TODO implementar onclick em todos os botões do sistema
 });
 
 function tryToPopulateWithData() {
@@ -29,7 +22,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {findById: true})
 
-    if (!response) {
+    if (response) {
         let account = Account.processAccount(response);
         let nameInput = document.getElementById('name-input')
         let financialInstitutionInput = document.getElementById('financial-institution-input')

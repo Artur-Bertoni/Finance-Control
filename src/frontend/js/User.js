@@ -4,18 +4,29 @@ import {User} from "./class/UserClass.js";
 addPasswordVisualization();
 tryToPopulateWithData();
 
+document.getElementById('save-btn').addEventListener("click", function () {
+    let usernameInput = document.getElementById('username-input').value
+    let emailInput = document.getElementById('email-input').value
+    let passwordInput = document.getElementById('password-input').value
+    let passwordConfirmInput = document.getElementById('password-confirm-input').value
+
+    if (usernameInput === '' || emailInput === '' || passwordInput === '' || passwordConfirmInput === '')
+        alert('Os campos Nome de Usuário, Endereço de Email, Senha e Confirmar Senha devem ser preenchidos!');
+    else
+        document.form.submit();
+});
+
 function tryToPopulateWithData() {
     let response = doRequest(
         'http://localhost/finance-control/src/backend/resources/UserResource.php',
         {findById: true})
 
-    if (!response) {
+    if (response) {
         let user = User.processUser(response)
         let usernameInput = document.getElementById('username-input')
         let emailInput = document.getElementById('email-input')
         let passwordInput = document.getElementById('password-input')
         let passwordConfirmInput = document.getElementById('password-confirm-input')
-
         if (user.username !== undefined)
             usernameInput.value = user.username
         if (user.email !== undefined)
