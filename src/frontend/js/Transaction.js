@@ -12,8 +12,6 @@ let date = document.getElementById('date-input')
 date.max = new Date().toISOString().split("T")[0]
 date.value = date.max
 
-tryToPopulateWithData();
-
 document.getElementById('save-btn').addEventListener("click", function () {
     let accountInput = document.getElementById('account-input').value
     let categoryInput = document.getElementById('category-input').value
@@ -27,6 +25,8 @@ document.getElementById('save-btn').addEventListener("click", function () {
     else
         document.form.submit();
 });
+
+tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(

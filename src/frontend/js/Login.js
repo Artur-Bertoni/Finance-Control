@@ -16,7 +16,7 @@ passwordToggle.addEventListener('click', function () {
     trocar('password-img')
 });
 
-document.getElementById('save-btn').addEventListener("click", function () {
+document.getElementById('login-btn').addEventListener("click", function () {
     let emailInput = document.getElementById('email-input').value
     let passwordInput = document.getElementById('password-input').value
 

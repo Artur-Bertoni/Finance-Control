@@ -1,8 +1,6 @@
 import {addDeleteIcon, doRequest} from "../../utils/FrontendFunctions.js";
 import {FinancialInstitution} from "./class/FinancialInstitutionClass.js";
 
-tryToPopulateWithData();
-
 document.getElementById('save-btn').addEventListener("click", function () {
     let nameInput = document.getElementById('name-input').value
 
@@ -11,6 +9,8 @@ document.getElementById('save-btn').addEventListener("click", function () {
     else
         document.form.submit();
 });
+
+tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(

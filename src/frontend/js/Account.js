@@ -4,8 +4,6 @@ import {Account} from "./class/AccountClass.js";
 
 FinancialInstitution.addFinancialInstitutions();
 
-tryToPopulateWithData();
-
 document.getElementById('save-btn').addEventListener("click", function () {
     let nameInput = document.getElementById('name-input').value
     let financialInstitutionInput = document.getElementById('financial-institution-input').value
@@ -16,6 +14,8 @@ document.getElementById('save-btn').addEventListener("click", function () {
     else
         document.form.submit();
 });
+
+tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(

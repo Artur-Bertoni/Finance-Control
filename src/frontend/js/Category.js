@@ -1,8 +1,6 @@
 import {addDeleteIcon, doRequest} from "../../utils/FrontendFunctions.js";
 import {Category} from "./class/CategoryClass.js";
 
-tryToPopulateWithData();
-
 document.getElementById('save-btn').addEventListener("click", function () {
     let nameInput = document.getElementById('name-input').value
 
@@ -12,6 +10,8 @@ document.getElementById('save-btn').addEventListener("click", function () {
         document.form.submit();
     }
 });
+
+tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(

@@ -2,7 +2,6 @@ import {addDeleteIcon, addHomePageIcon, doRequest} from "../../utils/FrontendFun
 import {User} from "./class/UserClass.js";
 
 addPasswordVisualization();
-tryToPopulateWithData();
 
 document.getElementById('save-btn').addEventListener("click", function () {
     let usernameInput = document.getElementById('username-input').value
@@ -15,6 +14,8 @@ document.getElementById('save-btn').addEventListener("click", function () {
     else
         document.form.submit();
 });
+
+tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(
