@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS artur_user
+CREATE TABLE IF NOT EXISTS user
 (
     id       INT AUTO_INCREMENT,
     username VARCHAR(75) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS artur_user
 );
 
 
-CREATE TABLE IF NOT EXISTS artur_financial_institution
+CREATE TABLE IF NOT EXISTS institution
 (
     id      INT AUTO_INCREMENT,
     user_id INT         NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS artur_financial_institution
 );
 
 
-CREATE TABLE IF NOT EXISTS artur_account
+CREATE TABLE IF NOT EXISTS account
 (
     id                       INT AUTO_INCREMENT,
     user_id                  INT         NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS artur_account
 );
 
 
-CREATE TABLE IF NOT EXISTS artur_transaction_locale
+CREATE TABLE IF NOT EXISTS transaction_locale
 (
     id      INT AUTO_INCREMENT,
     user_id INT         NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS artur_transaction_locale
 );
 
 
-CREATE TABLE IF NOT EXISTS artur_category
+CREATE TABLE IF NOT EXISTS category
 (
     id          INT AUTO_INCREMENT,
     user_id     INT         NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS artur_category
 );
 
 
-CREATE TABLE IF NOT EXISTS artur_transaction
+CREATE TABLE IF NOT EXISTS transaction
 (
     id                    INT AUTO_INCREMENT,
     user_id               INT         NOT NULL,

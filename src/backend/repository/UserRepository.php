@@ -11,7 +11,7 @@ class UserRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_user
+            $stmt = $db->prepare("insert into user
             (username, email, password) values(?, ?, ?)");
 
             if (!$stmt)
@@ -47,7 +47,7 @@ class UserRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_user set
+            $stmt = $db->prepare("update user set
             username = ?, email = ?, password = ? where id = ?");
 
             if (!$stmt)
@@ -82,7 +82,7 @@ class UserRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_user WHERE id = $id");
+            $result = $db->query("SELECT * FROM user WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
@@ -105,7 +105,7 @@ class UserRepository
         try {
             global $db;
 
-            return $db->query("SELECT * FROM artur_user WHERE email = '$email'");
+            return $db->query("SELECT * FROM user WHERE email = '$email'");
         } catch (Error|Throwable $e) {
             $db->rollback();
             return "Erro: " . $e->getMessage();
@@ -117,7 +117,7 @@ class UserRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_user WHERE email = '$email' and id != $id");
+            $result = $db->query("SELECT * FROM user WHERE email = '$email' and id != $id");
 
             return $result->num_rows > 0;
         } catch (Error|Throwable $e) {
@@ -131,7 +131,7 @@ class UserRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_user where email = '$email' and password like '$password'");
+            $result = $db->query("select * from user where email = '$email' and password like '$password'");
 
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
@@ -151,7 +151,7 @@ class UserRepository
             global $db;
 
             $db->begin_transaction();
-            $db->query("delete from artur_user where id = $id");
+            $db->query("delete from user where id = $id");
             $db->commit();
 
             return null;

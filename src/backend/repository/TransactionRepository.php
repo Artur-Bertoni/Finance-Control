@@ -11,7 +11,7 @@ class TransactionRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_transaction
+            $stmt = $db->prepare("insert into transaction
             (user_id, account_id, category_id, transaction_locale_id, value, date, type, installments_number, obs, transfer_partner_id)
             values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -65,7 +65,7 @@ class TransactionRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_transaction set
+            $stmt = $db->prepare("update transaction set
             user_id = ?, account_id = ?, category_id = ?, transaction_locale_id = ?, value = ?, date = ?, type = ?, installments_number = ?, obs = ?, transfer_partner_id = ?
             where id = ?");
 
@@ -117,7 +117,7 @@ class TransactionRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_transaction WHERE id = $id");
+            $result = $db->query("SELECT * FROM transaction WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $transaction = $result->fetch_assoc();
@@ -147,7 +147,7 @@ class TransactionRepository
         try {
             global $db;
 
-            $query = "select * from artur_transaction where user_id = $userId and date between '$startDate' and '$endDate' ";
+            $query = "select * from transaction where user_id = $userId and date between '$startDate' and '$endDate' ";
 
             if ($categoryId != "")
                 $query = $query . "and category_id = $categoryId ";
@@ -186,7 +186,7 @@ class TransactionRepository
             global $db;
 
             $db->begin_transaction();
-            $db->query("delete from artur_transaction where id = $id");
+            $db->query("delete from transaction where id = $id");
             $db->commit();
 
             return null;
@@ -202,7 +202,7 @@ class TransactionRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_transaction set transfer_partner_id = ? where id = ?");
+            $stmt = $db->prepare("update transaction set transfer_partner_id = ? where id = ?");
 
             if (!$stmt)
                 throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);

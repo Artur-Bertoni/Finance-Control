@@ -11,7 +11,7 @@ class FinancialInstitutionRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_financial_institution
+            $stmt = $db->prepare("insert into financial_institution
             (user_id, name, address, contact) values(?, ?, ?, ?)");
 
             if (!$stmt)
@@ -48,7 +48,7 @@ class FinancialInstitutionRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_financial_institution set
+            $stmt = $db->prepare("update financial_institution set
             user_id = ?, name = ?, address = ?, contact = ? where id = ?");
 
             if (!$stmt)
@@ -83,7 +83,7 @@ class FinancialInstitutionRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_financial_institution WHERE id = $id");
+            $result = $db->query("SELECT * FROM financial_institution WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $financialInstitution = $result->fetch_assoc();
@@ -107,7 +107,7 @@ class FinancialInstitutionRepository
             global $db;
             $db->begin_transaction();
 
-            $result = $db->query("select * from artur_financial_institution where user_id = $userId order by id desc");
+            $result = $db->query("select * from financial_institution where user_id = $userId order by id desc");
 
             $financialInstitution = array();
             while ($row = mysqli_fetch_array($result)) {
@@ -132,7 +132,7 @@ class FinancialInstitutionRepository
             $db->begin_transaction();
 
             $db->begin_transaction();
-            $db->query("delete from artur_financial_institution where id = $id");
+            $db->query("delete from financial_institution where id = $id");
             $db->commit();
 
             return null;

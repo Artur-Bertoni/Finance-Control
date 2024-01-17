@@ -11,7 +11,7 @@ class CategoryRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_category
+            $stmt = $db->prepare("insert into category
             (user_id, name, description) values(?, ?, ?)");
 
             if (!$stmt)
@@ -47,7 +47,7 @@ class CategoryRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_category set
+            $stmt = $db->prepare("update category set
             user_id = ?, name = ?, description = ? where id = ?");
 
             if (!$stmt)
@@ -81,7 +81,7 @@ class CategoryRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_category WHERE id = $id");
+            $result = $db->query("SELECT * FROM category WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $account = $result->fetch_assoc();
@@ -103,7 +103,7 @@ class CategoryRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_category where user_id = $userId order by id desc");
+            $result = $db->query("select * from category where user_id = $userId order by id desc");
 
             $categories = array();
             while ($row = mysqli_fetch_array($result)) {
@@ -126,7 +126,7 @@ class CategoryRepository
             global $db;
 
             $db->begin_transaction();
-            $db->query("delete from artur_category where id = $id");
+            $db->query("delete from category where id = $id");
             $db->commit();
 
             return null;

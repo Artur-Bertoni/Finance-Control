@@ -11,7 +11,7 @@ class TransactionLocaleRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_transaction_locale
+            $stmt = $db->prepare("insert into transaction_locale
             (user_id, name, address) values(?, ?, ?)");
 
             if (!$stmt)
@@ -49,7 +49,7 @@ class TransactionLocaleRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_transaction_locale set
+            $stmt = $db->prepare("update transaction_locale set
             user_id = ?, name = ?, address = ? where id = ?");
 
             if (!$stmt)
@@ -86,7 +86,7 @@ class TransactionLocaleRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_transaction_locale WHERE id = $id");
+            $result = $db->query("SELECT * FROM transaction_locale WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $transactionLocale = $result->fetch_assoc();
@@ -110,7 +110,7 @@ class TransactionLocaleRepository
             global $db;
             $db->begin_transaction();
 
-            $result = $db->query("select * from artur_transaction_locale where user_id = $userId order by id desc");
+            $result = $db->query("select * from transaction_locale where user_id = $userId order by id desc");
 
             $transactionLocales = array();
             while ($row = mysqli_fetch_array($result)) {
@@ -134,7 +134,7 @@ class TransactionLocaleRepository
             $db->begin_transaction();
 
             $db->begin_transaction();
-            $db->query("delete from artur_transaction_locale where id = $id");
+            $db->query("delete from transaction_locale where id = $id");
             $db->commit();
 
             return null;

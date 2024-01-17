@@ -11,7 +11,7 @@ class AccountRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("insert into artur_account
+            $stmt = $db->prepare("insert into account
             (user_id, financial_institution_id, name, contact, description, balance) values(?, ?, ?, ?, ?, ?)");
 
             if (!$stmt)
@@ -50,7 +50,7 @@ class AccountRepository
             global $db;
             $db->begin_transaction();
 
-            $stmt = $db->prepare("update artur_account set
+            $stmt = $db->prepare("update account set
             user_id = ?, financial_institution_id = ?, name = ?, contact = ?, description = ?, balance = ? where id = ?");
 
             if (!$stmt)
@@ -87,7 +87,7 @@ class AccountRepository
         try {
             global $db;
 
-            $result = $db->query("SELECT * FROM artur_account WHERE id = $id");
+            $result = $db->query("SELECT * FROM account WHERE id = $id");
 
             if ($result->num_rows > 0) {
                 $account = $result->fetch_assoc();
@@ -112,7 +112,7 @@ class AccountRepository
         try {
             global $db;
 
-            $result = $db->query("select * from artur_account where user_id = $userId order by id desc");
+            $result = $db->query("select * from account where user_id = $userId order by id desc");
 
             $accounts = array();
             while ($row = mysqli_fetch_array($result)) {
@@ -138,7 +138,7 @@ class AccountRepository
             global $db;
 
             $db->begin_transaction();
-            $db->query("delete from artur_account where id = $id");
+            $db->query("delete from account where id = $id");
             $db->commit();
 
             return null;
@@ -153,7 +153,7 @@ class AccountRepository
         try {
             global $db;
 
-            $query = "select Sum(balance) as total_value from artur_account ";
+            $query = "select Sum(balance) as total_value from account ";
 
             if ($accountId !== '')
                 $query = $query . "where id = $accountId";
@@ -175,7 +175,7 @@ class AccountRepository
             global $db;
 
             $db->begin_transaction();
-            $stmt = $db->prepare("update artur_account set balance = balance + ? where id = ?");
+            $stmt = $db->prepare("update account set balance = balance + ? where id = ?");
 
             if (!$stmt)
                 throw new SQLiteException("Prepare failed: (" . $db->errno . ") " . $db->error);
