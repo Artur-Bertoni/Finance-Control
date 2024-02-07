@@ -73,7 +73,7 @@ function populateTransactionsList() {
         let dateLabel = document.createElement('span')
         dateLabel.classList.add('grid-label')
         let date = new Date(element.date)
-        dateLabel.innerText = `Data: ${((date.getDate().toString().padStart(2, '0'))) + "/" + ((date.getMonth() + 1)) + "/" + date.getFullYear()}`
+        dateLabel.innerText = `Data: ${((date.getDate() + 1).toString().padStart(2, '0')) + "/" + ((date.getMonth() + 1).toString().padStart(2, '0')) + "/" + date.getFullYear()}`
         grid.appendChild(dateLabel)
 
         let valueLabel = document.createElement('span')

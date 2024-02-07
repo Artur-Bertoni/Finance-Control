@@ -154,7 +154,7 @@ class TransactionRepository
             if ($accountId != "")
                 $query = $query . "and account_id = $accountId ";
 
-            $query = $query . "order by id desc";
+            $query = $query . "order by date desc";
 
             $result = $db->query($query);
 
