@@ -17,7 +17,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
         {findById: true})
 
-    if (response) {
+    if (response.id !== undefined) {
         let transactionLocale = TransactionLocale.processTransactionLocale(response)
         let nameInput = document.getElementById('name-input')
         let addressInput = document.getElementById('address-input')

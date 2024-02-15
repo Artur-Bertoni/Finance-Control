@@ -18,7 +18,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
         {findById: true})
 
-    if (response) {
+    if (response.id !== undefined) {
         let category = Category.processCategory(response)
         let nameInput = document.getElementById('name-input')
         let descriptionInput = document.getElementById('description-input')

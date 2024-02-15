@@ -17,7 +17,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
         {findById: true})
 
-    if (response) {
+    if (response.id !== undefined) {
         let financialInstitution = FinancialInstitution.processFinancialInstitution(response)
         let nameInput = document.getElementById('name-input')
         let addressInput = document.getElementById('address-input')
