@@ -33,7 +33,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/TransactionResource.php',
         {findById: true})
 
-    if (response) {
+    if (response.id !== undefined) {
         let transaction = Transaction.processTransaction(response)
         let accountInput = document.getElementById('account-input')
         let categoryInput = document.getElementById('category-input')

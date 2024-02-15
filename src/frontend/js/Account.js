@@ -22,7 +22,7 @@ function tryToPopulateWithData() {
         'http://localhost/finance-control/src/backend/resources/AccountResource.php',
         {findById: true})
 
-    if (response) {
+    if (response.id !== undefined) {
         let account = Account.processAccount(response);
         let nameInput = document.getElementById('name-input')
         let financialInstitutionInput = document.getElementById('financial-institution-input')

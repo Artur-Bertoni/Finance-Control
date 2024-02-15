@@ -84,12 +84,12 @@ class CategoryRepository
             $result = $db->query("SELECT * FROM category WHERE id = $id");
 
             if ($result->num_rows > 0) {
-                $account = $result->fetch_assoc();
+                $category = $result->fetch_assoc();
                 return new Category(
-                    $account['id'],
-                    $account['user_id'],
-                    $account['name'],
-                    $account['description']
+                    $category['id'],
+                    $category['user_id'],
+                    $category['name'],
+                    $category['description']
                 );
             }
             return "Categoria de id " . $id . " não encontrada";
