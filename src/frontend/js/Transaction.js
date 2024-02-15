@@ -53,7 +53,7 @@ function tryToPopulateWithData() {
         if (transaction.date !== undefined)
             dateInput.value = transaction.date;
         if (transaction.value !== undefined)
-            valueInput.value = transaction.value;
+            valueInput.value = transaction.value.toFixed(2);
         if (transaction.installmentsNumber !== undefined)
             installmentsNumberInput.value = transaction.installmentsNumber;
         if (transaction.obs !== undefined)

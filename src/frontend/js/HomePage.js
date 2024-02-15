@@ -116,6 +116,7 @@ function populateTransactionsList() {
 }
 
 function configureFilters() {
+    //TODO filtros devem manter filtragem após saída e retorno pra página
     let startDateInput = document.getElementById('start-date-input')
     startDateInput.max = new Date().toISOString().split("T")[0]
     let firstDayOfTheMonth = new Date()

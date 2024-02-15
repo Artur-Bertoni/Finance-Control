@@ -37,7 +37,7 @@ function tryToPopulateWithData() {
         if (account.description !== undefined)
             descriptionInput.value = account.description
         if (account.balance !== undefined)
-            balanceInput.value = account.balance
+            balanceInput.value = account.balance.toFixed(2)
 
         let financialInstitutionOptions = financialInstitutionInput.options;
         for (const element of financialInstitutionOptions)
