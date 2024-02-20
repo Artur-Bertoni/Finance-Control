@@ -31,12 +31,12 @@ class TransactionService
     {
         global $repository, $accountRepository;
 
+        $accountRepository->patchBalance($id, -$repository->findById($id)->getValue());
+
         if ($requestDTO->getType() === 'credit')
-            $accountRepository->patchBalance($requestDTO->getAccountId(),
-                -($repository->findById($id)->getValue() - $requestDTO->getValue()));
+            $accountRepository->patchBalance($requestDTO->getAccountId(), $requestDTO->getValue());
         else
-            $accountRepository->patchBalance($requestDTO->getAccountId(),
-                ($repository->findById($id)->getValue() - $requestDTO->getValue()));
+            $accountRepository->patchBalance($requestDTO->getAccountId(), -$requestDTO->getValue());
 
         $result = $repository->update($id, $requestDTO);
 
