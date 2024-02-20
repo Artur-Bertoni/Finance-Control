@@ -17,6 +17,7 @@ class TransactionService
 {
     public function create(TransactionRequestDTO $requestDTO): Transaction|string
     {
+        //TODO transações parceladas devem ser cadastradas de forma q as parcelas sejam disperças enquanto durarem, ao invés de salvar o valor cheio
         global $repository, $accountRepository;
 
         if ($requestDTO->getType() === 'credit')
