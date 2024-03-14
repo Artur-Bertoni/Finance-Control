@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS user
 );
 
 
-CREATE TABLE IF NOT EXISTS institution
+CREATE TABLE IF NOT EXISTS financial_institution
 (
     id      INT AUTO_INCREMENT,
     user_id INT         NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS institution
     contact VARCHAR(100),
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
 
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS account
     balance                  DOUBLE DEFAULT 0,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE,
-    FOREIGN KEY (financial_institution_id) REFERENCES artur_financial_institution (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (financial_institution_id) REFERENCES financial_institution (id) ON DELETE CASCADE
 );
 
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS transaction_locale
     address VARCHAR(150),
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS category
     description TINYTEXT,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
 
@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS transaction
     transfer_partner_id   INT DEFAULT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES artur_user (id) ON DELETE CASCADE,
-    FOREIGN KEY (account_id) REFERENCES artur_account (id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES artur_category (id) ON DELETE CASCADE,
-    FOREIGN KEY (transaction_locale_id) REFERENCES artur_transaction_locale (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (account_id) REFERENCES account (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE,
+    FOREIGN KEY (transaction_locale_id) REFERENCES transaction_locale (id) ON DELETE CASCADE
 );
