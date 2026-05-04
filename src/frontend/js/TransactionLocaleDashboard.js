@@ -4,7 +4,7 @@ import {TransactionLocale} from "./class/TransactionLocaleClass.js";
 let data;
 let transactionLocales = []
 
-data = doRequest('http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
+data = doRequest('/backend/resources/TransactionLocaleResource.php',
     {findAllByUser: true})
 
 try {

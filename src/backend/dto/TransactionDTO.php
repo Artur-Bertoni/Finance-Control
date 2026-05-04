@@ -127,7 +127,7 @@ class TransactionDTO implements JsonSerializable
         $this->transferPartnerId = $transferPartnerId;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

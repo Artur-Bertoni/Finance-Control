@@ -9,7 +9,7 @@ export class TransactionLocale {
 
     static addTransactionLocales(elementId) {
         let transactionLocales = doRequest(
-            'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
+            '/backend/resources/TransactionLocaleResource.php',
             {findAllByUser: true}
         );
 

@@ -79,7 +79,7 @@ class AccountDTO implements JsonSerializable
         $this->balance = $balance;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

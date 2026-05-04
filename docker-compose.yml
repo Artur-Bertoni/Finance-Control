@@ -12,6 +12,24 @@ services:
       - "3306:3306"
     volumes:
       - db:/var/lib/mysql
+      - ./db_script.sql:/docker-entrypoint-initdb.d/db_script.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-ptest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db:
     driver: local

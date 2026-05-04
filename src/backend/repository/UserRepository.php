@@ -100,15 +100,20 @@ class UserRepository
         }
     }
 
-    public function findByEmail($email): bool|string
+    public function findByEmail($email): bool
     {
         try {
             global $db;
 
-            return $db->query("SELECT * FROM user WHERE email = '$email'");
+            $stmt = $db->prepare("SELECT id FROM user WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
+            $exists = $stmt->num_rows > 0;
+            $stmt->close();
+            return $exists;
         } catch (Error|Throwable $e) {
-            $db->rollback();
-            return "Erro: " . $e->getMessage();
+            return false;
         }
     }
 
@@ -126,22 +131,24 @@ class UserRepository
         }
     }
 
-    public function findByEmailAndPassword($email, $password): User|string
+    public function findByEmailAndPassword($email, $password): User|false
     {
         try {
             global $db;
 
-            $result = $db->query("select * from user where email = '$email' and password like '$password'");
+            $stmt = $db->prepare("SELECT * FROM user WHERE email = ? AND password = ?");
+            $stmt->bind_param("ss", $email, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
                 return new User($user['id'], $user['username'], $user['email'], $user['password']);
             }
 
-            return "Usuário de email " . $email . " e senha " . $password . " não encontrado";
+            return false;
         } catch (Error|Throwable $e) {
-            $db->rollback();
-            return "Erro: " . $e->getMessage();
+            return false;
         }
     }
 

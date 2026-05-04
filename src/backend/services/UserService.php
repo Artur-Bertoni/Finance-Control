@@ -13,11 +13,13 @@ class UserService
     {
         global $repository;
 
-        if ($repository->findByEmail($requestDTO->getEmail())) {
-            if ($this->verifyPasswordsEquality($requestDTO->getPassword(), $requestDTO->getPasswordConfirmation()))
-                return $repository->save($requestDTO);
-            else return "As senhas devem ser iguais";
-        } else return "Email já cadastrado";
+        if ($repository->findByEmail($requestDTO->getEmail()))
+            return "Email já cadastrado";
+
+        if (!$this->verifyPasswordsEquality($requestDTO->getPassword(), $requestDTO->getPasswordConfirmation()))
+            return "As senhas devem ser iguais";
+
+        return $repository->save($requestDTO);
     }
 
     private function verifyPasswordsEquality($password, $password_confirmation): bool

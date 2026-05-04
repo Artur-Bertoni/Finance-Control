@@ -4,7 +4,7 @@ import {Category} from "./class/CategoryClass.js";
 let data;
 let categories = []
 
-data = doRequest('http://localhost/finance-control/src/backend/resources/CategoryResource.php',
+data = doRequest('/backend/resources/CategoryResource.php',
     {findAllByUser: true})
 
 try {

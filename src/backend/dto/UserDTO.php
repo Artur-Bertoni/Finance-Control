@@ -55,7 +55,7 @@ class UserDTO implements JsonSerializable
         $this->password = $password;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

@@ -10,7 +10,7 @@ export class FinancialInstitution {
 
     static addFinancialInstitutions() {
         let financialInstitutions = doRequest(
-            'http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
+            '/backend/resources/FinancialInstitutionResource.php',
             {findAllByUser: true}
         );
 

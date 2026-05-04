@@ -12,7 +12,7 @@ export class Account {
 
     static addAccounts(elementId) {
         let accounts = doRequest(
-            'http://localhost/finance-control/src/backend/resources/AccountResource.php',
+            '/backend/resources/AccountResource.php',
             {findAllByUser: true}
         );
 

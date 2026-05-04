@@ -9,7 +9,7 @@ export class Category {
 
     static addCategories(elementId) {
         let categories = doRequest(
-            'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
+            '/backend/resources/CategoryResource.php',
             {findAllByUser: true}
         );
 

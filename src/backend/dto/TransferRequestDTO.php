@@ -103,7 +103,7 @@ class TransferRequestDTO implements JsonSerializable
         $this->obs = $obs;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array(
             'userId' => $this->userId,

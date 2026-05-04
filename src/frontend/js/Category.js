@@ -15,7 +15,7 @@ tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(
-        'http://localhost/finance-control/src/backend/resources/CategoryResource.php',
+        '/backend/resources/CategoryResource.php',
         {findById: true})
 
     if (response.id !== undefined) {

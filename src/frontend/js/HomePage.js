@@ -12,7 +12,7 @@ function populateTransactionsList() {
     let data;
     let transactions = [];
 
-    data = doRequest('http://localhost/finance-control/src/backend/resources/TransactionResource.php',
+    data = doRequest('/backend/resources/TransactionResource.php',
         {findAllByUser: true},
         {
             startDate: document.getElementById('start-date-input').value,
@@ -73,7 +73,7 @@ function populateTransactionsList() {
         let dateLabel = document.createElement('span')
         dateLabel.classList.add('grid-label')
         let date = new Date(element.date)
-        dateLabel.innerText = `Data: ${((date.getDate() + 1).toString().padStart(2, '0')) + "/" + ((date.getMonth() + 1).toString().padStart(2, '0')) + "/" + date.getFullYear()}`
+        dateLabel.innerText = `Data: ${(date.getUTCDate().toString().padStart(2, '0')) + "/" + ((date.getUTCMonth() + 1).toString().padStart(2, '0')) + "/" + date.getUTCFullYear()}`
         grid.appendChild(dateLabel)
 
         let valueLabel = document.createElement('span')
@@ -102,7 +102,7 @@ function populateTransactionsList() {
         list.appendChild(button)
     }
 
-    totalValue = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
+    totalValue = doRequest('/backend/resources/AccountResource.php',
         {totalAccountsValue: true},
         {accountId: document.getElementById('account-input').value}
     );

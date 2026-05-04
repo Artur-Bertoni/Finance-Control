@@ -67,7 +67,7 @@ class FinancialInstitution implements JsonSerializable
         $this->contact = $contact;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

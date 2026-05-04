@@ -4,7 +4,7 @@ import {Account} from "./class/AccountClass.js";
 let data;
 let accounts = []
 
-data = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
+data = doRequest('/backend/resources/AccountResource.php',
     {findAllByUser: true})
 
 try {

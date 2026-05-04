@@ -14,7 +14,7 @@ tryToPopulateWithData();
 
 function tryToPopulateWithData() {
     let response = doRequest(
-        'http://localhost/finance-control/src/backend/resources/TransactionLocaleResource.php',
+        '/backend/resources/TransactionLocaleResource.php',
         {findById: true})
 
     if (response.id !== undefined) {

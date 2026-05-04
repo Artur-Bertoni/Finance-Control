@@ -4,7 +4,7 @@ import {FinancialInstitution} from "./class/FinancialInstitutionClass.js";
 let data;
 let financialInstitutions = []
 
-data = doRequest('http://localhost/finance-control/src/backend/resources/FinancialInstitutionResource.php',
+data = doRequest('/backend/resources/FinancialInstitutionResource.php',
     {findAllByUser: true})
 
 try {

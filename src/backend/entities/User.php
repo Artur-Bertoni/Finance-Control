@@ -55,7 +55,7 @@ class User implements JsonSerializable
         $this->password = $password;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

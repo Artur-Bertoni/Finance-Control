@@ -43,7 +43,7 @@ class CategoryDTO implements JsonSerializable
         $this->description = $description;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

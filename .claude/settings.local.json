@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-Item *.html -File)",
+      "Bash(Select-Object Name, Length)"
+    ]
+  }
+}

@@ -55,7 +55,7 @@ class TransactionLocale implements JsonSerializable
         $this->address = $address;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

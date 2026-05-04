@@ -30,7 +30,7 @@ document.getElementById('save-btn').addEventListener("click", function () {
 function setMaxValue() {
     let valueInput = document.getElementById('value-input')
 
-    valueInput.max = doRequest('http://localhost/finance-control/src/backend/resources/AccountResource.php',
+    valueInput.max = doRequest('/backend/resources/AccountResource.php',
             {totalAccountsValue: true},
             {accountId: document.getElementById('origin-account-input').value}
         );

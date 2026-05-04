@@ -18,7 +18,7 @@ if (isset($_POST['deleteButton'])) {
     $result = $service->delete($_SESSION['userId']);
 
     if ($result != null) {
-        echo "<script>alert('" . $result . "');location.href=\"../User.html\";</script>";
+        echo "<script>alert(" . json_encode($result) . ");location.href=\"../User.html\";</script>";
         exit;
     }
 
@@ -27,7 +27,7 @@ if (isset($_POST['deleteButton'])) {
     exit;
 }
 
-$userId = $_SESSION['userId'];
+$userId = $_SESSION['userId'] ?? '';
 $username = $_POST["usernameField"];
 $email = $_POST["emailField"];
 $password = $_POST["passwordField"];
@@ -50,7 +50,7 @@ if ($userId != "") {
 }
 
 if (!$result instanceof User) {
-    echo "<script>alert('" . $result . "');location.href=\"../User.html\";</script>";
+    echo "<script>alert(" . json_encode($result) . ");location.href=\"../User.html\";</script>";
     exit;
 }
 

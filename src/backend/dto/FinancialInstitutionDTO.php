@@ -55,7 +55,7 @@ class FinancialInstitutionDTO implements JsonSerializable
         $this->contact = $contact;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,
