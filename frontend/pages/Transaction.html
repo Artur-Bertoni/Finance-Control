@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Transaction Post</title>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
+	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+	<script src=../js/Transaction.js type=module></script>
+</head>
+<body>
+<div id=page-wrapper>
+	<img alt=Logo id=logo-img src=../images/logo.png>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<form method=post name=form>
+				<ul id=navigation-menu-btn-gp>
+					<li>
+						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
+							<img alt="Profile" id=profile-btn-img src=../images/user.png>
+						</button>
+					</li>
+					<li>
+						<button class=img-btn id=home-btn name="homeButton" type=submit formnovalidate>
+							<img alt="Home" id=home-btn-img src=../images/home-page.png>
+						</button>
+					</li>
+				</ul>
+				<ul>
+					<li class=form-list-item id=title-in-list>
+						<h1>Transação</h1>
+					</li>
+					
+					<li class=form-list-item id=fields-in-list>
+						<div class=field>
+							<label for=account-input>Conta *</label>
+							<select class=normal-insertion-field id=account-input name=accountField>
+								<option disabled selected value="">Conta de origem</option>
+							</select>
+						</div>
+						
+						<div class=field>
+							<label for=category-input>Categoria *</label>
+							<select class=normal-insertion-field id=category-input name=categoryField>
+								<option disabled selected value="">Categoria da transação</option>
+							</select>
+						</div>
+						
+						<div class=field>
+							<label>Tipo de Transação *</label>
+							<label>
+								<input name=typeRadio type=radio id=debit-radio value=debit>Débito
+							</label>
+							<label>
+								<input name=typeRadio type=radio id=credit-radio value=credit>Crédito
+							</label>
+						</div>
+						
+						<div class=field>
+							<label for=date-input>Data *</label>
+							<input class=small-insertion-field id=date-input name=dateField type=date>
+						</div>
+						
+						<div class=field>
+							<label for=value-input>Valor *</label>
+							<input class=small-insertion-field id=value-input name=valueField placeholder="Valor ($)"
+								   type=number step=.01 min=0>
+						</div>
+						
+						<div class=field>
+							<label for=installments-number-input>Nº de Parcelas</label>
+							<input class=small-insertion-field id=installments-number-input name=installmentsNumberField
+								   placeholder="Parcelas" type=number>
+						</div>
+						
+						<div class=field>
+							<label for=transaction-locale-input>Local da Transação</label>
+							<select class=normal-insertion-field id=transaction-locale-input
+									name=transactionLocaleField>
+								<option disabled selected value="">Onde foi realizada</option>
+							</select>
+						</div>
+						
+						
+						<div class=field>
+							<label for=obs-input>Observações</label>
+							<textarea class=big-insertion-field id=obs-input name=obsField
+									  placeholder="Observações sobre a transação"></textarea>
+						</div>
+						
+						<input id=transfer-partner-id name=transferPartnerId type=hidden value=0>
+					</li>
+					
+					<li class=form-list-item id=buttons-in-list>
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
+						</button>
+						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
+				</ul>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

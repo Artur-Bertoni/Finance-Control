@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Transaction Locale Post</title>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
+	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+	<script src=../js/TransactionLocale.js type=module></script>
+</head>
+<body>
+<div id=page-wrapper>
+	<img alt=Logo id=logo-img src=../images/logo.png>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<form method=post name=form>
+				<ul id=navigation-menu-btn-gp>
+					<li>
+						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
+							<img alt="Profile" id=profile-btn-img src=../images/user.png>
+						</button>
+					</li>
+					<li>
+						<button class=img-btn id=home-btn name="homeButton" type=submit formnovalidate>
+							<img alt="Home" id=home-btn-img src=../images/home-page.png>
+						</button>
+					</li>
+				</ul>
+				<ul>
+					<li class=form-list-item id=title-in-list>
+						<h1 id=title>Local de Transação</h1>
+					</li>
+					
+					<li class=form-list-item id=fields-in-list>
+						<div class=field>
+							<label for=name-input>Nome *</label>
+							<input class=normal-insertion-field id=name-input name=nameField placeholder="Nome do local"
+								   type=text>
+						</div>
+						
+						<div class=field>
+							<label for=address-input>Endereço</label>
+							<input class=normal-insertion-field id=address-input name=addressField
+								   placeholder="Endereço do local"
+								   type=text>
+						</div>
+					</li>
+					
+					<li class=form-list-item id=buttons-in-list>
+						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
+						</button>
+						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

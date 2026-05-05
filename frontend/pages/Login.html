@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Login Page</title>
+	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
+	<link href=../styles/styles.css rel=stylesheet>
+	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+	<script src=../js/Login.js type=module></script>
+</head>
+<body>
+<div id=page-wrapper>
+	<img alt=Logo id=logo-img src=../images/logo.png>
+	
+	<div id=content-wrapper>
+		<div id=background>
+			<form method=post name=form>
+				<ul>
+					<li class=form-list-item id=title-in-list>
+						<h1 id=title>Bem Vindo(a)!</h1>
+					</li>
+					
+					<li class=form-list-item id=fields-in-list>
+						<div class=field>
+							<label for=email-input>Email</label>
+							<input class=normal-insertion-field id=email-input name=emailField placeholder="Preencha com o seu email"
+								   type=email>
+						</div>
+						
+						<div class=field>
+							<label for=password-input>Senha
+								<img alt="Show/Hide password" class=password-btn-img id=password-img
+									 src="../images/hiding.png">
+							</label>
+							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com a sua senha"
+								   type=password>
+						</div>
+					</li>
+					<li class=form-list-item id=buttons-in-list>
+						<button class=txt-btn formnovalidate id=register-btn name=registerButton type=submit>Cadastrar
+						</button>
+						<button class=txt-btn id=login-btn name=loginButton type=button>Login</button>
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

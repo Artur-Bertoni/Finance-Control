@@ -2,7 +2,19 @@
   "permissions": {
     "allow": [
       "Bash(Get-Item *.html -File)",
-      "Bash(Select-Object Name, Length)"
+      "Bash(Select-Object Name, Length)",
+      "Bash(docker compose *)",
+      "Bash(docker stop *)",
+      "Bash(docker rm *)",
+      "Bash(curl -v http://localhost:8080/)",
+      "Bash(docker restart *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Projetos\\\\Finance-Control\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Csv -NoTypeInformation)",
+      "Bash(Out-String)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Projetos\\\\Finance-Control\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\financecontrol\" -Recurse -Directory | ForEach-Object { $_.FullName.Replace\\('c:\\\\Projetos\\\\Finance-Control\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\financecontrol', 'financecontrol'\\) } | sort)",
+      "PowerShell(Get-ChildItem \"c:\\\\Projetos\\\\Finance-Control\\\\frontend\" -Recurse | Select-Object FullName | ForEach-Object { $_.FullName.Replace\\(\"c:\\\\Projetos\\\\Finance-Control\\\\frontend\\\\\", \"\"\\) })",
+      "PowerShell(Get-ChildItem \"c:\\\\Projetos\\\\Finance-Control\\\\frontend\" -Recurse | ForEach-Object { $_.FullName.Replace\\(\"c:\\\\Projetos\\\\Finance-Control\\\\frontend\\\\\", \"\"\\) })"
     ]
   }
 }
