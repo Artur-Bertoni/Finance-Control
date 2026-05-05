@@ -1,59 +1,60 @@
-﻿import {addDeleteIcon, doRequest, navigate} from "../utils/FrontendFunctions.js"
-import {FinancialInstitution} from "./class/FinancialInstitutionClass.js"
+import { addDeleteIcon, doRequest, navigate, showToast } from '../utils/FrontendFunctions.js'
+import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
+import { SidebarManager } from './components/SidebarManager.js'
+
+SidebarManager.initialize()
 
 const urlParams = new URLSearchParams(window.location.search)
 const fiId = urlParams.get('id')
 
-document.querySelector('form[name=form]').addEventListener('submit', function (e) {
-    e.preventDefault()
-    const name = e.submitter?.name
-    if (name === 'profileButton') navigate('/pages/User.html')
-    else if (name === 'homeButton') navigate('/pages/HomePage.html')
-    else if (name === 'cancelButton') navigate('/pages/FinancialInstitutionDashboard.html')
-})
-
 if (fiId) {
-    let response = doRequest(`/api/financial-institutions/${fiId}`, 'GET')
+    document.getElementById('page-title-text').textContent = 'Editar Instituição Financeira'
+    document.getElementById('save-btn').textContent = 'Salvar Alterações'
+
+    const response = doRequest(`/api/financial-institutions/${fiId}`, 'GET')
     if (response?.id !== undefined) {
-        let fi = FinancialInstitution.processFinancialInstitution(response)
-        document.getElementById('name-input').value = fi.name ?? ''
+        const fi = FinancialInstitution.processFinancialInstitution(response)
+        document.getElementById('name-input').value    = fi.name    ?? ''
         document.getElementById('address-input').value = fi.address ?? ''
         document.getElementById('contact-input').value = fi.contact ?? ''
 
-        let deleteBtn = addDeleteIcon()
+        const deleteBtn = addDeleteIcon()
         deleteBtn.addEventListener('click', function () {
             $.ajax({
-                url: `/api/financial-institutions/${fiId}`,
-                type: 'DELETE',
+                url:   `/api/financial-institutions/${fiId}`,
+                type:  'DELETE',
                 async: false,
                 success: function () { navigate('/pages/FinancialInstitutionDashboard.html') },
-                error: function (xhr) { alert(xhr.responseJSON?.message ?? 'Erro ao excluir instituição financeira.') }
+                error:   function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir instituição financeira.', 'error') }
             })
         })
     }
 }
 
-document.getElementById('save-btn').addEventListener('click', function () {
-    let name = document.getElementById('name-input').value
+document.getElementById('cancel-btn').addEventListener('click', () =>
+    navigate('/pages/FinancialInstitutionDashboard.html')
+)
 
+document.getElementById('save-btn').addEventListener('click', function () {
+    const name = document.getElementById('name-input').value
     if (!name) {
-        alert('O campo Nome deve ser preenchido!')
+        showToast('O campo Nome é obrigatório.', 'warning')
         return
     }
 
-    let body = {
+    const body = {
         name,
         address: document.getElementById('address-input').value || null,
         contact: document.getElementById('contact-input').value || null
     }
 
     $.ajax({
-        url: fiId ? `/api/financial-institutions/${fiId}` : '/api/financial-institutions',
-        type: fiId ? 'PUT' : 'POST',
-        async: false,
+        url:         fiId ? `/api/financial-institutions/${fiId}` : '/api/financial-institutions',
+        type:        fiId ? 'PUT' : 'POST',
+        async:       false,
         contentType: 'application/json',
-        data: JSON.stringify(body),
-        success: function () { navigate('/pages/FinancialInstitutionDashboard.html') },
-        error: function (xhr) { alert(xhr.responseJSON?.message ?? 'Erro ao salvar instituição financeira.') }
+        data:        JSON.stringify(body),
+        success:     function () { navigate('/pages/FinancialInstitutionDashboard.html') },
+        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar instituição financeira.', 'error') }
     })
 })

@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransferController extends BaseController {
 
-    private final TransferService service;
+    private final TransferService transferService;
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody TransferRequest req, HttpSession session) {
-        service.create(requireUserId(session), req);
+        transferService.create(requireUserId(session), req);
         return ResponseEntity.ok().build();
     }
 }

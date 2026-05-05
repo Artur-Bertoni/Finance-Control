@@ -9,4 +9,5 @@ public record TransferRequest(
         Long transactionLocaleId,
         Double value,
         LocalDate date,
-        String obs) {}
+        String obs
+) {}

@@ -2,8 +2,14 @@ package com.financecontrol.dto.response;
 
 import com.financecontrol.entity.Account;
 
-public record AccountResponse(Long id, FinancialInstitutionResponse financialInstitution,
-                               String name, String contact, String description, Double balance) {
+public record AccountResponse(
+    Long id,
+    FinancialInstitutionResponse financialInstitution,
+    String name,
+    String contact,
+    String description,
+    Double balance
+) {
     public static AccountResponse from(Account a) {
         return new AccountResponse(
                 a.getId(),

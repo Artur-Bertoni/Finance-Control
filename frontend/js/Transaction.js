@@ -1,107 +1,188 @@
-﻿import {addDeleteIcon, doRequest, navigate} from "../utils/FrontendFunctions.js"
-import {Account} from "./class/AccountClass.js"
-import {Category} from "./class/CategoryClass.js"
-import {TransactionLocale} from "./class/TransactionLocaleClass.js"
-import {Transaction} from "./class/TransactionClass.js"
+import { addDeleteIcon, doRequest, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { Account } from './class/AccountClass.js'
+import { Category } from './class/CategoryClass.js'
+import { TransactionLocale } from './class/TransactionLocaleClass.js'
+import { Transaction } from './class/TransactionClass.js'
+import { SidebarManager } from './components/SidebarManager.js'
+
+SidebarManager.initialize()
 
 Category.addCategories('category-input')
 TransactionLocale.addTransactionLocales('transaction-locale-input')
 Account.addAccounts('account-input')
 
-let date = document.getElementById('date-input')
-date.max = new Date().toISOString().split("T")[0]
-date.value = date.max
+const dateInput = document.getElementById('date-input')
+dateInput.max   = new Date().toISOString().split('T')[0]
+dateInput.value = dateInput.max
 
-const urlParams = new URLSearchParams(window.location.search)
+const urlParams     = new URLSearchParams(window.location.search)
 const transactionId = urlParams.get('id')
 
-document.querySelector('form[name=form]').addEventListener('submit', function (e) {
-    e.preventDefault()
-    const name = e.submitter?.name
-    if (name === 'profileButton') navigate('/pages/User.html')
-    else if (name === 'homeButton') navigate('/pages/HomePage.html')
-    else if (name === 'cancelButton') navigate('/pages/HomePage.html')
-})
-
 if (transactionId) {
-    let response = doRequest(`/api/transactions/${transactionId}`, 'GET')
+    document.getElementById('page-title-text').textContent = 'Editar Transação'
+    document.getElementById('save-btn').textContent = 'Salvar Alterações'
+
+    const response = doRequest(`/api/transactions/${transactionId}`, 'GET')
     if (response?.id !== undefined) {
-        let transaction = Transaction.processTransaction(response)
+        const tx = Transaction.processTransaction(response)
 
-        let typeRadioDebit = document.querySelector('input[name="typeRadio"][value="debit"]')
-        let typeRadioCredit = document.querySelector('input[name="typeRadio"][value="credit"]')
-        typeRadioDebit.checked = transaction.type === 'debit'
-        typeRadioCredit.checked = transaction.type === 'credit'
+        document.getElementById('debit-radio').checked  = tx.type === 'debit'
+        document.getElementById('credit-radio').checked = tx.type === 'credit'
+        updateRadioStyle()
 
-        document.getElementById('date-input').value = transaction.date
-        document.getElementById('value-input').value = transaction.value.toFixed(2)
-        document.getElementById('installments-number-input').value = transaction.installmentsNumber
-        document.getElementById('obs-input').value = transaction.obs ?? ''
-        document.getElementById('transfer-partner-id').value = transaction.transferPartnerId
+        dateInput.value = tx.date
+        document.getElementById('value-input').value                 = tx.value.toFixed(2)
+        document.getElementById('installments-number-input').value   = tx.installmentsNumber
+        document.getElementById('obs-input').value                   = tx.obs ?? ''
+        document.getElementById('transfer-partner-id').value         = tx.transferPartnerId
 
-        let accountInput = document.getElementById('account-input')
-        for (const option of accountInput.options) {
-            if (option.innerText === transaction.account) { option.selected = true; break }
+        const accountSel = document.getElementById('account-input')
+        for (const opt of accountSel.options) {
+            if (opt.innerText === tx.account) { opt.selected = true; break }
+        }
+        const categorySel = document.getElementById('category-input')
+        for (const opt of categorySel.options) {
+            if (opt.innerText === tx.category) { opt.selected = true; break }
+        }
+        const localeSel = document.getElementById('transaction-locale-input')
+        for (const opt of localeSel.options) {
+            if (opt.innerText === tx.transactionLocale) { opt.selected = true; break }
         }
 
-        let categoryInput = document.getElementById('category-input')
-        for (const option of categoryInput.options) {
-            if (option.innerText === transaction.category) { option.selected = true; break }
-        }
-
-        let localeInput = document.getElementById('transaction-locale-input')
-        for (const option of localeInput.options) {
-            if (option.innerText === transaction.transactionLocale) { option.selected = true; break }
-        }
-
-        let deleteBtn = addDeleteIcon()
+        const deleteBtn = addDeleteIcon()
         deleteBtn.addEventListener('click', function () {
             $.ajax({
                 url: `/api/transactions/${transactionId}`,
                 type: 'DELETE',
                 async: false,
                 success: function () { navigate('/pages/HomePage.html') },
-                error: function (xhr) { alert(xhr.responseJSON?.message ?? 'Erro ao excluir transação.') }
+                error: function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir transação.', 'error') }
             })
         })
     }
 }
 
-document.getElementById('save-btn').addEventListener('click', function () {
-    let accountId = document.getElementById('account-input').value
-    let categoryId = document.getElementById('category-input').value
-    let typeRadioDebit = document.getElementById('debit-radio')
-    let typeRadioCredit = document.getElementById('credit-radio')
-    let dateValue = document.getElementById('date-input').value
-    let value = document.getElementById('value-input').value
+document.querySelectorAll('input[name="typeRadio"]').forEach(r =>
+    r.addEventListener('change', updateRadioStyle)
+)
 
-    if (!accountId || !categoryId || (!typeRadioDebit.checked && !typeRadioCredit.checked) || !dateValue || !value) {
-        alert('Os campos Conta, Categoria, Tipo de Transação, Data e Valor devem ser preenchidos!')
+function updateRadioStyle() {
+    const debitOpt  = document.getElementById('debit-option')
+    const creditOpt = document.getElementById('credit-option')
+    const isDebit   = document.getElementById('debit-radio').checked
+    const isCredit  = document.getElementById('credit-radio').checked
+    debitOpt.classList.toggle('selected-debit',   isDebit)
+    creditOpt.classList.toggle('selected-credit', isCredit)
+}
+
+document.getElementById('cancel-btn').addEventListener('click', () =>
+    navigate('/pages/HomePage.html')
+)
+
+document.getElementById('save-btn').addEventListener('click', function () {
+    const accountId  = document.getElementById('account-input').value
+    const categoryId = document.getElementById('category-input').value
+    const debitRadio  = document.getElementById('debit-radio')
+    const creditRadio = document.getElementById('credit-radio')
+    const dateValue  = document.getElementById('date-input').value
+    const value      = document.getElementById('value-input').value
+
+    if (!accountId || !categoryId || (!debitRadio.checked && !creditRadio.checked) || !dateValue || !value) {
+        showToast('Preencha os campos obrigatórios: Conta, Categoria, Tipo, Data e Valor.', 'warning')
         return
     }
 
-    let localeId = document.getElementById('transaction-locale-input').value
-    let transferPartnerId = Number(document.getElementById('transfer-partner-id').value) || null
+    const localeId          = document.getElementById('transaction-locale-input').value
+    const transferPartnerId = Number(document.getElementById('transfer-partner-id').value) || null
 
-    let body = {
-        accountId: Number(accountId),
-        categoryId: Number(categoryId),
+    const body = {
+        accountId:           Number(accountId),
+        categoryId:          Number(categoryId),
         transactionLocaleId: localeId ? Number(localeId) : null,
-        value: Number(value),
-        date: dateValue,
-        type: typeRadioDebit.checked ? 'debit' : 'credit',
-        installmentsNumber: Number(document.getElementById('installments-number-input').value) || 0,
-        obs: document.getElementById('obs-input').value || null,
+        value:               Number(value),
+        date:                dateValue,
+        type:                debitRadio.checked ? 'debit' : 'credit',
+        installmentsNumber:  Number(document.getElementById('installments-number-input').value) || 0,
+        obs:                 document.getElementById('obs-input').value || null,
         transferPartnerId
     }
 
     $.ajax({
-        url: transactionId ? `/api/transactions/${transactionId}` : '/api/transactions',
-        type: transactionId ? 'PUT' : 'POST',
-        async: false,
+        url:         transactionId ? `/api/transactions/${transactionId}` : '/api/transactions',
+        type:        transactionId ? 'PUT' : 'POST',
+        async:       false,
         contentType: 'application/json',
-        data: JSON.stringify(body),
-        success: function () { navigate('/pages/HomePage.html') },
-        error: function (xhr) { alert(xhr.responseJSON?.message ?? 'Erro ao salvar transação.') }
+        data:        JSON.stringify(body),
+        success:     function () { navigate('/pages/HomePage.html') },
+        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar transação.', 'error') }
     })
 })
+
+// ── Quick-add buttons ──────────────────────────────────────────────────────
+
+document.getElementById('account-add-btn').addEventListener('click', () => {
+    const fiOptions = (doRequest('/api/financial-institutions', 'GET') ?? [])
+        .map(fi => ({ value: fi.id, label: fi.name }))
+
+    showQuickAdd({
+        title:  'Nova Conta',
+        apiUrl: '/api/accounts',
+        fields: [
+            { id: 'name',    label: 'Nome *',                 type: 'text',   required: true, placeholder: 'Nome da conta' },
+            { id: 'fiId', label: 'Instituição Financeira *', type: 'select', required: true, options: fiOptions, placeholder: 'Selecione',
+              addBtn: { title: 'Nova Instituição Financeira', apiUrl: '/api/financial-institutions',
+                fields: [
+                    { id: 'name',    label: 'Nome *',   type: 'text', required: true, placeholder: 'Nome da instituição' },
+                    { id: 'address', label: 'Endereço', type: 'text', placeholder: 'Endereço (opcional)' },
+                    { id: 'contact', label: 'Contato',  type: 'text', placeholder: 'Telefone ou e-mail (opcional)' }
+                ],
+                buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
+              }
+            },
+            { id: 'balance', label: 'Saldo Inicial',           type: 'number', placeholder: '0.00', step: '0.01' }
+        ],
+        buildBody: v => ({
+            name:                   v.name,
+            financialInstitutionId: Number(v.fiId),
+            balance:                v.balance === '' ? 0 : Number(v.balance),
+            contact:                null,
+            description:            null
+        }),
+        onSuccess: item => addOptionToSelect('account-input', item.id, item.name)
+    })
+})
+
+document.getElementById('category-add-btn').addEventListener('click', () => {
+    showQuickAdd({
+        title:  'Nova Categoria',
+        apiUrl: '/api/categories',
+        fields: [
+            { id: 'name',        label: 'Nome *',    type: 'text',     required: true, placeholder: 'Nome da categoria' },
+            { id: 'description', label: 'Descrição', type: 'textarea', placeholder: 'Descrição (opcional)' }
+        ],
+        buildBody: v => ({ name: v.name, description: v.description || null }),
+        onSuccess: item => addOptionToSelect('category-input', item.id, item.name)
+    })
+})
+
+document.getElementById('locale-add-btn').addEventListener('click', () => {
+    showQuickAdd({
+        title:  'Novo Local',
+        apiUrl: '/api/transaction-locales',
+        fields: [
+            { id: 'name',    label: 'Nome *',    type: 'text', required: true, placeholder: 'Nome do local' },
+            { id: 'address', label: 'Endereço',  type: 'text', placeholder: 'Endereço (opcional)' }
+        ],
+        buildBody: v => ({ name: v.name, address: v.address || null }),
+        onSuccess: item => addOptionToSelect('transaction-locale-input', item.id, item.name)
+    })
+})
+
+function addOptionToSelect(selectId, value, label) {
+    const sel = document.getElementById(selectId)
+    const opt = document.createElement('option')
+    opt.value = value
+    opt.text  = label
+    sel.appendChild(opt)
+    sel.value = value
+}

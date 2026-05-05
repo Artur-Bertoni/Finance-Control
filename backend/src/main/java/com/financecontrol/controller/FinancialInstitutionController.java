@@ -14,36 +14,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FinancialInstitutionController extends BaseController {
 
-    private final FinancialInstitutionService service;
+    private final FinancialInstitutionService financialInstitutionService;
 
     @GetMapping
     public ResponseEntity<List<FinancialInstitutionResponse>> findAll(HttpSession session) {
-        return ResponseEntity.ok(service.findAllByUser(requireUserId(session)));
+        return ResponseEntity.ok(financialInstitutionService.findAllByUser(requireUserId(session)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(financialInstitutionService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<FinancialInstitutionResponse> create(@RequestBody FinancialInstitutionRequest req,
                                                                HttpSession session) {
-        return ResponseEntity.ok(service.create(requireUserId(session), req));
+        return ResponseEntity.ok(financialInstitutionService.create(requireUserId(session), req));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<FinancialInstitutionResponse> update(@PathVariable Long id,
                                                                @RequestBody FinancialInstitutionRequest req,
                                                                HttpSession session) {
-        return ResponseEntity.ok(service.update(id, requireUserId(session), req));
+        return ResponseEntity.ok(financialInstitutionService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        service.delete(id);
+        financialInstitutionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

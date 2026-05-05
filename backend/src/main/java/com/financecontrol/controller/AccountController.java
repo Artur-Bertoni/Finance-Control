@@ -15,41 +15,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountController extends BaseController {
 
-    private final AccountService service;
+    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<List<AccountResponse>> findAll(HttpSession session) {
-        return ResponseEntity.ok(service.findAllByUser(requireUserId(session)));
+        return ResponseEntity.ok(accountService.findAllByUser(requireUserId(session)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountResponse> findById(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(accountService.findById(id));
     }
 
     @GetMapping("/total-value")
     public ResponseEntity<Double> totalValue(@RequestParam(required = false) Long accountId,
                                              HttpSession session) {
-        return ResponseEntity.ok(service.totalValue(requireUserId(session), accountId));
+        return ResponseEntity.ok(accountService.totalValue(requireUserId(session), accountId));
     }
 
     @PostMapping
     public ResponseEntity<AccountResponse> create(@RequestBody AccountRequest req, HttpSession session) {
-        return ResponseEntity.ok(service.create(requireUserId(session), req));
+        return ResponseEntity.ok(accountService.create(requireUserId(session), req));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AccountResponse> update(@PathVariable Long id,
                                                   @RequestBody AccountRequest req,
                                                   HttpSession session) {
-        return ResponseEntity.ok(service.update(id, requireUserId(session), req));
+        return ResponseEntity.ok(accountService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        service.delete(id);
+        accountService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -14,22 +14,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController extends BaseController {
 
-    private final CategoryService service;
+    private final CategoryService categoryService;
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> findAll(HttpSession session) {
-        return ResponseEntity.ok(service.findAllByUser(requireUserId(session)));
+        return ResponseEntity.ok(categoryService.findAllByUser(requireUserId(session)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> findById(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(categoryService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<CategoryResponse> create(@RequestBody CategoryRequest req, HttpSession session) {
-        return ResponseEntity.ok(service.create(requireUserId(session), req));
+        return ResponseEntity.ok(categoryService.create(requireUserId(session), req));
     }
 
     @PutMapping("/{id}")
@@ -37,13 +37,13 @@ public class CategoryController extends BaseController {
                                                    @RequestBody CategoryRequest req,
                                                    HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.update(id, req));
+        return ResponseEntity.ok(categoryService.update(id, req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        service.delete(id);
+        categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

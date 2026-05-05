@@ -1,140 +1,130 @@
-﻿<!DOCTYPE html>
-<html lang=en>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-	<meta charset=utf-8>
-	<title>Home Page</title>
-	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
-	<link href=../styles/styles.css rel=stylesheet>
-	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-	<script src=../js/HomePage.js type=module></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/HomePage.js" type="module"></script>
 </head>
 <body>
-<div id=page-wrapper>
-	<img alt=Logo id=logo-img src=../images/logo.png>
-	
-	<div id=content-wrapper>
-		<div id=background>
-			<form id=dashboard-form method=post>
-				<ul id=navigation-menu-btn-gp>
-					<li>
-						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
-							<img alt="Profile" id=profile-btn-img src=../images/user.png>
-						</button>
-					</li>
-				</ul>
-				<table>
-					<caption></caption>
-					<tr>
-						<th></th>
-						<th>
-							<h1 id=title>
-								Últimas Transações
-							</h1>
-						</th>
-					</tr>
-					<tr>
-						<td>
-							<ul>
-								<li>
-									<button class='dashboard-btn colorful-button' id=main-dashboard-btn
-											name=postTransaction type=submit>
-										Nova Transação
-									</button>
-								</li>
-								
-								<li>
-									<button class='dashboard-btn colorful-button' id=new-transaction-locale-btn
-											name=transactionLocales type=submit>
-										Locais
-									</button>
-								</li>
-								
-								<li>
-									<button class='dashboard-btn colorful-button' id=new-financial-institution-btn
-											name=financialInstitutions type=submit>
-										Instituições Financeiras
-									</button>
-								</li>
-								
-								<li>
-									<button class='dashboard-btn colorful-button' id=new-account-btn name=accounts
-											type=submit>
-										Contas
-									</button>
-								</li>
-								
-								<li>
-									<button class='dashboard-btn colorful-button' id=new-category-btn name=categories
-											type=submit>
-										Categorias
-									</button>
-								</li>
-							</ul>
-						</td>
-						<td>
-							<div id=list-bkg>
-								<div id=last-transaction-list></div>
-							</div>
-						</td>
-						<td>
-							<ul>
-								<li>
-									<div id=home-total-box class=total-box></div>
-								</li>
-								<li>
-									<div id=filtered-total-box class=total-box></div>
-								</li>
-							</ul>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							<table>
-								<caption></caption>
-								<tr id=home-filters>
-									<th></th>
-									<td>
-										<div class=field>
-											<label for=start-date-input>Data de Início</label>
-											<input class=small-insertion-field id=start-date-input name=startDateField
-												   type=date>
-										</div>
-									</td>
-									<td>
-										<div class=field>
-											<label for=end-date-input>Data de Fim</label>
-											<input class=small-insertion-field id=end-date-input name=endDateField
-												   type=date>
-										</div>
-									</td>
-									<td>
-										<div class=field>
-											<label for=category-input>Categoria</label>
-											<select class=small-insertion-field id=category-input name=categoryField>
-												<option disabled selected value="">Filtragem por Categoria</option>
-												<option value="">Todas</option>
-											</select>
-										</div>
-									</td>
-									<td>
-										<div class=field>
-											<label for=account-input>Conta</label>
-											<select class=small-insertion-field id=account-input name=accountField>
-												<option disabled selected value="">Filtragem por Conta</option>
-												<option value="">Todas</option>
-											</select>
-										</div>
-									</td>
-									<!--TODO adicionar outras filtragens (tipo (parcelamentos e a vista))-->
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</form>
-		</div>
-	</div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
+      <span class="sidebar-brand">Finance<br>Control</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/pages/HomePage.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Início
+      </a>
+      <div class="sidebar-section">Movimentações</div>
+      <a href="/pages/Transaction.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        Nova Transação
+      </a>
+      <a href="/pages/Transfer.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/></svg>
+        Transferência
+      </a>
+      <a href="/pages/AccountDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+        Contas
+      </a>
+      <div class="sidebar-section">Configurações</div>
+      <a href="/pages/CategoryDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+        Categorias
+      </a>
+      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+        Instituições Financeiras
+      </a>
+      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        Locais
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/pages/User.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+        Meu Perfil
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      </button>
+      <h1 class="page-title">Início</h1>
+      <div class="topbar-actions" id="header-actions">
+        <a href="/pages/Transaction.html" class="btn btn-primary btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+          Nova Transação
+        </a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- Stat cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">Saldo em Conta(s)</div>
+          <div class="stat-card-value" id="home-total-box">$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Valor pelo Filtro</div>
+          <div class="stat-card-value" id="filtered-total-box">$ 0,00</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="field">
+          <label for="start-date-input">Data de Início</label>
+          <input id="start-date-input" type="date">
+        </div>
+        <div class="field">
+          <label for="end-date-input">Data de Fim</label>
+          <input id="end-date-input" type="date">
+        </div>
+        <div class="field">
+          <label for="category-input">Categoria</label>
+          <select id="category-input">
+            <option value="">Todas as categorias</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="account-input">Conta</label>
+          <select id="account-input">
+            <option value="">Todas as contas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Transaction list -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Últimas Transações</span>
+        </div>
+        <div class="transactions-list" id="last-transaction-list">
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2.273 5.625A4.483 4.483 0 015.25 4.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0018.75 3H5.25a3 3 0 00-2.977 2.625zM2.273 8.625A4.483 4.483 0 015.25 7.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0018.75 6H5.25a3 3 0 00-2.977 2.625zM5.25 9a3 3 0 00-3 3v6a3 3 0 003 3h13.5a3 3 0 003-3v-6a3 3 0 00-3-3H5.25z"/></svg>
+            <p>Nenhuma transação encontrada</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
 </body>
 </html>

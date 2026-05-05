@@ -1,105 +1,160 @@
-﻿<!DOCTYPE html>
-<html lang=en>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-	<meta charset=utf-8>
-	<title>Transaction Post</title>
-	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
-	<link href=../styles/styles.css rel=stylesheet>
-	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-	<script src=../js/Transaction.js type=module></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transação | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/Transaction.js" type="module"></script>
 </head>
 <body>
-<div id=page-wrapper>
-	<img alt=Logo id=logo-img src=../images/logo.png>
-	
-	<div id=content-wrapper>
-		<div id=background>
-			<form method=post name=form>
-				<ul id=navigation-menu-btn-gp>
-					<li>
-						<button class=img-btn id=profile-btn name="profileButton" type=submit formnovalidate>
-							<img alt="Profile" id=profile-btn-img src=../images/user.png>
-						</button>
-					</li>
-					<li>
-						<button class=img-btn id=home-btn name="homeButton" type=submit formnovalidate>
-							<img alt="Home" id=home-btn-img src=../images/home-page.png>
-						</button>
-					</li>
-				</ul>
-				<ul>
-					<li class=form-list-item id=title-in-list>
-						<h1>Transação</h1>
-					</li>
-					
-					<li class=form-list-item id=fields-in-list>
-						<div class=field>
-							<label for=account-input>Conta *</label>
-							<select class=normal-insertion-field id=account-input name=accountField>
-								<option disabled selected value="">Conta de origem</option>
-							</select>
-						</div>
-						
-						<div class=field>
-							<label for=category-input>Categoria *</label>
-							<select class=normal-insertion-field id=category-input name=categoryField>
-								<option disabled selected value="">Categoria da transação</option>
-							</select>
-						</div>
-						
-						<div class=field>
-							<label>Tipo de Transação *</label>
-							<label>
-								<input name=typeRadio type=radio id=debit-radio value=debit>Débito
-							</label>
-							<label>
-								<input name=typeRadio type=radio id=credit-radio value=credit>Crédito
-							</label>
-						</div>
-						
-						<div class=field>
-							<label for=date-input>Data *</label>
-							<input class=small-insertion-field id=date-input name=dateField type=date>
-						</div>
-						
-						<div class=field>
-							<label for=value-input>Valor *</label>
-							<input class=small-insertion-field id=value-input name=valueField placeholder="Valor ($)"
-								   type=number step=.01 min=0>
-						</div>
-						
-						<div class=field>
-							<label for=installments-number-input>Nº de Parcelas</label>
-							<input class=small-insertion-field id=installments-number-input name=installmentsNumberField
-								   placeholder="Parcelas" type=number>
-						</div>
-						
-						<div class=field>
-							<label for=transaction-locale-input>Local da Transação</label>
-							<select class=normal-insertion-field id=transaction-locale-input
-									name=transactionLocaleField>
-								<option disabled selected value="">Onde foi realizada</option>
-							</select>
-						</div>
-						
-						
-						<div class=field>
-							<label for=obs-input>Observações</label>
-							<textarea class=big-insertion-field id=obs-input name=obsField
-									  placeholder="Observações sobre a transação"></textarea>
-						</div>
-						
-						<input id=transfer-partner-id name=transferPartnerId type=hidden value=0>
-					</li>
-					
-					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn formnovalidate id=cancel-btn name=cancelButton type=submit>Cancelar
-						</button>
-						<button class=txt-btn id=save-btn name=saveButton type=button>Salvar</button>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
+      <span class="sidebar-brand">Finance<br>Control</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/pages/HomePage.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Início
+      </a>
+      <div class="sidebar-section">Movimentações</div>
+      <a href="/pages/Transaction.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        Nova Transação
+      </a>
+      <a href="/pages/Transfer.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/></svg>
+        Transferência
+      </a>
+      <a href="/pages/AccountDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+        Contas
+      </a>
+      <div class="sidebar-section">Configurações</div>
+      <a href="/pages/CategoryDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+        Categorias
+      </a>
+      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/></svg>
+        Instituições Financeiras
+      </a>
+      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        Locais
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/pages/User.html" class="sidebar-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+        Meu Perfil
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+      </button>
+      <h1 class="page-title" id="page-title-text">Nova Transação</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="field">
+            <label for="account-input">Conta *</label>
+            <div class="select-with-add">
+              <select id="account-input">
+                <option disabled selected value="">Selecione a conta</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="account-add-btn" title="Nova conta">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="category-input">Categoria *</label>
+            <div class="select-with-add">
+              <select id="category-input">
+                <option disabled selected value="">Selecione a categoria</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="category-add-btn" title="Nova categoria">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label" style="font-size:12.5px;font-weight:600;color:var(--text-secondary)">Tipo de Transação *</span>
+            <div class="radio-group">
+              <label class="radio-option" id="debit-option">
+                <input type="radio" name="typeRadio" id="debit-radio" value="debit">
+                Débito
+              </label>
+              <label class="radio-option" id="credit-option">
+                <input type="radio" name="typeRadio" id="credit-radio" value="credit">
+                Crédito
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid two-col">
+            <div class="field">
+              <label for="date-input">Data *</label>
+              <input id="date-input" type="date">
+            </div>
+            <div class="field">
+              <label for="value-input">Valor ($) *</label>
+              <input id="value-input" type="number" step=".01" min="0" placeholder="0,00">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="installments-number-input">Nº de Parcelas <span style="color:var(--text-muted);font-weight:400">(deixe 0 para à vista)</span></label>
+            <input id="installments-number-input" type="number" min="0" placeholder="0">
+          </div>
+
+          <div class="field">
+            <label for="transaction-locale-input">Local da Transação</label>
+            <div class="select-with-add">
+              <select id="transaction-locale-input">
+                <option disabled selected value="">Selecione o local (opcional)</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="locale-add-btn" title="Novo local">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="obs-input">Observações</label>
+            <textarea id="obs-input" placeholder="Detalhes adicionais sobre a transação…"></textarea>
+          </div>
+
+          <input type="hidden" id="transfer-partner-id" value="0">
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" id="cancel-btn" type="button">Cancelar</button>
+          <button class="btn btn-primary" id="save-btn" type="button">Salvar Transação</button>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
+</body>
+</html>
+})();
+</script>
 </body>
 </html>

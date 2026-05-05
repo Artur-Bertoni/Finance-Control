@@ -1,50 +1,45 @@
-﻿<!DOCTYPE html>
-<html lang=en>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-	<meta charset=utf-8>
-	<title>Login Page</title>
-	<link href=https://fonts.googleapis.com/css?family=Acme&display=swap rel=stylesheet>
-	<link href=../styles/styles.css rel=stylesheet>
-	<script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-	<script src=../js/Login.js type=module></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/Login.js" type="module"></script>
 </head>
 <body>
-<div id=page-wrapper>
-	<img alt=Logo id=logo-img src=../images/logo.png>
-	
-	<div id=content-wrapper>
-		<div id=background>
-			<form method=post name=form>
-				<ul>
-					<li class=form-list-item id=title-in-list>
-						<h1 id=title>Bem Vindo(a)!</h1>
-					</li>
-					
-					<li class=form-list-item id=fields-in-list>
-						<div class=field>
-							<label for=email-input>Email</label>
-							<input class=normal-insertion-field id=email-input name=emailField placeholder="Preencha com o seu email"
-								   type=email>
-						</div>
-						
-						<div class=field>
-							<label for=password-input>Senha
-								<img alt="Show/Hide password" class=password-btn-img id=password-img
-									 src="../images/hiding.png">
-							</label>
-							<input class=normal-insertion-field id=password-input name=passwordField placeholder="Preencha com a sua senha"
-								   type=password>
-						</div>
-					</li>
-					<li class=form-list-item id=buttons-in-list>
-						<button class=txt-btn formnovalidate id=register-btn name=registerButton type=submit>Cadastrar
-						</button>
-						<button class=txt-btn id=login-btn name=loginButton type=button>Login</button>
-					</li>
-				</ul>
-			</form>
-		</div>
-	</div>
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="../images/logo.png" alt="Finance Control">
+      <div class="login-logo-text">Finance<span>Control</span></div>
+    </div>
+
+    <p class="login-welcome">Bem-vindo(a) de volta!</p>
+    <p class="login-sub">Faça login para acessar sua conta</p>
+
+    <div class="login-form">
+      <div class="field">
+        <label for="email-input">E-mail</label>
+        <input id="email-input" type="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label for="password-input">Senha</label>
+        <div class="pw-wrap">
+          <input id="password-input" type="password" placeholder="Sua senha" autocomplete="current-password">
+          <button class="pw-toggle" type="button" id="password-img" aria-label="Mostrar/ocultar senha"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-actions">
+      <button class="btn btn-secondary btn-lg" id="register-btn" type="button">Cadastrar</button>
+      <button class="btn btn-primary btn-lg" id="login-btn" type="button">Entrar</button>
+    </div>
+  </div>
 </div>
 </body>
 </html>

@@ -11,4 +11,5 @@ public record TransactionRequest(
         String type,
         Integer installmentsNumber,
         String obs,
-        Long transferPartnerId) {}
+        Long transferPartnerId
+) {}

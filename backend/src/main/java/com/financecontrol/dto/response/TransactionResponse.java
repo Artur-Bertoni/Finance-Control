@@ -4,17 +4,17 @@ import com.financecontrol.entity.Transaction;
 import java.time.LocalDate;
 
 public record TransactionResponse(
-        Long id,
-        AccountResponse account,
-        CategoryResponse category,
-        TransactionLocaleResponse transactionLocale,
-        Double value,
-        LocalDate date,
-        String type,
-        Integer installmentsNumber,
-        String obs,
-        Long transferPartnerId) {
-
+    Long id,
+    AccountResponse account,
+    CategoryResponse category,
+    TransactionLocaleResponse transactionLocale,
+    Double value,
+    LocalDate date,
+    String type,
+    Integer installmentsNumber,
+    String obs,
+    Long transferPartnerId
+) {
     public static TransactionResponse from(Transaction t) {
         return new TransactionResponse(
                 t.getId(),

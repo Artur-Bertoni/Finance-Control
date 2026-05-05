@@ -1,32 +1,19 @@
-﻿let imgSrcArray = ['../images/showing.png', '../images/hiding.png']
-let currentImgIndex = 0
+import { showToast } from '../utils/FrontendFunctions.js'
+import { PasswordInput } from './components/PasswordInput.js'
 
-function trocar(elementId) {
-    if (currentImgIndex === imgSrcArray.length)
-        currentImgIndex = 0
-    document.getElementById(elementId).src = imgSrcArray[currentImgIndex]
-    currentImgIndex++
-}
+// Configurar toggle de visualização de senha
+PasswordInput.setupToggle('password-input', 'password-img')
 
-let passwordInput = document.getElementById('password-input')
-let passwordToggle = document.querySelector('#password-img')
-
-passwordToggle.addEventListener('click', function () {
-    passwordInput.type = passwordInput.type === 'text' ? 'password' : 'text'
-    trocar('password-img')
-})
-
-document.getElementById('register-btn').addEventListener('click', function (e) {
-    e.preventDefault()
+document.getElementById('register-btn').addEventListener('click', function () {
     window.location.href = '/pages/User.html'
 })
 
 document.getElementById('login-btn').addEventListener('click', function () {
-    let email = document.getElementById('email-input').value
-    let password = document.getElementById('password-input').value
+    const email    = document.getElementById('email-input').value
+    const password = document.getElementById('password-input').value
 
     if (!email || !password) {
-        alert('Os campos Email e Senha devem ser preenchidos!')
+        showToast('Preencha e-mail e senha para continuar.', 'warning')
         return
     }
 
@@ -41,9 +28,9 @@ document.getElementById('login-btn').addEventListener('click', function () {
         },
         error: function (xhr) {
             if (xhr.status === 401)
-                alert('Email ou senha incorretos!')
+                showToast('E-mail ou senha incorretos.', 'error')
             else
-                alert('Erro ao fazer login.')
+                showToast('Erro ao fazer login. Tente novamente.', 'error')
         }
     })
 })

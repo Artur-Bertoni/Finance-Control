@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController extends BaseController {
 
-    private final UserService service;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest req) {
-        return ResponseEntity.ok(service.create(req));
+        return ResponseEntity.ok(userService.create(req));
     }
 
     @PutMapping("/{id}")
@@ -25,7 +25,7 @@ public class UserController extends BaseController {
                                                @RequestBody UserRequest req,
                                                HttpSession session) {
         requireUserId(session);
-        UserResponse updated = service.update(id, req);
+        UserResponse updated = userService.update(id, req);
         session.setAttribute("userId", updated.id());
         return ResponseEntity.ok(updated);
     }
@@ -33,7 +33,7 @@ public class UserController extends BaseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        service.delete(id);
+        userService.delete(id);
         session.invalidate();
         return ResponseEntity.noContent().build();
     }

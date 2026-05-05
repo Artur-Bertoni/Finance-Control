@@ -1,75 +1,158 @@
-﻿import {Account} from "./class/AccountClass.js"
-import {Category} from "./class/CategoryClass.js"
-import {TransactionLocale} from "./class/TransactionLocaleClass.js"
-import {navigate} from "../utils/FrontendFunctions.js"
+import { Account } from './class/AccountClass.js'
+import { Category } from './class/CategoryClass.js'
+import { TransactionLocale } from './class/TransactionLocaleClass.js'
+import { doRequest, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { SidebarManager } from './components/SidebarManager.js'
+
+SidebarManager.initialize()
 
 Category.addCategories('category-input')
 TransactionLocale.addTransactionLocales('transfer-locale-input')
 Account.addAccounts('origin-account-input')
 Account.addAccounts('destination-account-input')
 
-let date = document.getElementById('date-input')
-date.max = new Date().toISOString().split("T")[0]
-date.value = date.max
+const dateInput = document.getElementById('date-input')
+dateInput.max   = new Date().toISOString().split('T')[0]
+dateInput.value = dateInput.max
 
-document.getElementById('origin-account-input').addEventListener('change', setMaxValue)
+document.getElementById('origin-account-input').addEventListener('change', updateMaxValue)
 
-document.querySelector('form[name=form]').addEventListener('submit', function (e) {
-    e.preventDefault()
-    const name = e.submitter?.name
-    if (name === 'profileButton') navigate('/pages/User.html')
-    else if (name === 'homeButton') navigate('/pages/HomePage.html')
-    else if (name === 'cancelButton') navigate('/pages/AccountDashboard.html')
-})
+document.getElementById('cancel-btn').addEventListener('click', () =>
+    navigate('/pages/AccountDashboard.html')
+)
 
 document.getElementById('save-btn').addEventListener('click', function () {
-    let originAccountId = document.getElementById('origin-account-input').value
-    let destinationAccountId = document.getElementById('destination-account-input').value
-    let categoryId = document.getElementById('category-input').value
-    let value = document.getElementById('value-input').value
-    let dateValue = document.getElementById('date-input').value
+    const originAccountId      = document.getElementById('origin-account-input').value
+    const destinationAccountId = document.getElementById('destination-account-input').value
+    const categoryId           = document.getElementById('category-input').value
+    const value                = document.getElementById('value-input').value
+    const dateValue            = document.getElementById('date-input').value
 
     if (!originAccountId || !destinationAccountId || !categoryId || !dateValue || !value) {
-        alert('Os campos Conta de Origem, Conta Destino, Categoria, Valor e Data devem ser preenchidos!')
+        showToast('Preencha os campos obrigatórios: Origem, Destino, Categoria, Valor e Data.', 'warning')
         return
     }
 
-    let localeId = document.getElementById('transfer-locale-input').value
+    const localeId = document.getElementById('transfer-locale-input').value
 
-    let body = {
-        originAccountId: Number(originAccountId),
+    const body = {
+        originAccountId:      Number(originAccountId),
         destinationAccountId: Number(destinationAccountId),
-        categoryId: Number(categoryId),
-        transactionLocaleId: localeId ? Number(localeId) : null,
-        value: Number(value),
-        date: dateValue,
-        obs: document.getElementById('obs-input').value || null
+        categoryId:           Number(categoryId),
+        transactionLocaleId:  localeId ? Number(localeId) : null,
+        value:                Number(value),
+        date:                 dateValue,
+        obs:                  document.getElementById('obs-input').value || null
     }
 
     $.ajax({
-        url: '/api/transfers',
-        type: 'POST',
-        async: false,
+        url:         '/api/transfers',
+        type:        'POST',
+        async:       false,
         contentType: 'application/json',
-        data: JSON.stringify(body),
-        success: function () { navigate('/pages/AccountDashboard.html') },
-        error: function (xhr) { alert(xhr.responseJSON?.message ?? 'Erro ao realizar transferência.') }
+        data:        JSON.stringify(body),
+        success:     function () { navigate('/pages/AccountDashboard.html') },
+        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao realizar transferência.', 'error') }
     })
 })
 
-function setMaxValue() {
-    let accountId = document.getElementById('origin-account-input').value
+function updateMaxValue() {
+    const accountId = document.getElementById('origin-account-input').value
     if (!accountId) return
 
     $.ajax({
-        url: `/api/accounts/total-value?accountId=${accountId}`,
-        type: 'GET',
+        url:   `/api/accounts/total-value?accountId=${accountId}`,
+        type:  'GET',
         async: false,
         success: function (total) {
-            let valueInput = document.getElementById('value-input')
-            valueInput.max = total
-            valueInput.placeholder = `Valor ($) - Max: $ ${Number(total).toFixed(2)}`
+            const valueInput       = document.getElementById('value-input')
+            valueInput.max         = total
+            valueInput.placeholder = `Máx: $ ${Number(total).toFixed(2)}`
         },
         error: function () {}
+    })
+}
+
+// ── Quick-add buttons ──────────────────────────────────────────────────────
+
+function buildAccountQuickAdd(onSuccess) {
+    const fiOptions = (doRequest('/api/financial-institutions', 'GET') ?? [])
+        .map(fi => ({ value: fi.id, label: fi.name }))
+
+    showQuickAdd({
+        title:  'Nova Conta',
+        apiUrl: '/api/accounts',
+        fields: [
+            { id: 'name',    label: 'Nome *',                  type: 'text',   required: true, placeholder: 'Nome da conta' },
+            { id: 'fiId', label: 'Instituição Financeira *', type: 'select', required: true, options: fiOptions, placeholder: 'Selecione',
+              addBtn: { title: 'Nova Instituição Financeira', apiUrl: '/api/financial-institutions',
+                fields: [
+                    { id: 'name',    label: 'Nome *',   type: 'text', required: true, placeholder: 'Nome da instituição' },
+                    { id: 'address', label: 'Endereço', type: 'text', placeholder: 'Endereço (opcional)' },
+                    { id: 'contact', label: 'Contato',  type: 'text', placeholder: 'Telefone ou e-mail (opcional)' }
+                ],
+                buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
+              }
+            },
+            { id: 'balance', label: 'Saldo Inicial',            type: 'number', placeholder: '0.00', step: '0.01' }
+        ],
+        buildBody: v => ({
+            name:                   v.name,
+            financialInstitutionId: Number(v.fiId),
+            balance:                v.balance === '' ? 0 : Number(v.balance),
+            contact:                null,
+            description:            null
+        }),
+        onSuccess
+    })
+}
+
+document.getElementById('origin-account-add-btn').addEventListener('click', () => {
+    buildAccountQuickAdd(item => {
+        addOptionToSelects(['origin-account-input', 'destination-account-input'], item.id, item.name)
+    })
+})
+
+document.getElementById('dest-account-add-btn').addEventListener('click', () => {
+    buildAccountQuickAdd(item => {
+        addOptionToSelects(['origin-account-input', 'destination-account-input'], item.id, item.name)
+    })
+})
+
+document.getElementById('category-add-btn').addEventListener('click', () => {
+    showQuickAdd({
+        title:  'Nova Categoria',
+        apiUrl: '/api/categories',
+        fields: [
+            { id: 'name',        label: 'Nome *',    type: 'text',     required: true, placeholder: 'Nome da categoria' },
+            { id: 'description', label: 'Descrição', type: 'textarea', placeholder: 'Descrição (opcional)' }
+        ],
+        buildBody: v => ({ name: v.name, description: v.description || null }),
+        onSuccess: item => addOptionToSelects(['category-input'], item.id, item.name)
+    })
+})
+
+document.getElementById('locale-add-btn').addEventListener('click', () => {
+    showQuickAdd({
+        title:  'Novo Local',
+        apiUrl: '/api/transaction-locales',
+        fields: [
+            { id: 'name',    label: 'Nome *',   type: 'text', required: true, placeholder: 'Nome do local' },
+            { id: 'address', label: 'Endereço', type: 'text', placeholder: 'Endereço (opcional)' }
+        ],
+        buildBody: v => ({ name: v.name, address: v.address || null }),
+        onSuccess: item => addOptionToSelects(['transfer-locale-input'], item.id, item.name)
+    })
+})
+
+function addOptionToSelects(selectIds, value, label) {
+    selectIds.forEach(id => {
+        const sel = document.getElementById(id)
+        if (!sel) return
+        const opt = document.createElement('option')
+        opt.value = value
+        opt.text  = label
+        sel.appendChild(opt)
+        sel.value = value
     })
 }

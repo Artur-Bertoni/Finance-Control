@@ -14,23 +14,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionLocaleController extends BaseController {
 
-    private final TransactionLocaleService service;
+    private final TransactionLocaleService transactionLocaleService;
 
     @GetMapping
     public ResponseEntity<List<TransactionLocaleResponse>> findAll(HttpSession session) {
-        return ResponseEntity.ok(service.findAllByUser(requireUserId(session)));
+        return ResponseEntity.ok(transactionLocaleService.findAllByUser(requireUserId(session)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionLocaleResponse> findById(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(transactionLocaleService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<TransactionLocaleResponse> create(@RequestBody TransactionLocaleRequest req,
                                                             HttpSession session) {
-        return ResponseEntity.ok(service.create(requireUserId(session), req));
+        return ResponseEntity.ok(transactionLocaleService.create(requireUserId(session), req));
     }
 
     @PutMapping("/{id}")
@@ -38,13 +38,13 @@ public class TransactionLocaleController extends BaseController {
                                                             @RequestBody TransactionLocaleRequest req,
                                                             HttpSession session) {
         requireUserId(session);
-        return ResponseEntity.ok(service.update(id, req));
+        return ResponseEntity.ok(transactionLocaleService.update(id, req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         requireUserId(session);
-        service.delete(id);
+        transactionLocaleService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
