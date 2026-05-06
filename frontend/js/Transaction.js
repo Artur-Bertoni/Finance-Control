@@ -17,6 +17,7 @@ setupRequiredFieldValidation([
 ])
 TransactionLocale.addTransactionLocales('transaction-locale-input')
 Account.addAccounts('account-input')
+Category.addCategories('category-input')
 
 const dateInput = document.getElementById('date-input')
 dateInput.max   = new Date().toISOString().split('T')[0]
@@ -90,7 +91,6 @@ document.getElementById('save-btn').addEventListener('click', function () {
     const accountId  = document.getElementById('account-input').value
     const categoryId = document.getElementById('category-input').value
     const debitRadio  = document.getElementById('debit-radio')
-    const creditRadio = document.getElementById('credit-radio')
     const dateValue  = document.getElementById('date-input').value
     const value      = document.getElementById('value-input').value
 
