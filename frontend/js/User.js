@@ -3,11 +3,19 @@ import { PasswordInput } from './components/PasswordInput.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { ThemeManager } from './ThemeManager.js'
 import { Icons } from './icons/IconLibrary.js'
+import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 
 let currentUser = null
 
 PasswordInput.setupToggle('password-input', 'password-img')
 PasswordInput.setupToggle('password-confirm-input', 'password-confirm-img')
+
+setupRequiredFieldValidation([
+    'username-input',
+    'email-input',
+    'password-input',
+    'password-confirm-input'
+])
 
 loadUserData()
 
@@ -67,8 +75,17 @@ document.getElementById('save-btn').addEventListener('click', function () {
     const password             = document.getElementById('password-input').value
     const passwordConfirmation = document.getElementById('password-confirm-input').value
 
-    if (!username || !email || !password || !passwordConfirmation) {
-        showToast('Os campos Nome, Email, Senha e Confirmar Senha são obrigatórios.', 'warning')
+    const fieldLabels = {
+        'username-input': 'Nome de Usuário',
+        'email-input': 'Email',
+        'password-input': 'Senha',
+        'password-confirm-input': 'Confirmar Senha'
+    }
+
+    const emptyFields = validateRequiredFields(['username-input', 'email-input', 'password-input', 'password-confirm-input'], fieldLabels)
+    
+    if (emptyFields.length > 0) {
+        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
         return
     }
 
