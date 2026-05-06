@@ -1,13 +1,20 @@
-import { addDeleteIcon, doRequest, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { Category } from './class/CategoryClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { Transaction } from './class/TransactionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 
 SidebarManager.initialize()
 
-Category.addCategories('category-input')
+setupRequiredFieldValidation([
+  'account-input',
+  'category-input',
+  'debit-radio',
+  'date-input',
+  'value-input'
+])
 TransactionLocale.addTransactionLocales('transaction-locale-input')
 Account.addAccounts('account-input')
 
@@ -87,8 +94,26 @@ document.getElementById('save-btn').addEventListener('click', function () {
     const dateValue  = document.getElementById('date-input').value
     const value      = document.getElementById('value-input').value
 
-    if (!accountId || !categoryId || (!debitRadio.checked && !creditRadio.checked) || !dateValue || !value) {
-        showToast('Preencha os campos obrigatórios: Conta, Categoria, Tipo, Data e Valor.', 'warning')
+    const requiredFields = [
+      'account-input',
+      'category-input',
+      'debit-radio',
+      'date-input',
+      'value-input'
+    ]
+
+    const fieldLabels = {
+      'account-input': 'Conta',
+      'category-input': 'Categoria',
+      'debit-radio': 'Tipo',
+      'date-input': 'Data',
+      'value-input': 'Valor'
+    }
+
+    const emptyFields = validateRequiredFields(requiredFields, fieldLabels)
+
+    if (emptyFields.length > 0) {
+        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
         return
     }
 
@@ -113,7 +138,10 @@ document.getElementById('save-btn').addEventListener('click', function () {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success:     function () { navigate('/pages/HomePage.html') },
+        success:     function () {
+            const msg = transactionId ? 'Transação atualizada com sucesso!' : 'Transação criada com sucesso!'
+            navigateWithToast('/pages/HomePage.html', msg, 'success')
+        },
         error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar transação.', 'error') }
     })
 })

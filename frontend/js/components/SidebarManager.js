@@ -12,12 +12,24 @@ export class SidebarManager {
      * Inicializa a sidebar com todos os comportamentos
      */
     static initialize() {
+        SidebarManager.checkAuth()
         SidebarManager.renderIcons()
         SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
         ThemeManager.initialize()
+    }
+
+    static checkAuth() {
+        $.ajax({
+            url: '/api/auth/me',
+            type: 'GET',
+            async: false,
+            error: function (xhr) {
+                if (xhr.status === 401) globalThis.location.href = '/pages/Login.html'
+            }
+        })
     }
 
     /**

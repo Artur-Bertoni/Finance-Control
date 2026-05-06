@@ -1,16 +1,13 @@
 import { addDeleteIcon, navigate, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { PasswordInput } from './components/PasswordInput.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { ThemeManager } from './ThemeManager.js'
 import { Icons } from './icons/IconLibrary.js'
 
 let currentUser = null
 
-// Configurar toggle de visualização de senha
 PasswordInput.setupToggle('password-input', 'password-img')
 PasswordInput.setupToggle('password-confirm-input', 'password-confirm-img')
-
-// Inicializar sidebar
-SidebarManager.initialize()
 
 loadUserData()
 
@@ -21,6 +18,7 @@ function loadUserData() {
         async: false,
         success: function (user) {
             currentUser = user
+            SidebarManager.initialize()
             document.getElementById('username-input').value = user.username ?? ''
             document.getElementById('email-input').value    = user.email    ?? ''
 
@@ -43,6 +41,7 @@ function loadUserData() {
             })
         },
         error: function () {
+            ThemeManager.initialize()
             document.body.classList.add('user-guest')
 
             const main = document.querySelector('.page-content')

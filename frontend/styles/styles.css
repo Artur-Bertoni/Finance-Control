@@ -423,8 +423,8 @@ button { font-family: inherit; }
 .field input[type="number"]::-webkit-inner-spin-button { filter: sepia(60%) hue-rotate(90deg); cursor: pointer; }
 
 /* password wrapper */
-.pw-wrap { position: relative; }
-.pw-wrap input { padding-right: 44px; }
+.pw-wrap { position: relative; width: 100%; }
+.pw-wrap input { padding-right: 44px; width: 100%; }
 .pw-toggle {
   position: absolute;
   right: 11px;
@@ -466,6 +466,19 @@ button { font-family: inherit; }
 }
 
 .radio-option input[type="radio"] { display: none; }
+
+/* ===== FIELD VALIDATION ===== */
+.field input.field-error,
+.field select.field-error,
+.field textarea.field-error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(220,38,38,.15);
+}
+
+.radio-option.field-error {
+  border-color: var(--danger);
+  background-color: rgba(220,38,38,.05);
+}
 
 .radio-option.selected-debit {
   border-color: var(--debit);

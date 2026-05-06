@@ -4,6 +4,20 @@ export function navigate(url) {
     globalThis.location.href = url
 }
 
+export function navigateWithToast(url, message, type = 'success') {
+    sessionStorage.setItem('pendingToast', JSON.stringify({ message, type }))
+    globalThis.location.href = url
+}
+
+export function showPendingToast() {
+    const pending = sessionStorage.getItem('pendingToast')
+    if (pending) {
+        const { message, type } = JSON.parse(pending)
+        sessionStorage.removeItem('pendingToast')
+        setTimeout(() => showToast(message, type), 100)
+    }
+}
+
 export function doRequest(url, httpMethod = 'GET', body = null) {
     let result = null
     $.ajax({

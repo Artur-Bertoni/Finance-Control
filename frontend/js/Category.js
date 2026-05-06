@@ -1,8 +1,11 @@
-import { addDeleteIcon, doRequest, navigate, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from '../utils/FrontendFunctions.js'
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 
 SidebarManager.initialize()
+
+setupRequiredFieldValidation(['name-input'])
 
 const urlParams = new URLSearchParams(globalThis.location.search)
 const categoryId = urlParams.get('id')
@@ -36,8 +39,15 @@ document.getElementById('cancel-btn').addEventListener('click', () =>
 
 document.getElementById('save-btn').addEventListener('click', function () {
     const name = document.getElementById('name-input').value
-    if (!name) {
-        showToast('O campo Nome é obrigatório.', 'warning')
+
+    const fieldLabels = {
+      'name-input': 'Nome'
+    }
+
+    const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
+
+    if (emptyFields.length > 0) {
+        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
         return
     }
 
@@ -52,7 +62,10 @@ document.getElementById('save-btn').addEventListener('click', function () {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success:     function () { navigate('/pages/CategoryDashboard.html') },
+        success:     function () {
+            const msg = categoryId ? 'Categoria atualizada com sucesso!' : 'Categoria criada com sucesso!'
+            navigateWithToast('/pages/CategoryDashboard.html', msg, 'success')
+        },
         error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar categoria.', 'error') }
     })
 })

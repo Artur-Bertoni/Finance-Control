@@ -1,9 +1,10 @@
-import { doRequest, navigate } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 
 SidebarManager.initialize()
+showPendingToast()
 
 function addressRow(address) {
     return '<div class="item-card-meta"><div class="item-card-row">' + Icons.locations() + address + '</div></div>'

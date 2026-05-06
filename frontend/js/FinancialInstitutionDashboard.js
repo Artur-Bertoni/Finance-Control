@@ -1,9 +1,10 @@
-import { doRequest, navigate } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 
 SidebarManager.initialize()
+showPendingToast()
 
 const list = document.getElementById('financial-institutions-list')
 list.innerHTML = ''

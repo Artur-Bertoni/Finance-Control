@@ -1,8 +1,11 @@
-import { addDeleteIcon, doRequest, navigate, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 
 SidebarManager.initialize()
+
+setupRequiredFieldValidation(['name-input'])
 
 const urlParams = new URLSearchParams(globalThis.location.search)
 const fiId = urlParams.get('id')
@@ -37,8 +40,15 @@ document.getElementById('cancel-btn').addEventListener('click', () =>
 
 document.getElementById('save-btn').addEventListener('click', function () {
     const name = document.getElementById('name-input').value
-    if (!name) {
-        showToast('O campo Nome é obrigatório.', 'warning')
+
+    const fieldLabels = {
+      'name-input': 'Nome'
+    }
+
+    const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
+
+    if (emptyFields.length > 0) {
+        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
         return
     }
 
@@ -54,7 +64,10 @@ document.getElementById('save-btn').addEventListener('click', function () {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success:     function () { navigate('/pages/FinancialInstitutionDashboard.html') },
-        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar instituição financeira.', 'error') }
+        success:     function () {
+            const msg = fiId ? 'Instituição Financeira atualizada com sucesso!' : 'Instituição Financeira criada com sucesso!'
+            navigateWithToast('/pages/FinancialInstitutionDashboard.html', msg, 'success')
+        },
+        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar Instituição Financeira.', 'error') }
     })
 })

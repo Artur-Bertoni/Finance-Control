@@ -1,12 +1,18 @@
 import { Account } from './class/AccountClass.js'
-import { Category } from './class/CategoryClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
-import { doRequest, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 
 SidebarManager.initialize()
 
-Category.addCategories('category-input')
+setupRequiredFieldValidation([
+  'origin-account-input',
+  'destination-account-input',
+  'category-input',
+  'value-input',
+  'date-input'
+])
 TransactionLocale.addTransactionLocales('transfer-locale-input')
 Account.addAccounts('origin-account-input')
 Account.addAccounts('destination-account-input')
@@ -28,8 +34,26 @@ document.getElementById('save-btn').addEventListener('click', function () {
     const value                = document.getElementById('value-input').value
     const dateValue            = document.getElementById('date-input').value
 
-    if (!originAccountId || !destinationAccountId || !categoryId || !dateValue || !value) {
-        showToast('Preencha os campos obrigatórios: Origem, Destino, Categoria, Valor e Data.', 'warning')
+    const requiredFields = [
+      'origin-account-input',
+      'destination-account-input',
+      'category-input',
+      'value-input',
+      'date-input'
+    ]
+
+    const fieldLabels = {
+      'origin-account-input': 'Conta de Origem',
+      'destination-account-input': 'Conta de Destino',
+      'category-input': 'Categoria',
+      'value-input': 'Valor',
+      'date-input': 'Data'
+    }
+
+    const emptyFields = validateRequiredFields(requiredFields, fieldLabels)
+
+    if (emptyFields.length > 0) {
+        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
         return
     }
 
@@ -51,7 +75,9 @@ document.getElementById('save-btn').addEventListener('click', function () {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success:     function () { navigate('/pages/AccountDashboard.html') },
+        success:     function () {
+            navigateWithToast('/pages/AccountDashboard.html', 'Transferência realizada com sucesso!', 'success')
+        },
         error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao realizar transferência.', 'error') }
     })
 })

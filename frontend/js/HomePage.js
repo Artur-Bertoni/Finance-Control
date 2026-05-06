@@ -1,4 +1,4 @@
-import { doRequest, navigate } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
@@ -7,6 +7,7 @@ import { Icons } from './icons/IconLibrary.js'
 
 // Inicializar sidebar
 SidebarManager.initialize()
+showPendingToast()
 
 Category.addCategories('category-input')
 Account.addAccounts('account-input')
