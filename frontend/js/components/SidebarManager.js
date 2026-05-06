@@ -5,6 +5,7 @@
  */
 
 import { Icons } from '../icons/IconLibrary.js'
+import { ThemeManager } from '../ThemeManager.js'
 
 export class SidebarManager {
     /**
@@ -16,6 +17,7 @@ export class SidebarManager {
         SidebarManager.setupActiveLink()
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
+        ThemeManager.initialize()
     }
 
     /**

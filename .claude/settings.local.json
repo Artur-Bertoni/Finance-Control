@@ -18,7 +18,9 @@
       "Bash(python -c ' *)",
       "Bash(py --version)",
       "Bash(where python*)",
-      "Bash(py -c ' *)"
+      "Bash(py -c ' *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Projetos\\\\Finance-Control\" -Force)",
+      "Bash(Select-Object Name, Mode)"
     ]
   }
 }

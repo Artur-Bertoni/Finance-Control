@@ -58,6 +58,42 @@
   --t:          0.2s ease;
 }
 
+[data-theme="dark"] {
+  --primary-100:    #1C3A1C;
+  --primary-50:     #112111;
+
+  --bg:             #1A1A1A;
+  --surface:        #262626;
+  --surface-2:      #2C2C2C;
+
+  --text:           #F0F0F0;
+  --text-secondary: #ABABAB;
+  --text-muted:     #707070;
+
+  --border:         #383838;
+  --border-focus:   #4CAF50;
+
+  --danger-bg:      #2D1111;
+  --info-bg:        #0F1825;
+  --success-bg:     #0F2311;
+
+  --debit-bg:       #2D1111;
+  --credit-bg:      #0F2311;
+  --installment-bg: #0F1825;
+
+  --shadow-sm:  0 1px 2px rgba(0,0,0,.45);
+  --shadow:     0 2px 8px rgba(0,0,0,.55);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.65);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,.75);
+}
+
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.28s ease, border-color 0.28s ease,
+              color 0.28s ease, box-shadow 0.28s ease !important;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
   background-color: var(--bg);
@@ -914,3 +950,62 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
 .guest-form-header img { width: 62px; height: 62px; object-fit: contain; border-radius: var(--radius-sm); }
 .guest-form-header h1 { font-size: 22px; font-weight: 800; color: #fff; margin: 12px 0 4px; letter-spacing: -.3px; }
 .guest-form-header p { font-size: 13.5px; color: rgba(255,255,255,.75); }
+
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle {
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.08);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,.65);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255,255,255,.18);
+  color: #fff;
+}
+
+.theme-toggle svg {
+  width: 15px;
+  height: 15px;
+}
+
+.theme-toggle-floating {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--radius);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.theme-toggle-floating:hover {
+  background: rgba(0,0,0,.65);
+  color: #fff;
+}
+
+.theme-toggle-floating svg {
+  width: 17px;
+  height: 17px;
+}
+
+[data-theme="dark"] .field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23616161'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");
+}

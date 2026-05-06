@@ -1,5 +1,8 @@
 import { showToast } from '../utils/FrontendFunctions.js'
 import { PasswordInput } from './components/PasswordInput.js'
+import { ThemeManager } from './ThemeManager.js'
+
+ThemeManager.initialize()
 
 // Configurar toggle de visualização de senha
 PasswordInput.setupToggle('password-input', 'password-img')
