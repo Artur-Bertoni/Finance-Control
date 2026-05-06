@@ -1,16 +1,8 @@
-/**
- * Gerenciador de Sidebar
- * Centraliza toda a lógica de navegação e interatividade da barra lateral
- * Substitui os scripts inline minificados
- */
-
 import { Icons } from '../icons/IconLibrary.js'
 import { ThemeManager } from '../ThemeManager.js'
+import { CustomSelect } from './CustomSelect.js'
 
 export class SidebarManager {
-    /**
-     * Inicializa a sidebar com todos os comportamentos
-     */
     static initialize() {
         SidebarManager.checkAuth()
         SidebarManager.renderIcons()
@@ -19,6 +11,46 @@ export class SidebarManager {
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
         ThemeManager.initialize()
+        CustomSelect.autoInit()
+        SidebarManager.initDatePickers()
+    }
+
+    static initDatePickers() {
+        if (typeof flatpickr === 'undefined') return
+        document.querySelectorAll('input[type="date"]:not([data-fp-init])').forEach(input => {
+            input.dataset.fpInit = '1'
+            const fp = flatpickr(input, {
+                dateFormat:     'Y-m-d',
+                altInput:       true,
+                altFormat:      'd/m/Y',
+                altInputClass:  'flatpickr-input fc-date-input',
+                maxDate:        'today',
+                defaultDate:    input.value || 'today',
+                locale:         flatpickr.l10ns?.pt,
+                disableMobile:  true,
+                allowInput:     false,
+                onChange: (_, __, instance) => {
+                    instance.element.dispatchEvent(new Event('change', { bubbles: true }))
+                }
+            })
+            fp.calendarContainer.addEventListener('wheel', e => {
+                e.preventDefault()
+                fp.changeMonth(e.deltaY > 0 ? 1 : -1)
+            }, { passive: false })
+            // Sync programmatic .value = assignments to Flatpickr display
+            const orig = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')
+            let syncing = false
+            Object.defineProperty(input, 'value', {
+                get()  { return orig.get.call(input) },
+                set(v) {
+                    if (syncing) { orig.set.call(input, v); return }
+                    syncing = true
+                    fp.setDate(v || null, false)
+                    syncing = false
+                },
+                configurable: true
+            })
+        })
     }
 
     static checkAuth() {
@@ -124,33 +156,4 @@ export class SidebarManager {
         })
     }
 
-    /**
-     * Adiciona um botão de logout na sidebar
-     * Chamado automaticamente quando o usuário está autenticado
-     */
-    static addLogoutButton() {
-        const sidebarFooter = document.querySelector('.sidebar-footer')
-        if (!sidebarFooter) return
-
-        // Verifica se já existe
-        if (sidebarFooter.querySelector('.logout-btn')) return
-
-        const logoutBtn = document.createElement('button')
-        logoutBtn.className = 'sidebar-link logout-btn'
-        logoutBtn.type = 'button'
-        logoutBtn.innerHTML = `${Icons.logout()} Sair`
-
-        logoutBtn.addEventListener('click', () => {
-            $.ajax({
-                url: '/api/auth/logout',
-                type: 'POST',
-                async: false,
-                complete: () => {
-                    globalThis.location.href = '/pages/Login.html'
-                }
-            })
-        })
-
-        sidebarFooter.appendChild(logoutBtn)
-    }
 }

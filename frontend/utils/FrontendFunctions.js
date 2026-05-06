@@ -148,10 +148,6 @@ export function addDeleteIcon() {
     return btn
 }
 
-export function addHomePageIcon() {
-    return { addEventListener: () => {} }
-}
-
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'

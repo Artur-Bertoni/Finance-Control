@@ -3,9 +3,14 @@ import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
 
-// Inicializar sidebar
+const PAGE_SIZE = 30
+let allTransactions = []
+let currentPage = 1
+
+document.body.classList.add('page-home')
 SidebarManager.initialize()
 showPendingToast()
 
@@ -34,8 +39,7 @@ function configureFilters() {
 }
 
 function refresh() {
-    const list = document.getElementById('last-transaction-list')
-    list.innerHTML = ''
+    currentPage = 1
     populateTransactionsList()
 }
 
@@ -50,23 +54,12 @@ function populateTransactionsList() {
     if (accountId)  params.append('accountId', accountId)
 
     const data = doRequest(`/api/transactions?${params.toString()}`, 'GET') ?? []
-    const list = document.getElementById('last-transaction-list')
-    list.innerHTML = ''
+    allTransactions = loadTransactions(data)
 
-    const transactions = loadTransactions(data)
-
-    if (transactions.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state">
-                ${Icons.wallet()}
-                <p>Nenhuma transação no período</p>
-            </div>`
-        updateTotals(accountId, 0)
-        return
-    }
-
-    const { filteredTotal } = renderTransactions(transactions, list)
+    const filteredTotal = allTransactions.reduce((sum, tx) => sum + calculateTransactionValue(tx), 0)
     updateTotals(accountId, filteredTotal)
+
+    renderPage()
 }
 
 function loadTransactions(data) {
@@ -79,16 +72,73 @@ function loadTransactions(data) {
     return transactions
 }
 
-function renderTransactions(transactions, listElement) {
-    let filteredTotal = 0
+function renderPage() {
+    const list = document.getElementById('last-transaction-list')
+    list.innerHTML = ''
+    list.scrollTop = 0
 
-    for (const tx of transactions) {
-        const item = createTransactionItem(tx)
-        listElement.appendChild(item)
-        filteredTotal += calculateTransactionValue(tx)
+    const existing = document.getElementById('transactions-pagination')
+    if (existing) existing.remove()
+
+    if (allTransactions.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                ${Icons.wallet()}
+                <p>Nenhuma transação no período</p>
+            </div>`
+        return
     }
 
-    return { filteredTotal }
+    const start = (currentPage - 1) * PAGE_SIZE
+    const pageItems = allTransactions.slice(start, start + PAGE_SIZE)
+    for (const tx of pageItems) list.appendChild(createTransactionItem(tx))
+
+    renderPagination()
+}
+
+function renderPagination() {
+    const totalPages = Math.ceil(allTransactions.length / PAGE_SIZE)
+    if (totalPages <= 1) return
+
+    const pag = document.createElement('div')
+    pag.id = 'transactions-pagination'
+    pag.className = 'pagination'
+
+    const prevBtn = document.createElement('button')
+    prevBtn.className = 'pagination-btn'
+    prevBtn.textContent = '‹'
+    prevBtn.disabled = currentPage === 1
+    prevBtn.addEventListener('click', () => { currentPage--; renderPage() })
+    pag.appendChild(prevBtn)
+
+    const select = document.createElement('select')
+    select.className = 'pagination-select'
+    for (let i = 1; i <= totalPages; i++) {
+        const opt = document.createElement('option')
+        opt.value = i
+        opt.textContent = `Página ${i} de ${totalPages}`
+        opt.selected = i === currentPage
+        select.appendChild(opt)
+    }
+    select.addEventListener('change', () => { currentPage = Number(select.value); renderPage() })
+    pag.appendChild(select)
+    CustomSelect.wrap(select)
+
+    const nextBtn = document.createElement('button')
+    nextBtn.className = 'pagination-btn'
+    nextBtn.textContent = '›'
+    nextBtn.disabled = currentPage === totalPages
+    nextBtn.addEventListener('click', () => { currentPage++; renderPage() })
+    pag.appendChild(nextBtn)
+
+    const rangeStart = (currentPage - 1) * PAGE_SIZE + 1
+    const rangeEnd   = Math.min(currentPage * PAGE_SIZE, allTransactions.length)
+    const info = document.createElement('span')
+    info.className = 'pagination-info'
+    info.textContent = `${rangeStart}–${rangeEnd} de ${allTransactions.length}`
+    pag.appendChild(info)
+
+    document.querySelector('.transactions-card .card-header').appendChild(pag)
 }
 
 function createTransactionItem(tx) {
