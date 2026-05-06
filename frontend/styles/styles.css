@@ -791,15 +791,24 @@ button { font-family: inherit; }
 .toast-container {
   position: fixed;
   top: 18px;
-  right: 18px;
+  left: calc(50% + var(--sidebar-w) / 2);
+  transform: translateX(-50%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
   pointer-events: none;
 }
 
+body:not(:has(#sidebar)) .toast-container,
+body.user-guest .toast-container {
+  left: 50%;
+}
+
 .toast {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -840,10 +849,22 @@ button { font-family: inherit; }
   flex-shrink: 0;
 }
 
+.toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+}
+.toast.success .toast-progress-bar { background-color: var(--success); }
+.toast.error   .toast-progress-bar { background-color: var(--danger); }
+.toast.warning .toast-progress-bar { background-color: var(--warning); }
+.toast.info    .toast-progress-bar { background-color: var(--info); }
+
 .toast-closing { animation: toastOut .25s ease forwards; }
 
-@keyframes toastIn  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
-@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateX(16px); } }
+@keyframes toastIn  { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
 
 /* ===== CONFIRM MODAL ===== */
 .modal-overlay {
@@ -907,6 +928,7 @@ button { font-family: inherit; }
   .filter-bar .field { width: 100%; }
   .form-card { padding: 22px 18px; }
   .page-content { padding: 16px; }
+  .toast-container { left: 50%; }
 }
 
 @media (max-width: 480px) {

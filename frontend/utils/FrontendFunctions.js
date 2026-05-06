@@ -32,6 +32,8 @@ export function doRequest(url, httpMethod = 'GET', body = null) {
     return result
 }
 
+const TOAST_DURATION = 4500
+
 export function showToast(message, type = 'info') {
     let container = document.getElementById('toast-container')
     if (!container) {
@@ -54,12 +56,50 @@ export function showToast(message, type = 'info') {
         <span class="toast-icon">${icons[type] || icons.info}</span>
         <span class="toast-text">${message}</span>
         <button class="toast-close" aria-label="Fechar">×</button>
+        <div class="toast-progress-bar"></div>
     `
 
-    toast.querySelector('.toast-close').addEventListener('click', () => dismissToast(toast))
-    container.appendChild(toast)
+    const progressBar = toast.querySelector('.toast-progress-bar')
+    let elapsed = 0
+    let lastTick = 0
+    let paused = false
+    let timerId = null
+    let rafId = null
 
-    setTimeout(() => dismissToast(toast), 4500)
+    function tick() {
+        if (paused) return
+        const now = performance.now()
+        elapsed = Math.min(elapsed + (now - lastTick), TOAST_DURATION)
+        lastTick = now
+        progressBar.style.width = `${(1 - elapsed / TOAST_DURATION) * 100}%`
+        if (elapsed < TOAST_DURATION) rafId = requestAnimationFrame(tick)
+    }
+
+    function start() {
+        paused = false
+        lastTick = performance.now()
+        timerId = setTimeout(() => { cancelAnimationFrame(rafId); dismissToast(toast) }, TOAST_DURATION - elapsed)
+        rafId = requestAnimationFrame(tick)
+    }
+
+    function pause() {
+        if (paused) return
+        paused = true
+        elapsed = Math.min(elapsed + (performance.now() - lastTick), TOAST_DURATION)
+        clearTimeout(timerId)
+        cancelAnimationFrame(rafId)
+    }
+
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        clearTimeout(timerId)
+        cancelAnimationFrame(rafId)
+        dismissToast(toast)
+    })
+    toast.addEventListener('mouseenter', pause)
+    toast.addEventListener('mouseleave', start)
+
+    container.appendChild(toast)
+    start()
 }
 
 function dismissToast(toast) {
