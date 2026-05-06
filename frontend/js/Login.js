@@ -1,4 +1,5 @@
 import { showToast } from '../utils/FrontendFunctions.js'
+import { InputMasks } from './utils/InputMasks.js'
 import { PasswordInput } from './components/PasswordInput.js'
 import { ThemeManager } from './ThemeManager.js'
 import { I18n } from './i18n.js'
@@ -17,6 +18,7 @@ function applyTranslations() {
 
 await I18n.initialize()
 applyTranslations()
+InputMasks.autoInit()
 I18n.onChange(applyTranslations)
 
 document.getElementById('register-btn').addEventListener('click', function () {

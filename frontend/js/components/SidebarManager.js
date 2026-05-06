@@ -3,6 +3,8 @@ import { ThemeManager } from '../ThemeManager.js'
 import { CustomSelect } from './CustomSelect.js'
 import { I18n } from '../i18n.js'
 import { LanguageSwitcher } from './LanguageSwitcher.js'
+import { InputMasks } from '../utils/InputMasks.js'
+import { NumberSpinner } from '../utils/NumberSpinner.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
@@ -22,6 +24,8 @@ export class SidebarManager {
         SidebarManager.initTranslations()
         ThemeManager.initialize()
         CustomSelect.autoInit()
+        InputMasks.autoInit()
+        NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         LanguageSwitcher.initialize()
         I18n.onChange(() => SidebarManager.initTranslations())
@@ -30,6 +34,8 @@ export class SidebarManager {
     static onNavigate() {
         SidebarManager.setupActiveLink()
         SidebarManager.renderDataIcons()
+        InputMasks.autoInit()
+        NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         SidebarManager.initTranslations()
     }

@@ -434,7 +434,56 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
 [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
-input[type="number"]::-webkit-inner-spin-button { filter: sepia(60%) hue-rotate(90deg); cursor: pointer; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appearance: none; }
+
+.number-spinner-wrap {
+  position: relative;
+  display: block;
+}
+
+.number-spinner-wrap input[type="number"],
+.number-spinner-wrap [data-mask="money"] {
+  width: 100%;
+  padding-right: 28px;
+}
+
+.number-spin-btns {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0;
+  border-left: 1px solid var(--border);
+}
+
+.spin-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0;
+  transition: background-color var(--t), color var(--t);
+}
+
+.spin-btn:hover {
+  background-color: var(--primary-50);
+  color: var(--primary);
+}
+
+[data-theme="dark"] .spin-btn:hover { background-color: var(--primary-100); }
+
+.spin-btn svg { width: 9px; display: block; }
 
 /* password wrapper */
 .pw-wrap { position: relative; width: 100%; }
