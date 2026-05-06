@@ -14,7 +14,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
            "AND t.date BETWEEN :startDate AND :endDate " +
            "AND (:categoryId IS NULL OR t.category.id = :categoryId) " +
            "AND (:accountId IS NULL OR t.account.id = :accountId) " +
-           "ORDER BY t.date DESC")
+           "ORDER BY t.date, t.id DESC")
     List<Transaction> findAllFiltered(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
