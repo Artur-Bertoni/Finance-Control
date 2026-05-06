@@ -10,13 +10,7 @@ import { I18n } from './i18n.js'
 export function init() {
     SidebarManager.initialize()
 
-    setupRequiredFieldValidation([
-        'account-input',
-        'category-input',
-        'debit-radio',
-        'date-input',
-        'value-input'
-    ])
+    setupRequiredFieldValidation(['account-input', 'category-input', 'debit-radio', 'date-input', 'value-input'])
     TransactionLocale.addTransactionLocales('transaction-locale-input')
     Account.addAccounts('account-input')
     Category.addCategories('category-input')
@@ -25,120 +19,119 @@ export function init() {
     dateInput.max   = new Date().toISOString().split('T')[0]
     dateInput.value = dateInput.max
 
-    const urlParams     = new URLSearchParams(globalThis.location.search)
-    const transactionId = urlParams.get('id')
-
-    if (transactionId) {
-        const titleEl = document.getElementById('page-title-text')
-        if (titleEl) {
-            titleEl.dataset.i18n = 'editTransaction'
-            titleEl.textContent  = I18n.t('editTransaction')
-        }
-        const saveBtn = document.getElementById('save-btn')
-        if (saveBtn) {
-            saveBtn.dataset.i18n = 'saveChanges'
-            saveBtn.textContent  = I18n.t('saveChanges')
-        }
-
-        const response = doRequest(`/api/transactions/${transactionId}`, 'GET')
-        if (response?.id !== undefined) {
-            const tx = Transaction.processTransaction(response)
-
-            document.getElementById('debit-radio').checked  = tx.type === 'debit'
-            document.getElementById('credit-radio').checked = tx.type === 'credit'
-            updateRadioStyle()
-
-            dateInput.value = tx.date
-            document.getElementById('value-input').value               = tx.value.toFixed(2)
-            document.getElementById('installments-number-input').value = tx.installmentsNumber
-            document.getElementById('obs-input').value                 = tx.obs ?? ''
-            document.getElementById('transfer-partner-id').value       = tx.transferPartnerId
-
-            for (const opt of document.getElementById('account-input').options) {
-                if (opt.innerText === tx.account) { opt.selected = true; break }
-            }
-            for (const opt of document.getElementById('category-input').options) {
-                if (opt.innerText === tx.category) { opt.selected = true; break }
-            }
-            for (const opt of document.getElementById('transaction-locale-input').options) {
-                if (opt.innerText === tx.transactionLocale) { opt.selected = true; break }
-            }
-
-            const deleteBtn = addDeleteIcon()
-            deleteBtn.addEventListener('click', function () {
-                $.ajax({
-                    url:   `/api/transactions/${transactionId}`,
-                    type:  'DELETE',
-                    async: false,
-                    success: function () { navigate('/pages/HomePage.html') },
-                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error') }
-                })
-            })
-        }
-    }
+    const transactionId = new URLSearchParams(globalThis.location.search).get('id')
+    if (transactionId) loadEditMode(transactionId)
 
     document.querySelectorAll('input[name="typeRadio"]').forEach(r =>
         r.addEventListener('change', updateRadioStyle)
     )
 
-    function updateRadioStyle() {
-        const isDebit  = document.getElementById('debit-radio').checked
-        const isCredit = document.getElementById('credit-radio').checked
-        document.getElementById('debit-option').classList.toggle('selected-debit',   isDebit)
-        document.getElementById('credit-option').classList.toggle('selected-credit', isCredit)
-    }
-
     document.getElementById('cancel-btn').addEventListener('click', () =>
         navigate('/pages/HomePage.html')
     )
 
-    document.getElementById('save-btn').addEventListener('click', function () {
-        const fieldLabels = {
-            'account-input':  I18n.t('transactionAccount'),
-            'category-input': I18n.t('categories'),
-            'debit-radio':    I18n.t('transactionType'),
-            'date-input':     I18n.t('transactionDate'),
-            'value-input':    I18n.t('transactionValue')
-        }
+    document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId))
 
-        const emptyFields = validateRequiredFields(
-            ['account-input', 'category-input', 'debit-radio', 'date-input', 'value-input'],
-            fieldLabels
-        )
+    setupQuickAddButtons()
+}
 
-        if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
-            return
-        }
+function updateRadioStyle() {
+    const isDebit  = document.getElementById('debit-radio').checked
+    const isCredit = document.getElementById('credit-radio').checked
+    document.getElementById('debit-option').classList.toggle('selected-debit',   isDebit)
+    document.getElementById('credit-option').classList.toggle('selected-credit', isCredit)
+}
 
-        const debitRadio = document.getElementById('debit-radio')
-        const body = {
-            accountId:           Number(document.getElementById('account-input').value),
-            categoryId:          Number(document.getElementById('category-input').value),
-            transactionLocaleId: document.getElementById('transaction-locale-input').value
-                                    ? Number(document.getElementById('transaction-locale-input').value) : null,
-            value:               Number(document.getElementById('value-input').value),
-            date:                document.getElementById('date-input').value,
-            type:                debitRadio.checked ? 'debit' : 'credit',
-            installmentsNumber:  Number(document.getElementById('installments-number-input').value) || 0,
-            obs:                 document.getElementById('obs-input').value || null,
-            transferPartnerId:   Number(document.getElementById('transfer-partner-id').value) || null
-        }
+function loadEditMode(transactionId) {
+    const titleEl = document.getElementById('page-title-text')
+    if (titleEl) {
+        titleEl.dataset.i18n = 'editTransaction'
+        titleEl.textContent  = I18n.t('editTransaction')
+    }
+    const saveBtn = document.getElementById('save-btn')
+    if (saveBtn) {
+        saveBtn.dataset.i18n = 'saveChanges'
+        saveBtn.textContent  = I18n.t('saveChanges')
+    }
 
+    const response = doRequest(`/api/transactions/${transactionId}`, 'GET')
+    if (response?.id === undefined) return
+
+    const tx = Transaction.processTransaction(response)
+
+    document.getElementById('debit-radio').checked  = tx.type === 'debit'
+    document.getElementById('credit-radio').checked = tx.type === 'credit'
+    updateRadioStyle()
+
+    document.getElementById('date-input').value                        = tx.date
+    document.getElementById('value-input').value                       = tx.value.toFixed(2)
+    document.getElementById('installments-number-input').value         = tx.installmentsNumber
+    document.getElementById('obs-input').value                         = tx.obs ?? ''
+    document.getElementById('transfer-partner-id').value               = tx.transferPartnerId
+
+    selectOptionByText('account-input',            tx.account)
+    selectOptionByText('category-input',           tx.category)
+    selectOptionByText('transaction-locale-input', tx.transactionLocale)
+
+    const deleteBtn = addDeleteIcon()
+    deleteBtn.addEventListener('click', () => {
         $.ajax({
-            url:         transactionId ? `/api/transactions/${transactionId}` : '/api/transactions',
-            type:        transactionId ? 'PUT' : 'POST',
-            async:       false,
-            contentType: 'application/json',
-            data:        JSON.stringify(body),
-            success:     function () {
-                const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
-                navigateWithToast('/pages/HomePage.html', msg, 'success')
-            },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error') }
+            url:   `/api/transactions/${transactionId}`,
+            type:  'DELETE',
+            async: false,
+            success: () => navigate('/pages/HomePage.html'),
+            error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
         })
     })
+}
 
+function handleSave(transactionId) {
+    const fieldLabels = {
+        'account-input':  I18n.t('transactionAccount'),
+        'category-input': I18n.t('categories'),
+        'debit-radio':    I18n.t('transactionType'),
+        'date-input':     I18n.t('transactionDate'),
+        'value-input':    I18n.t('transactionValue')
+    }
+
+    const emptyFields = validateRequiredFields(
+        ['account-input', 'category-input', 'debit-radio', 'date-input', 'value-input'],
+        fieldLabels
+    )
+
+    if (emptyFields.length > 0) {
+        showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+        return
+    }
+
+    const localeVal = document.getElementById('transaction-locale-input').value
+    const body = {
+        accountId:           Number(document.getElementById('account-input').value),
+        categoryId:          Number(document.getElementById('category-input').value),
+        transactionLocaleId: localeVal ? Number(localeVal) : null,
+        value:               Number(document.getElementById('value-input').value),
+        date:                document.getElementById('date-input').value,
+        type:                document.getElementById('debit-radio').checked ? 'debit' : 'credit',
+        installmentsNumber:  Number(document.getElementById('installments-number-input').value) || 0,
+        obs:                 document.getElementById('obs-input').value || null,
+        transferPartnerId:   Number(document.getElementById('transfer-partner-id').value) || null
+    }
+
+    $.ajax({
+        url:         transactionId ? `/api/transactions/${transactionId}` : '/api/transactions',
+        type:        transactionId ? 'PUT' : 'POST',
+        async:       false,
+        contentType: 'application/json',
+        data:        JSON.stringify(body),
+        success: () => {
+            const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
+            navigateWithToast('/pages/HomePage.html', msg, 'success')
+        },
+        error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error')
+    })
+}
+
+function setupQuickAddButtons() {
     document.getElementById('account-add-btn').addEventListener('click', () => {
         const fiOptions = (doRequest('/api/financial-institutions', 'GET') ?? [])
             .map(fi => ({ value: fi.id, label: fi.name }))
@@ -147,8 +140,8 @@ export function init() {
             title:  I18n.t('newAccount'),
             apiUrl: '/api/accounts',
             fields: [
-                { id: 'name',  label: `${I18n.t('accountName')} *`, type: 'text', required: true, placeholder: I18n.t('accountNamePlaceholder') },
-                { id: 'fiId', label: `${I18n.t('financialInstitution')} *`, type: 'select', required: true, options: fiOptions,
+                { id: 'name',    label: `${I18n.t('accountName')} *`, type: 'text', required: true, placeholder: I18n.t('accountNamePlaceholder') },
+                { id: 'fiId',    label: `${I18n.t('financialInstitution')} *`, type: 'select', required: true, options: fiOptions,
                   placeholder: I18n.t('selectInstitution'),
                   addBtn: {
                     title: I18n.t('newFinancialInstitution'), apiUrl: '/api/financial-institutions',
@@ -189,12 +182,18 @@ export function init() {
             apiUrl: '/api/transaction-locales',
             fields: [
                 { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },
-                { id: 'address', label: I18n.t('localeAddress'),       type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
+                { id: 'address', label: I18n.t('localeAddress'),      type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
             ],
             buildBody: v => ({ name: v.name, address: v.address || null }),
             onSuccess: item => addOptionToSelect('transaction-locale-input', item.id, item.name)
         })
     })
+}
+
+function selectOptionByText(selectId, text) {
+    for (const opt of document.getElementById(selectId).options) {
+        if (opt.innerText === text) { opt.selected = true; break }
+    }
 }
 
 function addOptionToSelect(selectId, value, label) {

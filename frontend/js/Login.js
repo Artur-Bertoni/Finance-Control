@@ -15,10 +15,9 @@ function applyTranslations() {
     })
 }
 
-I18n.initialize().then(() => {
-    applyTranslations()
-    I18n.onChange(applyTranslations)
-})
+await I18n.initialize()
+applyTranslations()
+I18n.onChange(applyTranslations)
 
 document.getElementById('register-btn').addEventListener('click', function () {
     globalThis.location.href = '/pages/User.html'
