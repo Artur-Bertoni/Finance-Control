@@ -3,7 +3,11 @@ import { ThemeManager } from '../ThemeManager.js'
 import { CustomSelect } from './CustomSelect.js'
 
 export class SidebarManager {
+    static _initialized = false
+
     static initialize() {
+        if (SidebarManager._initialized) return
+        SidebarManager._initialized = true
         SidebarManager.checkAuth()
         SidebarManager.renderIcons()
         SidebarManager.renderDataIcons()
@@ -12,6 +16,12 @@ export class SidebarManager {
         SidebarManager.setupOverlayDismiss()
         ThemeManager.initialize()
         CustomSelect.autoInit()
+        SidebarManager.initDatePickers()
+    }
+
+    static onNavigate() {
+        SidebarManager.setupActiveLink()
+        SidebarManager.renderDataIcons()
         SidebarManager.initDatePickers()
     }
 
@@ -114,9 +124,7 @@ export class SidebarManager {
 
         links.forEach(link => {
             const href = link.href.split('/').pop()
-            if (href === currentPage) {
-                link.classList.add('active')
-            }
+            link.classList.toggle('active', href === currentPage)
         })
     }
 

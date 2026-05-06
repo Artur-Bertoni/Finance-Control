@@ -7,17 +7,81 @@ import { setupRequiredFieldValidation, validateRequiredFields } from './utils/Fi
 
 let currentUser = null
 
-PasswordInput.setupToggle('password-input', 'password-img')
-PasswordInput.setupToggle('password-confirm-input', 'password-confirm-img')
+export function init() {
+    currentUser = null
 
-setupRequiredFieldValidation([
-    'username-input',
-    'email-input',
-    'password-input',
-    'password-confirm-input'
-])
+    PasswordInput.setupToggle('password-input', 'password-img')
+    PasswordInput.setupToggle('password-confirm-input', 'password-confirm-img')
 
-loadUserData()
+    setupRequiredFieldValidation([
+        'username-input',
+        'email-input',
+        'password-input',
+        'password-confirm-input'
+    ])
+
+    loadUserData()
+
+    document.getElementById('cancel-btn').addEventListener('click', () =>
+        navigate(currentUser ? '/pages/HomePage.html' : '/pages/Login.html')
+    )
+
+    document.getElementById('save-btn').addEventListener('click', function () {
+        const username             = document.getElementById('username-input').value
+        const email                = document.getElementById('email-input').value
+        const password             = document.getElementById('password-input').value
+        const passwordConfirmation = document.getElementById('password-confirm-input').value
+
+        const fieldLabels = {
+            'username-input':          'Nome de Usuário',
+            'email-input':             'Email',
+            'password-input':          'Senha',
+            'password-confirm-input':  'Confirmar Senha'
+        }
+
+        const emptyFields = validateRequiredFields(
+            ['username-input', 'email-input', 'password-input', 'password-confirm-input'],
+            fieldLabels
+        )
+
+        if (emptyFields.length > 0) {
+            showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
+            return
+        }
+
+        const isNewUser = !currentUser
+
+        $.ajax({
+            url:         isNewUser ? '/api/users' : `/api/users/${currentUser.id}`,
+            type:        isNewUser ? 'POST' : 'PUT',
+            async:       false,
+            contentType: 'application/json',
+            data:        JSON.stringify({ username, email, password, passwordConfirmation }),
+            success:     function () {
+                if (isNewUser) {
+                    $.ajax({
+                        url: '/api/auth/login',
+                        type: 'POST',
+                        async: false,
+                        contentType: 'application/json',
+                        data: JSON.stringify({ email, password }),
+                        success: function () {
+                            showToast('Conta criada e login realizado com sucesso!', 'success')
+                            navigate('/pages/HomePage.html')
+                        },
+                        error: function () {
+                            showToast('Conta criada, mas falha ao fazer login automático. Redirecionando para login.', 'warning')
+                            navigate('/pages/Login.html')
+                        }
+                    })
+                } else {
+                    navigate('/pages/HomePage.html')
+                }
+            },
+            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar usuário.', 'error') }
+        })
+    })
+}
 
 function loadUserData() {
     $.ajax({
@@ -35,7 +99,12 @@ function loadUserData() {
             logoutBtn.type = 'button'
             logoutBtn.innerHTML = `${Icons.logout()}<span style="margin-left:5px">Sair</span>`
             logoutBtn.addEventListener('click', () => {
-                $.ajax({ url: '/api/auth/logout', type: 'POST', async: false, complete: () => navigate('/pages/Login.html') })
+                $.ajax({
+                    url: '/api/auth/logout',
+                    type: 'POST',
+                    async: false,
+                    complete: () => { globalThis.location.href = '/pages/Login.html' }
+                })
             })
             document.getElementById('header-actions').appendChild(logoutBtn)
 
@@ -65,70 +134,14 @@ function loadUserData() {
     })
 }
 
-document.getElementById('cancel-btn').addEventListener('click', () =>
-    navigate(currentUser ? '/pages/HomePage.html' : '/pages/Login.html')
-)
-
-document.getElementById('save-btn').addEventListener('click', function () {
-    const username             = document.getElementById('username-input').value
-    const email                = document.getElementById('email-input').value
-    const password             = document.getElementById('password-input').value
-    const passwordConfirmation = document.getElementById('password-confirm-input').value
-
-    const fieldLabels = {
-        'username-input': 'Nome de Usuário',
-        'email-input': 'Email',
-        'password-input': 'Senha',
-        'password-confirm-input': 'Confirmar Senha'
-    }
-
-    const emptyFields = validateRequiredFields(['username-input', 'email-input', 'password-input', 'password-confirm-input'], fieldLabels)
-    
-    if (emptyFields.length > 0) {
-        showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
-        return
-    }
-
-    const isNewUser = !currentUser
-    
-    $.ajax({
-        url:         isNewUser ? '/api/users' : `/api/users/${currentUser.id}`,
-        type:        isNewUser ? 'POST' : 'PUT',
-        async:       false,
-        contentType: 'application/json',
-        data:        JSON.stringify({ username, email, password, passwordConfirmation }),
-        success:     function () {
-            if (isNewUser) {
-                // Fazer login automático após cadastro bem-sucedido
-                $.ajax({
-                    url: '/api/auth/login',
-                    type: 'POST',
-                    async: false,
-                    contentType: 'application/json',
-                    data: JSON.stringify({ email, password }),
-                    success: function () {
-                        showToast('Conta criada e login realizado com sucesso!', 'success')
-                        navigate('/pages/HomePage.html')
-                    },
-                    error: function (xhr) {
-                        showToast('Conta criada, mas falha ao fazer login automático. Redirecionando para login.', 'warning')
-                        navigate('/pages/Login.html')
-                    }
-                })
-            } else {
-                navigate('/pages/HomePage.html')
-            }
-        },
-        error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar usuário.', 'error') }
-    })
-})
-
 function deleteUser() {
     $.ajax({
         url:   `/api/users/${currentUser.id}`,
         type:  'DELETE',
         async: false,
-        success: function () { navigate('/pages/Login.html') },
+        success: function () { globalThis.location.href = '/pages/Login.html' },
         error:   function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir usuário.', 'error') }
     })
 }
+
+if (!globalThis.__appRouter) init()

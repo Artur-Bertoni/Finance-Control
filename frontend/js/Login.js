@@ -27,7 +27,7 @@ document.getElementById('login-btn').addEventListener('click', function () {
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
         success: function () {
-            globalThis.location.href = '/pages/HomePage.html'
+            globalThis.location.href = '/pages/AppShell.html'
         },
         error: function (xhr) {
             if (xhr.status === 401)

@@ -1,12 +1,20 @@
 import { Icons } from '../js/icons/IconLibrary.js'
 
 export function navigate(url) {
-    globalThis.location.href = url
+    if (globalThis.__appRouter?.navigate && !url.includes('Login.html')) {
+        globalThis.__appRouter.navigate(url)
+    } else {
+        globalThis.location.href = url
+    }
 }
 
 export function navigateWithToast(url, message, type = 'success') {
     sessionStorage.setItem('pendingToast', JSON.stringify({ message, type }))
-    globalThis.location.href = url
+    if (globalThis.__appRouter?.navigate && !url.includes('Login.html')) {
+        globalThis.__appRouter.navigate(url)
+    } else {
+        globalThis.location.href = url
+    }
 }
 
 export function showPendingToast() {

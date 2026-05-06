@@ -10,14 +10,17 @@ const PAGE_SIZE = 30
 let allTransactions = []
 let currentPage = 1
 
-document.body.classList.add('page-home')
-SidebarManager.initialize()
-showPendingToast()
-
-Category.addCategories('category-input')
-Account.addAccounts('account-input')
-configureFilters()
-populateTransactionsList()
+export function init() {
+    allTransactions = []
+    currentPage = 1
+    document.body.classList.add('page-home')
+    SidebarManager.initialize()
+    showPendingToast()
+    Category.addCategories('category-input')
+    Account.addAccounts('account-input')
+    configureFilters()
+    populateTransactionsList()
+}
 
 function configureFilters() {
     const startInput = document.getElementById('start-date-input')
@@ -250,3 +253,5 @@ function updateTotals(accountId, filteredTotal) {
     filteredBox.textContent = `$ ${filteredTotal.toFixed(2)}`
     filteredBox.className   = 'stat-card-value ' + (filteredTotal >= 0 ? 'positive' : 'negative')
 }
+
+if (!globalThis.__appRouter) init()
