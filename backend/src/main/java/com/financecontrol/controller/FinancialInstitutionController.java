@@ -6,6 +6,7 @@ import com.financecontrol.service.FinancialInstitutionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class FinancialInstitutionController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(financialInstitutionService.findById(id));
     }
@@ -34,14 +35,15 @@ public class FinancialInstitutionController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FinancialInstitutionResponse> update(@PathVariable Long id,
+    public ResponseEntity<FinancialInstitutionResponse> update(@PathVariable @NonNull Long id,
                                                                @RequestBody FinancialInstitutionRequest req,
                                                                HttpSession session) {
-        return ResponseEntity.ok(financialInstitutionService.update(id, requireUserId(session), req));
+        requireUserId(session);
+        return ResponseEntity.ok(financialInstitutionService.update(id, req));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         financialInstitutionService.delete(id);
         return ResponseEntity.noContent().build();

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +30,7 @@ public class TransactionController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionResponse> findById(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<TransactionResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(transactionService.findById(id));
     }
@@ -40,14 +41,14 @@ public class TransactionController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionResponse> update(@PathVariable Long id,
+    public ResponseEntity<TransactionResponse> update(@PathVariable @NonNull Long id,
                                                       @RequestBody TransactionRequest req,
                                                       HttpSession session) {
         return ResponseEntity.ok(transactionService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         transactionService.delete(id);
         return ResponseEntity.noContent().build();

@@ -8,6 +8,8 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.AccountRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -24,7 +26,7 @@ public class AccountService {
                 .map(AccountResponse::from).toList();
     }
 
-    public AccountResponse findById(Long id) {
+    public AccountResponse findById(@NonNull Long id) {
         return AccountResponse.from(getOrThrow(id));
     }
 
@@ -41,7 +43,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountResponse update(Long id, Long userId, AccountRequest req) {
+    public AccountResponse update(@NonNull Long id, Long userId, AccountRequest req) {
         Account account = getOrThrow(id);
         FinancialInstitution fi = fiRepository.findById(req.financialInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instituição financeira não encontrada"));
@@ -54,7 +56,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         getOrThrow(id);
         repository.deleteById(id);
     }
@@ -64,7 +66,7 @@ public class AccountService {
         repository.patchBalance(id, delta);
     }
 
-    Account getOrThrow(Long id) {
+    Account getOrThrow(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
     }

@@ -6,6 +6,8 @@ import com.financecontrol.entity.TransactionLocale;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.TransactionLocaleRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -21,7 +23,7 @@ public class TransactionLocaleService {
                 .map(TransactionLocaleResponse::from).toList();
     }
 
-    public TransactionLocaleResponse findById(Long id) {
+    public TransactionLocaleResponse findById(@NonNull Long id) {
         return TransactionLocaleResponse.from(getOrThrow(id));
     }
 
@@ -32,7 +34,7 @@ public class TransactionLocaleService {
     }
 
     @Transactional
-    public TransactionLocaleResponse update(Long id, TransactionLocaleRequest req) {
+    public TransactionLocaleResponse update(@NonNull Long id, TransactionLocaleRequest req) {
         TransactionLocale tl = getOrThrow(id);
         tl.setName(req.name());
         tl.setAddress(req.address());
@@ -40,12 +42,12 @@ public class TransactionLocaleService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         getOrThrow(id);
         repository.deleteById(id);
     }
 
-    private TransactionLocale getOrThrow(Long id) {
+    private TransactionLocale getOrThrow(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Local de transação não encontrado"));
     }

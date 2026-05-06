@@ -6,6 +6,7 @@ import com.financecontrol.service.AccountService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class AccountController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> findById(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<AccountResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(accountService.findById(id));
     }
@@ -40,14 +41,14 @@ public class AccountController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountResponse> update(@PathVariable Long id,
+    public ResponseEntity<AccountResponse> update(@PathVariable @NonNull Long id,
                                                   @RequestBody AccountRequest req,
                                                   HttpSession session) {
         return ResponseEntity.ok(accountService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         accountService.delete(id);
         return ResponseEntity.noContent().build();

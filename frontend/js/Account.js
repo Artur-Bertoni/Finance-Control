@@ -6,7 +6,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 SidebarManager.initialize()
 FinancialInstitution.addFinancialInstitutions()
 
-const urlParams = new URLSearchParams(window.location.search)
+const urlParams = new URLSearchParams(globalThis.location.search)
 const accountId = urlParams.get('id')
 
 if (accountId) {

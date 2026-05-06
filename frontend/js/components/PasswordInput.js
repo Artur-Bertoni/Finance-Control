@@ -12,35 +12,39 @@ export class PasswordInput {
      * @param {string} buttonId - ID do botão de toggle
      */
     static setupToggle(inputId, buttonId) {
-        const input = document.getElementById(inputId)
-        const button = document.getElementById(buttonId)
+        const initialize = () => {
+            const input = document.getElementById(inputId)
+            const button = document.getElementById(buttonId)
 
-        if (!input || !button) {
-            console.warn(`PasswordInput: não encontrado input="${inputId}" ou button="${buttonId}"`)
-            return
+            if (!input || !button) {
+                console.warn(`PasswordInput: não encontrado input="${inputId}" ou button="${buttonId}"`)
+                return
+            }
+
+            button.type = 'button'
+            button.setAttribute('aria-label', 'Mostrar/ocultar senha')
+
+            const iconSvg = Icons.eyeOpen()
+            if (!iconSvg) {
+                console.error('Erro ao carregar ícone eyeOpen')
+                return
+            }
+            button.innerHTML = iconSvg
+
+            button.addEventListener('click', (event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                PasswordInput.toggleVisibility(input, button)
+            })
+
+            PasswordInput.setHidden(input, button)
         }
 
-        // Configurar o HTML do botão com os ícones
-        button.type = 'button'
-        button.setAttribute('aria-label', 'Mostrar/ocultar senha')
-        
-        // Garantir que o ícone seja renderizado
-        const iconSvg = Icons.eyeOpen()
-        if (!iconSvg) {
-            console.error('Erro ao carregar ícone eyeOpen')
-            return
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize)
+        } else {
+            initialize()
         }
-        button.innerHTML = iconSvg
-
-        // Handler do toggle
-        button.addEventListener('click', (event) => {
-            event.preventDefault()
-            event.stopPropagation()
-            PasswordInput.toggleVisibility(input, button)
-        })
-
-        // Iniciar como escondido
-        PasswordInput.setHidden(input, button)
     }
 
     /**

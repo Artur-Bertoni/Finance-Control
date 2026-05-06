@@ -6,6 +6,7 @@ import com.financecontrol.service.CategoryService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class CategoryController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> findById(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<CategoryResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(categoryService.findById(id));
     }
@@ -33,7 +34,7 @@ public class CategoryController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> update(@PathVariable Long id,
+    public ResponseEntity<CategoryResponse> update(@PathVariable @NonNull Long id,
                                                    @RequestBody CategoryRequest req,
                                                    HttpSession session) {
         requireUserId(session);
@@ -41,7 +42,7 @@ public class CategoryController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         categoryService.delete(id);
         return ResponseEntity.noContent().build();

@@ -6,6 +6,8 @@ import com.financecontrol.entity.FinancialInstitution;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -21,7 +23,7 @@ public class FinancialInstitutionService {
                 .map(FinancialInstitutionResponse::from).toList();
     }
 
-    public FinancialInstitutionResponse findById(Long id) {
+    public FinancialInstitutionResponse findById(@NonNull Long id) {
         return FinancialInstitutionResponse.from(getOrThrow(id));
     }
 
@@ -32,7 +34,7 @@ public class FinancialInstitutionService {
     }
 
     @Transactional
-    public FinancialInstitutionResponse update(Long id, Long userId, FinancialInstitutionRequest req) {
+    public FinancialInstitutionResponse update(@NonNull Long id, FinancialInstitutionRequest req) {
         FinancialInstitution fi = getOrThrow(id);
         fi.setName(req.name());
         fi.setAddress(req.address());
@@ -41,12 +43,12 @@ public class FinancialInstitutionService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         getOrThrow(id);
         repository.deleteById(id);
     }
 
-    private FinancialInstitution getOrThrow(Long id) {
+    private FinancialInstitution getOrThrow(@NonNull Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Instituição financeira não encontrada"));
     }

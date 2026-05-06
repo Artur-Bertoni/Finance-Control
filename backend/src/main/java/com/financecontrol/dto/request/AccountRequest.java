@@ -1,7 +1,9 @@
 package com.financecontrol.dto.request;
 
+import org.springframework.lang.NonNull;
+
 public record AccountRequest(
-    Long financialInstitutionId,
+    @NonNull Long financialInstitutionId,
     String name,
     String contact,
     String description,

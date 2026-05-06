@@ -4,7 +4,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 
 SidebarManager.initialize()
 
-const urlParams = new URLSearchParams(window.location.search)
+const urlParams = new URLSearchParams(globalThis.location.search)
 const fiId = urlParams.get('id')
 
 if (fiId) {

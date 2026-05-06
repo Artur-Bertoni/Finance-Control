@@ -15,7 +15,7 @@ const dateInput = document.getElementById('date-input')
 dateInput.max   = new Date().toISOString().split('T')[0]
 dateInput.value = dateInput.max
 
-const urlParams     = new URLSearchParams(window.location.search)
+const urlParams     = new URLSearchParams(globalThis.location.search)
 const transactionId = urlParams.get('id')
 
 if (transactionId) {

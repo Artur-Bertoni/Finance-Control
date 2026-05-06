@@ -13,7 +13,7 @@
 export function required(selector, context = '') {
     const el = document.querySelector(selector)
     if (!el) {
-        throw new Error(`Elemento não encontrado: ${selector} ${context ? `(em ${context})` : ''}`)
+        throw new Error(`Elemento não encontrado: ${selector}` + (context ? ` (em ${context})` : ''))
     }
     return el
 }
@@ -178,7 +178,7 @@ export function disableButton(buttonId, loadingText = 'Carregando...') {
     const button = document.getElementById(buttonId)
     if (!button) return
     button.disabled = true
-    button.setAttribute('data-original-text', button.textContent)
+    button.dataset.originalText = button.textContent
     button.textContent = loadingText
 }
 
@@ -190,10 +190,10 @@ export function enableButton(buttonId) {
     const button = document.getElementById(buttonId)
     if (!button) return
     button.disabled = false
-    const originalText = button.getAttribute('data-original-text')
+    const originalText = button.dataset.originalText
     if (originalText) {
         button.textContent = originalText
-        button.removeAttribute('data-original-text')
+        delete button.dataset.originalText
     }
 }
 
@@ -202,9 +202,9 @@ export function enableButton(buttonId) {
  * @param {Function} callback - Função a executar
  */
 export function onReady(callback) {
-    if (document.readyState !== 'loading') {
-        callback()
-    } else {
+    if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', callback)
+    } else {
+        callback()
     }
 }

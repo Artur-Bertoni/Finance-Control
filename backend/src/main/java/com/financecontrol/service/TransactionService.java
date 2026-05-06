@@ -6,6 +6,9 @@ import com.financecontrol.entity.*;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.*;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -14,6 +17,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
+
+    private static final String TYPE_CREDIT = "credit";
+    private static final String TYPE_DEBIT = "debit";
+    private static final String ERR_TRANSACTION = "Transação não encontrada";
+    private static final String ERR_ACCOUNT = "Conta não encontrada";
+    private static final String ERR_CATEGORY = "Categoria não encontrada";
 
     private final TransactionRepository repository;
     private final AccountRepository accountRepository;
@@ -26,39 +35,64 @@ public class TransactionService {
                 .stream().map(TransactionResponse::from).toList();
     }
 
-    public TransactionResponse findById(Long id) {
+    public TransactionResponse findById(@NonNull Long id) {
         return TransactionResponse.from(getOrThrow(id));
     }
 
     @Transactional
     public TransactionResponse create(Long userId, TransactionRequest req) {
         applyBalanceDelta(req.accountId(), req.type(), req.value());
-        Transaction t = buildEntity(userId, req);
-        return TransactionResponse.from(repository.save(t));
+        return TransactionResponse.from(repository.save(buildEntity(userId, req)));
     }
 
     @Transactional
-    public TransactionResponse update(Long id, Long userId, TransactionRequest req) {
+    public TransactionResponse update(@NonNull Long id, Long userId, TransactionRequest req) {
+        return updateOne(id, userId, req);
+    }
+
+    @Transactional
+    public void delete(@NonNull Long id) {
+        deleteOne(id);
+    }
+
+    @Transactional
+    public TransactionResponse patchTransferPartner(@NonNull Long id, @Nullable Long partnerId) {
+        Transaction t = getOrThrow(id);
+        t.setTransferPartnerId(partnerId);
+        return TransactionResponse.from(repository.save(t));
+    }
+
+    @NonNull
+    Transaction getOrThrow(@NonNull Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ERR_TRANSACTION));
+    }
+
+    private TransactionResponse updateOne(@NonNull Long id, Long userId, TransactionRequest req) {
         Transaction existing = getOrThrow(id);
 
-        // revert old balance effect
         String oldType = existing.getType();
-        double revert = oldType.equals("credit") ? -existing.getValue() : existing.getValue();
-        accountRepository.patchBalance(existing.getAccount().getId(), revert);
-
-        // apply new balance effect
+        double revert = TYPE_CREDIT.equals(oldType) ? -existing.getValue() : existing.getValue();
+        Long accountId = existing.getAccount().getId();
+        if (accountId != null) {
+            accountRepository.patchBalance(accountId, revert);
+        }
         applyBalanceDelta(req.accountId(), req.type(), req.value());
 
-        // if this is part of a transfer, update the partner too
-        if (existing.getTransferPartnerId() != null && existing.getTransferPartnerId() != 0) {
-            Transaction partner = getOrThrow(existing.getTransferPartnerId());
+        Long partnerId = existing.getTransferPartnerId();
+        if (isTransferPartner(partnerId)) {
+            Transaction partner = getOrThrow(partnerId);
             if (!partner.getValue().equals(req.value())) {
+                String partnerType = TYPE_DEBIT.equals(req.type()) ? TYPE_CREDIT : TYPE_DEBIT;
+                Long partnerAccountId = partner.getAccount().getId();
                 TransactionRequest partnerReq = new TransactionRequest(
-                        partner.getAccount().getId(), req.categoryId(), req.transactionLocaleId(),
-                        req.value(), req.date(),
-                        req.type().equals("debit") ? "credit" : "debit",
+                        partnerAccountId, req.categoryId(), req.transactionLocaleId(),
+                        req.value(), req.date(), partnerType,
                         req.installmentsNumber(), req.obs(), id);
-                update(partner.getId(), userId, partnerReq);
+                Long partnerId2 = partner.getId();
+                if (partnerId2 != null) {
+                    updateOne(partnerId2, userId, partnerReq);
+                }
             }
         }
 
@@ -66,68 +100,63 @@ public class TransactionService {
         return TransactionResponse.from(repository.save(existing));
     }
 
-    @Transactional
-    public void delete(Long id) {
+    private void deleteOne(@NonNull Long id) {
         Transaction t = getOrThrow(id);
+        double revert = TYPE_CREDIT.equals(t.getType()) ? -t.getValue() : t.getValue();
+        Long accountId = t.getAccount().getId();
+        if (accountId != null) {
+            accountRepository.patchBalance(accountId, revert);
+        }
 
-        // revert balance
-        double revert = t.getType().equals("credit") ? -t.getValue() : t.getValue();
-        accountRepository.patchBalance(t.getAccount().getId(), revert);
-
-        // delete transfer partner first if exists
-        if (t.getTransferPartnerId() != null && t.getTransferPartnerId() != 0) {
-            if (repository.existsById(t.getTransferPartnerId())) {
-                delete(t.getTransferPartnerId());
-            }
+        Long partnerId = t.getTransferPartnerId();
+        if (isTransferPartner(partnerId) && repository.existsById(partnerId)) {
+            deleteOne(partnerId);
         }
 
         repository.deleteById(id);
     }
 
-    @Transactional
-    public TransactionResponse patchTransferPartner(Long id, Long partnerId) {
-        Transaction t = getOrThrow(id);
-        t.setTransferPartnerId(partnerId);
-        return TransactionResponse.from(repository.save(t));
-    }
-
-    Transaction getOrThrow(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
-    }
-
-    private void applyBalanceDelta(Long accountId, String type, Double value) {
-        double delta = type.equals("credit") ? value : -value;
+    private void applyBalanceDelta(@NonNull Long accountId, String type, Double value) {
+        double delta = TYPE_CREDIT.equals(type) ? value : -value;
         accountRepository.patchBalance(accountId, delta);
     }
 
-    private Transaction buildEntity(Long userId, TransactionRequest req) {
-        Account account = accountRepository.findById(req.accountId())
-                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
-        Category category = categoryRepository.findById(req.categoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
-        TransactionLocale locale = req.transactionLocaleId() != null
-                ? localeRepository.findById(req.transactionLocaleId()).orElse(null) : null;
+    private boolean isTransferPartner(Long partnerId) {
+        return partnerId != null && !partnerId.equals(0L);
+    }
 
-        return new Transaction(null, userId, account, category, locale,
+    private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
+
+    private TransactionDeps loadDeps(TransactionRequest req) {
+        Long accountId = req.accountId();
+        Long categoryId = req.categoryId();
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException(ERR_ACCOUNT));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(ERR_CATEGORY));
+        Long localeId = req.transactionLocaleId();
+        TransactionLocale locale = localeId != null
+                ? localeRepository.findById(localeId).orElse(null) : null;
+        return new TransactionDeps(account, category, locale);
+    }
+
+    private Transaction buildEntity(Long userId, TransactionRequest req) {
+        TransactionDeps deps = loadDeps(req);
+        Integer installmentsNumber = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
+        Long transferPartnerId = req.transferPartnerId() != null ? req.transferPartnerId() : 0L;
+        return new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                 req.value(), req.date(), req.type(),
-                req.installmentsNumber() != null ? req.installmentsNumber() : 0,
+                installmentsNumber,
                 req.obs(),
-                req.transferPartnerId() != null ? req.transferPartnerId() : 0L);
+                transferPartnerId);
     }
 
     private void updateEntity(Transaction t, Long userId, TransactionRequest req) {
-        Account account = accountRepository.findById(req.accountId())
-                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
-        Category category = categoryRepository.findById(req.categoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
-        TransactionLocale locale = req.transactionLocaleId() != null
-                ? localeRepository.findById(req.transactionLocaleId()).orElse(null) : null;
-
+        TransactionDeps deps = loadDeps(req);
         t.setUserId(userId);
-        t.setAccount(account);
-        t.setCategory(category);
-        t.setTransactionLocale(locale);
+        t.setAccount(deps.account());
+        t.setCategory(deps.category());
+        t.setTransactionLocale(deps.locale());
         t.setValue(req.value());
         t.setDate(req.date());
         t.setType(req.type());

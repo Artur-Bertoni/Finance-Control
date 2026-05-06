@@ -5,7 +5,7 @@ import { PasswordInput } from './components/PasswordInput.js'
 PasswordInput.setupToggle('password-input', 'password-img')
 
 document.getElementById('register-btn').addEventListener('click', function () {
-    window.location.href = '/pages/User.html'
+    globalThis.location.href = '/pages/User.html'
 })
 
 document.getElementById('login-btn').addEventListener('click', function () {
@@ -24,7 +24,7 @@ document.getElementById('login-btn').addEventListener('click', function () {
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
         success: function () {
-            window.location.href = '/pages/HomePage.html'
+            globalThis.location.href = '/pages/HomePage.html'
         },
         error: function (xhr) {
             if (xhr.status === 401)

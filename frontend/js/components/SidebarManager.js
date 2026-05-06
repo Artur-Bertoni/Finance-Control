@@ -4,14 +4,59 @@
  * Substitui os scripts inline minificados
  */
 
+import { Icons } from '../icons/IconLibrary.js'
+
 export class SidebarManager {
     /**
      * Inicializa a sidebar com todos os comportamentos
      */
     static initialize() {
+        SidebarManager.renderIcons()
+        SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
+    }
+
+    /**
+     * Renderiza os ícones da sidebar a partir da biblioteca centralizada
+     */
+    static renderIcons() {
+        const iconMap = {
+            'HomePage.html': 'home',
+            'Transaction.html': 'transaction',
+            'Transfer.html': 'transfer',
+            'AccountDashboard.html': 'accounts',
+            'CategoryDashboard.html': 'categories',
+            'FinancialInstitutionDashboard.html': 'institutions',
+            'TransactionLocaleDashboard.html': 'locations',
+            'User.html': 'profile'
+        }
+
+        document.querySelectorAll('.sidebar-nav .sidebar-link, .sidebar-footer .sidebar-link').forEach(link => {
+            const href = link.getAttribute('href')?.split('/').pop()
+            const iconName = href ? iconMap[href] : null
+            if (!iconName) return
+
+            const label = link.textContent.trim()
+            link.innerHTML = `${Icons[iconName]()} ${label}`
+        })
+
+        const toggleButton = document.getElementById('sidebar-toggle-btn')
+        if (toggleButton) {
+            toggleButton.innerHTML = Icons.menu()
+        }
+    }
+
+    /**
+     * Renderiza ícones em elementos com atributo data-icon
+     */
+    static renderDataIcons() {
+        document.querySelectorAll('[data-icon]').forEach(el => {
+            const iconName = el.dataset.icon
+            const icon = Icons[iconName]
+            if (icon) el.innerHTML = icon()
+        })
     }
 
     /**
@@ -79,12 +124,7 @@ export class SidebarManager {
         const logoutBtn = document.createElement('button')
         logoutBtn.className = 'sidebar-link logout-btn'
         logoutBtn.type = 'button'
-        logoutBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
-            </svg>
-            Sair
-        `
+        logoutBtn.innerHTML = `${Icons.logout()} Sair`
 
         logoutBtn.addEventListener('click', () => {
             $.ajax({
@@ -92,7 +132,7 @@ export class SidebarManager {
                 type: 'POST',
                 async: false,
                 complete: () => {
-                    window.location.href = '/pages/Login.html'
+                    globalThis.location.href = '/pages/Login.html'
                 }
             })
         })

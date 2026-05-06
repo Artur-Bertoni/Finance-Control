@@ -1,5 +1,7 @@
 package com.financecontrol.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -10,6 +12,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private ResponseEntity<Map<String, String>> error(@NonNull HttpStatus status, String message) {
         return ResponseEntity.status(status).body(Map.of("message", message));
@@ -32,6 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneral(Exception e) {
-        return error(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno: " + e.getMessage());
+        log.error("Unexpected error", e);
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor");
     }
 }
