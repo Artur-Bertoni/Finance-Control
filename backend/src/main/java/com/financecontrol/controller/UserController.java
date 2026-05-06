@@ -6,6 +6,7 @@ import com.financecontrol.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(@PathVariable Long id,
+    public ResponseEntity<UserResponse> update(@PathVariable @NonNull Long id,
                                                @RequestBody UserRequest req,
                                                HttpSession session) {
         requireUserId(session);
@@ -31,7 +32,7 @@ public class UserController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
         requireUserId(session);
         userService.delete(id);
         session.invalidate();
