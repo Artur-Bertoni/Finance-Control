@@ -22,24 +22,24 @@ public class UserService {
 
     public UserResponse login(String email, String password) {
         User user = repository.findByEmail(email)
-                .orElseThrow(() -> new UnauthorizedException("Email e/ou senha incorreto(s)"));
+                .orElseThrow(() -> new UnauthorizedException("error.auth.invalidCredentials"));
         if (!passwordEncoder.matches(password, user.getPassword()))
-            throw new UnauthorizedException("Email e/ou senha incorreto(s)");
+            throw new UnauthorizedException("error.auth.invalidCredentials");
         return UserResponse.from(user);
     }
 
     public UserResponse findById(@NonNull Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.user"));
         return UserResponse.from(user);
     }
 
     @Transactional
     public UserResponse create(UserRequest req) {
         if (repository.findByEmail(req.email()).isPresent())
-            throw new BusinessException("Email já cadastrado");
+            throw new BusinessException("error.user.duplicateEmail");
         if (!req.password().equals(req.passwordConfirmation()))
-            throw new BusinessException("As senhas devem ser iguais");
+            throw new BusinessException("error.user.passwordMismatch");
 
         User user = new User(null, req.username(), req.email(), passwordEncoder.encode(req.password()));
         return UserResponse.from(repository.save(user));
@@ -48,12 +48,12 @@ public class UserService {
     @Transactional
     public UserResponse update(@NonNull Long id, UserRequest req) {
         if (repository.existsByEmailAndIdNot(req.email(), id))
-            throw new BusinessException("Email já cadastrado");
+            throw new BusinessException("error.user.duplicateEmail");
         if (!req.password().equals(req.passwordConfirmation()))
-            throw new BusinessException("As senhas devem ser iguais");
+            throw new BusinessException("error.user.passwordMismatch");
 
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.user"));
         user.setUsername(req.username());
         user.setEmail(req.email());
         user.setPassword(passwordEncoder.encode(req.password()));
@@ -63,7 +63,7 @@ public class UserService {
     @Transactional
     public void delete(@NonNull Long id) {
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException("Usuário não encontrado");
+            throw new ResourceNotFoundException("error.notFound.user");
         repository.deleteById(id);
     }
 }

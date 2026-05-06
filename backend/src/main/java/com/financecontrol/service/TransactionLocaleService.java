@@ -49,6 +49,6 @@ public class TransactionLocaleService {
 
     private TransactionLocale getOrThrow(@NonNull Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Local de transação não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
     }
 }

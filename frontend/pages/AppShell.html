@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" id="root-html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,28 +20,28 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
+      <div class="login-logo-text">Finance<span>Control</span></div>
     </div>
     <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
+      <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
+      <div class="sidebar-section" data-i18n="movements">Movimentações</div>
+      <a href="/pages/Transaction.html" class="sidebar-link" data-i18n="newTransaction">Nova Transação</a>
+      <a href="/pages/Transfer.html" class="sidebar-link" data-i18n="transfer">Transferência</a>
+      <a href="/pages/AccountDashboard.html" class="sidebar-link" data-i18n="accounts">Contas</a>
+      <div class="sidebar-section" data-i18n="settings">Configurações</div>
+      <a href="/pages/CategoryDashboard.html" class="sidebar-link" data-i18n="categories">Categorias</a>
+      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link" data-i18n="financialInstitutions">Instituições Financeiras</a>
+      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link" data-i18n="locations">Locais</a>
     </nav>
     <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
+      <a href="/pages/User.html" class="sidebar-link" data-i18n="myProfile">Meu Perfil</a>
     </div>
   </aside>
 
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title" id="page-title-text"></h1>
+      <h1 class="page-title" id="page-title-text">Finance Control</h1>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
     <main class="page-content" id="view"></main>

@@ -16,32 +16,10 @@
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <div class="app-shell">
-
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
-    </div>
-  </aside>
-
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title">Transferência entre Contas</h1>
+      <h1 class="page-title" data-i18n="transferBetweenAccounts">Transferência entre Contas</h1>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
 
@@ -50,71 +28,69 @@
         <div class="form-grid">
           <div class="form-grid two-col">
             <div class="field">
-              <label for="origin-account-input">Conta de Origem *</label>
+              <label for="origin-account-input" data-i18n="sourceAccount">Conta de Origem *</label>
               <div class="select-with-add">
                 <select id="origin-account-input">
-                  <option disabled selected value="">Selecione a origem</option>
+                  <option disabled selected value="" data-i18n="selectOrigin">Selecione a origem</option>
                 </select>
-                <button type="button" class="btn-add-inline" id="origin-account-add-btn" title="Nova conta" data-icon="add"></button>
+                <button type="button" class="btn-add-inline" id="origin-account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
               </div>
             </div>
             <div class="field">
-              <label for="destination-account-input">Conta de Destino *</label>
+              <label for="destination-account-input" data-i18n="destinationAccount">Conta de Destino *</label>
               <div class="select-with-add">
                 <select id="destination-account-input">
-                  <option disabled selected value="">Selecione o destino</option>
+                  <option disabled selected value="" data-i18n="selectDestination">Selecione o destino</option>
                 </select>
-                <button type="button" class="btn-add-inline" id="dest-account-add-btn" title="Nova conta" data-icon="add"></button>
+                <button type="button" class="btn-add-inline" id="dest-account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
               </div>
             </div>
           </div>
 
           <div class="field">
-            <label for="category-input">Categoria *</label>
+            <label for="category-input" data-i18n="categories">Categoria *</label>
             <div class="select-with-add">
               <select id="category-input">
-                <option disabled selected value="">Selecione a categoria</option>
+                <option disabled selected value="" data-i18n="selectCategory">Selecione a categoria</option>
               </select>
-              <button type="button" class="btn-add-inline" id="category-add-btn" title="Nova categoria" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="newCategory" title="Nova categoria" data-icon="add"></button>
             </div>
           </div>
 
           <div class="form-grid two-col">
             <div class="field">
-              <label for="value-input">Valor ($) *</label>
-              <input id="value-input" type="number" step=".01" min="0" placeholder="0,00">
+              <label for="value-input" data-i18n="transactionValue">Valor ($) *</label>
+              <input id="value-input" type="number" step=".01" min="0" data-i18n-placeholder="valueZero" placeholder="0,00">
             </div>
             <div class="field">
-              <label for="date-input">Data *</label>
+              <label for="date-input" data-i18n="transactionDate">Data *</label>
               <input id="date-input" type="date">
             </div>
           </div>
 
           <div class="field">
-            <label for="transfer-locale-input">Local da Transferência</label>
+            <label for="transfer-locale-input" data-i18n="transactionLocale">Local da Transferência</label>
             <div class="select-with-add">
               <select id="transfer-locale-input">
-                <option disabled selected value="">Selecione o local (opcional)</option>
+                <option disabled selected value="" data-i18n="selectLocale">Selecione o local (opcional)</option>
               </select>
-              <button type="button" class="btn-add-inline" id="locale-add-btn" title="Novo local" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="newLocale" title="Novo local" data-icon="add"></button>
             </div>
           </div>
 
           <div class="field">
-            <label for="obs-input">Observações</label>
-            <textarea id="obs-input" placeholder="Detalhes adicionais sobre a transferência…"></textarea>
+            <label for="obs-input" data-i18n="observations">Observações</label>
+            <textarea id="obs-input" data-i18n-placeholder="transferDescription" placeholder="Detalhes adicionais sobre a transferência…"></textarea>
           </div>
         </div>
 
         <div class="form-actions">
-          <button class="btn btn-secondary" id="cancel-btn" type="button">Cancelar</button>
-          <button class="btn btn-primary"   id="save-btn"   type="button">Confirmar Transferência</button>
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="confirmTransfer">Confirmar Transferência</button>
         </div>
       </div>
     </main>
   </div>
 </div>
-</body>
-</html>
 </body>
 </html>

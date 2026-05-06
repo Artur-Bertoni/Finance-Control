@@ -1,11 +1,24 @@
 import { showToast } from '../utils/FrontendFunctions.js'
 import { PasswordInput } from './components/PasswordInput.js'
 import { ThemeManager } from './ThemeManager.js'
+import { I18n } from './i18n.js'
 
 ThemeManager.initialize()
-
-// Configurar toggle de visualização de senha
 PasswordInput.setupToggle('password-input', 'password-img')
+
+function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = I18n.t(el.dataset.i18n)
+    })
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = I18n.t(el.dataset.i18nPlaceholder)
+    })
+}
+
+I18n.initialize().then(() => {
+    applyTranslations()
+    I18n.onChange(applyTranslations)
+})
 
 document.getElementById('register-btn').addEventListener('click', function () {
     globalThis.location.href = '/pages/User.html'
@@ -16,7 +29,7 @@ document.getElementById('login-btn').addEventListener('click', function () {
     const password = document.getElementById('password-input').value
 
     if (!email || !password) {
-        showToast('Preencha e-mail e senha para continuar.', 'warning')
+        showToast(I18n.t('emptyEmailPassword'), 'warning')
         return
     }
 
@@ -31,9 +44,9 @@ document.getElementById('login-btn').addEventListener('click', function () {
         },
         error: function (xhr) {
             if (xhr.status === 401)
-                showToast('E-mail ou senha incorretos.', 'error')
+                showToast(xhr.responseJSON?.message ?? I18n.t('errorLoginInvalid'), 'error')
             else
-                showToast('Erro ao fazer login. Tente novamente.', 'error')
+                showToast(xhr.responseJSON?.message ?? I18n.t('errorLogin'), 'error')
         }
     })
 })

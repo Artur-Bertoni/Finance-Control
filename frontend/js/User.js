@@ -4,6 +4,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { ThemeManager } from './ThemeManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
+import { I18n } from './i18n.js'
 
 let currentUser = null
 
@@ -27,16 +28,11 @@ export function init() {
     )
 
     document.getElementById('save-btn').addEventListener('click', function () {
-        const username             = document.getElementById('username-input').value
-        const email                = document.getElementById('email-input').value
-        const password             = document.getElementById('password-input').value
-        const passwordConfirmation = document.getElementById('password-confirm-input').value
-
         const fieldLabels = {
-            'username-input':          'Nome de Usuário',
-            'email-input':             'Email',
-            'password-input':          'Senha',
-            'password-confirm-input':  'Confirmar Senha'
+            'username-input':         I18n.t('username'),
+            'email-input':            I18n.t('emailAddress'),
+            'password-input':         I18n.t('password'),
+            'password-confirm-input': I18n.t('confirmPassword')
         }
 
         const emptyFields = validateRequiredFields(
@@ -45,18 +41,24 @@ export function init() {
         )
 
         if (emptyFields.length > 0) {
-            showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
+            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
         const isNewUser = !currentUser
+        const body = {
+            username:             document.getElementById('username-input').value,
+            email:                document.getElementById('email-input').value,
+            password:             document.getElementById('password-input').value,
+            passwordConfirmation: document.getElementById('password-confirm-input').value
+        }
 
         $.ajax({
             url:         isNewUser ? '/api/users' : `/api/users/${currentUser.id}`,
             type:        isNewUser ? 'POST' : 'PUT',
             async:       false,
             contentType: 'application/json',
-            data:        JSON.stringify({ username, email, password, passwordConfirmation }),
+            data:        JSON.stringify(body),
             success:     function () {
                 if (isNewUser) {
                     $.ajax({
@@ -64,13 +66,13 @@ export function init() {
                         type: 'POST',
                         async: false,
                         contentType: 'application/json',
-                        data: JSON.stringify({ email, password }),
+                        data: JSON.stringify({ email: body.email, password: body.password }),
                         success: function () {
-                            showToast('Conta criada e login realizado com sucesso!', 'success')
+                            showToast(I18n.t('accountCreatedLoginSuccess'), 'success')
                             navigate('/pages/HomePage.html')
                         },
                         error: function () {
-                            showToast('Conta criada, mas falha ao fazer login automático. Redirecionando para login.', 'warning')
+                            showToast(I18n.t('accountCreatedLoginFail'), 'warning')
                             navigate('/pages/Login.html')
                         }
                     })
@@ -78,7 +80,7 @@ export function init() {
                     navigate('/pages/HomePage.html')
                 }
             },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar usuário.', 'error') }
+            error: function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error') }
         })
     })
 }
@@ -97,7 +99,7 @@ function loadUserData() {
             const logoutBtn = document.createElement('button')
             logoutBtn.className = 'btn btn-ghost btn-sm'
             logoutBtn.type = 'button'
-            logoutBtn.innerHTML = `${Icons.logout()}<span style="margin-left:5px">Sair</span>`
+            logoutBtn.innerHTML = `${Icons.logout()}<span style="margin-left:5px" data-i18n="logout">${I18n.t('logout')}</span>`
             logoutBtn.addEventListener('click', () => {
                 $.ajax({
                     url: '/api/auth/logout',
@@ -111,9 +113,9 @@ function loadUserData() {
             const deleteBtn = addDeleteIcon()
             deleteBtn.addEventListener('click', function () {
                 showConfirm(
-                    'Deseja excluir sua conta? Esta ação não pode ser desfeita.',
+                    I18n.t('deleteAccountConfirm'),
                     deleteUser,
-                    'Excluir Conta'
+                    I18n.t('deleteAccountTitle')
                 )
             })
         },
@@ -121,15 +123,27 @@ function loadUserData() {
             ThemeManager.initialize()
             document.body.classList.add('user-guest')
 
-            const main = document.querySelector('.page-content')
+            const main   = document.querySelector('.page-content')
             const header = document.createElement('div')
             header.className = 'guest-form-header'
-            header.innerHTML = '<img src="../images/logo.png" alt="Finance Control"><h1>Criar Conta</h1><p>Preencha os dados para acessar o Finance Control</p>'
+            header.innerHTML = `<img src="../images/logo.png" alt="Finance Control"><h1 data-i18n="createAccount">${I18n.t('createAccount')}</h1><p data-i18n="guestFormHeader">${I18n.t('guestFormHeader')}</p>`
             main.insertBefore(header, main.firstChild)
 
-            document.getElementById('page-title-text').textContent = 'Criar Conta'
-            document.getElementById('save-btn').textContent        = 'Criar Conta'
-            document.getElementById('cancel-btn').textContent      = 'Voltar ao Login'
+            const titleEl = document.getElementById('page-title-text')
+            if (titleEl) {
+                titleEl.dataset.i18n = 'createAccount'
+                titleEl.textContent  = I18n.t('createAccount')
+            }
+            const saveBtn = document.getElementById('save-btn')
+            if (saveBtn) {
+                saveBtn.dataset.i18n = 'createAccount'
+                saveBtn.textContent  = I18n.t('createAccount')
+            }
+            const cancelBtn = document.getElementById('cancel-btn')
+            if (cancelBtn) {
+                cancelBtn.dataset.i18n = 'backToLogin'
+                cancelBtn.textContent  = I18n.t('backToLogin')
+            }
         }
     })
 }
@@ -140,7 +154,7 @@ function deleteUser() {
         type:  'DELETE',
         async: false,
         success: function () { globalThis.location.href = '/pages/Login.html' },
-        error:   function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir usuário.', 'error') }
+        error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error') }
     })
 }
 

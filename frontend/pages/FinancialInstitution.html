@@ -13,51 +13,31 @@
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
-    </div>
-  </aside>
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title" id="page-title-text">Nova Instituição Financeira</h1>
+      <h1 class="page-title" id="page-title-text" data-i18n="newFinancialInstitution">Nova Instituição Financeira</h1>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
     <main class="page-content">
       <div class="form-card">
         <div class="form-grid">
           <div class="field">
-            <label for="name-input">Nome *</label>
-            <input id="name-input" type="text" placeholder="Nome da instituição">
+            <label for="name-input" data-i18n="institutionName">Nome *</label>
+            <input id="name-input" type="text" data-i18n-placeholder="institutionNamePlaceholder" placeholder="Nome da instituição">
           </div>
           <div class="field">
-            <label for="address-input">Endereço</label>
-            <input id="address-input" type="text" placeholder="Endereço da instituição (opcional)">
+            <label for="address-input" data-i18n="institutionAddress">Endereço</label>
+            <input id="address-input" type="text" data-i18n-placeholder="institutionAddressPlaceholder" placeholder="Endereço da instituição (opcional)">
           </div>
           <div class="field">
-            <label for="contact-input">Contato</label>
-            <input id="contact-input" type="text" placeholder="Telefone ou e-mail de contato (opcional)">
+            <label for="contact-input" data-i18n="institutionContact">Contato</label>
+            <input id="contact-input" type="text" data-i18n-placeholder="institutionContactPlaceholder" placeholder="Telefone ou e-mail de contato (opcional)">
           </div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-secondary" id="cancel-btn" type="button">Cancelar</button>
-          <button class="btn btn-primary"   id="save-btn"   type="button">Salvar Instituição</button>
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="saveInstitution">Salvar Instituição</button>
         </div>
       </div>
     </main>

@@ -50,6 +50,6 @@ public class FinancialInstitutionService {
 
     private FinancialInstitution getOrThrow(@NonNull Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Instituição financeira não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
     }
 }

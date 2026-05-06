@@ -37,7 +37,7 @@ public class AccountService {
     @Transactional
     public AccountResponse create(Long userId, AccountRequest req) {
         FinancialInstitution fi = fiRepository.findById(req.financialInstitutionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Instituição financeira não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance());
         return AccountResponse.from(repository.save(account));
     }
@@ -46,7 +46,7 @@ public class AccountService {
     public AccountResponse update(@NonNull Long id, Long userId, AccountRequest req) {
         Account account = getOrThrow(id);
         FinancialInstitution fi = fiRepository.findById(req.financialInstitutionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Instituição financeira não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         account.setFinancialInstitution(fi);
         account.setName(req.name());
         account.setContact(req.contact());
@@ -68,6 +68,6 @@ public class AccountService {
 
     Account getOrThrow(@NonNull Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
     }
 }

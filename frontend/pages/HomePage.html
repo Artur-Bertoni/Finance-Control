@@ -16,50 +16,26 @@
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
-    </div>
-  </aside>
-
   <!-- MAIN -->
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title">Início</h1>
+      <h1 class="page-title" data-i18n="home">Início</h1>
       <div class="topbar-actions" id="header-actions">
-        <a href="/pages/Transaction.html" class="btn btn-primary btn-sm">
+        <a href="/pages/Transaction.html" class="btn btn-primary btn-sm" data-i18n="newTransaction">
           Nova Transação
         </a>
       </div>
     </header>
 
     <main class="page-content">
-      <!-- Stat cards -->
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-card-label">Saldo em Conta(s)</div>
+          <div class="stat-card-label" data-i18n="accountBalance">Saldo em Conta(s)</div>
           <div class="stat-card-value" id="home-total-box">$ 0,00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label">Valor pelo Filtro</div>
+          <div class="stat-card-label" data-i18n="filteredValue">Valor pelo Filtro</div>
           <div class="stat-card-value" id="filtered-total-box">$ 0,00</div>
         </div>
       </div>
@@ -67,23 +43,23 @@
       <!-- Filter bar -->
       <div class="filter-bar">
         <div class="field">
-          <label for="start-date-input">Data de Início</label>
+          <label for="start-date-input" data-i18n="startDate">Data de Início</label>
           <input id="start-date-input" type="date">
         </div>
         <div class="field">
-          <label for="end-date-input">Data de Fim</label>
+          <label for="end-date-input" data-i18n="endDate">Data de Fim</label>
           <input id="end-date-input" type="date">
         </div>
         <div class="field">
-          <label for="category-input">Categoria</label>
+          <label for="category-input" data-i18n="categories">Categoria</label>
           <select id="category-input">
-            <option value="">Todas as categorias</option>
+            <option value="" data-i18n="allCategories">Todas as categorias</option>
           </select>
         </div>
         <div class="field">
-          <label for="account-input">Conta</label>
+          <label for="account-input" data-i18n="accounts">Conta</label>
           <select id="account-input">
-            <option value="">Todas as contas</option>
+            <option value="" data-i18n="allAccounts">Todas as contas</option>
           </select>
         </div>
       </div>
@@ -91,11 +67,11 @@
       <!-- Transaction list -->
       <div class="card transactions-card">
         <div class="card-header">
-          <span class="card-title">Últimas Transações</span>
+          <span class="card-title" data-i18n="latestTransactions">Últimas Transações</span>
         </div>
         <div class="transactions-list" id="last-transaction-list">
           <div class="empty-state">
-            <p>Nenhuma transação encontrada</p>
+            <p data-i18n="noTransactionsFound">Nenhuma transação encontrada</p>
           </div>
         </div>
       </div>

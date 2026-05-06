@@ -3,6 +3,7 @@ import { addDeleteIcon, doRequest, navigate, navigateWithToast, showQuickAdd, sh
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
+import { I18n } from './i18n.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -18,8 +19,16 @@ export function init() {
     const accountId = urlParams.get('id')
 
     if (accountId) {
-        document.getElementById('page-title-text').textContent = 'Editar Conta'
-        document.getElementById('save-btn').textContent = 'Salvar Alterações'
+        const titleEl = document.getElementById('page-title-text')
+        if (titleEl) {
+            titleEl.dataset.i18n = 'editAccount'
+            titleEl.textContent  = I18n.t('editAccount')
+        }
+        const saveBtn = document.getElementById('save-btn')
+        if (saveBtn) {
+            saveBtn.dataset.i18n = 'saveChanges'
+            saveBtn.textContent  = I18n.t('saveChanges')
+        }
 
         const response = doRequest(`/api/accounts/${accountId}`, 'GET')
         if (response?.id !== undefined) {
@@ -41,7 +50,7 @@ export function init() {
                     type:  'DELETE',
                     async: false,
                     success: function () { navigate('/pages/AccountDashboard.html') },
-                    error: function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir Conta.', 'error') }
+                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingAccount'), 'error') }
                 })
             })
         }
@@ -56,22 +65,19 @@ export function init() {
         const financialInstitutionId = document.getElementById('financial-institution-input').value
         const balance                = document.getElementById('balance-input').value
 
-        const requiredFields = [
-            'name-input',
-            'financial-institution-input',
-            'balance-input'
-        ]
-
         const fieldLabels = {
-            'name-input':                   'Nome',
-            'financial-institution-input':  'Instituição Financeira',
-            'balance-input':                'Saldo'
+            'name-input':                  I18n.t('accountName'),
+            'financial-institution-input': I18n.t('financialInstitution'),
+            'balance-input':               I18n.t('initialBalance')
         }
 
-        const emptyFields = validateRequiredFields(requiredFields, fieldLabels)
+        const emptyFields = validateRequiredFields(
+            ['name-input', 'financial-institution-input', 'balance-input'],
+            fieldLabels
+        )
 
         if (emptyFields.length > 0) {
-            showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
+            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -90,21 +96,21 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
-                const msg = accountId ? 'Conta atualizada com sucesso!' : 'Conta criada com sucesso!'
+                const msg = accountId ? I18n.t('accountUpdatedSuccess') : I18n.t('accountCreatedSuccess')
                 navigateWithToast('/pages/AccountDashboard.html', msg, 'success')
             },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar conta.', 'error') }
+            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingAccount'), 'error') }
         })
     })
 
     document.getElementById('fi-add-btn').addEventListener('click', () => {
         showQuickAdd({
-            title:  'Nova Instituição Financeira',
+            title:  I18n.t('newFinancialInstitution'),
             apiUrl: '/api/financial-institutions',
             fields: [
-                { id: 'name',    label: 'Nome *',   type: 'text', required: true, placeholder: 'Nome da instituição' },
-                { id: 'address', label: 'Endereço', type: 'text', placeholder: 'Endereço (opcional)' },
-                { id: 'contact', label: 'Contato',  type: 'text', placeholder: 'Telefone ou e-mail (opcional)' }
+                { id: 'name',    label: `${I18n.t('institutionName')} *`,    type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
+                { id: 'address', label: I18n.t('institutionAddress'), type: 'text', placeholder: I18n.t('institutionAddressPlaceholder') },
+                { id: 'contact', label: I18n.t('institutionContact'),  type: 'text', placeholder: I18n.t('institutionContactPlaceholder') }
             ],
             buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null }),
             onSuccess: item => {

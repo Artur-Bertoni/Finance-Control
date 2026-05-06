@@ -1,5 +1,6 @@
 import { SidebarManager } from './components/SidebarManager.js'
 import { showPendingToast } from '../utils/FrontendFunctions.js'
+import { I18n } from './i18n.js'
 
 const routes = {
     '/pages/HomePage.html':                      () => import('./HomePage.js'),
@@ -17,7 +18,7 @@ const routes = {
 }
 
 globalThis.__appRouter = { navigate }
-SidebarManager.initialize()
+await SidebarManager.initialize()
 
 async function navigate(rawUrl) {
     const url  = new URL(rawUrl, location.href)
@@ -38,8 +39,19 @@ async function navigate(rawUrl) {
 
     document.title = doc.title
 
-    const pageTitle = doc.querySelector('.topbar .page-title')
-    document.getElementById('page-title-text').textContent = pageTitle?.textContent?.trim() ?? ''
+    // Resolve page title via data-i18n key when available
+    const pageTitleEl = doc.querySelector('.topbar .page-title')
+    const appTitleEl  = document.getElementById('page-title-text')
+    if (appTitleEl) {
+        const i18nKey = pageTitleEl?.dataset?.i18n
+        if (i18nKey) {
+            appTitleEl.textContent    = I18n.t(i18nKey)
+            appTitleEl.dataset.i18n   = i18nKey
+        } else {
+            appTitleEl.textContent    = pageTitleEl?.textContent?.trim() ?? ''
+            delete appTitleEl.dataset.i18n
+        }
+    }
 
     const srcActions = doc.getElementById('header-actions')
     document.getElementById('header-actions').innerHTML = srcActions?.innerHTML ?? ''

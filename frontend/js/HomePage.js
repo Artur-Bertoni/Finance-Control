@@ -5,6 +5,7 @@ import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
+import { I18n } from './i18n.js'
 
 const PAGE_SIZE = 30
 let allTransactions = []
@@ -20,6 +21,8 @@ export function init() {
     Account.addAccounts('account-input')
     configureFilters()
     populateTransactionsList()
+
+    I18n.onChange(() => renderPage())
 }
 
 function configureFilters() {
@@ -54,7 +57,7 @@ function populateTransactionsList() {
 
     const params = new URLSearchParams({ startDate, endDate })
     if (categoryId) params.append('categoryId', categoryId)
-    if (accountId)  params.append('accountId', accountId)
+    if (accountId)  params.append('accountId',  accountId)
 
     const data = doRequest(`/api/transactions?${params.toString()}`, 'GET') ?? []
     allTransactions = loadTransactions(data)
@@ -77,6 +80,7 @@ function loadTransactions(data) {
 
 function renderPage() {
     const list = document.getElementById('last-transaction-list')
+    if (!list) return
     list.innerHTML = ''
     list.scrollTop = 0
 
@@ -87,12 +91,12 @@ function renderPage() {
         list.innerHTML = `
             <div class="empty-state">
                 ${Icons.wallet()}
-                <p>Nenhuma transação no período</p>
+                <p>${I18n.t('noTransactionsInPeriod')}</p>
             </div>`
         return
     }
 
-    const start = (currentPage - 1) * PAGE_SIZE
+    const start     = (currentPage - 1) * PAGE_SIZE
     const pageItems = allTransactions.slice(start, start + PAGE_SIZE)
     for (const tx of pageItems) list.appendChild(createTransactionItem(tx))
 
@@ -100,8 +104,7 @@ function renderPage() {
 }
 
 function renderPagination() {
-    const totalPages = Math.ceil(allTransactions.length / PAGE_SIZE)
-    if (totalPages <= 1) return
+    const totalPages = Math.max(1, Math.ceil(allTransactions.length / PAGE_SIZE))
 
     const pag = document.createElement('div')
     pag.id = 'transactions-pagination'
@@ -119,7 +122,7 @@ function renderPagination() {
     for (let i = 1; i <= totalPages; i++) {
         const opt = document.createElement('option')
         opt.value = i
-        opt.textContent = `Página ${i} de ${totalPages}`
+        opt.textContent = I18n.t('pageOf', { page: i, total: totalPages })
         opt.selected = i === currentPage
         select.appendChild(opt)
     }
@@ -138,7 +141,7 @@ function renderPagination() {
     const rangeEnd   = Math.min(currentPage * PAGE_SIZE, allTransactions.length)
     const info = document.createElement('span')
     info.className = 'pagination-info'
-    info.textContent = `${rangeStart}–${rangeEnd} de ${allTransactions.length}`
+    info.textContent = I18n.t('paginationInfo', { start: rangeStart, end: rangeEnd, total: allTransactions.length })
     pag.appendChild(info)
 
     document.querySelector('.transactions-card .card-header').appendChild(pag)
@@ -146,7 +149,7 @@ function renderPagination() {
 
 function createTransactionItem(tx) {
     const isInstallment = tx.type === 'debit' && tx.installmentsNumber > 0
-    const typeClass = isInstallment ? 'installment' : tx.type
+    const typeClass     = isInstallment ? 'installment' : tx.type
 
     const item = document.createElement('div')
     item.className = `transaction-item ${typeClass}`
@@ -155,7 +158,7 @@ function createTransactionItem(tx) {
     const indicator = document.createElement('div')
     indicator.className = `tx-indicator ${typeClass}`
 
-    const info = createTransactionInfo(tx)
+    const info  = createTransactionInfo(tx)
     const badge = createTransactionBadge(tx, isInstallment, typeClass)
     const value = createTransactionValue(tx, typeClass)
 
@@ -175,11 +178,8 @@ function createTransactionInfo(tx) {
     cat.className = 'tx-category'
     cat.textContent = tx.category
 
-    const meta = createTransactionMeta(tx)
-
     info.appendChild(cat)
-    info.appendChild(meta)
-
+    info.appendChild(createTransactionMeta(tx))
     return info
 }
 
@@ -197,8 +197,7 @@ function createTransactionMeta(tx) {
         meta.appendChild(locSpan)
     }
 
-    const dateSpan = createDateSpan(tx.date)
-    meta.appendChild(dateSpan)
+    meta.appendChild(createDateSpan(tx.date))
 
     if (tx.installmentsNumber > 0) {
         const instSpan = document.createElement('span')
@@ -219,7 +218,7 @@ function createDateSpan(date) {
 function createTransactionBadge(tx, isInstallment, typeClass) {
     const badge = document.createElement('span')
     badge.className = `tx-badge ${typeClass}`
-    badge.textContent = isInstallment ? 'Parcelado' : (tx.type === 'debit' ? 'Débito' : 'Crédito')
+    badge.textContent = isInstallment ? I18n.t('installment') : (tx.type === 'debit' ? I18n.t('debit') : I18n.t('credit'))
     return badge
 }
 
@@ -231,9 +230,8 @@ function createTransactionValue(tx, typeClass) {
 }
 
 function calculateTransactionValue(tx) {
-    const isInstallment = tx.type === 'debit' && tx.installmentsNumber > 0
     if (tx.type === 'debit') {
-        return isInstallment ? 0 : -tx.value
+        return (tx.installmentsNumber > 0) ? 0 : -tx.value
     }
     return tx.value
 }

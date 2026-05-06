@@ -1,32 +1,84 @@
 import { Icons } from '../icons/IconLibrary.js'
 import { ThemeManager } from '../ThemeManager.js'
 import { CustomSelect } from './CustomSelect.js'
+import { I18n } from '../i18n.js'
+import { LanguageSwitcher } from './LanguageSwitcher.js'
+
+const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
 export class SidebarManager {
     static _initialized = false
 
-    static initialize() {
+    static async initialize() {
         if (SidebarManager._initialized) return
         SidebarManager._initialized = true
+        await I18n.initialize()
         SidebarManager.checkAuth()
         SidebarManager.renderIcons()
         SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
+        SidebarManager.initTranslations()
         ThemeManager.initialize()
         CustomSelect.autoInit()
         SidebarManager.initDatePickers()
+        LanguageSwitcher.initialize()
+        I18n.onChange(() => SidebarManager.initTranslations())
     }
 
     static onNavigate() {
         SidebarManager.setupActiveLink()
         SidebarManager.renderDataIcons()
         SidebarManager.initDatePickers()
+        SidebarManager.initTranslations()
+    }
+
+    static initTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key  = el.dataset.i18n
+            const text = I18n.t(key)
+            if (el.tagName === 'A') {
+                const icon = el.querySelector('svg')
+                el.innerHTML = icon ? icon.outerHTML : ''
+                el.appendChild(document.createTextNode(text))
+            } else if (el.tagName === 'OPTION') {
+                el.textContent = text
+            } else if (el.tagName === 'SPAN' && el.parentElement?.classList.contains('radio-option')) {
+                el.textContent = text
+            } else if (el.querySelector('[data-i18n]')) {
+                // Has nested i18n children — update only the first text node to avoid destroying them
+                for (const node of el.childNodes) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        node.textContent = text + ' '
+                        break
+                    }
+                }
+            } else {
+                el.textContent = text
+            }
+        })
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            el.placeholder = I18n.t(el.dataset.i18nPlaceholder)
+        })
+
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            el.title = I18n.t(el.dataset.i18nTitle)
+        })
+
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+            el.setAttribute('aria-label', I18n.t(el.dataset.i18nAria))
+        })
     }
 
     static initDatePickers() {
         if (typeof flatpickr === 'undefined') return
+        const lang   = I18n.getLanguage()
+        const locale = FLATPICKR_LOCALES[lang]
+            ? (flatpickr.l10ns?.[FLATPICKR_LOCALES[lang]] ?? undefined)
+            : undefined
+
         document.querySelectorAll('input[type="date"]:not([data-fp-init])').forEach(input => {
             input.dataset.fpInit = '1'
             const fp = flatpickr(input, {
@@ -36,7 +88,7 @@ export class SidebarManager {
                 altInputClass:  'flatpickr-input fc-date-input',
                 maxDate:        'today',
                 defaultDate:    input.value || 'today',
-                locale:         flatpickr.l10ns?.pt,
+                ...(locale ? { locale } : {}),
                 disableMobile:  true,
                 allowInput:     false,
                 onChange: (_, __, instance) => {
@@ -47,7 +99,6 @@ export class SidebarManager {
                 e.preventDefault()
                 fp.changeMonth(e.deltaY > 0 ? 1 : -1)
             }, { passive: false })
-            // Sync programmatic .value = assignments to Flatpickr display
             const orig = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')
             let syncing = false
             Object.defineProperty(input, 'value', {
@@ -74,9 +125,6 @@ export class SidebarManager {
         })
     }
 
-    /**
-     * Renderiza os ícones da sidebar a partir da biblioteca centralizada
-     */
     static renderIcons() {
         const iconMap = {
             'HomePage.html': 'home',
@@ -90,7 +138,7 @@ export class SidebarManager {
         }
 
         document.querySelectorAll('.sidebar-nav .sidebar-link, .sidebar-footer .sidebar-link').forEach(link => {
-            const href = link.getAttribute('href')?.split('/').pop()
+            const href     = link.getAttribute('href')?.split('/').pop()
             const iconName = href ? iconMap[href] : null
             if (!iconName) return
 
@@ -104,9 +152,6 @@ export class SidebarManager {
         }
     }
 
-    /**
-     * Renderiza ícones em elementos com atributo data-icon
-     */
     static renderDataIcons() {
         document.querySelectorAll('[data-icon]').forEach(el => {
             const iconName = el.dataset.icon
@@ -115,11 +160,8 @@ export class SidebarManager {
         })
     }
 
-    /**
-     * Marca o link ativo baseado na URL atual
-     */
     static setupActiveLink() {
-        const links = document.querySelectorAll('.sidebar-link[href]')
+        const links       = document.querySelectorAll('.sidebar-link[href]')
         const currentPage = location.pathname.split('/').pop()
 
         links.forEach(link => {
@@ -128,30 +170,19 @@ export class SidebarManager {
         })
     }
 
-    /**
-     * Configura o botão de toggle da sidebar para mobile
-     */
     static setupToggleButton() {
         const toggleButton = document.getElementById('sidebar-toggle-btn')
-        const sidebar = document.getElementById('sidebar')
-        const overlay = document.getElementById('sidebar-overlay')
+        const sidebar      = document.getElementById('sidebar')
+        const overlay      = document.getElementById('sidebar-overlay')
 
-        if (!toggleButton || !sidebar) {
-            console.warn('Sidebar toggle button ou sidebar element não encontrados')
-            return
-        }
+        if (!toggleButton || !sidebar) return
 
         toggleButton.addEventListener('click', () => {
             sidebar.classList.toggle('open')
-            if (overlay) {
-                overlay.classList.toggle('show')
-            }
+            if (overlay) overlay.classList.toggle('show')
         })
     }
 
-    /**
-     * Permite fechar a sidebar ao clicar no overlay
-     */
     static setupOverlayDismiss() {
         const overlay = document.getElementById('sidebar-overlay')
         const sidebar = document.getElementById('sidebar')
@@ -163,5 +194,4 @@ export class SidebarManager {
             overlay.classList.remove('show')
         })
     }
-
 }

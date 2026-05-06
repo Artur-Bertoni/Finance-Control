@@ -49,6 +49,6 @@ public class CategoryService {
 
     private Category getOrThrow(@NonNull Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
     }
 }

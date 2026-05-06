@@ -2,12 +2,20 @@ import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunction
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
+import { I18n } from './i18n.js'
 
 export function init() {
     SidebarManager.initialize()
     showPendingToast()
 
+    renderList()
+
+    I18n.onChange(renderList)
+}
+
+function renderList() {
     const list = document.getElementById('categories-list')
+    if (!list) return
     list.innerHTML = ''
 
     let categories = []
@@ -19,25 +27,28 @@ export function init() {
     }
 
     if (categories.length === 0) {
-        list.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-            ${Icons.emptyCategory()}
-            <p>Nenhuma categoria cadastrada</p></div>`
-    } else {
-        for (const cat of categories) {
-            const card = document.createElement('div')
-            card.className = 'item-card'
-            card.addEventListener('click', () => navigate(`/pages/Category.html?id=${cat.id}`))
-            const metaHtml = cat.description
-                ? `<div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
-                : ''
-            card.innerHTML = `
-                <div class="item-card-header">
-                    <span class="item-card-name">${cat.name}</span>
-                    <span class="item-card-badge"></span>
-                </div>
-                ${metaHtml}`
-            list.appendChild(card)
-        }
+        list.innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+                ${Icons.emptyCategory()}
+                <p>${I18n.t('noCategoriesRegistered')}</p>
+            </div>`
+        return
+    }
+
+    for (const cat of categories) {
+        const card = document.createElement('div')
+        card.className = 'item-card'
+        card.addEventListener('click', () => navigate(`/pages/Category.html?id=${cat.id}`))
+        const metaHtml = cat.description
+            ? `<div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
+            : ''
+        card.innerHTML = `
+            <div class="item-card-header">
+                <span class="item-card-name">${cat.name}</span>
+                <span class="item-card-badge"></span>
+            </div>
+            ${metaHtml}`
+        list.appendChild(card)
     }
 }
 

@@ -2,6 +2,7 @@ import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
+import { I18n } from './i18n.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -12,8 +13,16 @@ export function init() {
     const localeId  = urlParams.get('id')
 
     if (localeId) {
-        document.getElementById('page-title-text').textContent = 'Editar Local'
-        document.getElementById('save-btn').textContent = 'Salvar Alterações'
+        const titleEl = document.getElementById('page-title-text')
+        if (titleEl) {
+            titleEl.dataset.i18n = 'editLocation'
+            titleEl.textContent  = I18n.t('editLocation')
+        }
+        const saveBtn = document.getElementById('save-btn')
+        if (saveBtn) {
+            saveBtn.dataset.i18n = 'saveChanges'
+            saveBtn.textContent  = I18n.t('saveChanges')
+        }
 
         const response = doRequest(`/api/transaction-locales/${localeId}`, 'GET')
         if (response?.id !== undefined) {
@@ -28,7 +37,7 @@ export function init() {
                     type:  'DELETE',
                     async: false,
                     success: function () { navigate('/pages/TransactionLocaleDashboard.html') },
-                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao excluir local.', 'error') }
+                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingLocale'), 'error') }
                 })
             })
         }
@@ -39,19 +48,16 @@ export function init() {
     )
 
     document.getElementById('save-btn').addEventListener('click', function () {
-        const name = document.getElementById('name-input').value
-
-        const fieldLabels = { 'name-input': 'Nome' }
-
+        const fieldLabels = { 'name-input': I18n.t('localeName') }
         const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
 
         if (emptyFields.length > 0) {
-            showToast(`Preencha os campos obrigatórios: ${emptyFields.join(', ')}.`, 'warning')
+            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
         const body = {
-            name,
+            name:    document.getElementById('name-input').value,
             address: document.getElementById('address-input').value || null
         }
 
@@ -62,10 +68,10 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
-                const msg = localeId ? 'Local atualizado com sucesso!' : 'Local criado com sucesso!'
+                const msg = localeId ? I18n.t('localeUpdatedSuccess') : I18n.t('localeCreatedSuccess')
                 navigateWithToast('/pages/TransactionLocaleDashboard.html', msg, 'success')
             },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? 'Erro ao salvar local.', 'error') }
+            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error') }
         })
     })
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -13,32 +13,10 @@
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <div class="app-shell">
-
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
-    </div>
-  </aside>
-
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title" id="page-title-text">Nova Conta</h1>
+      <h1 class="page-title" id="page-title-text" data-i18n="newAccount">Nova Conta</h1>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
 
@@ -46,34 +24,34 @@
       <div class="form-card">
         <div class="form-grid">
           <div class="field">
-            <label for="name-input">Nome / Apelido *</label>
-            <input id="name-input" type="text" placeholder="Ex: Nubank, Carteira, C6...">
+            <label for="name-input" data-i18n="accountName">Nome / Apelido *</label>
+            <input id="name-input" type="text" data-i18n-placeholder="accountNamePlaceholder" placeholder="Ex: Nubank, Carteira, C6...">
           </div>
           <div class="field">
-            <label for="financial-institution-input">Instituição Financeira *</label>
+            <label for="financial-institution-input" data-i18n="financialInstitution">InstituiÃ§Ã£o Financeira *</label>
             <div class="select-with-add">
               <select id="financial-institution-input">
-                <option disabled selected value="">Selecione a instituição</option>
+                <option disabled selected value="" data-i18n="selectInstitution">Selecione a instituiÃ§Ã£o</option>
               </select>
-              <button type="button" class="btn-add-inline" id="fi-add-btn" title="Nova instituição financeira" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="fi-add-btn" data-i18n-title="newFinancialInstitution" title="Nova instituiÃ§Ã£o financeira" data-icon="add"></button>
             </div>
           </div>
           <div class="field">
-            <label for="contact-input">Contato</label>
-            <input id="contact-input" type="text" placeholder="Telefone ou e-mail de contato (opcional)">
+            <label for="contact-input" data-i18n="contact">Contato</label>
+            <input id="contact-input" type="text" data-i18n-placeholder="contactPlaceholder" placeholder="Telefone ou e-mail de contato (opcional)">
           </div>
           <div class="field">
-            <label for="description-input">Descrição</label>
-            <textarea id="description-input" placeholder="Detalhes sobre a conta (opcional)"></textarea>
+            <label for="description-input" data-i18n="description">DescriÃ§Ã£o</label>
+            <textarea id="description-input" data-i18n-placeholder="descriptionPlaceholder" placeholder="Detalhes sobre a conta (opcional)"></textarea>
           </div>
           <div class="field">
-            <label for="balance-input">Saldo Inicial ($) *</label>
-            <input id="balance-input" type="number" step=".01" placeholder="0,00">
+            <label for="balance-input" data-i18n="initialBalance">Saldo Inicial ($) *</label>
+            <input id="balance-input" type="number" step=".01" data-i18n-placeholder="initialBalancePlaceholder" placeholder="0,00">
           </div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-secondary" id="cancel-btn" type="button">Cancelar</button>
-          <button class="btn btn-primary"   id="save-btn"   type="button">Salvar Conta</button>
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="saveAccount">Salvar Conta</button>
         </div>
       </div>
     </main>

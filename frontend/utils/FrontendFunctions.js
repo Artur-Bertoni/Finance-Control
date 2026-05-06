@@ -1,4 +1,12 @@
 import { Icons } from '../js/icons/IconLibrary.js'
+import { I18n } from '../js/i18n.js'
+
+// Send current language with every AJAX request so the backend can respond in the right locale
+$.ajaxSetup({
+    beforeSend(xhr) {
+        xhr.setRequestHeader('Accept-Language', I18n.getLanguage())
+    }
+})
 
 export function navigate(url) {
     if (globalThis.__appRouter?.navigate && !url.includes('Login.html')) {
@@ -63,7 +71,7 @@ export function showToast(message, type = 'info') {
     toast.innerHTML = `
         <span class="toast-icon">${icons[type] || icons.info}</span>
         <span class="toast-text">${message}</span>
-        <button class="toast-close" aria-label="Fechar">×</button>
+        <button class="toast-close" aria-label="${I18n.t('close')}">×</button>
         <div class="toast-progress-bar"></div>
     `
 
@@ -116,16 +124,16 @@ function dismissToast(toast) {
     setTimeout(() => toast.remove(), 260)
 }
 
-export function showConfirm(message, onConfirm, title = 'Confirmar ação') {
+export function showConfirm(message, onConfirm, title = null) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'
     overlay.innerHTML = `
         <div class="modal-card">
-            <p class="modal-title">${title}</p>
+            <p class="modal-title">${title ?? I18n.t('confirmAction')}</p>
             <p class="modal-message">${message}</p>
             <div class="modal-actions">
-                <button class="btn btn-secondary" id="modal-cancel-btn">Cancelar</button>
-                <button class="btn btn-danger"    id="modal-confirm-btn">Confirmar</button>
+                <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('cancel')}</button>
+                <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('confirm')}</button>
             </div>
         </div>
     `
@@ -139,16 +147,12 @@ export function showConfirm(message, onConfirm, title = 'Confirmar ação') {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove() })
 }
 
-/**
- * Adiciona um botão de deletar na área de ações do header
- * @returns {HTMLElement} O botão criado
- */
 export function addDeleteIcon() {
     const btn = document.createElement('button')
     btn.className = 'btn btn-danger btn-sm'
     btn.id = 'delete-btn'
     btn.type = 'button'
-    btn.innerHTML = `${Icons.delete()} Excluir`
+    btn.innerHTML = `${Icons.delete()} ${I18n.t('delete')}`
 
     const container = document.getElementById('header-actions')
     if (container) container.appendChild(btn)
@@ -165,11 +169,11 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             return `<textarea id="qaf-${f.id}" placeholder="${f.placeholder ?? ''}"></textarea>`
         if (f.type === 'select') {
             const opts = (f.options ?? []).map(o => `<option value="${o.value}">${o.label}</option>`).join('')
-            const sel  = `<select id="qaf-${f.id}"><option value="">— ${f.placeholder ?? 'Selecione'} —</option>${opts}</select>`
+            const sel  = `<select id="qaf-${f.id}"><option value="">— ${f.placeholder ?? I18n.t('selectAccount')} —</option>${opts}</select>`
             if (!f.addBtn) return sel
             return (
                 '<div class="select-with-add">' + sel +
-                '<button type="button" class="btn-add-inline" id="qaf-' + f.id + '-add-btn" title="' + (f.addBtn.title ?? 'Novo') + '">' + Icons.add() + '</button>' +
+                '<button type="button" class="btn-add-inline" id="qaf-' + f.id + '-add-btn" title="' + (f.addBtn.title ?? '') + '">' + Icons.add() + '</button>' +
                 '</div>'
             )
         }
@@ -187,20 +191,19 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             <p class="modal-title">${title}</p>
             <div class="quick-add-fields">${fieldsHtml}</div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" id="qa-cancel">Cancelar</button>
-                <button class="btn btn-primary"   id="qa-save">Salvar</button>
+                <button class="btn btn-secondary" id="qa-cancel">${I18n.t('cancel')}</button>
+                <button class="btn btn-primary"   id="qa-save">${I18n.t('save')}</button>
             </div>
         </div>
     `
     document.body.appendChild(overlay)
 
-    // Wire up any nested add-buttons for select fields
     fields.filter(f => f.type === 'select' && f.addBtn).forEach(f => {
         const addBtn = overlay.querySelector('#qaf-' + f.id + '-add-btn')
         if (!addBtn) return
         addBtn.addEventListener('click', () => {
             showQuickAdd({
-                title:     f.addBtn.title  ?? 'Novo',
+                title:     f.addBtn.title  ?? '',
                 apiUrl:    f.addBtn.apiUrl,
                 fields:    f.addBtn.fields,
                 buildBody: f.addBtn.buildBody,
@@ -226,7 +229,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
 
         const missing = fields.filter(f => f.required && !values[f.id])
         if (missing.length) {
-            showToast(`Preencha: ${missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ')}`, 'warning')
+            showToast(I18n.t('fillRequiredFields', { fields: missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ') }), 'warning')
             return
         }
 
@@ -239,10 +242,10 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             success: function (item) {
                 overlay.remove()
                 onSuccess(item)
-                showToast('Criado com sucesso!', 'success')
+                showToast(I18n.t('createdSuccess'), 'success')
             },
             error: function (xhr) {
-                showToast(xhr.responseJSON?.message ?? 'Erro ao criar.', 'error')
+                showToast(xhr.responseJSON?.message ?? I18n.t('errorCreating'), 'error')
             }
         })
     })

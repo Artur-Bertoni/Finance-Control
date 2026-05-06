@@ -19,10 +19,7 @@ import java.util.List;
 public class TransactionService {
 
     private static final String TYPE_CREDIT = "credit";
-    private static final String TYPE_DEBIT = "debit";
-    private static final String ERR_TRANSACTION = "Transação não encontrada";
-    private static final String ERR_ACCOUNT = "Conta não encontrada";
-    private static final String ERR_CATEGORY = "Categoria não encontrada";
+    private static final String TYPE_DEBIT  = "debit";
 
     private final TransactionRepository repository;
     private final AccountRepository accountRepository;
@@ -65,7 +62,7 @@ public class TransactionService {
     @NonNull
     Transaction getOrThrow(@NonNull Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ERR_TRANSACTION));
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
     private TransactionResponse updateOne(@NonNull Long id, Long userId, TransactionRequest req) {
@@ -128,12 +125,10 @@ public class TransactionService {
     private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
 
     private TransactionDeps loadDeps(TransactionRequest req) {
-        Long accountId = req.accountId();
-        Long categoryId = req.categoryId();
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new ResourceNotFoundException(ERR_ACCOUNT));
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException(ERR_CATEGORY));
+        Account account = accountRepository.findById(req.accountId())
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        Category category = categoryRepository.findById(req.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
         Long localeId = req.transactionLocaleId();
         TransactionLocale locale = localeId != null
                 ? localeRepository.findById(localeId).orElse(null) : null;

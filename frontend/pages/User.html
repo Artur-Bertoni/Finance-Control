@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -13,61 +13,41 @@
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
 <div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <span class="sidebar-brand">Finance<br>Control</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/pages/HomePage.html" class="sidebar-link">Início</a>
-      <div class="sidebar-section">Movimentações</div>
-      <a href="/pages/Transaction.html" class="sidebar-link">Nova Transação</a>
-      <a href="/pages/Transfer.html" class="sidebar-link">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link">Contas</a>
-      <div class="sidebar-section">Configurações</div>
-      <a href="/pages/CategoryDashboard.html" class="sidebar-link">Categorias</a>
-      <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link">Instituições Financeiras</a>
-      <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link">Locais</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link">Meu Perfil</a>
-    </div>
-  </aside>
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title" id="page-title-text">Meu Perfil</h1>
+      <h1 class="page-title" id="page-title-text" data-i18n="myProfile">Meu Perfil</h1>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
     <main class="page-content">
       <div class="form-card">
         <div class="form-grid">
           <div class="field">
-            <label for="username-input">Nome de Usuário *</label>
-            <input id="username-input" type="text" placeholder="Seu nome de usuário" autocomplete="username">
+            <label for="username-input" data-i18n="username">Nome de UsuÃ¡rio *</label>
+            <input id="username-input" type="text" data-i18n-placeholder="usernamePlaceholder" placeholder="Seu nome de usuÃ¡rio" autocomplete="username">
           </div>
           <div class="field">
-            <label for="email-input">Endereço de Email *</label>
-            <input id="email-input" type="email" placeholder="seu@email.com" autocomplete="email">
+            <label for="email-input" data-i18n="emailAddress">EndereÃ§o de Email *</label>
+            <input id="email-input" type="email" data-i18n-placeholder="emailPlaceholder" placeholder="seu@email.com" autocomplete="email">
           </div>
           <div class="field">
-            <label for="password-input">Senha *</label>
+            <label for="password-input" data-i18n="password">Senha *</label>
             <div class="pw-wrap">
-              <input id="password-input" type="password" placeholder="Digite uma senha" autocomplete="new-password">
+              <input id="password-input" type="password" data-i18n-placeholder="passwordPlaceholderNew" placeholder="Digite uma senha" autocomplete="new-password">
               <button class="pw-toggle" type="button" id="password-img" aria-label="Mostrar/ocultar senha"></button>
             </div>
           </div>
           <div class="field">
-            <label for="password-confirm-input">Confirmar Senha *</label>
+            <label for="password-confirm-input" data-i18n="confirmPassword">Confirmar Senha *</label>
             <div class="pw-wrap">
-              <input id="password-confirm-input" type="password" placeholder="Repita a senha" autocomplete="new-password">
-              <button class="pw-toggle" type="button" id="password-confirm-img" aria-label="Mostrar/ocultar confirmação de senha"></button>
+              <input id="password-confirm-input" type="password" data-i18n-placeholder="confirmPasswordPlaceholder" placeholder="Repita a senha" autocomplete="new-password">
+              <button class="pw-toggle" type="button" id="password-confirm-img" aria-label="Mostrar/ocultar confirmaÃ§Ã£o de senha"></button>
             </div>
           </div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-secondary" id="cancel-btn" type="button">Cancelar</button>
-          <button class="btn btn-primary"   id="save-btn"   type="button">Salvar Perfil</button>
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="saveProfile">Salvar Perfil</button>
         </div>
       </div>
     </main>

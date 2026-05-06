@@ -53,7 +53,7 @@
   --shadow-md:  0 4px 16px rgba(0,0,0,.10);
   --shadow-lg:  0 8px 24px rgba(0,0,0,.14);
 
-  --sidebar-w:  240px;
+  --sidebar-w:  280px;
   --topbar-h:   62px;
   --t:          0.2s ease;
 }
@@ -212,6 +212,7 @@ button { font-family: inherit; }
   padding: 10px 8px 14px;
   border-top: 1px solid rgba(255,255,255,.07);
   flex-shrink: 0;
+  display: flex;
 }
 
 /* ===== MAIN ===== */
@@ -771,7 +772,7 @@ textarea.field-error {
 .login-logo-text {
   font-size: 22px;
   font-weight: 800;
-  color: var(--text);
+  color: #F0F0F0;
   letter-spacing: -0.5px;
 }
 
@@ -1416,3 +1417,93 @@ span.flatpickr-weekday {
 .flatpickr-innerContainer { border: none; }
 
 [data-theme="dark"] .flatpickr-calendar { box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+
+/* ===== LANGUAGE SWITCHER ===== */
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
+  cursor: pointer;
+  transition: all var(--t);
+  font-size: 18px;
+  position: relative;
+}
+
+.language-trigger:hover {
+  background-color: var(--sidebar-hover);
+  color: #fff;
+}
+
+.flag-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  width: 24px;
+  height: 24px;
+}
+
+.language-menu {
+  display: none;
+  position: absolute;
+  bottom: 48px;
+  right: 8px;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--sidebar-bg);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  padding: 6px;
+  z-index: 300;
+  min-width: auto;
+}
+
+.language-menu.show {
+  display: flex;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 500;
+  transition: all var(--t);
+  position: relative;
+}
+
+.language-option:hover {
+  background-color: var(--sidebar-hover);
+  color: #fff;
+}
+
+.language-option.active {
+  background-color: var(--sidebar-active);
+  color: #fff;
+  border-color: rgba(255,255,255,.2);
+}
+
+.language-option .flag-icon {
+  font-size: 20px;
+}
