@@ -21,14 +21,14 @@ public class TransactionService {
     private static final String TYPE_CREDIT = "credit";
     private static final String TYPE_DEBIT  = "debit";
 
-    private final TransactionRepository repository;
+    private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
-    private final TransactionLocaleRepository localeRepository;
+    private final TransactionLocaleRepository transactionLocaleRepository;
 
     public List<TransactionResponse> findAllByUser(Long userId, LocalDate startDate, LocalDate endDate,
                                                     Long categoryId, Long accountId) {
-        return repository.findAllFiltered(userId, startDate, endDate, categoryId, accountId)
+        return transactionRepository.findAllFiltered(userId, startDate, endDate, categoryId, accountId)
                 .stream().map(TransactionResponse::from).toList();
     }
 
@@ -39,7 +39,7 @@ public class TransactionService {
     @Transactional
     public TransactionResponse create(Long userId, TransactionRequest req) {
         applyBalanceDelta(req.accountId(), req.type(), req.value());
-        return TransactionResponse.from(repository.save(buildEntity(userId, req)));
+        return TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));
     }
 
     @Transactional
@@ -56,12 +56,12 @@ public class TransactionService {
     public TransactionResponse patchTransferPartner(@NonNull Long id, @Nullable Long partnerId) {
         Transaction t = getOrThrow(id);
         t.setTransferPartnerId(partnerId);
-        return TransactionResponse.from(repository.save(t));
+        return TransactionResponse.from(transactionRepository.save(t));
     }
 
     @NonNull
     Transaction getOrThrow(@NonNull Long id) {
-        return repository.findById(id)
+        return transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
@@ -94,7 +94,7 @@ public class TransactionService {
         }
 
         updateEntity(existing, userId, req);
-        return TransactionResponse.from(repository.save(existing));
+        return TransactionResponse.from(transactionRepository.save(existing));
     }
 
     private void deleteOne(@NonNull Long id) {
@@ -106,11 +106,11 @@ public class TransactionService {
         }
 
         Long partnerId = t.getTransferPartnerId();
-        if (isTransferPartner(partnerId) && repository.existsById(partnerId)) {
+        if (isTransferPartner(partnerId) && transactionRepository.existsById(partnerId)) {
             deleteOne(partnerId);
         }
 
-        repository.deleteById(id);
+        transactionRepository.deleteById(id);
     }
 
     private void applyBalanceDelta(@NonNull Long accountId, String type, Double value) {
@@ -131,7 +131,7 @@ public class TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
         Long localeId = req.transactionLocaleId();
         TransactionLocale locale = localeId != null
-                ? localeRepository.findById(localeId).orElse(null) : null;
+                ? transactionLocaleRepository.findById(localeId).orElse(null) : null;
         return new TransactionDeps(account, category, locale);
     }
 

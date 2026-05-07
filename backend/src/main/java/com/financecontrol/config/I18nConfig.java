@@ -14,7 +14,7 @@ import java.util.Locale;
 public class I18nConfig {
 
     @Bean
-    public MessageSource messageSource() {
+    MessageSource messageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
         ms.setBasename("classpath:messages");
         ms.setDefaultEncoding("UTF-8");
@@ -23,7 +23,7 @@ public class I18nConfig {
     }
 
     @Bean
-    public LocaleResolver localeResolver() {
+    LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
         resolver.setDefaultLocale(Locale.forLanguageTag("pt"));
         resolver.setSupportedLocales(List.of(

@@ -16,10 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FinancialInstitutionService {
 
-    private final FinancialInstitutionRepository repository;
+    private final FinancialInstitutionRepository financialInstitutionRepository;
 
     public List<FinancialInstitutionResponse> findAllByUser(Long userId) {
-        return repository.findByUserIdOrderByIdDesc(userId).stream()
+        return financialInstitutionRepository.findByUserIdOrderByIdDesc(userId).stream()
                 .map(FinancialInstitutionResponse::from).toList();
     }
 
@@ -30,7 +30,7 @@ public class FinancialInstitutionService {
     @Transactional
     public FinancialInstitutionResponse create(Long userId, FinancialInstitutionRequest req) {
         FinancialInstitution fi = new FinancialInstitution(null, userId, req.name(), req.address(), req.contact());
-        return FinancialInstitutionResponse.from(repository.save(fi));
+        return FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
     }
 
     @Transactional
@@ -39,17 +39,17 @@ public class FinancialInstitutionService {
         fi.setName(req.name());
         fi.setAddress(req.address());
         fi.setContact(req.contact());
-        return FinancialInstitutionResponse.from(repository.save(fi));
+        return FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         getOrThrow(id);
-        repository.deleteById(id);
+        financialInstitutionRepository.deleteById(id);
     }
 
     private FinancialInstitution getOrThrow(@NonNull Long id) {
-        return repository.findById(id)
+        return financialInstitutionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
     }
 }

@@ -16,10 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionLocaleService {
 
-    private final TransactionLocaleRepository repository;
+    private final TransactionLocaleRepository transactionLocaleRepository;
 
     public List<TransactionLocaleResponse> findAllByUser(Long userId) {
-        return repository.findByUserIdOrderByIdDesc(userId).stream()
+        return transactionLocaleRepository.findByUserIdOrderByIdDesc(userId).stream()
                 .map(TransactionLocaleResponse::from).toList();
     }
 
@@ -30,7 +30,7 @@ public class TransactionLocaleService {
     @Transactional
     public TransactionLocaleResponse create(Long userId, TransactionLocaleRequest req) {
         TransactionLocale tl = new TransactionLocale(null, userId, req.name(), req.address());
-        return TransactionLocaleResponse.from(repository.save(tl));
+        return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }
 
     @Transactional
@@ -38,17 +38,17 @@ public class TransactionLocaleService {
         TransactionLocale tl = getOrThrow(id);
         tl.setName(req.name());
         tl.setAddress(req.address());
-        return TransactionLocaleResponse.from(repository.save(tl));
+        return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         getOrThrow(id);
-        repository.deleteById(id);
+        transactionLocaleRepository.deleteById(id);
     }
 
     private TransactionLocale getOrThrow(@NonNull Long id) {
-        return repository.findById(id)
+        return transactionLocaleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
     }
 }

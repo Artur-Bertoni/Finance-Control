@@ -16,10 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategoryRepository repository;
+    private final CategoryRepository categoryRepository;
 
     public List<CategoryResponse> findAllByUser(Long userId) {
-        return repository.findByUserIdOrderByIdDesc(userId).stream()
+        return categoryRepository.findByUserIdOrderByIdDesc(userId).stream()
                 .map(CategoryResponse::from).toList();
     }
 
@@ -30,7 +30,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponse create(Long userId, CategoryRequest req) {
         Category c = new Category(null, userId, req.name(), req.description());
-        return CategoryResponse.from(repository.save(c));
+        return CategoryResponse.from(categoryRepository.save(c));
     }
 
     @Transactional
@@ -38,17 +38,17 @@ public class CategoryService {
         Category c = getOrThrow(id);
         c.setName(req.name());
         c.setDescription(req.description());
-        return CategoryResponse.from(repository.save(c));
+        return CategoryResponse.from(categoryRepository.save(c));
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         getOrThrow(id);
-        repository.deleteById(id);
+        categoryRepository.deleteById(id);
     }
 
     private Category getOrThrow(@NonNull Long id) {
-        return repository.findById(id)
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
     }
 }

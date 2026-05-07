@@ -18,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final AccountRepository repository;
-    private final FinancialInstitutionRepository fiRepository;
+    private final AccountRepository accountRepository;
+    private final FinancialInstitutionRepository financialInstitutionRepository;
 
     public List<AccountResponse> findAllByUser(Long userId) {
-        return repository.findByUserIdOrderByIdDesc(userId).stream()
+        return accountRepository.findByUserIdOrderByIdDesc(userId).stream()
                 .map(AccountResponse::from).toList();
     }
 
@@ -31,43 +31,43 @@ public class AccountService {
     }
 
     public Double totalValue(Long userId, Long accountId) {
-        return repository.sumBalance(userId, accountId);
+        return accountRepository.sumBalance(userId, accountId);
     }
 
     @Transactional
     public AccountResponse create(Long userId, AccountRequest req) {
-        FinancialInstitution fi = fiRepository.findById(req.financialInstitutionId())
+        FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance());
-        return AccountResponse.from(repository.save(account));
+        return AccountResponse.from(accountRepository.save(account));
     }
 
     @Transactional
     public AccountResponse update(@NonNull Long id, Long userId, AccountRequest req) {
         Account account = getOrThrow(id);
-        FinancialInstitution fi = fiRepository.findById(req.financialInstitutionId())
+        FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         account.setFinancialInstitution(fi);
         account.setName(req.name());
         account.setContact(req.contact());
         account.setDescription(req.description());
         account.setBalance(req.balance());
-        return AccountResponse.from(repository.save(account));
+        return AccountResponse.from(accountRepository.save(account));
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         getOrThrow(id);
-        repository.deleteById(id);
+        accountRepository.deleteById(id);
     }
 
     @Transactional
     public void patchBalance(Long id, Double delta) {
-        repository.patchBalance(id, delta);
+        accountRepository.patchBalance(id, delta);
     }
 
     Account getOrThrow(@NonNull Long id) {
-        return repository.findById(id)
+        return accountRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
     }
 }

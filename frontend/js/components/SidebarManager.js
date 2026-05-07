@@ -140,7 +140,7 @@ export class SidebarManager {
             'CategoryDashboard.html': 'categories',
             'FinancialInstitutionDashboard.html': 'institutions',
             'TransactionLocaleDashboard.html': 'locations',
-            'User.html': 'profile'
+            'UserView.html': 'profile'
         }
 
         document.querySelectorAll('.sidebar-nav .sidebar-link, .sidebar-footer .sidebar-link').forEach(link => {
