@@ -1,4 +1,4 @@
-import { doRequest, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
@@ -17,7 +17,7 @@ export function init() {
     const label = formatTxLabel(tx)
 
     setBreadcrumb([
-        { label: I18n.t('movements'), url: '/pages/HomePage.html' },
+        { i18nKey: 'movements', url: '/pages/HomePage.html' },
         { label }
     ])
 
@@ -37,7 +37,7 @@ export function init() {
 
     const valueEl = document.getElementById('detail-value')
     valueEl.className = `detail-balance ${tx.type === 'credit' ? 'positive' : 'negative'}`
-    valueEl.textContent = tx.type === 'debit' ? `- $ ${tx.value.toFixed(2)}` : `+ $ ${tx.value.toFixed(2)}`
+    valueEl.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
 
     const installField = document.getElementById('detail-installments-field')
     if (tx.installmentsNumber > 0) {

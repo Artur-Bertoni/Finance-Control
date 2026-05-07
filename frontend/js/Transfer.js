@@ -1,6 +1,6 @@
 import { Account } from './class/AccountClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
-import { doRequest, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
@@ -130,7 +130,7 @@ function updateMaxValue() {
         success: function (total) {
             const valueInput       = document.getElementById('value-input')
             valueInput.max         = total
-            valueInput.placeholder = I18n.t('maxValue', { max: Number(total).toFixed(2) })
+            valueInput.placeholder = I18n.t('maxValue', { max: formatCurrency(Number(total)) })
         },
         error: function () {}
     })

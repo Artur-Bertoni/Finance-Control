@@ -5,6 +5,7 @@ import { I18n } from '../i18n.js'
 import { LanguageSwitcher } from './LanguageSwitcher.js'
 import { InputMasks } from '../utils/InputMasks.js'
 import { NumberSpinner } from '../utils/NumberSpinner.js'
+import { rerenderBreadcrumb } from '../../utils/FrontendFunctions.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
@@ -28,7 +29,7 @@ export class SidebarManager {
         NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         LanguageSwitcher.initialize()
-        I18n.onChange(() => SidebarManager.initTranslations())
+        I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb() })
     }
 
     static onNavigate() {

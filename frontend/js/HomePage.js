@@ -1,4 +1,4 @@
-import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
@@ -10,6 +10,8 @@ import { I18n } from './i18n.js'
 const PAGE_SIZE = 30
 let allTransactions = []
 let currentPage = 1
+let currentTotalNum = 0
+let currentFilteredTotal = 0
 
 export function init() {
     allTransactions = []
@@ -22,7 +24,7 @@ export function init() {
     configureFilters()
     populateTransactionsList()
 
-    I18n.onChange(() => renderPage())
+    I18n.onChange(() => { renderPage(); renderTotals() })
 }
 
 function configureFilters() {
@@ -225,7 +227,7 @@ function createTransactionBadge(tx, isInstallment, typeClass) {
 function createTransactionValue(tx, typeClass) {
     const value = document.createElement('div')
     value.className = `tx-value ${typeClass}`
-    value.textContent = tx.type === 'debit' ? `- $ ${tx.value.toFixed(2)}` : `+ $ ${tx.value.toFixed(2)}`
+    value.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
     return value
 }
 
@@ -240,16 +242,21 @@ function updateTotals(accountId, filteredTotal) {
     const totalParams = new URLSearchParams()
     if (accountId) totalParams.append('accountId', accountId)
     const totalValue = doRequest(`/api/accounts/total-value?${totalParams.toString()}`, 'GET') ?? 0
-    const totalNum   = Number(totalValue)
+    currentTotalNum      = Number(totalValue)
+    currentFilteredTotal = filteredTotal
+    renderTotals()
+}
 
+function renderTotals() {
     const totalBox    = document.getElementById('home-total-box')
     const filteredBox = document.getElementById('filtered-total-box')
+    if (!totalBox || !filteredBox) return
 
-    totalBox.textContent    = `$ ${totalNum.toFixed(2)}`
-    totalBox.className      = 'stat-card-value ' + (totalNum >= 0 ? 'positive' : 'negative')
+    totalBox.textContent    = `$ ${formatCurrency(currentTotalNum)}`
+    totalBox.className      = 'stat-card-value ' + (currentTotalNum >= 0 ? 'positive' : 'negative')
 
-    filteredBox.textContent = `$ ${filteredTotal.toFixed(2)}`
-    filteredBox.className   = 'stat-card-value ' + (filteredTotal >= 0 ? 'positive' : 'negative')
+    filteredBox.textContent = `$ ${formatCurrency(currentFilteredTotal)}`
+    filteredBox.className   = 'stat-card-value ' + (currentFilteredTotal >= 0 ? 'positive' : 'negative')
 }
 
 if (!globalThis.__appRouter) init()

@@ -27,9 +27,9 @@ export function init() {
             document.getElementById('contact-input').value = fi.contact ?? ''
 
             setBreadcrumb([
-                { label: I18n.t('financialInstitutions'), url: '/pages/FinancialInstitutionDashboard.html' },
+                { i18nKey: 'financialInstitutions', url: '/pages/FinancialInstitutionDashboard.html' },
                 { label: fi.name, url: `/pages/FinancialInstitutionView.html?id=${fiId}` },
-                { label: I18n.t('edit') }
+                { i18nKey: 'edit' }
             ])
 
             const deleteBtn = addDeleteIcon()

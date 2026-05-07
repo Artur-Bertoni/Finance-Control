@@ -15,7 +15,7 @@ export function init() {
     const loc = TransactionLocale.processTransactionLocale(response)
 
     setBreadcrumb([
-        { label: I18n.t('locations'), url: '/pages/TransactionLocaleDashboard.html' },
+        { i18nKey: 'locations', url: '/pages/TransactionLocaleDashboard.html' },
         { label: loc.name }
     ])
 

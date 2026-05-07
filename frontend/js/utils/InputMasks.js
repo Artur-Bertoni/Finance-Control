@@ -1,7 +1,22 @@
+import { I18n } from '../i18n.js'
+
+const MONEY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
+
+function formatMoneyDisplay(num) {
+    const locale = MONEY_LOCALE_MAP[I18n.getLanguage()] ?? 'pt-BR'
+    return new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)
+}
+
 export class InputMasks {
     static autoInit() {
         document.querySelectorAll('[data-mask="money"]').forEach(el => InputMasks.money(el))
         document.querySelectorAll('[data-mask="email"]').forEach(el => InputMasks.email(el))
+    }
+
+    static reformatAll() {
+        document.querySelectorAll('[data-mask-init]').forEach(el => {
+            if (el._reformatMoney) el._reformatMoney()
+        })
     }
 
     static money(input) {
@@ -12,13 +27,15 @@ export class InputMasks {
         let digits = ''
 
         const format = () =>
-            orig.set.call(input, digits ? (parseInt(digits, 10) / 100).toFixed(2) : '')
+            orig.set.call(input, digits ? formatMoneyDisplay(Number.parseInt(digits, 10) / 100) : '')
+
+        input._reformatMoney = format
 
         Object.defineProperty(input, 'value', {
-            get: () => orig.get.call(input),
+            get: () => digits ? String(Number.parseInt(digits, 10) / 100) : '',
             set: (v) => {
-                const n = parseFloat(v)
-                digits = (v === '' || v === null || v === undefined || isNaN(n))
+                const n = Number.parseFloat(v)
+                digits = (v === '' || v === null || v === undefined || Number.isNaN(n))
                     ? ''
                     : Math.round(Math.abs(n) * 100).toString()
                 format()
@@ -28,7 +45,7 @@ export class InputMasks {
 
         input.addEventListener('keydown', e => {
             const allSelected = input.selectionStart === 0 && input.selectionEnd === input.value.length
-            if (/^[0-9]$/.test(e.key)) {
+            if (/^\d$/.test(e.key)) {
                 e.preventDefault()
                 if (allSelected) digits = ''
                 if (digits.length < 12) digits += e.key
@@ -55,7 +72,7 @@ export class InputMasks {
 
         input.addEventListener('paste', e => {
             e.preventDefault()
-            const nums = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '')
+            const nums = (e.clipboardData || globalThis.clipboardData).getData('text').replaceAll(/\D/g, '')
             if (nums) digits = nums.slice(0, 12)
             format()
             input.dispatchEvent(new Event('input', { bubbles: true }))
@@ -67,14 +84,15 @@ export class InputMasks {
         input.dataset.maskInit = '1'
 
         input.addEventListener('input', () => {
-            const cleaned = input.value.replace(/[^\w.@+\-]/gi, '').toLowerCase()
+            const cleaned = input.value.replaceAll(/[^\w.@+-]/gi, '').toLowerCase()
             if (cleaned !== input.value) input.value = cleaned
         })
 
         input.addEventListener('paste', e => {
             e.preventDefault()
-            const text = (e.clipboardData || window.clipboardData).getData('text')
-            document.execCommand('insertText', false, text.replace(/[^\w.@+\-]/gi, '').toLowerCase().trim())
+            const text = (e.clipboardData || globalThis.clipboardData).getData('text')
+            const cleaned = text.replaceAll(/[^\w.@+-]/gi, '').toLowerCase().trim()
+            document.execCommand('insertText', false, cleaned)
         })
     }
 }

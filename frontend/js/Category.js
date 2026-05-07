@@ -26,9 +26,9 @@ export function init() {
             document.getElementById('description-input').value = cat.description ?? ''
 
             setBreadcrumb([
-                { label: I18n.t('categories'), url: '/pages/CategoryDashboard.html' },
+                { i18nKey: 'categories', url: '/pages/CategoryDashboard.html' },
                 { label: cat.name, url: `/pages/CategoryView.html?id=${categoryId}` },
-                { label: I18n.t('edit') }
+                { i18nKey: 'edit' }
             ])
 
             const deleteBtn = addDeleteIcon()

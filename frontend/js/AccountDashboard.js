@@ -1,4 +1,4 @@
-import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
@@ -57,7 +57,7 @@ function renderList() {
                 ${acc.contact ? `<div class="item-card-row">${Icons.phone()}${acc.contact}</div>` : ''}
             </div>
             <div class="item-balance ${balClass}">
-                ${acc.balance >= 0 ? '+ ' : '- '} $ ${Math.abs(acc.balance).toFixed(2)}
+                ${acc.balance >= 0 ? '+ ' : '- '} $ ${formatCurrency(Math.abs(acc.balance))}
             </div>`
 
         list.appendChild(card)

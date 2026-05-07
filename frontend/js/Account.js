@@ -55,9 +55,9 @@ function loadEditMode(accountId) {
     const acc = Account.processAccount(response)
 
     setBreadcrumb([
-        { label: I18n.t('accounts'), url: '/pages/AccountDashboard.html' },
+        { i18nKey: 'accounts', url: '/pages/AccountDashboard.html' },
         { label: acc.name, url: `/pages/AccountView.html?id=${accountId}` },
-        { label: I18n.t('edit') }
+        { i18nKey: 'edit' }
     ])
     document.getElementById('name-input').value        = acc.name ?? ''
     document.getElementById('contact-input').value     = acc.contact ?? ''

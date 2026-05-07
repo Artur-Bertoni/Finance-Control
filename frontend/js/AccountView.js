@@ -1,4 +1,4 @@
-import { doRequest, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
@@ -15,7 +15,7 @@ export function init() {
     const acc = Account.processAccount(response)
 
     setBreadcrumb([
-        { label: I18n.t('accounts'), url: '/pages/AccountDashboard.html' },
+        { i18nKey: 'accounts', url: '/pages/AccountDashboard.html' },
         { label: acc.name }
     ])
 
@@ -43,7 +43,7 @@ export function init() {
     if (acc.balance > 0) balClass = 'positive'
     else if (acc.balance < 0) balClass = 'negative'
     balEl.className = `detail-balance ${balClass}`
-    balEl.textContent = `${acc.balance >= 0 ? '+' : '-'} $ ${Math.abs(acc.balance).toFixed(2)}`
+    balEl.textContent = `${acc.balance >= 0 ? '+' : '-'} $ ${formatCurrency(Math.abs(acc.balance))}`
 
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Account.html?id=${accountId}`)

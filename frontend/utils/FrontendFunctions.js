@@ -1,6 +1,13 @@
 import { Icons } from '../js/icons/IconLibrary.js'
 import { I18n } from '../js/i18n.js'
 
+const CURRENCY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
+
+export function formatCurrency(value) {
+    const locale = CURRENCY_LOCALE_MAP[I18n.getLanguage()] ?? 'pt-BR'
+    return new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
+}
+
 // Send current language with every AJAX request so the backend can respond in the right locale
 $.ajaxSetup({
     beforeSend(xhr) {
@@ -160,25 +167,37 @@ export function addDeleteIcon() {
     return btn
 }
 
+let _breadcrumbCrumbs = []
+
 export function setBreadcrumb(crumbs) {
+    _breadcrumbCrumbs = crumbs
+    _renderBreadcrumb()
+}
+
+export function rerenderBreadcrumb() {
+    _renderBreadcrumb()
+}
+
+function _renderBreadcrumb() {
     const nav = document.getElementById('breadcrumb')
-    if (!nav) return
+    if (!nav || _breadcrumbCrumbs.length === 0) return
 
     const titleEl = document.getElementById('page-title-text')
     nav.innerHTML = ''
 
-    crumbs.forEach((crumb, i) => {
-        const isLast = i === crumbs.length - 1
+    _breadcrumbCrumbs.forEach((crumb, i) => {
+        const isLast = i === _breadcrumbCrumbs.length - 1
+        const text   = crumb.i18nKey ? I18n.t(crumb.i18nKey) : (crumb.label ?? '')
 
         if (isLast) {
             const el = titleEl ?? Object.assign(document.createElement('span'), { id: 'page-title-text', className: 'page-title' })
-            el.textContent = crumb.label
+            el.textContent = text
             delete el.dataset.i18n
             nav.appendChild(el)
         } else {
             const a = document.createElement('a')
             a.className = 'breadcrumb-link'
-            a.textContent = crumb.label
+            a.textContent = text
             if (crumb.url) a.href = crumb.url
             nav.appendChild(a)
 

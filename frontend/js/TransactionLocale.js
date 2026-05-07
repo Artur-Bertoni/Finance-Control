@@ -26,9 +26,9 @@ export function init() {
             document.getElementById('address-input').value = locale.address ?? ''
 
             setBreadcrumb([
-                { label: I18n.t('locations'), url: '/pages/TransactionLocaleDashboard.html' },
+                { i18nKey: 'locations', url: '/pages/TransactionLocaleDashboard.html' },
                 { label: locale.name, url: `/pages/TransactionLocaleView.html?id=${localeId}` },
-                { label: I18n.t('edit') }
+                { i18nKey: 'edit' }
             ])
 
             const deleteBtn = addDeleteIcon()

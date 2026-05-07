@@ -153,8 +153,8 @@ function loadUserData() {
             document.getElementById('header-actions').appendChild(logoutBtn)
 
             setBreadcrumb([
-                { label: I18n.t('myProfile'), url: '/pages/UserView.html' },
-                { label: I18n.t('edit') }
+                { i18nKey: 'myProfile', url: '/pages/UserView.html' },
+                { i18nKey: 'edit' }
             ])
         },
         error: function () {

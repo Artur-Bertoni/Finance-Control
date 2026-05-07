@@ -15,7 +15,7 @@ export function init() {
     const fi = FinancialInstitution.processFinancialInstitution(response)
 
     setBreadcrumb([
-        { label: I18n.t('financialInstitutions'), url: '/pages/FinancialInstitutionDashboard.html' },
+        { i18nKey: 'financialInstitutions', url: '/pages/FinancialInstitutionDashboard.html' },
         { label: fi.name }
     ])
 

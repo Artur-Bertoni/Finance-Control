@@ -15,7 +15,7 @@ export function init() {
     const cat = Category.processCategory(response)
 
     setBreadcrumb([
-        { label: I18n.t('categories'), url: '/pages/CategoryDashboard.html' },
+        { i18nKey: 'categories', url: '/pages/CategoryDashboard.html' },
         { label: cat.name }
     ])
 

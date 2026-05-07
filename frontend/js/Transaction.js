@@ -55,9 +55,9 @@ function loadEditMode(transactionId) {
     const tx = Transaction.processTransaction(response)
 
     setBreadcrumb([
-        { label: I18n.t('movements'), url: '/pages/HomePage.html' },
+        { i18nKey: 'movements', url: '/pages/HomePage.html' },
         { label: formatTxLabel(tx), url: `/pages/TransactionView.html?id=${transactionId}` },
-        { label: I18n.t('edit') }
+        { i18nKey: 'edit' }
     ])
 
     document.getElementById('debit-radio').checked  = tx.type === 'debit'
