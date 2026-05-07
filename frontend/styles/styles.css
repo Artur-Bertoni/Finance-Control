@@ -444,6 +444,38 @@ button { font-family: inherit; }
 .filter-bar input,
 .filter-bar select { padding: 8px 12px; font-size: 13px; }
 
+.filter-clear-field {
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.filter-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--text-muted);
+  transition: color var(--t);
+}
+
+.filter-clear-btn:hover { color: var(--danger); }
+.filter-clear-btn svg { width: 16px; height: 16px; }
+
+/* ===== BACK BUTTON ===== */
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
 /* ===== SECTION HEADER ===== */
 .section-header {
   display: flex;

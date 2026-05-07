@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showToast } from '../utils/FrontendFunctions.js'
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -37,7 +37,7 @@ export function init() {
                     url:   `/api/categories/${categoryId}`,
                     type:  'DELETE',
                     async: false,
-                    success: function () { navigate('/pages/CategoryDashboard.html') },
+                    success: function () { clearDirtyGuard(); navigate('/pages/CategoryDashboard.html') },
                     error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingCategory'), 'error') }
                 })
             })
@@ -69,12 +69,15 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
+                clearDirtyGuard()
                 const msg = categoryId ? I18n.t('categoryUpdatedSuccess') : I18n.t('categoryCreatedSuccess')
                 navigateWithToast('/pages/CategoryDashboard.html', msg, 'success')
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
         })
     })
+
+    setupDirtyGuard()
 }
 
 if (!globalThis.__appRouter) init()

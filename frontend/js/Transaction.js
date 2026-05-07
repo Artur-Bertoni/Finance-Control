@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { Category } from './class/CategoryClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
@@ -33,6 +33,7 @@ export function init() {
     document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId))
 
     setupQuickAddButtons()
+    setupDirtyGuard()
 }
 
 function updateRadioStyle() {
@@ -80,7 +81,7 @@ function loadEditMode(transactionId) {
             url:   `/api/transactions/${transactionId}`,
             type:  'DELETE',
             async: false,
-            success: () => navigate('/pages/HomePage.html'),
+            success: () => { clearDirtyGuard(); navigate('/pages/HomePage.html') },
             error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
         })
     })
@@ -125,6 +126,7 @@ function handleSave(transactionId) {
         contentType: 'application/json',
         data:        JSON.stringify(body),
         success: () => {
+            clearDirtyGuard()
             const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
             navigateWithToast('/pages/HomePage.html', msg, 'success')
         },

@@ -1,5 +1,5 @@
 import { SidebarManager } from './components/SidebarManager.js'
-import { showPendingToast } from '../utils/FrontendFunctions.js'
+import { showConfirmAsync, showPendingToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
 const routes = {
@@ -23,10 +23,34 @@ const routes = {
     '/pages/UserView.html':                          () => import('./UserView.js'),
 }
 
+let currentSpaUrl = location.pathname + location.search
+
 globalThis.__appRouter = { navigate }
 await SidebarManager.initialize()
 
-async function navigate(rawUrl) {
+document.getElementById('back-btn')?.addEventListener('click', () => history.back())
+
+function updateBackButton(path) {
+    const btn = document.getElementById('back-btn')
+    if (!btn) return
+    const isHome = path === '/pages/HomePage.html' || path === '/'
+    btn.style.display = isHome ? 'none' : ''
+}
+
+async function confirmLeave(fromPopstate) {
+    if (!globalThis.__dirtyGuard?.()) return true
+    const confirmed = await showConfirmAsync(
+        I18n.t('unsavedChangesWarning'),
+        I18n.t('unsavedChangesTitle')
+    )
+    if (!confirmed && fromPopstate) history.pushState({ url: currentSpaUrl }, '', currentSpaUrl)
+    return confirmed
+}
+
+async function navigate(rawUrl, { _fromPopstate = false } = {}) {
+    if (!await confirmLeave(_fromPopstate)) return
+    globalThis.__dirtyGuard = null
+
     const url  = new URL(rawUrl, location.href)
     const path = url.pathname
     const full = url.pathname + url.search
@@ -76,7 +100,9 @@ async function navigate(rawUrl) {
     ;[...document.body.classList].filter(c => c.startsWith('page-')).forEach(c => document.body.classList.remove(c))
     newClasses.forEach(c => document.body.classList.add(c))
 
-    history.pushState({ url: full }, '', full)
+    if (!_fromPopstate) history.pushState({ url: full }, '', full)
+    currentSpaUrl = full
+    updateBackButton(path)
 
     SidebarManager.onNavigate()
 
@@ -102,7 +128,7 @@ document.addEventListener('click', e => {
 }, true)
 
 globalThis.addEventListener('popstate', e => {
-    navigate(e.state?.url ?? location.pathname + location.search)
+    navigate(e.state?.url ?? location.pathname + location.search, { _fromPopstate: true })
 })
 
 const pendingUrl = sessionStorage.getItem('__spa_url')

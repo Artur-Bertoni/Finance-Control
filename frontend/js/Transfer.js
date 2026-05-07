@@ -1,6 +1,6 @@
 import { Account } from './class/AccountClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
-import { doRequest, formatCurrency, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { clearDirtyGuard, doRequest, formatCurrency, navigate, navigateWithToast, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
@@ -78,6 +78,7 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
+                clearDirtyGuard()
                 navigateWithToast('/pages/AccountDashboard.html', I18n.t('transferSuccess'), 'success')
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorTransfer'), 'error') }
@@ -104,6 +105,8 @@ export function init() {
             onSuccess: item => addOptionToSelects(['category-input'], item.id, item.name)
         })
     })
+
+    setupDirtyGuard()
 
     document.getElementById('locale-add-btn').addEventListener('click', () => {
         showQuickAdd({

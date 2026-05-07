@@ -182,5 +182,12 @@
   "currentPassword": "Contraseña Actual",
   "currentPasswordPlaceholder": "Ingrese su contraseña actual",
   "newPassword": "Nueva Contraseña",
-  "passwordChangedSuccess": "¡Contraseña cambiada con éxito!"
+  "passwordChangedSuccess": "¡Contraseña cambiada con éxito!",
+
+  "back": "Volver",
+  "unsavedChangesTitle": "Cambios no guardados",
+  "unsavedChangesWarning": "Tiene cambios sin guardar. ¿Está seguro de que desea salir? Se perderán.",
+  "stay": "Quedarse",
+  "leaveAnyway": "Salir de todas formas",
+  "clearFilters": "Limpiar filtros"
 }

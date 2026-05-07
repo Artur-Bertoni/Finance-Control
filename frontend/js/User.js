@@ -1,4 +1,4 @@
-import { navigate, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
+import { clearDirtyGuard, navigate, setBreadcrumb, setupDirtyGuard, showToast } from '../utils/FrontendFunctions.js'
 import { PasswordInput } from './components/PasswordInput.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { ThemeManager } from './ThemeManager.js'
@@ -25,6 +25,8 @@ export function init() {
     )
 
     document.getElementById('save-btn').addEventListener('click', handleSave)
+
+    setupDirtyGuard()
 }
 
 function handleSave() {
@@ -67,6 +69,7 @@ function handleSave() {
                     contentType: 'application/json',
                     data:        JSON.stringify({ email: body.email, password: body.password }),
                     success: function () {
+                        clearDirtyGuard()
                         showToast(I18n.t('accountCreatedLoginSuccess'), 'success')
                         navigate('/pages/HomePage.html')
                     },
@@ -98,7 +101,7 @@ function handleSave() {
                 username: document.getElementById('username-input').value,
                 email:    document.getElementById('email-input').value
             }),
-            success: function () { navigate('/pages/UserView.html') },
+            success: function () { clearDirtyGuard(); navigate('/pages/UserView.html') },
             error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error') }
         })
     }

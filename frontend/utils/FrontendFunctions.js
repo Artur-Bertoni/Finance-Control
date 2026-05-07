@@ -131,6 +131,42 @@ function dismissToast(toast) {
     setTimeout(() => toast.remove(), 260)
 }
 
+export function showConfirmAsync(message, title = null) {
+    return new Promise(resolve => {
+        const overlay = document.createElement('div')
+        overlay.className = 'modal-overlay'
+        overlay.innerHTML = `
+            <div class="modal-card">
+                <p class="modal-title">${title ?? I18n.t('confirmAction')}</p>
+                <p class="modal-message">${message}</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('stay')}</button>
+                    <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('leaveAnyway')}</button>
+                </div>
+            </div>
+        `
+        document.body.appendChild(overlay)
+        const cancel  = () => { overlay.remove(); resolve(false) }
+        const confirm = () => { overlay.remove(); resolve(true) }
+        overlay.querySelector('#modal-cancel-btn').addEventListener('click', cancel)
+        overlay.querySelector('#modal-confirm-btn').addEventListener('click', confirm)
+        overlay.addEventListener('click', e => { if (e.target === overlay) cancel() })
+    })
+}
+
+export function setupDirtyGuard() {
+    let dirty = false
+    globalThis.__dirtyGuard = () => dirty
+    const form = document.querySelector('.form-card')
+    if (!form) return
+    form.addEventListener('change', () => { dirty = true })
+    form.addEventListener('input',  () => { dirty = true })
+}
+
+export function clearDirtyGuard() {
+    globalThis.__dirtyGuard = null
+}
+
 export function showConfirm(message, onConfirm, title = null) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'

@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showToast } from '../utils/FrontendFunctions.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -37,7 +37,7 @@ export function init() {
                     url:   `/api/transaction-locales/${localeId}`,
                     type:  'DELETE',
                     async: false,
-                    success: function () { navigate('/pages/TransactionLocaleDashboard.html') },
+                    success: function () { clearDirtyGuard(); navigate('/pages/TransactionLocaleDashboard.html') },
                     error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingLocale'), 'error') }
                 })
             })
@@ -69,12 +69,15 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
+                clearDirtyGuard()
                 const msg = localeId ? I18n.t('localeUpdatedSuccess') : I18n.t('localeCreatedSuccess')
                 navigateWithToast('/pages/TransactionLocaleDashboard.html', msg, 'success')
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error') }
         })
     })
+
+    setupDirtyGuard()
 }
 
 if (!globalThis.__appRouter) init()

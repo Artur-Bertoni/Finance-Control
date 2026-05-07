@@ -1,5 +1,5 @@
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -19,6 +19,7 @@ export function init() {
     )
 
     document.getElementById('save-btn').addEventListener('click', () => handleSave(accountId))
+    setupDirtyGuard()
 
     document.getElementById('fi-add-btn').addEventListener('click', () => {
         showQuickAdd({
@@ -72,7 +73,7 @@ function loadEditMode(accountId) {
             url:   `/api/accounts/${accountId}`,
             type:  'DELETE',
             async: false,
-            success: () => navigate('/pages/AccountDashboard.html'),
+            success: () => { clearDirtyGuard(); navigate('/pages/AccountDashboard.html') },
             error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingAccount'), 'error')
         })
     })
@@ -114,6 +115,7 @@ function handleSave(accountId) {
         contentType: 'application/json',
         data:        JSON.stringify(body),
         success: () => {
+            clearDirtyGuard()
             const msg = accountId ? I18n.t('accountUpdatedSuccess') : I18n.t('accountCreatedSuccess')
             navigateWithToast('/pages/AccountDashboard.html', msg, 'success')
         },

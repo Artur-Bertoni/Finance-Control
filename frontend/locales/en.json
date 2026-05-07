@@ -181,5 +181,12 @@
   "currentPassword": "Current Password",
   "currentPasswordPlaceholder": "Enter your current password",
   "newPassword": "New Password",
-  "passwordChangedSuccess": "Password changed successfully!"
+  "passwordChangedSuccess": "Password changed successfully!",
+
+  "back": "Back",
+  "unsavedChangesTitle": "Unsaved Changes",
+  "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to leave? They will be lost.",
+  "stay": "Stay",
+  "leaveAnyway": "Leave Anyway",
+  "clearFilters": "Clear filters"
 }

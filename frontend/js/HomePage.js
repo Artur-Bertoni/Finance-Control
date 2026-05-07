@@ -7,7 +7,8 @@ import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
-const PAGE_SIZE = 30
+const PAGE_SIZE   = 30
+const FILTER_KEY  = '__homeFilters'
 let allTransactions = []
 let currentPage = 1
 let currentTotalNum = 0
@@ -27,27 +28,70 @@ export function init() {
     I18n.onChange(() => { renderPage(); renderTotals() })
 }
 
+function saveFilters() {
+    const filters = {
+        startDate: document.getElementById('start-date-input').value,
+        endDate:   document.getElementById('end-date-input').value,
+        category:  document.getElementById('category-input').value,
+        account:   document.getElementById('account-input').value,
+    }
+    sessionStorage.setItem(FILTER_KEY, JSON.stringify(filters))
+}
+
+function loadSavedFilters() {
+    try { return JSON.parse(sessionStorage.getItem(FILTER_KEY)) ?? {} }
+    catch { return {} }
+}
+
+function resetFilterDefaults(startInput, endInput, today) {
+    endInput.value   = today
+    const firstOfMonth = new Date()
+    firstOfMonth.setDate(1)
+    startInput.value = new Date(firstOfMonth.getTime() - firstOfMonth.getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    document.getElementById('category-input').value = ''
+    document.getElementById('account-input').value  = ''
+}
+
 function configureFilters() {
     const startInput = document.getElementById('start-date-input')
     const endInput   = document.getElementById('end-date-input')
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
 
     endInput.max   = today
-    endInput.value = today
     startInput.max = today
 
-    const firstOfMonth = new Date()
-    firstOfMonth.setDate(1)
-    startInput.value = new Date(firstOfMonth.getTime() - firstOfMonth.getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    const saved = loadSavedFilters()
+    if (saved.startDate) {
+        startInput.value = saved.startDate
+    } else {
+        const firstOfMonth = new Date()
+        firstOfMonth.setDate(1)
+        startInput.value = new Date(firstOfMonth.getTime() - firstOfMonth.getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    }
+    endInput.value = saved.endDate || today
+
+    if (saved.category) document.getElementById('category-input').value = saved.category
+    if (saved.account)  document.getElementById('account-input').value  = saved.account
+
     startInput.addEventListener('change', refresh)
     endInput.addEventListener('change', refresh)
-
     document.getElementById('category-input').addEventListener('change', refresh)
     document.getElementById('account-input').addEventListener('change', refresh)
+
+    const clearBtn = document.getElementById('clear-filters-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+
+    clearBtn?.addEventListener('click', () => {
+        sessionStorage.removeItem(FILTER_KEY)
+        resetFilterDefaults(startInput, endInput, today)
+        currentPage = 1
+        populateTransactionsList()
+    })
 }
 
 function refresh() {
     currentPage = 1
+    saveFilters()
     populateTransactionsList()
 }
 

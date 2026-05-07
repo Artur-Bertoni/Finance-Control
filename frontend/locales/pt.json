@@ -181,5 +181,12 @@
   "currentPassword": "Senha Atual",
   "currentPasswordPlaceholder": "Digite sua senha atual",
   "newPassword": "Nova Senha",
-  "passwordChangedSuccess": "Senha alterada com sucesso!"
+  "passwordChangedSuccess": "Senha alterada com sucesso!",
+
+  "back": "Voltar",
+  "unsavedChangesTitle": "Alterações não salvas",
+  "unsavedChangesWarning": "Você tem alterações não salvas. Deseja mesmo sair? Elas serão perdidas.",
+  "stay": "Ficar",
+  "leaveAnyway": "Sair mesmo assim",
+  "clearFilters": "Limpar filtros"
 }

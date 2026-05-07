@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showToast } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -38,7 +38,7 @@ export function init() {
                     url:   `/api/financial-institutions/${fiId}`,
                     type:  'DELETE',
                     async: false,
-                    success: function () { navigate('/pages/FinancialInstitutionDashboard.html') },
+                    success: function () { clearDirtyGuard(); navigate('/pages/FinancialInstitutionDashboard.html') },
                     error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingInstitution'), 'error') }
                 })
             })
@@ -71,12 +71,15 @@ export function init() {
             contentType: 'application/json',
             data:        JSON.stringify(body),
             success:     function () {
+                clearDirtyGuard()
                 const msg = fiId ? I18n.t('institutionUpdatedSuccess') : I18n.t('institutionCreatedSuccess')
                 navigateWithToast('/pages/FinancialInstitutionDashboard.html', msg, 'success')
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingInstitution'), 'error') }
         })
     })
+
+    setupDirtyGuard()
 }
 
 if (!globalThis.__appRouter) init()
