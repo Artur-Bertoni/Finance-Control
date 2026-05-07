@@ -4,13 +4,42 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
+let allAccounts = []
+let searchQuery = ''
+
 export function init() {
+    document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
-
-    renderList()
-
+    loadData()
+    setupSearch()
     I18n.onChange(renderList)
+}
+
+function loadData() {
+    try {
+        const data = doRequest('/api/accounts', 'GET')
+        allAccounts = (data ?? []).map(el => Account.processAccount(el))
+    } catch (e) {
+        console.log('Erro ao carregar contas:', e)
+        allAccounts = []
+    }
+    renderList()
+}
+
+function setupSearch() {
+    const input = document.getElementById('search-input')
+    const clearBtn = document.getElementById('clear-search-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+    input?.addEventListener('input', () => {
+        searchQuery = input.value
+        renderList()
+    })
+    clearBtn?.addEventListener('click', () => {
+        searchQuery = ''
+        if (input) input.value = ''
+        renderList()
+    })
 }
 
 function renderList() {
@@ -18,13 +47,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
-    let accounts = []
-    try {
-        const data = doRequest('/api/accounts', 'GET')
-        for (const el of (data ?? [])) accounts.push(Account.processAccount(el))
-    } catch (e) {
-        console.log('Erro ao carregar contas:', e)
-    }
+    const q = searchQuery.trim().toLowerCase()
+    const accounts = q ? allAccounts.filter(a => a.name.toLowerCase().includes(q)) : allAccounts
 
     if (accounts.length === 0) {
         list.innerHTML = `

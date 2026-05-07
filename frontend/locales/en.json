@@ -189,5 +189,6 @@
   "stay": "Stay",
   "leaveAnyway": "Leave Anyway",
   "clearFilters": "Clear filters",
-  "clearSelection": "Clear selection"
+  "clearSelection": "Clear selection",
+  "searchByName": "Search by name"
 }

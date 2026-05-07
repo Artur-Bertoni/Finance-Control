@@ -4,13 +4,42 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
+let allCategories = []
+let searchQuery = ''
+
 export function init() {
+    document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
-
-    renderList()
-
+    loadData()
+    setupSearch()
     I18n.onChange(renderList)
+}
+
+function loadData() {
+    try {
+        const data = doRequest('/api/categories', 'GET')
+        allCategories = (data ?? []).map(el => Category.processCategory(el))
+    } catch (e) {
+        console.log('Erro ao carregar categorias:', e)
+        allCategories = []
+    }
+    renderList()
+}
+
+function setupSearch() {
+    const input = document.getElementById('search-input')
+    const clearBtn = document.getElementById('clear-search-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+    input?.addEventListener('input', () => {
+        searchQuery = input.value
+        renderList()
+    })
+    clearBtn?.addEventListener('click', () => {
+        searchQuery = ''
+        if (input) input.value = ''
+        renderList()
+    })
 }
 
 function renderList() {
@@ -18,13 +47,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
-    let categories = []
-    try {
-        const data = doRequest('/api/categories', 'GET')
-        for (const el of (data ?? [])) categories.push(Category.processCategory(el))
-    } catch (e) {
-        console.log('Erro ao carregar categorias:', e)
-    }
+    const q = searchQuery.trim().toLowerCase()
+    const categories = q ? allCategories.filter(c => c.name.toLowerCase().includes(q)) : allCategories
 
     if (categories.length === 0) {
         list.innerHTML = `

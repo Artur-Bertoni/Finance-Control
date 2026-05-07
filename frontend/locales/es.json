@@ -190,5 +190,6 @@
   "stay": "Quedarse",
   "leaveAnyway": "Salir de todas formas",
   "clearFilters": "Limpiar filtros",
-  "clearSelection": "Limpiar selección"
+  "clearSelection": "Limpiar selección",
+  "searchByName": "Buscar por nombre"
 }

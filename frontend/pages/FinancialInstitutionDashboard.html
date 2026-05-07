@@ -22,7 +22,18 @@
       </div>
     </header>
     <main class="page-content">
-      <div id="financial-institutions-list" class="items-grid"></div>
+      <div class="dashboard-search-bar">
+        <div class="field">
+          <label for="search-input" data-i18n="searchByName">Buscar por nome</label>
+          <input type="text" id="search-input" autocomplete="off">
+        </div>
+        <div class="filter-clear-field">
+          <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-search-btn" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros"></button>
+        </div>
+      </div>
+      <div class="dashboard-items-scroll">
+        <div id="financial-institutions-list" class="items-grid"></div>
+      </div>
     </main>
   </div>
 </div>

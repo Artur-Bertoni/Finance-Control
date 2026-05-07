@@ -4,17 +4,42 @@ import { Icons } from './icons/IconLibrary.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { I18n } from './i18n.js'
 
-function addressRow(address) {
-    return '<div class="item-card-meta"><div class="item-card-row">' + Icons.locations() + address + '</div></div>'
-}
+let allLocales = []
+let searchQuery = ''
 
 export function init() {
+    document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
-
-    renderList()
-
+    loadData()
+    setupSearch()
     I18n.onChange(renderList)
+}
+
+function loadData() {
+    try {
+        const data = doRequest('/api/transaction-locales', 'GET')
+        allLocales = (data ?? []).map(el => TransactionLocale.processTransactionLocale(el))
+    } catch (e) {
+        console.log('Erro ao carregar locais:', e)
+        allLocales = []
+    }
+    renderList()
+}
+
+function setupSearch() {
+    const input = document.getElementById('search-input')
+    const clearBtn = document.getElementById('clear-search-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+    input?.addEventListener('input', () => {
+        searchQuery = input.value
+        renderList()
+    })
+    clearBtn?.addEventListener('click', () => {
+        searchQuery = ''
+        if (input) input.value = ''
+        renderList()
+    })
 }
 
 function renderList() {
@@ -22,13 +47,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
-    let locales = []
-    try {
-        const data = doRequest('/api/transaction-locales', 'GET')
-        for (const el of (data ?? [])) locales.push(TransactionLocale.processTransactionLocale(el))
-    } catch (e) {
-        console.log('Erro ao carregar locais:', e)
-    }
+    const q = searchQuery.trim().toLowerCase()
+    const locales = q ? allLocales.filter(l => l.name.toLowerCase().includes(q)) : allLocales
 
     if (locales.length === 0) {
         list.innerHTML = `
@@ -43,12 +63,15 @@ function renderList() {
         const card = document.createElement('div')
         card.className = 'item-card'
         card.addEventListener('click', () => navigate(`/pages/TransactionLocaleView.html?id=${loc.id}`))
+        const addressHtml = loc.address
+            ? '<div class="item-card-meta"><div class="item-card-row">' + Icons.locations() + loc.address + '</div></div>'
+            : ''
         card.innerHTML = `
             <div class="item-card-header">
                 <span class="item-card-name">${loc.name}</span>
                 <span class="item-card-badge"></span>
             </div>
-            ${loc.address ? addressRow(loc.address) : ''}`
+            ${addressHtml}`
         list.appendChild(card)
     }
 }

@@ -4,13 +4,42 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
+let allInstitutions = []
+let searchQuery = ''
+
 export function init() {
+    document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
-
-    renderList()
-
+    loadData()
+    setupSearch()
     I18n.onChange(renderList)
+}
+
+function loadData() {
+    try {
+        const data = doRequest('/api/financial-institutions', 'GET')
+        allInstitutions = (data ?? []).map(el => FinancialInstitution.processFinancialInstitution(el))
+    } catch (e) {
+        console.log('Erro ao carregar instituições:', e)
+        allInstitutions = []
+    }
+    renderList()
+}
+
+function setupSearch() {
+    const input = document.getElementById('search-input')
+    const clearBtn = document.getElementById('clear-search-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+    input?.addEventListener('input', () => {
+        searchQuery = input.value
+        renderList()
+    })
+    clearBtn?.addEventListener('click', () => {
+        searchQuery = ''
+        if (input) input.value = ''
+        renderList()
+    })
 }
 
 function renderList() {
@@ -18,13 +47,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
-    let institutions = []
-    try {
-        const data = doRequest('/api/financial-institutions', 'GET')
-        for (const el of (data ?? [])) institutions.push(FinancialInstitution.processFinancialInstitution(el))
-    } catch (e) {
-        console.log('Erro ao carregar instituições:', e)
-    }
+    const q = searchQuery.trim().toLowerCase()
+    const institutions = q ? allInstitutions.filter(fi => fi.name.toLowerCase().includes(q)) : allInstitutions
 
     if (institutions.length === 0) {
         list.innerHTML = `
