@@ -255,7 +255,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             return `<textarea id="qaf-${f.id}" placeholder="${f.placeholder ?? ''}"></textarea>`
         if (f.type === 'select') {
             const opts = (f.options ?? []).map(o => `<option value="${o.value}">${o.label}</option>`).join('')
-            const sel  = `<select id="qaf-${f.id}"><option value="">— ${f.placeholder ?? I18n.t('selectAccount')} —</option>${opts}</select>`
+            const sel  = `<select id="qaf-${f.id}"><option value=""> ${f.placeholder ?? I18n.t('selectAccount')} </option>${opts}</select>`
             if (!f.addBtn) return sel
             return (
                 '<div class="select-with-add">' + sel +
