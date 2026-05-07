@@ -258,4 +258,9 @@ function showPasswordChangeModal(userId) {
     })
 }
 
-if (!globalThis.__appRouter) init()
+if (!globalThis.__appRouter) {
+    await I18n.initialize()
+    SidebarManager.initTranslations()
+    I18n.onChange(() => SidebarManager.initTranslations())
+    init()
+}
