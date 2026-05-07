@@ -188,5 +188,6 @@
   "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to leave? They will be lost.",
   "stay": "Stay",
   "leaveAnyway": "Leave Anyway",
-  "clearFilters": "Clear filters"
+  "clearFilters": "Clear filters",
+  "clearSelection": "Clear selection"
 }

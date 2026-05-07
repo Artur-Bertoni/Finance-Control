@@ -1,3 +1,5 @@
+import { I18n } from '../i18n.js'
+
 export class CustomSelect {
     constructor(select) {
         this.select   = select
@@ -78,6 +80,29 @@ export class CustomSelect {
     _buildOptions() {
         const sel = this.select
         this.dropdown.innerHTML = ''
+
+        if (sel.value !== '') {
+            const clearItem = document.createElement('div')
+            clearItem.className = 'cs-option cs-clear'
+            clearItem.textContent = I18n.t('clearSelection')
+            clearItem.tabIndex = -1
+            const doClear = () => {
+                sel.selectedIndex = 0
+                sel.dispatchEvent(new Event('change', { bubbles: true }))
+                this._close()
+                this.trigger.focus()
+            }
+            clearItem.addEventListener('mousedown', e => { e.preventDefault(); doClear() })
+            clearItem.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doClear() }
+                if (e.key === 'Escape')    { this._close(); this.trigger.focus() }
+                if (e.key === 'ArrowDown') { e.preventDefault(); clearItem.nextElementSibling?.focus() }
+                if (e.key === 'ArrowUp')   { e.preventDefault(); this.trigger.focus() }
+                if (e.key === 'Tab')       this._close()
+            })
+            this.dropdown.appendChild(clearItem)
+        }
+
         Array.from(sel.options).forEach(opt => {
             if (opt.disabled) return
             const item = document.createElement('div')
