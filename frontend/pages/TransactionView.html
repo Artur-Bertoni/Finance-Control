@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Transação | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/TransactionView.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" id="page-title-text" data-i18n="movements">Movimentações</h1>
+      <div class="topbar-actions" id="header-actions">
+        <button class="btn btn-danger btn-sm" id="delete-btn" type="button" data-i18n="delete">Excluir</button>
+        <button class="btn btn-primary btn-sm" id="edit-btn" type="button" data-i18n="edit">Editar</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="detail-card">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label data-i18n="transactionAccount">Conta</label>
+            <p id="detail-account">—</p>
+          </div>
+          <div class="detail-field">
+            <label data-i18n="categories">Categoria</label>
+            <p id="detail-category">—</p>
+          </div>
+          <div class="detail-field">
+            <label data-i18n="transactionType">Tipo</label>
+            <p id="detail-type">—</p>
+          </div>
+          <div class="detail-field">
+            <label data-i18n="transactionDate">Data</label>
+            <p id="detail-date">—</p>
+          </div>
+          <div class="detail-field">
+            <label data-i18n="transactionValue">Valor ($)</label>
+            <p id="detail-value">—</p>
+          </div>
+          <div class="detail-field" id="detail-installments-field">
+            <label data-i18n="installmentsNumber">Nº de Parcelas</label>
+            <p id="detail-installments">—</p>
+          </div>
+          <div class="detail-field">
+            <label data-i18n="transactionLocale">Local</label>
+            <p id="detail-locale">—</p>
+          </div>
+          <div class="detail-field" style="grid-column: 1 / -1">
+            <label data-i18n="observations">Observações</label>
+            <p id="detail-obs">—</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

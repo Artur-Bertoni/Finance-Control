@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { Category } from './class/CategoryClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
@@ -16,7 +16,7 @@ export function init() {
     Category.addCategories('category-input')
 
     const dateInput = document.getElementById('date-input')
-    dateInput.max   = new Date().toISOString().split('T')[0]
+    dateInput.max   = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
     dateInput.value = dateInput.max
 
     const transactionId = new URLSearchParams(globalThis.location.search).get('id')
@@ -27,7 +27,7 @@ export function init() {
     )
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
-        navigate('/pages/HomePage.html')
+        navigate(transactionId ? `/pages/TransactionView.html?id=${transactionId}` : '/pages/HomePage.html')
     )
 
     document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId))
@@ -43,11 +43,6 @@ function updateRadioStyle() {
 }
 
 function loadEditMode(transactionId) {
-    const titleEl = document.getElementById('page-title-text')
-    if (titleEl) {
-        titleEl.dataset.i18n = 'editTransaction'
-        titleEl.textContent  = I18n.t('editTransaction')
-    }
     const saveBtn = document.getElementById('save-btn')
     if (saveBtn) {
         saveBtn.dataset.i18n = 'saveChanges'
@@ -58,6 +53,12 @@ function loadEditMode(transactionId) {
     if (response?.id === undefined) return
 
     const tx = Transaction.processTransaction(response)
+
+    setBreadcrumb([
+        { label: I18n.t('movements'), url: '/pages/HomePage.html' },
+        { label: formatTxLabel(tx), url: `/pages/TransactionView.html?id=${transactionId}` },
+        { label: I18n.t('edit') }
+    ])
 
     document.getElementById('debit-radio').checked  = tx.type === 'debit'
     document.getElementById('credit-radio').checked = tx.type === 'credit'
@@ -188,6 +189,12 @@ function setupQuickAddButtons() {
             onSuccess: item => addOptionToSelect('transaction-locale-input', item.id, item.name)
         })
     })
+}
+
+function formatTxLabel(tx) {
+    const d = new Date(tx.date)
+    const dateStr = `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
+    return `${tx.category} – ${dateStr}`
 }
 
 function selectOptionByText(selectId, text) {

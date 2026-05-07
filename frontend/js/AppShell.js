@@ -3,18 +3,24 @@ import { showPendingToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
 const routes = {
-    '/pages/HomePage.html':                      () => import('./HomePage.js'),
-    '/pages/Transaction.html':                   () => import('./Transaction.js'),
-    '/pages/Transfer.html':                      () => import('./Transfer.js'),
-    '/pages/Account.html':                       () => import('./Account.js'),
-    '/pages/AccountDashboard.html':              () => import('./AccountDashboard.js'),
-    '/pages/Category.html':                      () => import('./Category.js'),
-    '/pages/CategoryDashboard.html':             () => import('./CategoryDashboard.js'),
-    '/pages/FinancialInstitution.html':          () => import('./FinancialInstitution.js'),
-    '/pages/FinancialInstitutionDashboard.html': () => import('./FinancialInstitutionDashboard.js'),
-    '/pages/TransactionLocale.html':             () => import('./TransactionLocale.js'),
-    '/pages/TransactionLocaleDashboard.html':    () => import('./TransactionLocaleDashboard.js'),
-    '/pages/User.html':                          () => import('./User.js'),
+    '/pages/HomePage.html':                          () => import('./HomePage.js'),
+    '/pages/Transaction.html':                       () => import('./Transaction.js'),
+    '/pages/TransactionView.html':                   () => import('./TransactionView.js'),
+    '/pages/Transfer.html':                          () => import('./Transfer.js'),
+    '/pages/Account.html':                           () => import('./Account.js'),
+    '/pages/AccountView.html':                       () => import('./AccountView.js'),
+    '/pages/AccountDashboard.html':                  () => import('./AccountDashboard.js'),
+    '/pages/Category.html':                          () => import('./Category.js'),
+    '/pages/CategoryView.html':                      () => import('./CategoryView.js'),
+    '/pages/CategoryDashboard.html':                 () => import('./CategoryDashboard.js'),
+    '/pages/FinancialInstitution.html':              () => import('./FinancialInstitution.js'),
+    '/pages/FinancialInstitutionView.html':          () => import('./FinancialInstitutionView.js'),
+    '/pages/FinancialInstitutionDashboard.html':     () => import('./FinancialInstitutionDashboard.js'),
+    '/pages/TransactionLocale.html':                 () => import('./TransactionLocale.js'),
+    '/pages/TransactionLocaleView.html':             () => import('./TransactionLocaleView.js'),
+    '/pages/TransactionLocaleDashboard.html':        () => import('./TransactionLocaleDashboard.js'),
+    '/pages/User.html':                              () => import('./User.js'),
+    '/pages/UserView.html':                          () => import('./UserView.js'),
 }
 
 globalThis.__appRouter = { navigate }
@@ -39,9 +45,16 @@ async function navigate(rawUrl) {
 
     document.title = doc.title
 
+    // Reset breadcrumb to single item before updating title
+    const breadcrumbNav = document.getElementById('breadcrumb')
+    const appTitleEl    = document.getElementById('page-title-text')
+    if (breadcrumbNav && appTitleEl) {
+        breadcrumbNav.innerHTML = ''
+        breadcrumbNav.appendChild(appTitleEl)
+    }
+
     // Resolve page title via data-i18n key when available
     const pageTitleEl = doc.querySelector('.topbar .page-title')
-    const appTitleEl  = document.getElementById('page-title-text')
     if (appTitleEl) {
         const i18nKey = pageTitleEl?.dataset?.i18n
         if (i18nKey) {

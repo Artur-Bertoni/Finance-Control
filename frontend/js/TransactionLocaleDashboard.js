@@ -42,7 +42,7 @@ function renderList() {
     for (const loc of locales) {
         const card = document.createElement('div')
         card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/TransactionLocale.html?id=${loc.id}`))
+        card.addEventListener('click', () => navigate(`/pages/TransactionLocaleView.html?id=${loc.id}`))
         card.innerHTML = `
             <div class="item-card-header">
                 <span class="item-card-name">${loc.name}</span>

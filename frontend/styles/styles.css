@@ -145,6 +145,15 @@ button { font-family: inherit; }
   flex-shrink: 0;
 }
 
+.sidebar-logo-text {
+  font-size: 23px;
+  font-weight: 800;
+  color: #F0F0F0;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-logo-text span { color: var(--primary-500); }
+
 .sidebar-brand {
   font-size: 15px;
   font-weight: 700;
@@ -239,12 +248,108 @@ button { font-family: inherit; }
   box-shadow: var(--shadow-sm);
 }
 
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.breadcrumb-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color var(--t);
+}
+
+.breadcrumb-link:hover { color: var(--primary-500); }
+
+.breadcrumb-sep {
+  color: var(--text-muted);
+  font-size: 16px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
 .page-title {
   font-size: 17px;
   font-weight: 700;
   color: var(--text);
-  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+/* ===== DETAIL CARD ===== */
+.detail-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 32px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.detail-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.detail-field p {
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.detail-field .detail-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.detail-balance {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.detail-balance.positive { color: var(--credit); }
+.detail-balance.negative { color: var(--debit); }
+.detail-balance.zero     { color: var(--text-secondary); }
+
+/* pencil button inside pw-wrap */
+.pw-pencil {
+  position: absolute;
+  right: 43px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: color var(--t);
+}
+.pw-pencil:hover { color: var(--primary-500); }
+.pw-pencil svg   { width: 15px; height: 15px; }
+.pw-with-pencil input { padding-right: 76px; }
 
 .topbar-actions {
   display: flex;
@@ -787,6 +892,7 @@ textarea.field-error {
 
 /* ===== LOGIN PAGE ===== */
 .login-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -805,21 +911,25 @@ textarea.field-error {
 }
 
 .login-logo {
+  gap: 10px;
+  margin-bottom: 28px;
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 28px;
 }
 
 .login-logo img {
-  width: 68px;
-  height: 68px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
 }
 
 .login-logo-text {
-  font-size: 22px;
+  font-size: 50px;
   font-weight: 800;
   color: #F0F0F0;
   letter-spacing: -0.5px;

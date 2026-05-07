@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -13,11 +13,6 @@ export function init() {
     const fiId      = urlParams.get('id')
 
     if (fiId) {
-        const titleEl = document.getElementById('page-title-text')
-        if (titleEl) {
-            titleEl.dataset.i18n = 'editFinancialInstitution'
-            titleEl.textContent  = I18n.t('editFinancialInstitution')
-        }
         const saveBtn = document.getElementById('save-btn')
         if (saveBtn) {
             saveBtn.dataset.i18n = 'saveChanges'
@@ -30,6 +25,12 @@ export function init() {
             document.getElementById('name-input').value    = fi.name    ?? ''
             document.getElementById('address-input').value = fi.address ?? ''
             document.getElementById('contact-input').value = fi.contact ?? ''
+
+            setBreadcrumb([
+                { label: I18n.t('financialInstitutions'), url: '/pages/FinancialInstitutionDashboard.html' },
+                { label: fi.name, url: `/pages/FinancialInstitutionView.html?id=${fiId}` },
+                { label: I18n.t('edit') }
+            ])
 
             const deleteBtn = addDeleteIcon()
             deleteBtn.addEventListener('click', function () {
@@ -45,7 +46,7 @@ export function init() {
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
-        navigate('/pages/FinancialInstitutionDashboard.html')
+        navigate(fiId ? `/pages/FinancialInstitutionView.html?id=${fiId}` : '/pages/FinancialInstitutionDashboard.html')
     )
 
     document.getElementById('save-btn').addEventListener('click', function () {

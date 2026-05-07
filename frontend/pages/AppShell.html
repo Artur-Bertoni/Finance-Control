@@ -11,7 +11,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
-  <script src="../js/AppRouter.js" type="module"></script>
+  <script src="../js/AppShell.js" type="module"></script>
 </head>
 <body>
 <div id="sidebar-overlay" class="sidebar-overlay"></div>
@@ -20,28 +20,30 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
-      <div class="login-logo-text">Finance<span>Control</span></div>
+      <div class="sidebar-logo-text">Finance<span>Control</span></div>
     </div>
     <nav class="sidebar-nav">
       <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
       <div class="sidebar-section" data-i18n="movements">Movimentações</div>
       <a href="/pages/Transaction.html" class="sidebar-link" data-i18n="newTransaction">Nova Transação</a>
       <a href="/pages/Transfer.html" class="sidebar-link" data-i18n="transfer">Transferência</a>
-      <a href="/pages/AccountDashboard.html" class="sidebar-link" data-i18n="accounts">Contas</a>
       <div class="sidebar-section" data-i18n="settings">Configurações</div>
       <a href="/pages/CategoryDashboard.html" class="sidebar-link" data-i18n="categories">Categorias</a>
+      <a href="/pages/AccountDashboard.html" class="sidebar-link" data-i18n="accounts">Contas</a>
       <a href="/pages/FinancialInstitutionDashboard.html" class="sidebar-link" data-i18n="financialInstitutions">Instituições Financeiras</a>
       <a href="/pages/TransactionLocaleDashboard.html" class="sidebar-link" data-i18n="locations">Locais</a>
     </nav>
     <div class="sidebar-footer">
-      <a href="/pages/User.html" class="sidebar-link" data-i18n="myProfile">Meu Perfil</a>
+      <a href="/pages/UserView.html" class="sidebar-link" data-i18n="myProfile">Meu Perfil</a>
     </div>
   </aside>
 
   <div class="main-container">
     <header class="topbar">
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
-      <h1 class="page-title" id="page-title-text">Finance Control</h1>
+      <nav class="breadcrumb" id="breadcrumb" aria-label="Navegação">
+        <span class="page-title" id="page-title-text">Finance Control</span>
+      </nav>
       <div class="topbar-actions" id="header-actions"></div>
     </header>
     <main class="page-content" id="view"></main>

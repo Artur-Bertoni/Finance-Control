@@ -1,5 +1,5 @@
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -15,7 +15,7 @@ export function init() {
     if (accountId) loadEditMode(accountId)
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
-        navigate('/pages/AccountDashboard.html')
+        navigate(accountId ? `/pages/AccountView.html?id=${accountId}` : '/pages/AccountDashboard.html')
     )
 
     document.getElementById('save-btn').addEventListener('click', () => handleSave(accountId))
@@ -43,11 +43,6 @@ export function init() {
 }
 
 function loadEditMode(accountId) {
-    const titleEl = document.getElementById('page-title-text')
-    if (titleEl) {
-        titleEl.dataset.i18n = 'editAccount'
-        titleEl.textContent  = I18n.t('editAccount')
-    }
     const saveBtn = document.getElementById('save-btn')
     if (saveBtn) {
         saveBtn.dataset.i18n = 'saveChanges'
@@ -58,6 +53,12 @@ function loadEditMode(accountId) {
     if (response?.id === undefined) return
 
     const acc = Account.processAccount(response)
+
+    setBreadcrumb([
+        { label: I18n.t('accounts'), url: '/pages/AccountDashboard.html' },
+        { label: acc.name, url: `/pages/AccountView.html?id=${accountId}` },
+        { label: I18n.t('edit') }
+    ])
     document.getElementById('name-input').value        = acc.name ?? ''
     document.getElementById('contact-input').value     = acc.contact ?? ''
     document.getElementById('description-input').value = acc.description ?? ''

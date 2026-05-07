@@ -172,6 +172,14 @@
   "financeControl": "Finance Control",
 
   "save": "Save",
+  "edit": "Edit",
   "newCategory": "New Category",
-  "maxValue": "Max: {max}"
+  "maxValue": "Max: {max}",
+  "deleteConfirm": "Are you sure you want to delete this item? This action cannot be undone.",
+  "notInformed": "Not informed",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "currentPasswordPlaceholder": "Enter your current password",
+  "newPassword": "New Password",
+  "passwordChangedSuccess": "Password changed successfully!"
 }

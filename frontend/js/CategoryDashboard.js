@@ -38,7 +38,7 @@ function renderList() {
     for (const cat of categories) {
         const card = document.createElement('div')
         card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/Category.html?id=${cat.id}`))
+        card.addEventListener('click', () => navigate(`/pages/CategoryView.html?id=${cat.id}`))
         const metaHtml = cat.description
             ? `<div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
             : ''

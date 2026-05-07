@@ -28,18 +28,18 @@ export function init() {
 function configureFilters() {
     const startInput = document.getElementById('start-date-input')
     const endInput   = document.getElementById('end-date-input')
-    const today      = new Date().toISOString().split('T')[0]
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
 
     endInput.max   = today
     endInput.value = today
-
     startInput.max = today
+
     const firstOfMonth = new Date()
     firstOfMonth.setDate(1)
-    startInput.value = firstOfMonth.toISOString().split('T')[0]
-
+    startInput.value = new Date(firstOfMonth.getTime() - firstOfMonth.getTimezoneOffset() * 60000).toISOString().split('T')[0]
     startInput.addEventListener('change', refresh)
     endInput.addEventListener('change', refresh)
+
     document.getElementById('category-input').addEventListener('change', refresh)
     document.getElementById('account-input').addEventListener('change', refresh)
 }
@@ -153,7 +153,7 @@ function createTransactionItem(tx) {
 
     const item = document.createElement('div')
     item.className = `transaction-item ${typeClass}`
-    item.addEventListener('click', () => navigate(`/pages/Transaction.html?id=${tx.id}`))
+    item.addEventListener('click', () => navigate(`/pages/TransactionView.html?id=${tx.id}`))
 
     const indicator = document.createElement('div')
     indicator.className = `tx-indicator ${typeClass}`

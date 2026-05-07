@@ -1,5 +1,6 @@
 package com.financecontrol.service;
 
+import com.financecontrol.dto.request.PasswordChangeRequest;
 import com.financecontrol.dto.request.UserRequest;
 import com.financecontrol.dto.response.UserResponse;
 import com.financecontrol.entity.User;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final String NOT_FOUND = "error.notFound.user";
+
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,7 +33,7 @@ public class UserService {
 
     public UserResponse findById(@NonNull Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.user"));
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
         return UserResponse.from(user);
     }
 
@@ -49,21 +52,30 @@ public class UserService {
     public UserResponse update(@NonNull Long id, UserRequest req) {
         if (repository.existsByEmailAndIdNot(req.email(), id))
             throw new BusinessException("error.user.duplicateEmail");
-        if (!req.password().equals(req.passwordConfirmation()))
-            throw new BusinessException("error.user.passwordMismatch");
 
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.user"));
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
         user.setUsername(req.username());
         user.setEmail(req.email());
-        user.setPassword(passwordEncoder.encode(req.password()));
         return UserResponse.from(repository.save(user));
+    }
+
+    @Transactional
+    public void changePassword(@NonNull Long id, PasswordChangeRequest req) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
+        if (!passwordEncoder.matches(req.currentPassword(), user.getPassword()))
+            throw new BusinessException("error.user.wrongCurrentPassword");
+        if (!req.newPassword().equals(req.passwordConfirmation()))
+            throw new BusinessException("error.user.passwordMismatch");
+        user.setPassword(passwordEncoder.encode(req.newPassword()));
+        repository.save(user);
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException("error.notFound.user");
+            throw new ResourceNotFoundException(NOT_FOUND);
         repository.deleteById(id);
     }
 }

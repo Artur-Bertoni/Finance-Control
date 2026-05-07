@@ -173,6 +173,14 @@
   "financeControl": "Finance Control",
 
   "save": "Guardar",
+  "edit": "Editar",
   "newCategory": "Nueva Categoría",
-  "maxValue": "Máx: {max}"
+  "maxValue": "Máx: {max}",
+  "deleteConfirm": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
+  "notInformed": "No informado",
+  "changePassword": "Cambiar Contraseña",
+  "currentPassword": "Contraseña Actual",
+  "currentPasswordPlaceholder": "Ingrese su contraseña actual",
+  "newPassword": "Nueva Contraseña",
+  "passwordChangedSuccess": "¡Contraseña cambiada con éxito!"
 }

@@ -38,7 +38,7 @@ function renderList() {
     for (const acc of accounts) {
         const card = document.createElement('div')
         card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/Account.html?id=${acc.id}`))
+        card.addEventListener('click', () => navigate(`/pages/AccountView.html?id=${acc.id}`))
 
         let balClass = 'zero'
         if (acc.balance > 0) balClass = 'positive'

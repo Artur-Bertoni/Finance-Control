@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -13,11 +13,6 @@ export function init() {
     const categoryId = urlParams.get('id')
 
     if (categoryId) {
-        const titleEl = document.getElementById('page-title-text')
-        if (titleEl) {
-            titleEl.dataset.i18n = 'editCategory'
-            titleEl.textContent  = I18n.t('editCategory')
-        }
         const saveBtn = document.getElementById('save-btn')
         if (saveBtn) {
             saveBtn.dataset.i18n = 'saveChanges'
@@ -29,6 +24,12 @@ export function init() {
             const cat = Category.processCategory(response)
             document.getElementById('name-input').value        = cat.name ?? ''
             document.getElementById('description-input').value = cat.description ?? ''
+
+            setBreadcrumb([
+                { label: I18n.t('categories'), url: '/pages/CategoryDashboard.html' },
+                { label: cat.name, url: `/pages/CategoryView.html?id=${categoryId}` },
+                { label: I18n.t('edit') }
+            ])
 
             const deleteBtn = addDeleteIcon()
             deleteBtn.addEventListener('click', function () {
@@ -44,7 +45,7 @@ export function init() {
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
-        navigate('/pages/CategoryDashboard.html')
+        navigate(categoryId ? `/pages/CategoryView.html?id=${categoryId}` : '/pages/CategoryDashboard.html')
     )
 
     document.getElementById('save-btn').addEventListener('click', function () {

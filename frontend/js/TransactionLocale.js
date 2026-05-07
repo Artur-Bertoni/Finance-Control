@@ -1,4 +1,4 @@
-import { addDeleteIcon, doRequest, navigate, navigateWithToast, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, doRequest, navigate, navigateWithToast, setBreadcrumb, showToast } from '../utils/FrontendFunctions.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -13,11 +13,6 @@ export function init() {
     const localeId  = urlParams.get('id')
 
     if (localeId) {
-        const titleEl = document.getElementById('page-title-text')
-        if (titleEl) {
-            titleEl.dataset.i18n = 'editLocation'
-            titleEl.textContent  = I18n.t('editLocation')
-        }
         const saveBtn = document.getElementById('save-btn')
         if (saveBtn) {
             saveBtn.dataset.i18n = 'saveChanges'
@@ -29,6 +24,12 @@ export function init() {
             const locale = TransactionLocale.processTransactionLocale(response)
             document.getElementById('name-input').value    = locale.name    ?? ''
             document.getElementById('address-input').value = locale.address ?? ''
+
+            setBreadcrumb([
+                { label: I18n.t('locations'), url: '/pages/TransactionLocaleDashboard.html' },
+                { label: locale.name, url: `/pages/TransactionLocaleView.html?id=${localeId}` },
+                { label: I18n.t('edit') }
+            ])
 
             const deleteBtn = addDeleteIcon()
             deleteBtn.addEventListener('click', function () {
@@ -44,7 +45,7 @@ export function init() {
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
-        navigate('/pages/TransactionLocaleDashboard.html')
+        navigate(localeId ? `/pages/TransactionLocaleView.html?id=${localeId}` : '/pages/TransactionLocaleDashboard.html')
     )
 
     document.getElementById('save-btn').addEventListener('click', function () {

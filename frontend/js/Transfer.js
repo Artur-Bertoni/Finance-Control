@@ -32,7 +32,7 @@ export function init() {
     }
 
     const dateInput = document.getElementById('date-input')
-    dateInput.max   = new Date().toISOString().split('T')[0]
+    dateInput.max   = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
     dateInput.value = dateInput.max
 
     document.getElementById('origin-account-input').addEventListener('change', updateMaxValue)

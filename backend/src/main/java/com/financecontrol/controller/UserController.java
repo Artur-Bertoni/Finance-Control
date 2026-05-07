@@ -1,5 +1,6 @@
 package com.financecontrol.controller;
 
+import com.financecontrol.dto.request.PasswordChangeRequest;
 import com.financecontrol.dto.request.UserRequest;
 import com.financecontrol.dto.response.UserResponse;
 import com.financecontrol.service.UserService;
@@ -29,6 +30,15 @@ public class UserController extends BaseController {
         UserResponse updated = userService.update(id, req);
         session.setAttribute("userId", updated.id());
         return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Void> changePassword(@PathVariable @NonNull Long id,
+                                               @RequestBody PasswordChangeRequest req,
+                                               HttpSession session) {
+        requireUserId(session);
+        userService.changePassword(id, req);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

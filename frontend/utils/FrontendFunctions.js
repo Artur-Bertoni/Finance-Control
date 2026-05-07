@@ -160,6 +160,37 @@ export function addDeleteIcon() {
     return btn
 }
 
+export function setBreadcrumb(crumbs) {
+    const nav = document.getElementById('breadcrumb')
+    if (!nav) return
+
+    const titleEl = document.getElementById('page-title-text')
+    nav.innerHTML = ''
+
+    crumbs.forEach((crumb, i) => {
+        const isLast = i === crumbs.length - 1
+
+        if (isLast) {
+            const el = titleEl ?? Object.assign(document.createElement('span'), { id: 'page-title-text', className: 'page-title' })
+            el.textContent = crumb.label
+            delete el.dataset.i18n
+            nav.appendChild(el)
+        } else {
+            const a = document.createElement('a')
+            a.className = 'breadcrumb-link'
+            a.textContent = crumb.label
+            if (crumb.url) a.href = crumb.url
+            nav.appendChild(a)
+
+            const sep = document.createElement('span')
+            sep.className = 'breadcrumb-sep'
+            sep.setAttribute('aria-hidden', 'true')
+            sep.textContent = '›'
+            nav.appendChild(sep)
+        }
+    })
+}
+
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'
