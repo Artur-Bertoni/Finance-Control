@@ -36,9 +36,11 @@ public class FinancialInstitutionService {
     @Transactional
     public FinancialInstitutionResponse update(@NonNull Long id, FinancialInstitutionRequest req) {
         FinancialInstitution fi = getOrThrow(id);
+
         fi.setName(req.name());
         fi.setAddress(req.address());
         fi.setContact(req.contact());
+
         return FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
     }
 
@@ -49,7 +51,6 @@ public class FinancialInstitutionService {
     }
 
     private FinancialInstitution getOrThrow(@NonNull Long id) {
-        return financialInstitutionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+        return financialInstitutionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
     }
 }

@@ -47,17 +47,20 @@ public class AccountService {
         Account account = getOrThrow(id);
         FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+
         account.setFinancialInstitution(fi);
         account.setName(req.name());
         account.setContact(req.contact());
         account.setDescription(req.description());
         account.setBalance(req.balance());
+
         return AccountResponse.from(accountRepository.save(account));
     }
 
     @Transactional
     public void delete(@NonNull Long id) {
         getOrThrow(id);
+
         accountRepository.deleteById(id);
     }
 
@@ -67,7 +70,6 @@ public class AccountService {
     }
 
     Account getOrThrow(@NonNull Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        return accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
     }
 }

@@ -3,6 +3,7 @@ package com.financecontrol.service;
 import com.financecontrol.dto.request.TransactionRequest;
 import com.financecontrol.dto.response.TransactionResponse;
 import com.financecontrol.entity.*;
+import com.financecontrol.enums.TransactionType;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionService {
 
-    private static final String TYPE_CREDIT = "credit";
-    private static final String TYPE_DEBIT  = "debit";
+    private static final TransactionType TYPE_CREDIT = TransactionType.CREDIT;
+    private static final TransactionType TYPE_DEBIT  = TransactionType.DEBIT;
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
@@ -61,15 +62,14 @@ public class TransactionService {
 
     @NonNull
     Transaction getOrThrow(@NonNull Long id) {
-        return transactionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
+        return transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
     private TransactionResponse updateOne(@NonNull Long id, Long userId, TransactionRequest req) {
         Transaction existing = getOrThrow(id);
 
-        String oldType = existing.getType();
-        double revert = TYPE_CREDIT.equals(oldType) ? -existing.getValue() : existing.getValue();
+        TransactionType oldType = existing.getType();
+        double revert = TYPE_CREDIT == oldType ? -existing.getValue() : existing.getValue();
         Long accountId = existing.getAccount().getId();
         if (accountId != null) {
             accountRepository.patchBalance(accountId, revert);
@@ -80,7 +80,7 @@ public class TransactionService {
         if (isTransferPartner(partnerId)) {
             Transaction partner = getOrThrow(partnerId);
             if (!partner.getValue().equals(req.value())) {
-                String partnerType = TYPE_DEBIT.equals(req.type()) ? TYPE_CREDIT : TYPE_DEBIT;
+                TransactionType partnerType = TYPE_DEBIT == req.type() ? TYPE_CREDIT : TYPE_DEBIT;
                 Long partnerAccountId = partner.getAccount().getId();
                 TransactionRequest partnerReq = new TransactionRequest(
                         partnerAccountId, req.categoryId(), req.transactionLocaleId(),
@@ -99,7 +99,7 @@ public class TransactionService {
 
     private void deleteOne(@NonNull Long id) {
         Transaction t = getOrThrow(id);
-        double revert = TYPE_CREDIT.equals(t.getType()) ? -t.getValue() : t.getValue();
+        double revert = TYPE_CREDIT == t.getType() ? -t.getValue() : t.getValue();
         Long accountId = t.getAccount().getId();
         if (accountId != null) {
             accountRepository.patchBalance(accountId, revert);
@@ -113,8 +113,8 @@ public class TransactionService {
         transactionRepository.deleteById(id);
     }
 
-    private void applyBalanceDelta(@NonNull Long accountId, String type, Double value) {
-        double delta = TYPE_CREDIT.equals(type) ? value : -value;
+    private void applyBalanceDelta(@NonNull Long accountId, TransactionType type, Double value) {
+        double delta = TYPE_CREDIT == type ? value : -value;
         accountRepository.patchBalance(accountId, delta);
     }
 

@@ -28,3 +28,6 @@ logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# SQL generated files
+sql/

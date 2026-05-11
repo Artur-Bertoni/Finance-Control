@@ -36,8 +36,10 @@ public class TransactionLocaleService {
     @Transactional
     public TransactionLocaleResponse update(@NonNull Long id, TransactionLocaleRequest req) {
         TransactionLocale tl = getOrThrow(id);
+
         tl.setName(req.name());
         tl.setAddress(req.address());
+
         return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }
 
@@ -48,7 +50,6 @@ public class TransactionLocaleService {
     }
 
     private TransactionLocale getOrThrow(@NonNull Long id) {
-        return transactionLocaleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
+        return transactionLocaleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
     }
 }

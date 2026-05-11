@@ -1,6 +1,7 @@
 package com.financecontrol.dto.response;
 
 import com.financecontrol.entity.Transaction;
+import com.financecontrol.enums.TransactionType;
 import java.time.LocalDate;
 
 public record TransactionResponse(
@@ -10,7 +11,7 @@ public record TransactionResponse(
     TransactionLocaleResponse transactionLocale,
     Double value,
     LocalDate date,
-    String type,
+    TransactionType type,
     Integer installmentsNumber,
     String obs,
     Long transferPartnerId

@@ -1,5 +1,7 @@
 package com.financecontrol.entity;
 
+import com.financecontrol.config.TransactionTypeConverter;
+import com.financecontrol.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -28,7 +30,9 @@ public class Transaction {
 
     private Double value;
     private LocalDate date;
-    private String type;
+
+    @Convert(converter = TransactionTypeConverter.class)
+    private TransactionType type;
 
     @Column(name = "installments_number")
     private Integer installmentsNumber;

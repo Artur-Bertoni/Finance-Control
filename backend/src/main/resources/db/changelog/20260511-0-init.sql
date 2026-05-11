@@ -1,3 +1,7 @@
+--liquibase formatted sql
+--changeset github-copilot:20260511-0-init
+--comment: initial database schema creation from db_script.sql
+
 CREATE TABLE IF NOT EXISTS user
 (
     id       INT AUTO_INCREMENT,
@@ -7,7 +11,6 @@ CREATE TABLE IF NOT EXISTS user
 
     PRIMARY KEY (id)
 );
-
 
 CREATE TABLE IF NOT EXISTS financial_institution
 (
@@ -20,7 +23,6 @@ CREATE TABLE IF NOT EXISTS financial_institution
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS account
 (
@@ -37,7 +39,6 @@ CREATE TABLE IF NOT EXISTS account
     FOREIGN KEY (financial_institution_id) REFERENCES financial_institution (id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE IF NOT EXISTS transaction_locale
 (
     id      INT AUTO_INCREMENT,
@@ -48,7 +49,6 @@ CREATE TABLE IF NOT EXISTS transaction_locale
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS category
 (
@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS category
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE IF NOT EXISTS transaction
 (
     id                    INT AUTO_INCREMENT,
@@ -71,7 +70,7 @@ CREATE TABLE IF NOT EXISTS transaction
     transaction_locale_id INT,
     value                 DOUBLE      NOT NULL,
     date                  DATE        NOT NULL,
-    type                  VARCHAR(10) NOT NULL,
+    type INT NOT NULL,
     installments_number   INT DEFAULT 0,
     obs                   TINYTEXT,
     transfer_partner_id   INT DEFAULT NULL,

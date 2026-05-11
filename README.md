@@ -52,7 +52,18 @@ Para destruir os dados do banco também:
 docker compose down -v
 ```
 
-> Na primeira execução o banco é inicializado automaticamente com o schema de [`db_script.sql`](https://github.com/Artur-Bertoni/Finance-Control/blob/main/sql/db_script.sql).
+> Na primeira execução o banco é inicializado automaticamente pelo backend usando Liquibase.
+
+---
+
+## Versionamento de banco de dados
+
+O projeto usa Liquibase para migrar o banco automaticamente. Os changelogs SQL ficam em:
+
+- `backend/src/main/resources/db/db.changelog-master.sql`
+- `backend/src/main/resources/db/changelog/*.sql`
+
+Isso garante que as alterações de esquema sejam aplicadas na inicialização do backend e que cada changeset seja executado apenas uma vez.
 
 ---
 
@@ -165,7 +176,6 @@ Finance-Control/
 │   │   └── styles.css              # Estilos globais (inclui dark mode via data-theme)
 │   └── images/                     # Assets estáticos
 │
-├── sql/                            # Schema inicial do banco (tabelas) + carga de dados estática para testes
 ├── docker-compose.yml              # Orquestração Docker (db + backend + nginx)
 ├── nginx.conf                      # Configuração do proxy Nginx (Docker)
 └── proxy-server.js                 # Servidor proxy Node.js (desenvolvimento local)

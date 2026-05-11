@@ -36,8 +36,10 @@ public class CategoryService {
     @Transactional
     public CategoryResponse update(@NonNull Long id, CategoryRequest req) {
         Category c = getOrThrow(id);
+
         c.setName(req.name());
         c.setDescription(req.description());
+
         return CategoryResponse.from(categoryRepository.save(c));
     }
 
@@ -48,7 +50,6 @@ public class CategoryService {
     }
 
     private Category getOrThrow(@NonNull Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+        return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
     }
 }
