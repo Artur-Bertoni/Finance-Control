@@ -1,18 +1,23 @@
 import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
 let allAccounts = []
+let allFinancialInstitutions = []
 let searchQuery = ''
+let selectedFinancialInstitutionId = ''
 
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
+    CustomSelect.autoInit()
     showPendingToast()
     loadData()
     setupSearch()
+    setupFinancialInstitutionFilter()
     I18n.onChange(renderList)
 }
 
@@ -24,6 +29,16 @@ function loadData() {
         console.log('Erro ao carregar contas:', e)
         allAccounts = []
     }
+    
+    try {
+        const data = doRequest('/api/financial-institutions', 'GET')
+        allFinancialInstitutions = data ?? []
+        populateFinancialInstitutionFilter()
+    } catch (e) {
+        console.log('Erro ao carregar instituições financeiras:', e)
+        allFinancialInstitutions = []
+    }
+    
     renderList()
 }
 
@@ -37,7 +52,32 @@ function setupSearch() {
     })
     clearBtn?.addEventListener('click', () => {
         searchQuery = ''
+        selectedFinancialInstitutionId = ''
         if (input) input.value = ''
+        const fiFilter = document.getElementById('fi-filter')
+        if (fiFilter) fiFilter.value = ''
+        renderList()
+    })
+}
+
+function populateFinancialInstitutionFilter() {
+    const select = document.getElementById('fi-filter')
+    if (!select) return
+    
+    for (const fi of allFinancialInstitutions) {
+        const option = document.createElement('option')
+        option.value = fi.id
+        option.textContent = fi.name
+        select.appendChild(option)
+    }
+}
+
+function setupFinancialInstitutionFilter() {
+    const select = document.getElementById('fi-filter')
+    if (!select) return
+    
+    select.addEventListener('change', () => {
+        selectedFinancialInstitutionId = select.value
         renderList()
     })
 }
@@ -48,7 +88,17 @@ function renderList() {
     list.innerHTML = ''
 
     const q = searchQuery.trim().toLowerCase()
-    const accounts = q ? allAccounts.filter(a => a.name.toLowerCase().includes(q)) : allAccounts
+    let accounts = allAccounts
+
+    // Aplicar filtro de busca por nome
+    if (q) {
+        accounts = accounts.filter(a => a.name.toLowerCase().includes(q))
+    }
+
+    // Aplicar filtro por instituição financeira
+    if (selectedFinancialInstitutionId) {
+        accounts = accounts.filter(a => a.financialInstitutionId === parseInt(selectedFinancialInstitutionId))
+    }
 
     if (accounts.length === 0) {
         list.innerHTML = `

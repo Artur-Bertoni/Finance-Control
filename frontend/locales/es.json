@@ -30,6 +30,7 @@
   "endDate": "Fecha de Fin",
   "allCategories": "Todas las categorías",
   "allAccounts": "Todas las cuentas",
+  "allInstitutions": "Todas las instituciones",
   "latestTransactions": "Últimas Transacciones",
   "noTransactionsFound": "No se encontraron transacciones",
   "noTransactionsInPeriod": "No hay transacciones en este período",
