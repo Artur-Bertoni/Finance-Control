@@ -8,8 +8,7 @@ backend/target/
 out/
 
 # ── VS Code ───────────────────────────────────────────────────────────────────
-.vscode/launch.json
-.vscode/settings.json
+.vscode/
 
 # ── Node.js ───────────────────────────────────────────────────────────────────
 node_modules/

@@ -27,24 +27,14 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) com Docker Compose
 
 ### Para rodar localmente (debug)
-- **JDK 17** — recomendado: [Eclipse Temurin 17](https://adoptium.net/)
-- **Maven 3.x** — [download](https://maven.apache.org/download.cgi) ou via gerenciador de pacotes
-- **Docker** — apenas para o banco de dados MySQL
-- **Node.js** — para o servidor proxy local do frontend
-- **IDE** — VS Code com [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), ou IntelliJ IDEA
-
-> Verifique se `JAVA_HOME` aponta para o JDK (não JRE):
-> ```powershell
-> $env:JAVA_HOME = "C:\caminho\para\jdk-17"
-> java -version   # deve mostrar 17.x
-> javac -version  # deve funcionar
-> ```
+- [JDK 17](https://adoptium.net/pt-BR/temurin/releases?version=17&os=any&arch=any)
+- [Maven 3.x](https://maven.apache.org/download.cgi)
+- [Docker](https://www.docker.com/products/docker-desktop/)
+- [Node.js 24.x](https://nodejs.org/pt-br/download)
 
 ---
 
 ## Rodando com Docker
-
-A forma mais simples — sobe tudo (banco, backend e frontend) com um único comando:
 
 ```bash
 docker compose up --build
@@ -62,7 +52,7 @@ Para destruir os dados do banco também:
 docker compose down -v
 ```
 
-> Na primeira execução o banco é inicializado automaticamente com o schema de `db_script.sql`.
+> Na primeira execução o banco é inicializado automaticamente com o schema de [`db_script.sql`](https://github.com/Artur-Bertoni/Finance-Control/blob/main/sql/db_script.sql).
 
 ---
 
@@ -136,7 +126,7 @@ Browser :8080  →  proxy-server.js  →  /api/*  →  Spring Boot :8081  →  M
 
 O banco inicia vazio (sem usuários). Para acessar o sistema:
 
-1. Acesse `http://localhost:8080/pages/User.html`
+1. Acesse **http://localhost:8080/pages/User.html**
 2. Preencha os dados e clique em **Criar Conta**
 3. O login é feito automaticamente após o cadastro
 
@@ -175,7 +165,7 @@ Finance-Control/
 │   │   └── styles.css              # Estilos globais (inclui dark mode via data-theme)
 │   └── images/                     # Assets estáticos
 │
-├── db_script.sql                   # Schema inicial do banco (tabelas)
+├── sql/                            # Schema inicial do banco (tabelas) + carga de dados estática para testes
 ├── docker-compose.yml              # Orquestração Docker (db + backend + nginx)
 ├── nginx.conf                      # Configuração do proxy Nginx (Docker)
 └── proxy-server.js                 # Servidor proxy Node.js (desenvolvimento local)
