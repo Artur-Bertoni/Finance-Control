@@ -28,12 +28,17 @@ export function init() {
         document.getElementById('admin-section-header').style.display = ''
         document.getElementById('admin-section-grid').style.display = ''
         document.getElementById('send-test-email-btn').addEventListener('click', () => {
+            const overlay = document.createElement('div')
+            overlay.className = 'loading-overlay'
+            overlay.innerHTML = '<div class="loading-spinner"></div>'
+            document.body.appendChild(overlay)
+
             $.ajax({
-                url:   '/api/admin/email/send-test',
-                type:  'POST',
-                async: false,
-                success: () => showToast(I18n.t('testEmailSent'), 'success'),
-                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSendingTestEmail'), 'error')
+                url:  '/api/admin/email/send-test',
+                type: 'POST',
+                success:  () => showToast(I18n.t('testEmailSent'), 'success'),
+                error:    xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSendingTestEmail'), 'error'),
+                complete: () => overlay.remove()
             })
         })
     }

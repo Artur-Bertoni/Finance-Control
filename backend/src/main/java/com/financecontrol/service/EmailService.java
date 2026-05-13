@@ -41,40 +41,50 @@ public class EmailService {
     }
 
     @Async("emailTaskExecutor")
-    @SuppressWarnings("null")
     public void sendWeeklyReminder(User user) {
-        Locale locale = resolveLocale(user.getLanguage());
         try {
-            String subject  = msg("email.weekly.subject",      null, locale);
-            String subtitle = msg("email.weekly.subtitle",     null, locale);
-            String greeting = msg("email.weekly.greeting",     new Object[]{user.getUsername()}, locale);
-            String question = msg("email.weekly.question",     null, locale);
-            String body     = msg("email.weekly.body",         null, locale);
-            String cta      = msg("email.weekly.cta",          null, locale);
-            String footer   = msg("email.weekly.footerPrefix", null, locale);
-            String profile  = msg("email.weekly.profileLinkText", null, locale);
-
-            String html = loadTemplate()
-                    .replace("{{emailSubtitle}}",         subtitle)
-                    .replace("{{emailGreeting}}",         greeting)
-                    .replace("{{emailQuestion}}",         question)
-                    .replace("{{emailBody}}",             body)
-                    .replace("{{emailCtaLabel}}",         cta)
-                    .replace("{{emailFooterPrefix}}",     footer)
-                    .replace("{{emailProfileLinkText}}",  profile)
-                    .replace("{{baseUrl}}",               baseUrl);
-
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(mailFrom);
-            helper.setTo(user.getEmail());
-            helper.setSubject(subject);
-            helper.setText(html, true);
-            mailSender.send(message);
+            doSend(user);
             log.info("Email semanal enviado para {} (lang={})", user.getEmail(), user.getLanguage());
-        } catch (MessagingException | IOException e) {
+        } catch (Exception e) {
             log.error("Falha ao enviar email semanal para {}: {}", user.getEmail(), e.getMessage());
         }
+    }
+
+    public void sendTestEmail(User user) throws MessagingException, IOException {
+        doSend(user);
+    }
+
+    @SuppressWarnings("null")
+    private void doSend(User user) throws MessagingException, IOException {
+        Locale locale = resolveLocale(user.getLanguage());
+
+        String subject  = msg("email.weekly.subject",         null, locale);
+        String subtitle = msg("email.weekly.subtitle",        null, locale);
+        String greeting = msg("email.weekly.greeting",        new Object[]{user.getUsername()}, locale);
+        String question = msg("email.weekly.question",        null, locale);
+        String body     = msg("email.weekly.body",            null, locale);
+        String cta      = msg("email.weekly.cta",             null, locale);
+        String footer   = msg("email.weekly.footerPrefix",    null, locale);
+        String profile  = msg("email.weekly.profileLinkText", null, locale);
+
+        String html = loadTemplate()
+                .replace("{{emailSubtitle}}",         subtitle)
+                .replace("{{emailGreeting}}",         greeting)
+                .replace("{{emailQuestion}}",         question)
+                .replace("{{emailBody}}",             body)
+                .replace("{{emailCtaLabel}}",         cta)
+                .replace("{{emailFooterPrefix}}",     footer)
+                .replace("{{emailProfileLinkText}}",  profile)
+                .replace("{{baseUrl}}",               baseUrl);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom(mailFrom);
+        helper.setTo(user.getEmail());
+        helper.setSubject(subject);
+        helper.setText(html, true);
+        helper.addInline("emailLogo", new ClassPathResource("templates/logo.png"), "image/png");
+        mailSender.send(message);
     }
 
     @NonNull
