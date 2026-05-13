@@ -26,10 +26,10 @@ document.getElementById('register-btn').addEventListener('click', function () {
 })
 
 document.getElementById('login-btn').addEventListener('click', function () {
-    const email    = document.getElementById('email-input').value
-    const password = document.getElementById('password-input').value
+    const identifier = document.getElementById('email-input').value.trim()
+    const password   = document.getElementById('password-input').value
 
-    if (!email || !password) {
+    if (!identifier || !password) {
         showToast(I18n.t('emptyEmailPassword'), 'warning')
         return
     }
@@ -39,7 +39,7 @@ document.getElementById('login-btn').addEventListener('click', function () {
         type: 'POST',
         async: false,
         contentType: 'application/json',
-        data: JSON.stringify({ email, password }),
+        data: JSON.stringify({ identifier, password }),
         success: function () {
             $.ajax({
                 url: '/api/auth/me', type: 'GET', async: false,

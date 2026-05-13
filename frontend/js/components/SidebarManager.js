@@ -122,6 +122,9 @@ export class SidebarManager {
     }
 
     static checkAuth() {
+        const pendingUrl = sessionStorage.getItem('__spa_url') ?? ''
+        if (pendingUrl.includes('?guest=true')) return
+
         $.ajax({
             url: '/api/auth/me',
             type: 'GET',

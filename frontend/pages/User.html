@@ -50,6 +50,36 @@
           </div>
         </div>
 
+        <div id="guest-notification-section" style="display:none">
+          <div class="section-divider">
+            <span data-i18n="emailNotifications">Notificações por E-mail</span>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="guest-notification-enabled-input" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
+              <div class="toggle-switch">
+                <input type="checkbox" id="guest-notification-enabled-input" class="toggle-input">
+                <span class="toggle-track" id="guest-toggle-track" role="presentation">
+                  <span class="toggle-thumb"></span>
+                </span>
+                <span class="toggle-label" id="guest-notification-enabled-label" data-i18n="disabled">Desativado</span>
+              </div>
+            </div>
+            <div class="field" id="field-guest-notification-day" style="display:none">
+              <label for="guest-notification-day-input" data-i18n="notificationDayLabel">Dia preferido para receber</label>
+              <select id="guest-notification-day-input">
+                <option value="1" data-i18n="monday">Segunda-feira</option>
+                <option value="2" data-i18n="tuesday">Terça-feira</option>
+                <option value="3" data-i18n="wednesday">Quarta-feira</option>
+                <option value="4" data-i18n="thursday">Quinta-feira</option>
+                <option value="5" data-i18n="friday" selected>Sexta-feira</option>
+                <option value="6" data-i18n="saturday">Sábado</option>
+                <option value="7" data-i18n="sunday">Domingo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div id="notification-section" style="display:none">
           <div class="section-divider">
             <span data-i18n="emailNotifications">Notificações por E-mail</span>

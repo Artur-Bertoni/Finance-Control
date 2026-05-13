@@ -15,6 +15,8 @@
   "loginSubtext": "Faça login para acessar sua conta",
   "email": "E-mail",
   "emailPlaceholder": "seu@email.com",
+  "emailOrUsername": "E-mail ou nome de usuário",
+  "emailOrUsernamePlaceholder": "seu@email.com ou nome de usuário",
   "password": "Senha",
   "passwordPlaceholder": "Sua senha",
   "showHidePassword": "Mostrar/ocultar senha",

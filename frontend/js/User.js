@@ -48,11 +48,16 @@ function handleSave() {
             return
         }
 
+        const notifyEnabled = document.getElementById('guest-notification-enabled-input').checked
         const body = {
-            username:             document.getElementById('username-input').value,
-            email:                document.getElementById('email-input').value,
-            password:             document.getElementById('password-input').value,
-            passwordConfirmation: document.getElementById('password-confirm-input').value
+            username:                   document.getElementById('username-input').value,
+            email:                      document.getElementById('email-input').value,
+            password:                   document.getElementById('password-input').value,
+            passwordConfirmation:       document.getElementById('password-confirm-input').value,
+            emailNotificationEnabled:   notifyEnabled,
+            emailNotificationDay:       notifyEnabled
+                ? Number.parseInt(document.getElementById('guest-notification-day-input').value, 10)
+                : 5
         }
 
         $.ajax({
@@ -133,6 +138,27 @@ function showGuestForm() {
 
     const cancelBtn = document.getElementById('cancel-btn')
     if (cancelBtn) { cancelBtn.dataset.i18n = 'backToLogin'; cancelBtn.textContent = I18n.t('backToLogin') }
+
+    setupGuestNotificationSection()
+}
+
+function setupGuestNotificationSection() {
+    document.getElementById('guest-notification-section').style.display = ''
+
+    const checkbox  = document.getElementById('guest-notification-enabled-input')
+    const label     = document.getElementById('guest-notification-enabled-label')
+    const dayField  = document.getElementById('field-guest-notification-day')
+
+    function applyState() {
+        updateNotificationLabel(label, checkbox.checked)
+        dayField.style.display = checkbox.checked ? '' : 'none'
+    }
+
+    document.getElementById('guest-toggle-track').addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked
+        applyState()
+    })
+    checkbox.addEventListener('change', applyState)
 }
 
 function loadUserData() {

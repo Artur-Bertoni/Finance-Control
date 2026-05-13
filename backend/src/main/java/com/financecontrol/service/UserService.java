@@ -23,10 +23,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponse login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UnauthorizedException("error.auth.invalidCredentials"));
-        if (!passwordEncoder.matches(password, user.getPassword()))
+    public UserResponse login(String identifier, String password) {
+        User user = identifier.contains("@")
+                ? userRepository.findByEmail(identifier).orElse(null)
+                : userRepository.findByUsername(identifier).orElse(null);
+        if (user == null || !passwordEncoder.matches(password, user.getPassword()))
             throw new UnauthorizedException("error.auth.invalidCredentials");
         return UserResponse.from(user);
     }
@@ -48,8 +49,8 @@ public class UserService {
         user.setUsername(req.username());
         user.setEmail(req.email());
         user.setPassword(passwordEncoder.encode(req.password()));
-        user.setEmailNotificationEnabled(true);
-        user.setEmailNotificationDay(5);
+        user.setEmailNotificationEnabled(Boolean.TRUE.equals(req.emailNotificationEnabled()));
+        user.setEmailNotificationDay(req.emailNotificationDay() != null ? req.emailNotificationDay() : 5);
         user.setLanguage("pt");
         user.setAdmin(false);
         return UserResponse.from(userRepository.save(user));

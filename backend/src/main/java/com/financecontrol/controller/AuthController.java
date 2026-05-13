@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@RequestBody LoginRequest req, HttpSession session) {
-        UserResponse user = userService.login(req.email(), req.password());
+        UserResponse user = userService.login(req.identifier(), req.password());
         session.setAttribute("userId", user.id());
         return ResponseEntity.ok(user);
     }
