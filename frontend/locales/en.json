@@ -52,8 +52,8 @@
   "contactPlaceholder": "Phone or email contact (optional)",
   "description": "Description",
   "descriptionPlaceholder": "Details about the account (optional)",
-  "initialBalance": "Initial Balance ($)",
-  "initialBalancePlaceholder": "0.00",
+  "currentBalance": "Current Balance ($)",
+  "currentBalancePlaceholder": "0.00",
   "cancel": "Cancel",
   "saveAccount": "Save Account",
   "saveChanges": "Save Changes",
@@ -69,6 +69,7 @@
   "noCategoriesRegistered": "No categories registered",
 
   "transactionAccount": "Account",
+  "mandatoryTransactionAccount": "Account *",
   "selectAccount": "Select an account",
   "transactionType": "Transaction Type",
   "transactionDate": "Date",
@@ -217,5 +218,20 @@
   "preferredLanguage": "Preferred Language",
   "languagePt": "Portuguese",
   "languageEn": "English",
-  "languageEs": "Spanish"
+  "languageEs": "Spanish",
+
+  "categoryInternalName": "Internal Name",
+  "categoryInternalNameHint": "Identifier used during statement imports. Change the Name above to something more readable; the Internal Name stays fixed so re-imports find this category automatically.",
+  "internalNameChangeWarning": "Warning: changing the Internal Name may cause issues with future statement imports, as the system may not recognize this category. Only change it if you know what you are doing.",
+
+  "statementImport": "Import Statement",
+  "statementImportHint": "Currently only Sicredi bank statements are officially supported. Other bank statements may not work correctly.",
+  "importFile": "Statement PDF file *",
+  "dragDropFile": "Drag & drop the PDF file here, or click to select",
+  "importBtn": "Import Transactions",
+  "noFileSelected": "Please select a PDF file to import.",
+  "fileSelected": "File selected: {name}",
+  "importSuccess": "{count} transaction(s) imported successfully!",
+  "viewImported": "View Records",
+  "importError": "Error importing statement. Please verify the file is a valid PDF."
 }

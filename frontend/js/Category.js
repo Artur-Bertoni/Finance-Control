@@ -1,4 +1,4 @@
-import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -12,6 +12,11 @@ export function init() {
     const urlParams  = new URLSearchParams(globalThis.location.search)
     const categoryId = urlParams.get('id')
 
+    const nameInput         = document.getElementById('name-input')
+    const internalNameInput = document.getElementById('internal-name-input')
+    let originalInternalName       = null
+    let internalNameManuallyEdited = false
+
     if (categoryId) {
         const saveBtn = document.getElementById('save-btn')
         if (saveBtn) {
@@ -22,8 +27,10 @@ export function init() {
         const response = doRequest(`/api/categories/${categoryId}`, 'GET')
         if (response?.id !== undefined) {
             const cat = Category.processCategory(response)
-            document.getElementById('name-input').value        = cat.name ?? ''
+            nameInput.value         = cat.name ?? ''
             document.getElementById('description-input').value = cat.description ?? ''
+            internalNameInput.value = cat.internalName ?? cat.name ?? ''
+            originalInternalName    = internalNameInput.value
 
             setBreadcrumb([
                 { i18nKey: 'categories', url: '/pages/CategoryDashboard.html' },
@@ -42,6 +49,15 @@ export function init() {
                 })
             })
         }
+    } else {
+        nameInput.addEventListener('input', () => {
+            if (!internalNameManuallyEdited) {
+                internalNameInput.value = nameInput.value
+            }
+        })
+        internalNameInput.addEventListener('input', () => {
+            internalNameManuallyEdited = true
+        })
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
@@ -57,24 +73,36 @@ export function init() {
             return
         }
 
-        const body = {
-            name:        document.getElementById('name-input').value,
-            description: document.getElementById('description-input').value || null
+        const currentInternalName = internalNameInput.value.trim() || nameInput.value.trim()
+        const internalNameChanged  = categoryId && originalInternalName !== null && currentInternalName !== originalInternalName
+
+        function doSave() {
+            const body = {
+                name:         nameInput.value,
+                description:  document.getElementById('description-input').value || null,
+                internalName: currentInternalName
+            }
+
+            $.ajax({
+                url:         categoryId ? `/api/categories/${categoryId}` : '/api/categories',
+                type:        categoryId ? 'PUT' : 'POST',
+                async:       false,
+                contentType: 'application/json',
+                data:        JSON.stringify(body),
+                success:     function () {
+                    clearDirtyGuard()
+                    const msg = categoryId ? I18n.t('categoryUpdatedSuccess') : I18n.t('categoryCreatedSuccess')
+                    navigateWithToast('/pages/CategoryDashboard.html', msg, 'success')
+                },
+                error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
+            })
         }
 
-        $.ajax({
-            url:         categoryId ? `/api/categories/${categoryId}` : '/api/categories',
-            type:        categoryId ? 'PUT' : 'POST',
-            async:       false,
-            contentType: 'application/json',
-            data:        JSON.stringify(body),
-            success:     function () {
-                clearDirtyGuard()
-                const msg = categoryId ? I18n.t('categoryUpdatedSuccess') : I18n.t('categoryCreatedSuccess')
-                navigateWithToast('/pages/CategoryDashboard.html', msg, 'success')
-            },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
-        })
+        if (internalNameChanged) {
+            showConfirm(I18n.t('internalNameChangeWarning'), doSave, I18n.t('confirmAction'))
+        } else {
+            doSave()
+        }
     })
 
     setupDirtyGuard()

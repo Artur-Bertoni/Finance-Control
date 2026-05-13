@@ -15,4 +15,7 @@ public class Category {
 
     private String name;
     private String description;
+
+    @Column(name = "internal_name")
+    private String internalName;
 }

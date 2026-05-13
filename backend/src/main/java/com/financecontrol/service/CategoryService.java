@@ -29,18 +29,33 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse create(Long userId, CategoryRequest req) {
-        Category c = new Category(null, userId, req.name(), req.description());
+        String internalName = (req.internalName() != null && !req.internalName().isBlank())
+                ? req.internalName() : req.name();
+        Category c = new Category(null, userId, req.name(), req.description(), internalName);
         return CategoryResponse.from(categoryRepository.save(c));
     }
 
     @Transactional
     public CategoryResponse update(@NonNull Long id, CategoryRequest req) {
         Category c = getOrThrow(id);
-
         c.setName(req.name());
         c.setDescription(req.description());
-
+        if (req.internalName() != null && !req.internalName().isBlank()) {
+            c.setInternalName(req.internalName());
+        }
         return CategoryResponse.from(categoryRepository.save(c));
+    }
+
+    // Used by the statement import: finds an existing category by its internal name or
+    // creates a new one (with name = internalName) if none exists yet.
+    @Transactional
+    public Category findOrCreateByInternalName(Long userId, String internalName) {
+        return categoryRepository.findByUserIdAndInternalName(userId, internalName)
+                .orElseGet(() -> {
+                    String name = internalName.length() > 500 ? internalName.substring(0, 500) : internalName;
+                    Category c = new Category(null, userId, name, null, internalName);
+                    return categoryRepository.save(c);
+                });
     }
 
     @Transactional

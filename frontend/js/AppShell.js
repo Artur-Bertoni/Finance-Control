@@ -7,6 +7,7 @@ const routes = {
     '/pages/Transaction.html':                       () => import('./Transaction.js'),
     '/pages/TransactionView.html':                   () => import('./TransactionView.js'),
     '/pages/Transfer.html':                          () => import('./Transfer.js'),
+    '/pages/StatementImport.html':                   () => import('./StatementImport.js'),
     '/pages/Account.html':                           () => import('./Account.js'),
     '/pages/AccountView.html':                       () => import('./AccountView.js'),
     '/pages/AccountDashboard.html':                  () => import('./AccountDashboard.js'),

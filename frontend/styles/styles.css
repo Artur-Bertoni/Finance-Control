@@ -303,7 +303,8 @@ button { font-family: inherit; }
   gap: 24px;
 }
 
-.detail-field label {
+.detail-field label,
+.detail-field .detail-label {
   display: block;
   font-size: 11px;
   font-weight: 600;
@@ -1203,6 +1204,84 @@ body.user-guest .toast-container {
 /* ===== QUICK-ADD MODAL ===== */
 .quick-add-card { max-width: 460px !important; }
 .quick-add-fields { margin: 16px 0; display: flex; flex-direction: column; gap: 14px; }
+
+/* ===== STATEMENT IMPORT ===== */
+.file-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t);
+  background: var(--surface-2);
+  text-align: center;
+}
+.file-drop-zone:hover,
+.file-drop-zone.drag-over {
+  border-color: var(--primary-400);
+  background: var(--primary-50);
+}
+.file-drop-zone svg {
+  width: 32px;
+  height: 32px;
+  color: var(--text-muted);
+}
+.file-drop-zone.drag-over svg { color: var(--primary); }
+.file-drop-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.file-drop-zone.has-file { border-style: solid; border-color: var(--primary-400); }
+.file-drop-zone.has-file .file-drop-text { color: var(--primary); font-weight: 500; }
+
+.info-hint-btn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--t);
+  flex-shrink: 0;
+}
+.info-hint-btn:hover { color: var(--primary-500); }
+.info-hint-btn svg { width: 15px; height: 15px; }
+.info-hint-btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 8px 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: normal;
+  width: max-content;
+  max-width: 260px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+.info-hint-btn[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.import-result-card { margin-top: 0; }
+.import-result-card p { line-height: 1.7; }
 
 /* ===== USER GUEST MODE ===== */
 body.user-guest .sidebar,

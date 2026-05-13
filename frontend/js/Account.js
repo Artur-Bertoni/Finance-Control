@@ -87,7 +87,7 @@ function handleSave(accountId) {
     const fieldLabels = {
         'name-input':                  I18n.t('accountName'),
         'financial-institution-input': I18n.t('financialInstitution'),
-        'balance-input':               I18n.t('initialBalance')
+        'balance-input':               I18n.t('currentBalance')
     }
 
     const emptyFields = validateRequiredFields(

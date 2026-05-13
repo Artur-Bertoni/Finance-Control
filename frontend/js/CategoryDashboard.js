@@ -48,15 +48,18 @@ function renderList() {
         const card = document.createElement('div')
         card.className = 'item-card'
         card.addEventListener('click', () => navigate(`/pages/CategoryView.html?id=${cat.id}`))
-        const metaHtml = cat.description
-            ? `<div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
+        const description = cat.description
+            ? `</br><div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
             : ''
         card.innerHTML = `
             <div class="item-card-header">
                 <span class="item-card-name">${cat.name}</span>
                 <span class="item-card-badge"></span>
             </div>
-            ${metaHtml}`
+            <div class="item-card-meta">
+                <span class="item-card-row">${cat.internalName}</span>
+            </div>
+            ${description}`
         list.appendChild(card)
     }
 }

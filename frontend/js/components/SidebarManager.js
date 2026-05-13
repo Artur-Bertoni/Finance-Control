@@ -71,7 +71,12 @@ export class SidebarManager {
         })
 
         document.querySelectorAll('[data-i18n-title]').forEach(el => {
-            el.title = I18n.t(el.dataset.i18nTitle)
+            const text = I18n.t(el.dataset.i18nTitle)
+            if (el.classList.contains('info-hint-btn')) {
+                el.dataset.tooltip = text
+            } else {
+                el.title = text
+            }
         })
 
         document.querySelectorAll('[data-i18n-aria]').forEach(el => {
@@ -144,6 +149,7 @@ export class SidebarManager {
             'CategoryDashboard.html': 'categories',
             'FinancialInstitutionDashboard.html': 'institutions',
             'TransactionLocaleDashboard.html': 'locations',
+            'StatementImport.html': 'statementImport',
             'UserView.html': 'profile'
         }
 

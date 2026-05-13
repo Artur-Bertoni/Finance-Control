@@ -52,8 +52,8 @@
   "contactPlaceholder": "Telefone ou e-mail de contato (opcional)",
   "description": "Descrição",
   "descriptionPlaceholder": "Detalhes sobre a conta (opcional)",
-  "initialBalance": "Saldo Inicial ($)",
-  "initialBalancePlaceholder": "0,00",
+  "currentBalance": "Saldo Atual ($)",
+  "currentBalancePlaceholder": "0,00",
   "cancel": "Cancelar",
   "saveAccount": "Salvar Conta",
   "saveChanges": "Salvar Alterações",
@@ -69,6 +69,7 @@
   "noCategoriesRegistered": "Nenhuma categoria cadastrada",
 
   "transactionAccount": "Conta",
+  "mandatoryTransactionAccount": "Conta *",
   "selectAccount": "Selecione a conta",
   "transactionType": "Tipo de Transação",
   "transactionDate": "Data",
@@ -217,5 +218,20 @@
   "preferredLanguage": "Idioma Preferido",
   "languagePt": "Português",
   "languageEn": "English",
-  "languageEs": "Español"
+  "languageEs": "Español",
+
+  "categoryInternalName": "Nome Interno",
+  "categoryInternalNameHint": "Identificador usado na importação de extratos. Altere o Nome acima para um nome mais legível; o Nome Interno permanece fixo para que reimportações encontrem esta categoria automaticamente.",
+  "internalNameChangeWarning": "Atenção: alterar o Nome Interno pode causar problemas em futuras importações de extratos, pois o sistema pode não reconhecer esta categoria. Altere-o apenas se souber o que está fazendo.",
+
+  "statementImport": "Importar Extrato",
+  "statementImportHint": "Atualmente há suporte oficial apenas para extratos do banco Sicredi. Extratos de outros bancos podem não funcionar corretamente.",
+  "importFile": "Arquivo PDF do extrato *",
+  "dragDropFile": "Arraste e solte o arquivo PDF aqui, ou clique para selecionar",
+  "importBtn": "Importar Transações",
+  "noFileSelected": "Selecione um arquivo PDF para importar.",
+  "fileSelected": "Arquivo selecionado: {name}",
+  "importSuccess": "{count} transação(ões) importada(s) com sucesso!",
+  "viewImported": "Visualizar Cadastros",
+  "importError": "Erro ao importar extrato. Verifique se o arquivo é um PDF válido."
 }

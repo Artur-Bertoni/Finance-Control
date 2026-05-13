@@ -1,10 +1,11 @@
 import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Category {
-    constructor(id, name, description) {
+    constructor(id, name, description, internalName) {
         this.id = id
         this.name = name
         this.description = description
+        this.internalName = internalName ?? null
     }
 
     static addCategories(elementId) {
@@ -15,7 +16,8 @@ export class Category {
         return new Category(
             Number(data.id),
             data.name,
-            data.description ?? ''
+            data.description ?? '',
+            data.internalName ?? null
         )
     }
 }

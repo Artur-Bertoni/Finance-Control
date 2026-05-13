@@ -156,7 +156,7 @@ function setupQuickAddButtons() {
                     buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
                   }
                 },
-                { id: 'balance', label: I18n.t('initialBalance'), type: 'number', placeholder: '0.00', step: '0.01' }
+                { id: 'balance', label: I18n.t('currentBalance'), type: 'number', placeholder: '0.00', step: '0.01' }
             ],
             buildBody: v => ({
                 name: v.name, financialInstitutionId: Number(v.fiId),

@@ -28,6 +28,11 @@ export function init() {
         descEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
     }
 
+    if (cat.internalName) {
+        document.getElementById('detail-internal-name').textContent = cat.internalName
+        document.getElementById('internal-name-row').style.display = ''
+    }
+
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Category.html?id=${categoryId}`)
     )
