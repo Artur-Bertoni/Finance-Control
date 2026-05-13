@@ -29,5 +29,8 @@ logs/
 Thumbs.db
 desktop.ini
 
-# SQL generated files
+# ── SQL generated files ───────────────────────────────────────────────────────
 sql/
+
+# ── Arquivos Locais ───────────────────────────────────────────────────────────
+TODO.js
