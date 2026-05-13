@@ -45,15 +45,17 @@ public class EmailService {
     public void sendWeeklyReminder(User user) {
         Locale locale = resolveLocale(user.getLanguage());
         try {
-            String subject  = msg("email.weekly.subject", null, locale);
-            String greeting = msg("email.weekly.greeting", new Object[]{user.getUsername()}, locale);
-            String question = msg("email.weekly.question", null, locale);
-            String body     = msg("email.weekly.body",     null, locale);
-            String cta      = msg("email.weekly.cta",      null, locale);
-            String footer   = msg("email.weekly.footerPrefix",    null, locale);
+            String subject  = msg("email.weekly.subject",      null, locale);
+            String subtitle = msg("email.weekly.subtitle",     null, locale);
+            String greeting = msg("email.weekly.greeting",     new Object[]{user.getUsername()}, locale);
+            String question = msg("email.weekly.question",     null, locale);
+            String body     = msg("email.weekly.body",         null, locale);
+            String cta      = msg("email.weekly.cta",          null, locale);
+            String footer   = msg("email.weekly.footerPrefix", null, locale);
             String profile  = msg("email.weekly.profileLinkText", null, locale);
 
             String html = loadTemplate()
+                    .replace("{{emailSubtitle}}",         subtitle)
                     .replace("{{emailGreeting}}",         greeting)
                     .replace("{{emailQuestion}}",         question)
                     .replace("{{emailBody}}",             body)
