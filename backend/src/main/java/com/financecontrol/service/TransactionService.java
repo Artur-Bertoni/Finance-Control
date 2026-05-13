@@ -38,6 +38,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public TransactionResponse create(Long userId, TransactionRequest req) {
         applyBalanceDelta(req.accountId(), req.type(), req.value());
         return TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));
@@ -61,10 +62,12 @@ public class TransactionService {
     }
 
     @NonNull
+    @SuppressWarnings("null")
     Transaction getOrThrow(@NonNull Long id) {
         return transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
+    @SuppressWarnings("null")
     private TransactionResponse updateOne(@NonNull Long id, Long userId, TransactionRequest req) {
         Transaction existing = getOrThrow(id);
 
@@ -97,6 +100,7 @@ public class TransactionService {
         return TransactionResponse.from(transactionRepository.save(existing));
     }
 
+    @SuppressWarnings("null")
     private void deleteOne(@NonNull Long id) {
         Transaction t = getOrThrow(id);
         double revert = TYPE_CREDIT == t.getType() ? -t.getValue() : t.getValue();
@@ -124,6 +128,7 @@ public class TransactionService {
 
     private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
 
+    @SuppressWarnings("null")
     private TransactionDeps loadDeps(TransactionRequest req) {
         Account account = accountRepository.findById(req.accountId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));

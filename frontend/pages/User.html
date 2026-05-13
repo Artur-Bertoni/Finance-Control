@@ -48,6 +48,51 @@
             <button class="btn btn-secondary" type="button" id="password-edit-btn" data-i18n="changePassword">Alterar Senha</button>
           </div>
         </div>
+
+        <div id="notification-section" style="display:none">
+          <div class="section-divider">
+            <span data-i18n="emailNotifications">Notificações por E-mail</span>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="notification-enabled-input" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
+              <div class="toggle-switch">
+                <input type="checkbox" id="notification-enabled-input" class="toggle-input">
+                <span class="toggle-track" role="presentation">
+                  <span class="toggle-thumb"></span>
+                </span>
+                <span class="toggle-label" id="notification-enabled-label" data-i18n="enabled">Ativado</span>
+              </div>
+            </div>
+            <div class="field" id="field-notification-day">
+              <label for="notification-day-input" data-i18n="notificationDayLabel">Dia preferido para receber</label>
+              <select id="notification-day-input">
+                <option value="1" data-i18n="monday">Segunda-feira</option>
+                <option value="2" data-i18n="tuesday">Terça-feira</option>
+                <option value="3" data-i18n="wednesday">Quarta-feira</option>
+                <option value="4" data-i18n="thursday">Quinta-feira</option>
+                <option value="5" data-i18n="friday" selected>Sexta-feira</option>
+                <option value="6" data-i18n="saturday">Sábado</option>
+                <option value="7" data-i18n="sunday">Domingo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-divider">
+            <span data-i18n="preferredLanguage">Idioma Preferido</span>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="language-select" data-i18n="preferredLanguage">Idioma Preferido</label>
+              <select id="language-select">
+                <option value="pt" data-i18n="languagePt">Português</option>
+                <option value="en" data-i18n="languageEn">English</option>
+                <option value="es" data-i18n="languageEs">Español</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
         <div class="form-actions">
           <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
           <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="saveProfile">Salvar Perfil</button>

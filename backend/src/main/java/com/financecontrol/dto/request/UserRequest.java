@@ -4,5 +4,8 @@ public record UserRequest(
     String username,
     String email,
     String password,
-    String passwordConfirmation
+    String passwordConfirmation,
+    Boolean emailNotificationEnabled,
+    Integer emailNotificationDay,
+    String language
 ) {}

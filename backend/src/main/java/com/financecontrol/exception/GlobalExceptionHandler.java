@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneral(Exception e) {
-        log.error("Unexpected error", e);
+        log.error("Erro inesperado: ", e);
         return error(HttpStatus.INTERNAL_SERVER_ERROR, "error.internal");
     }
 }

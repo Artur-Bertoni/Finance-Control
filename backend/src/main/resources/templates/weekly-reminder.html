@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#F3F6F3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F3F6F3;padding:40px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table width="560" cellpadding="0" cellspacing="0"
+               style="background-color:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1A2B1B;padding:24px 40px;text-align:center;">
+              <p style="margin:0 0 2px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#A5D6A7;">
+                Finance Control
+              </p>
+              <p style="margin:0;font-size:20px;font-weight:700;color:#FFFFFF;letter-spacing:-0.3px;">
+                💸 Controle Financeiro Pessoal
+              </p>
+            </td>
+          </tr>
+
+          <!-- Accent bar -->
+          <tr>
+            <td style="background-color:#2E7D32;height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 40px 28px;">
+
+              <p style="margin:0 0 6px;font-size:15px;color:#4B5563;">
+                {{emailGreeting}}
+              </p>
+
+              <p style="margin:0 0 24px;font-size:22px;font-weight:700;color:#111827;line-height:1.35;">
+                {{emailQuestion}}
+              </p>
+
+              <p style="margin:0 0 32px;font-size:14px;color:#4B5563;line-height:1.7;">
+                {{emailBody}}
+              </p>
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#2E7D32;border-radius:10px;">
+                    <a href="{{baseUrl}}/pages/HomePage.html"
+                       style="display:inline-block;padding:13px 28px;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:0.01em;">
+                      {{emailCtaLabel}}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 40px;">
+              <div style="border-top:1px solid #E5E7EB;"></div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px 28px;">
+              <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.7;">
+                {{emailFooterPrefix}}
+                <a href="{{baseUrl}}/pages/User.html"
+                   style="color:#4CAF50;text-decoration:none;">{{emailProfileLinkText}}</a>.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

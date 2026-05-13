@@ -41,6 +41,10 @@ document.getElementById('login-btn').addEventListener('click', function () {
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
         success: function () {
+            $.ajax({
+                url: '/api/auth/me', type: 'GET', async: false,
+                success: function (user) { I18n.setLanguage(user.language || 'pt') }
+            })
             globalThis.location.href = '/pages/AppShell.html'
         },
         error: function (xhr) {

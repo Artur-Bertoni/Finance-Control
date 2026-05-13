@@ -23,6 +23,7 @@ public class I18nConfig {
     }
 
     @Bean
+    @SuppressWarnings("null")
     LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
         resolver.setDefaultLocale(Locale.forLanguageTag("pt"));

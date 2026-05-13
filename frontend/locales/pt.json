@@ -191,5 +191,29 @@
   "leaveAnyway": "Sair mesmo assim",
   "clearFilters": "Limpar filtros",
   "clearSelection": "Limpar seleção",
-  "searchByName": "Buscar por nome"
+  "searchByName": "Buscar por nome",
+
+  "personalData": "Dados Pessoais",
+  "emailNotifications": "Notificações por E-mail",
+  "weeklyReminderLabel": "Lembrete semanal de lançamentos",
+  "notificationDayLabel": "Dia preferido para receber",
+  "enabled": "Ativado",
+  "disabled": "Desativado",
+  "monday": "Segunda-feira",
+  "tuesday": "Terça-feira",
+  "wednesday": "Quarta-feira",
+  "thursday": "Quinta-feira",
+  "friday": "Sexta-feira",
+  "saturday": "Sábado",
+  "sunday": "Domingo",
+
+  "adminTools": "Ferramentas de Admin",
+  "sendTestEmail": "Enviar E-mail de Teste",
+  "testEmailSent": "E-mail de teste enviado com sucesso!",
+  "errorSendingTestEmail": "Erro ao enviar e-mail de teste.",
+
+  "preferredLanguage": "Idioma Preferido",
+  "languagePt": "Português",
+  "languageEn": "English",
+  "languageEs": "Español"
 }

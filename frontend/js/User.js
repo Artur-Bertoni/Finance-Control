@@ -92,17 +92,25 @@ function handleSave() {
             return
         }
 
+        const selectedLanguage = document.getElementById('language-select').value
         $.ajax({
             url:         `/api/users/${currentUser.id}`,
             type:        'PUT',
             async:       false,
             contentType: 'application/json',
             data:        JSON.stringify({
-                username: document.getElementById('username-input').value,
-                email:    document.getElementById('email-input').value
+                username:                   document.getElementById('username-input').value,
+                email:                      document.getElementById('email-input').value,
+                emailNotificationEnabled:   document.getElementById('notification-enabled-input').checked,
+                emailNotificationDay:       Number.parseInt(document.getElementById('notification-day-input').value, 10),
+                language:                   selectedLanguage
             }),
-            success: function () { clearDirtyGuard(); navigate('/pages/UserView.html') },
-            error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error') }
+            success: function () {
+                clearDirtyGuard()
+                I18n.setLanguage(selectedLanguage)
+                navigate('/pages/UserView.html')
+            },
+            error: function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error') }
         })
     }
 }
@@ -142,6 +150,7 @@ function loadUserData() {
             document.getElementById('email-input').value    = user.email    ?? ''
 
             setupEditPasswordMode(user.id)
+            setupNotificationSection(user)
 
             const logoutBtn = document.createElement('button')
             logoutBtn.className = 'btn btn-ghost btn-sm'
@@ -169,6 +178,35 @@ function setupEditPasswordMode(userId) {
     document.getElementById('field-password-confirm').style.display = 'none'
     document.getElementById('field-change-password').style.display  = ''
     document.getElementById('password-edit-btn').addEventListener('click', () => showPasswordChangeModal(userId))
+}
+
+function setupNotificationSection(user) {
+    const section = document.getElementById('notification-section')
+    section.style.display = ''
+
+
+    const checkbox = document.getElementById('notification-enabled-input')
+    const daySelect = document.getElementById('notification-day-input')
+    const label     = document.getElementById('notification-enabled-label')
+
+    checkbox.checked = user.emailNotificationEnabled
+    daySelect.value  = user.emailNotificationDay ?? 5
+    updateNotificationLabel(label, checkbox.checked)
+
+    const langSelect = document.getElementById('language-select')
+    langSelect.value = user.language ?? 'pt'
+
+    // clicking the track toggles the checkbox
+    document.querySelector('.toggle-track').addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked
+        updateNotificationLabel(label, checkbox.checked)
+    })
+    checkbox.addEventListener('change', () => updateNotificationLabel(label, checkbox.checked))
+}
+
+function updateNotificationLabel(label, checked) {
+    label.dataset.i18n = checked ? 'enabled' : 'disabled'
+    label.textContent  = I18n.t(checked ? 'enabled' : 'disabled')
 }
 
 function showPasswordChangeModal(userId) {

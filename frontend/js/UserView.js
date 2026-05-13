@@ -21,6 +21,23 @@ export function init() {
     document.getElementById('detail-username').textContent = user.username
     document.getElementById('detail-email').textContent    = user.email
 
+    renderNotificationFields(user)
+    I18n.onChange(() => renderNotificationFields(user))
+
+    if (user.admin) {
+        document.getElementById('admin-section-header').style.display = ''
+        document.getElementById('admin-section-grid').style.display = ''
+        document.getElementById('send-test-email-btn').addEventListener('click', () => {
+            $.ajax({
+                url:   '/api/admin/email/send-test',
+                type:  'POST',
+                async: false,
+                success: () => showToast(I18n.t('testEmailSent'), 'success'),
+                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSendingTestEmail'), 'error')
+            })
+        })
+    }
+
     const actionsEl = document.getElementById('header-actions')
 
     const logoutBtn = document.createElement('button')
@@ -50,6 +67,21 @@ export function init() {
             })
         }, I18n.t('deleteAccountTitle'))
     })
+}
+
+const DAY_KEYS  = ['', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+const LANG_KEYS = { pt: 'languagePt', en: 'languageEn', es: 'languageEs' }
+
+function renderNotificationFields(user) {
+    const statusEl = document.getElementById('detail-notification-status')
+    if (!statusEl) return
+    const enabled = user.emailNotificationEnabled
+    statusEl.textContent = I18n.t(enabled ? 'enabled' : 'disabled')
+    statusEl.className   = `tx-badge ${enabled ? 'enabled' : 'disabled'}`
+    document.getElementById('detail-notification-day').textContent =
+        I18n.t(DAY_KEYS[user.emailNotificationDay] ?? 'notInformed')
+    document.getElementById('detail-language').textContent =
+        I18n.t(LANG_KEYS[user.language] ?? 'notInformed')
 }
 
 if (!globalThis.__appRouter) init()

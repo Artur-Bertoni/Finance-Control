@@ -44,7 +44,14 @@ public class UserService {
         if (!req.password().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");
 
-        User user = new User(null, req.username(), req.email(), passwordEncoder.encode(req.password()));
+        User user = new User();
+        user.setUsername(req.username());
+        user.setEmail(req.email());
+        user.setPassword(passwordEncoder.encode(req.password()));
+        user.setEmailNotificationEnabled(true);
+        user.setEmailNotificationDay(5);
+        user.setLanguage("pt");
+        user.setAdmin(false);
         return UserResponse.from(userRepository.save(user));
     }
 
@@ -57,6 +64,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
         user.setUsername(req.username());
         user.setEmail(req.email());
+        if (req.emailNotificationEnabled() != null)
+            user.setEmailNotificationEnabled(req.emailNotificationEnabled());
+        if (req.emailNotificationDay() != null)
+            user.setEmailNotificationDay(req.emailNotificationDay());
+        if (req.language() != null)
+            user.setLanguage(req.language());
         return UserResponse.from(userRepository.save(user));
     }
 

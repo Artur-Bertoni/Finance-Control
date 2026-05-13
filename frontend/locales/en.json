@@ -191,5 +191,29 @@
   "leaveAnyway": "Leave Anyway",
   "clearFilters": "Clear filters",
   "clearSelection": "Clear selection",
-  "searchByName": "Search by name"
+  "searchByName": "Search by name",
+
+  "personalData": "Personal Data",
+  "emailNotifications": "Email Notifications",
+  "weeklyReminderLabel": "Weekly transaction reminder",
+  "notificationDayLabel": "Preferred day to receive",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+
+  "adminTools": "Admin Tools",
+  "sendTestEmail": "Send Test Email",
+  "testEmailSent": "Test email sent successfully!",
+  "errorSendingTestEmail": "Error sending test email.",
+
+  "preferredLanguage": "Preferred Language",
+  "languagePt": "Portuguese",
+  "languageEn": "English",
+  "languageEs": "Spanish"
 }

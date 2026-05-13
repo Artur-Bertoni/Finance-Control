@@ -25,6 +25,10 @@
 
     <main class="page-content">
       <div class="detail-card">
+
+        <div class="section-divider section-divider--first">
+          <span data-i18n="personalData">Dados Pessoais</span>
+        </div>
         <div class="detail-grid">
           <div class="detail-field">
             <label for="detail-username" data-i18n="username">Nome de Usuário</label>
@@ -33,6 +37,35 @@
           <div class="detail-field">
             <label for="detail-email" data-i18n="emailAddress">E-mail</label>
             <p id="detail-email">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-language" data-i18n="preferredLanguage">Idioma Preferido</label>
+            <p id="detail-language">—</p>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <span data-i18n="emailNotifications">Notificações por E-mail</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label for="detail-notification-status" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
+            <p><span id="detail-notification-status" class="tx-badge">—</span></p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-notification-day" data-i18n="notificationDayLabel">Dia preferido para receber</label>
+            <p id="detail-notification-day">—</p>
+          </div>
+        </div>
+
+        <div id="admin-section-header" class="section-divider" style="display:none">
+          <span data-i18n="adminTools">Ferramentas de Admin</span>
+        </div>
+        <div id="admin-section-grid" class="detail-grid" style="display:none">
+          <div class="detail-field">
+            <button class="btn btn-secondary btn-sm" type="button" id="send-test-email-btn" data-i18n="sendTestEmail">
+              Enviar E-mail de Teste
+            </button>
           </div>
         </div>
       </div>

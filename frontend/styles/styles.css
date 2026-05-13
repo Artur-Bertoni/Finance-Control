@@ -828,6 +828,8 @@ textarea.field-error {
 .tx-badge.debit       { background-color: var(--debit-bg);       color: var(--debit); }
 .tx-badge.credit      { background-color: var(--credit-bg);      color: var(--credit); }
 .tx-badge.installment { background-color: var(--installment-bg); color: var(--installment); }
+.tx-badge.enabled     { background-color: var(--success-bg);     color: var(--success); }
+.tx-badge.disabled    { background-color: var(--border);         color: var(--text-muted); }
 
 .tx-value {
   font-size: 15px;
@@ -1712,6 +1714,76 @@ span.flatpickr-weekday {
 
 .language-option .flag-icon {
   font-size: 20px;
+}
+
+/* ===== SECTION DIVIDER ===== */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 24px 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.section-divider--plain::after  { display: none; }
+.section-divider--first { margin-top: 0; }
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.toggle-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 44px;
+  height: 24px;
+  background: var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--t);
+  flex-shrink: 0;
+}
+.toggle-input:checked + .toggle-track {
+  background: var(--primary-500);
+}
+.toggle-thumb {
+  position: absolute;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--t);
+}
+.toggle-input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(20px);
+}
+.toggle-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  user-select: none;
 }
 
 /* ===== DASHBOARD PAGES — STATIC LAYOUT ===== */
