@@ -1,2 +1,0 @@
---liquibase formatted sql
---includeAll path:changelog relativeToChangelogFile:true
