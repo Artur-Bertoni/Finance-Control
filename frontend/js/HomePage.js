@@ -119,7 +119,7 @@ function loadTransactions(data) {
     try {
         for (const el of data) transactions.push(Transaction.processTransaction(el))
     } catch (e) {
-        console.log('Erro ao carregar transações:', e)
+        console.error('Erro ao carregar transações:', e)
     }
     return transactions
 }

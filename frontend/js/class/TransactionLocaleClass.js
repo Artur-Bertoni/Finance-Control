@@ -1,4 +1,4 @@
-﻿import {doRequest} from "../../utils/FrontendFunctions.js"
+import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class TransactionLocale {
     constructor(id, name, address) {
@@ -8,16 +8,7 @@ export class TransactionLocale {
     }
 
     static addTransactionLocales(elementId) {
-        let transactionLocales = doRequest('/api/transaction-locales', 'GET') ?? []
-
-        let transactionLocaleList = document.getElementById(elementId)
-        for (const element of transactionLocales) {
-            let locale = this.processTransactionLocale(element)
-            let option = document.createElement('option')
-            option.value = locale.id
-            option.innerText = locale.name
-            transactionLocaleList.appendChild(option)
-        }
+        populateSelect(elementId, '/api/transaction-locales')
     }
 
     static processTransactionLocale(data) {

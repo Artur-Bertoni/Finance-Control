@@ -14,7 +14,7 @@ export function init() {
 
     const tx = Transaction.processTransaction(response)
 
-    const label = formatTxLabel(tx)
+    const label = Transaction.formatLabel(tx)
 
     setBreadcrumb([
         { i18nKey: 'movements', url: '/pages/HomePage.html' },
@@ -75,12 +75,6 @@ export function init() {
             })
         })
     })
-}
-
-function formatTxLabel(tx) {
-    const d = new Date(tx.date)
-    const dateStr = `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
-    return `${tx.category} – ${dateStr}`
 }
 
 if (!globalThis.__appRouter) init()

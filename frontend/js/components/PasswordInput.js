@@ -1,16 +1,6 @@
-/**
- * Componente de Input de Senha com Toggle de Visibilidade
- * Substitui a lógica repetida de mostrar/ocultar senha em vários lugares
- */
-
 import { Icons } from '../icons/IconLibrary.js'
 
 export class PasswordInput {
-    /**
-     * Inicializa o toggle de visibilidade para um input de senha
-     * @param {string} inputId - ID do input de senha
-     * @param {string} buttonId - ID do botão de toggle
-     */
     static setupToggle(inputId, buttonId) {
         const initialize = () => {
             const input = document.getElementById(inputId)
@@ -47,9 +37,6 @@ export class PasswordInput {
         }
     }
 
-    /**
-     * Alterna entre mostrar e esconder a senha
-     */
     static toggleVisibility(input, button) {
         if (input.type === 'password') {
             PasswordInput.setVisible(input, button)
@@ -58,27 +45,17 @@ export class PasswordInput {
         }
     }
 
-    /**
-     * Faz a senha ficar visível
-     */
     static setVisible(input, button) {
         input.type = 'text'
         const iconSvg = Icons.eyeClosed()
-        if (iconSvg) {
-            button.innerHTML = iconSvg
-        }
+        if (iconSvg) button.innerHTML = iconSvg
         button.setAttribute('aria-label', 'Ocultar senha')
     }
 
-    /**
-     * Faz a senha ficar escondida
-     */
     static setHidden(input, button) {
         input.type = 'password'
         const iconSvg = Icons.eyeOpen()
-        if (iconSvg) {
-            button.innerHTML = iconSvg
-        }
+        if (iconSvg) button.innerHTML = iconSvg
         button.setAttribute('aria-label', 'Mostrar senha')
     }
 }

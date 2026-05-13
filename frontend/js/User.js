@@ -160,25 +160,7 @@ function loadUserData() {
                 { i18nKey: 'edit' }
             ])
         },
-        error: function () {
-            ThemeManager.initialize()
-            document.body.classList.add('user-guest')
-
-            const main   = document.querySelector('.page-content')
-            const header = document.createElement('div')
-            header.className = 'guest-form-header'
-            header.innerHTML = `<img src="../images/logo.png" alt="Finance Control"><h1 data-i18n="createAccount">${I18n.t('createAccount')}</h1><p data-i18n="guestFormHeader">${I18n.t('guestFormHeader')}</p>`
-            main.insertBefore(header, main.firstChild)
-
-            const titleEl = document.getElementById('page-title-text')
-            if (titleEl) { titleEl.dataset.i18n = 'createAccount'; titleEl.textContent = I18n.t('createAccount') }
-
-            const saveBtn = document.getElementById('save-btn')
-            if (saveBtn) { saveBtn.dataset.i18n = 'createAccount'; saveBtn.textContent = I18n.t('createAccount') }
-
-            const cancelBtn = document.getElementById('cancel-btn')
-            if (cancelBtn) { cancelBtn.dataset.i18n = 'backToLogin'; cancelBtn.textContent = I18n.t('backToLogin') }
-        }
+        error: showGuestForm
     })
 }
 

@@ -1,4 +1,4 @@
-import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, addOptionToSelect, clearDirtyGuard, doRequest, navigate, navigateWithToast, selectOptionByText, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { Category } from './class/CategoryClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
@@ -57,7 +57,7 @@ function loadEditMode(transactionId) {
 
     setBreadcrumb([
         { i18nKey: 'movements', url: '/pages/HomePage.html' },
-        { label: formatTxLabel(tx), url: `/pages/TransactionView.html?id=${transactionId}` },
+        { label: Transaction.formatLabel(tx), url: `/pages/TransactionView.html?id=${transactionId}` },
         { i18nKey: 'edit' }
     ])
 
@@ -191,28 +191,6 @@ function setupQuickAddButtons() {
             onSuccess: item => addOptionToSelect('transaction-locale-input', item.id, item.name)
         })
     })
-}
-
-function formatTxLabel(tx) {
-    const d = new Date(tx.date)
-    const dateStr = `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
-    return `${tx.category} – ${dateStr}`
-}
-
-function selectOptionByText(selectId, text) {
-    for (const opt of document.getElementById(selectId).options) {
-        if (opt.innerText === text) { opt.selected = true; break }
-    }
-}
-
-function addOptionToSelect(selectId, value, label) {
-    const sel = document.getElementById(selectId)
-    if (!sel) return
-    const opt = document.createElement('option')
-    opt.value = value
-    opt.text  = label
-    sel.appendChild(opt)
-    sel.value = value
 }
 
 if (!globalThis.__appRouter) init()

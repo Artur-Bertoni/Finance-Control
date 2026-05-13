@@ -1,4 +1,4 @@
-﻿import {doRequest} from "../../utils/FrontendFunctions.js"
+import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class FinancialInstitution {
     constructor(id, name, address, contact) {
@@ -8,17 +8,8 @@ export class FinancialInstitution {
         this.contact = contact
     }
 
-    static addFinancialInstitutions() {
-        let financialInstitutions = doRequest('/api/financial-institutions', 'GET') ?? []
-
-        let financialInstitutionList = document.getElementById('financial-institution-input')
-        for (const element of financialInstitutions) {
-            let fi = this.processFinancialInstitution(element)
-            let option = document.createElement('option')
-            option.value = fi.id
-            option.innerText = fi.name
-            financialInstitutionList.appendChild(option)
-        }
+    static addFinancialInstitutions(elementId = 'financial-institution-input') {
+        populateSelect(elementId, '/api/financial-institutions')
     }
 
     static processFinancialInstitution(data) {

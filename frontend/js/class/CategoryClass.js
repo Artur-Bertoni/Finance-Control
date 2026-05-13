@@ -1,4 +1,4 @@
-﻿import {doRequest} from "../../utils/FrontendFunctions.js"
+import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Category {
     constructor(id, name, description) {
@@ -8,16 +8,7 @@ export class Category {
     }
 
     static addCategories(elementId) {
-        let categories = doRequest('/api/categories', 'GET') ?? []
-
-        let categoryList = document.getElementById(elementId)
-        for (const element of categories) {
-            let category = this.processCategory(element)
-            let option = document.createElement('option')
-            option.value = category.id
-            option.innerText = category.name
-            categoryList.appendChild(option)
-        }
+        populateSelect(elementId, '/api/categories')
     }
 
     static processCategory(data) {

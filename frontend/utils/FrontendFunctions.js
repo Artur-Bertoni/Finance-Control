@@ -246,6 +246,48 @@ function _renderBreadcrumb() {
     })
 }
 
+export function setupSearch(onInput, onClear) {
+    const input = document.getElementById('search-input')
+    const clearBtn = document.getElementById('clear-search-btn')
+    if (clearBtn) clearBtn.innerHTML = Icons.broom()
+    input?.addEventListener('input', () => onInput(input.value))
+    clearBtn?.addEventListener('click', () => {
+        if (input) input.value = ''
+        onClear?.()
+    })
+}
+
+export function selectOptionByText(selectId, text) {
+    for (const opt of document.getElementById(selectId)?.options ?? []) {
+        if (opt.innerText === text) { opt.selected = true; break }
+    }
+}
+
+export function addOptionToSelect(selectIds, value, label) {
+    const ids = Array.isArray(selectIds) ? selectIds : [selectIds]
+    for (const id of ids) {
+        const sel = document.getElementById(id)
+        if (!sel) continue
+        const opt = document.createElement('option')
+        opt.value = value
+        opt.text  = label
+        sel.appendChild(opt)
+        sel.value = value
+    }
+}
+
+export function populateSelect(elementId, apiUrl) {
+    const items = doRequest(apiUrl, 'GET') ?? []
+    const list  = document.getElementById(elementId)
+    if (!list) return
+    for (const item of items) {
+        const opt = document.createElement('option')
+        opt.value     = item.id
+        opt.innerText = item.name
+        list.appendChild(opt)
+    }
+}
+
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'

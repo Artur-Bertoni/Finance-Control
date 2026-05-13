@@ -1,4 +1,4 @@
-import { doRequest, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, setupSearch, showPendingToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
@@ -12,7 +12,7 @@ export function init() {
     SidebarManager.initialize()
     showPendingToast()
     loadData()
-    setupSearch()
+    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
     I18n.onChange(renderList)
 }
 
@@ -21,25 +21,10 @@ function loadData() {
         const data = doRequest('/api/transaction-locales', 'GET')
         allLocales = (data ?? []).map(el => TransactionLocale.processTransactionLocale(el))
     } catch (e) {
-        console.log('Erro ao carregar locais:', e)
+        console.error('Erro ao carregar locais:', e)
         allLocales = []
     }
     renderList()
-}
-
-function setupSearch() {
-    const input = document.getElementById('search-input')
-    const clearBtn = document.getElementById('clear-search-btn')
-    if (clearBtn) clearBtn.innerHTML = Icons.broom()
-    input?.addEventListener('input', () => {
-        searchQuery = input.value
-        renderList()
-    })
-    clearBtn?.addEventListener('click', () => {
-        searchQuery = ''
-        if (input) input.value = ''
-        renderList()
-    })
 }
 
 function renderList() {

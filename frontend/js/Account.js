@@ -1,5 +1,5 @@
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
-import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, selectOptionByText, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
@@ -121,12 +121,6 @@ function handleSave(accountId) {
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingAccount'), 'error')
     })
-}
-
-function selectOptionByText(selectId, text) {
-    for (const opt of document.getElementById(selectId).options) {
-        if (opt.innerText === text) { opt.selected = true; break }
-    }
 }
 
 if (!globalThis.__appRouter) init()

@@ -1,4 +1,4 @@
-﻿import {doRequest} from "../../utils/FrontendFunctions.js"
+import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Account {
     constructor(id, name, financialInstitution, contact, description, balance, financialInstitutionId) {
@@ -12,16 +12,7 @@ export class Account {
     }
 
     static addAccounts(elementId) {
-        let accounts = doRequest('/api/accounts', 'GET') ?? []
-
-        let accountList = document.getElementById(elementId)
-        for (const element of accounts) {
-            let account = this.processAccount(element)
-            let option = document.createElement('option')
-            option.value = account.id
-            option.innerText = account.name
-            accountList.appendChild(option)
-        }
+        populateSelect(elementId, '/api/accounts')
     }
 
     static processAccount(data) {

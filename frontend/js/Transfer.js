@@ -1,6 +1,6 @@
 import { Account } from './class/AccountClass.js'
 import { TransactionLocale } from './class/TransactionLocaleClass.js'
-import { clearDirtyGuard, doRequest, formatCurrency, navigate, navigateWithToast, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { addOptionToSelect, clearDirtyGuard, doRequest, formatCurrency, navigate, navigateWithToast, setupDirtyGuard, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
@@ -19,7 +19,6 @@ export function init() {
     Account.addAccounts('origin-account-input')
     Account.addAccounts('destination-account-input')
 
-    // Populate category select for transfer
     const data = doRequest('/api/categories', 'GET') ?? []
     const catSel = document.getElementById('category-input')
     if (catSel) {
@@ -86,11 +85,11 @@ export function init() {
     })
 
     document.getElementById('origin-account-add-btn').addEventListener('click', () => {
-        buildAccountQuickAdd(item => addOptionToSelects(['origin-account-input', 'destination-account-input'], item.id, item.name))
+        buildAccountQuickAdd(item => addOptionToSelect(['origin-account-input', 'destination-account-input'], item.id, item.name))
     })
 
     document.getElementById('dest-account-add-btn').addEventListener('click', () => {
-        buildAccountQuickAdd(item => addOptionToSelects(['origin-account-input', 'destination-account-input'], item.id, item.name))
+        buildAccountQuickAdd(item => addOptionToSelect(['origin-account-input', 'destination-account-input'], item.id, item.name))
     })
 
     document.getElementById('category-add-btn').addEventListener('click', () => {
@@ -102,7 +101,7 @@ export function init() {
                 { id: 'description', label: I18n.t('categoryDescription'),  type: 'textarea', placeholder: I18n.t('categoryDescriptionPlaceholder') }
             ],
             buildBody: v => ({ name: v.name, description: v.description || null }),
-            onSuccess: item => addOptionToSelects(['category-input'], item.id, item.name)
+            onSuccess: item => addOptionToSelect('category-input', item.id, item.name)
         })
     })
 
@@ -117,7 +116,7 @@ export function init() {
                 { id: 'address', label: I18n.t('localeAddress'),       type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
             ],
             buildBody: v => ({ name: v.name, address: v.address || null }),
-            onSuccess: item => addOptionToSelects(['transfer-locale-input'], item.id, item.name)
+            onSuccess: item => addOptionToSelect('transfer-locale-input', item.id, item.name)
         })
     })
 }
@@ -167,18 +166,6 @@ function buildAccountQuickAdd(onSuccess) {
             balance: v.balance === '' ? 0 : Number(v.balance), contact: null, description: null
         }),
         onSuccess
-    })
-}
-
-function addOptionToSelects(selectIds, value, label) {
-    selectIds.forEach(id => {
-        const sel = document.getElementById(id)
-        if (!sel) return
-        const opt = document.createElement('option')
-        opt.value = value
-        opt.text  = label
-        sel.appendChild(opt)
-        sel.value = value
     })
 }
 
