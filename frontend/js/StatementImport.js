@@ -74,12 +74,46 @@ export function init() {
         })
     })
 
-    document.getElementById('cancel-btn').addEventListener('click', () => navigate('/pages/HomePage.html'))
+    document.getElementById('cancel-btn').addEventListener('click', () => {
+        document.body.classList.remove('review-mode')
+        navigate('/pages/HomePage.html')
+    })
     document.getElementById('analyze-btn').addEventListener('click', handleAnalyze)
-    document.getElementById('back-btn').addEventListener('click', showUploadSection)
+    document.getElementById('review-back-btn').addEventListener('click', showUploadSection)
     document.getElementById('confirm-btn').addEventListener('click', handleConfirm)
     document.getElementById('select-all-check').addEventListener('change', function () {
         document.querySelectorAll('.row-check').forEach(cb => { cb.checked = this.checked })
+    })
+
+    I18n.onChange(() => {
+        if (!parsedRows.length) return
+        document.querySelectorAll('.row-category-select').forEach(sel => {
+            const blank = sel.querySelector('option[value=""]')
+            if (blank) {
+                blank.textContent = I18n.t('selectCategory')
+                if (sel.value === '') { sel.selectedIndex = -1; sel.selectedIndex = 0 }
+            }
+            const newO = sel.querySelector('option[value="__new__"]')
+            if (newO) newO.textContent = I18n.t('newCategoryInline')
+        })
+        document.querySelectorAll('.row-new-category-input').forEach(el => {
+            el.placeholder = I18n.t('categoryNamePlaceholder')
+        })
+        document.querySelectorAll('.row-locale-select').forEach(sel => {
+            const blank = sel.querySelector('option[value=""]')
+            if (blank) {
+                blank.textContent = I18n.t('selectLocale')
+                if (sel.value === '') { sel.selectedIndex = -1; sel.selectedIndex = 0 }
+            }
+            const newO = sel.querySelector('option[value="__new__"]')
+            if (newO) newO.textContent = I18n.t('newLocale') + '...'
+        })
+        document.querySelectorAll('.row-new-locale-input').forEach(el => {
+            el.placeholder = I18n.t('localeNamePlaceholder')
+        })
+        document.querySelectorAll('.row-toggle-label').forEach(lbl => {
+            lbl.title = I18n.t('shouldImportHint')
+        })
     })
 }
 
@@ -99,6 +133,7 @@ function setFileSelected(dropZone, dropText, name) {
 }
 
 function showUploadSection() {
+    document.body.classList.remove('review-mode')
     document.getElementById('upload-section').style.display = ''
     document.getElementById('review-section').style.display = 'none'
     document.getElementById('import-result').style.display  = 'none'
@@ -138,6 +173,8 @@ function handleAnalyze() {
             buildReviewTable(rows)
             document.getElementById('upload-section').style.display = 'none'
             document.getElementById('review-section').style.display = ''
+            document.body.classList.add('review-mode')
+            SidebarManager.initTranslations()
         },
         error: xhr => {
             showToast(xhr.responseJSON?.message ?? I18n.t('importError'), 'error')
@@ -162,9 +199,11 @@ function buildReviewTable(rows) {
         const tdCheck = document.createElement('td')
         tdCheck.style.padding = '8px 6px'
         const toggleLabel = document.createElement('label')
-        toggleLabel.className = 'toggle-switch'
+        toggleLabel.className = 'toggle-switch row-toggle-label'
         toggleLabel.style.margin = '0'
-        toggleLabel.setAttribute('aria-label', I18n.t('includeRow'))
+        toggleLabel.title = I18n.t('shouldImportHint')
+        toggleLabel.dataset.i18nTitle = 'shouldImportHint'
+        toggleLabel.dataset.i18nAria = 'includeRow'
         const check = document.createElement('input')
         check.type = 'checkbox'
         check.checked = true
@@ -183,7 +222,7 @@ function buildReviewTable(rows) {
 
         // Description
         const tdDesc = document.createElement('td')
-        tdDesc.style.cssText = 'padding:8px 6px;font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'
+        tdDesc.style.cssText = 'padding:8px 6px;font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help'
         tdDesc.title = row.description
         tdDesc.textContent = row.description
 
@@ -234,6 +273,7 @@ function buildCategoryCell(row, index) {
     const blankOpt = document.createElement('option')
     blankOpt.value = ''
     blankOpt.textContent = I18n.t('selectCategory')
+    blankOpt.dataset.i18n = 'selectCategory'
     select.appendChild(blankOpt)
 
     allCategories.forEach(cat => {
@@ -249,6 +289,7 @@ function buildCategoryCell(row, index) {
     const newOpt = document.createElement('option')
     newOpt.value = '__new__'
     newOpt.textContent = I18n.t('newCategoryInline')
+    newOpt.dataset.i18n = 'newCategoryInline'
     select.appendChild(newOpt)
 
     // Inline input for new category (hidden by default)
@@ -256,6 +297,7 @@ function buildCategoryCell(row, index) {
     newInput.type = 'text'
     newInput.className = 'row-new-category-input'
     newInput.placeholder = I18n.t('categoryNamePlaceholder')
+    newInput.dataset.i18nPlaceholder = 'categoryNamePlaceholder'
     newInput.style.cssText = 'display:none;flex:1'
 
     select.addEventListener('change', () => {
@@ -315,6 +357,7 @@ function buildLocaleCell(index) {
     const blankOpt = document.createElement('option')
     blankOpt.value = ''
     blankOpt.textContent = I18n.t('selectLocale')
+    blankOpt.dataset.i18n = 'selectLocale'
     select.appendChild(blankOpt)
 
     allLocales.forEach(loc => {
@@ -333,6 +376,7 @@ function buildLocaleCell(index) {
     newInput.type = 'text'
     newInput.className = 'row-new-locale-input'
     newInput.placeholder = I18n.t('localeNamePlaceholder')
+    newInput.dataset.i18nPlaceholder = 'localeNamePlaceholder'
     newInput.style.cssText = 'display:none;width:100%;margin-top:4px'
 
     select.addEventListener('change', () => {
@@ -399,12 +443,13 @@ function handleConfirm() {
             ? Number(localeSelect.value) : null
 
         rows.push({
-            date:       pr.date,
-            amount:     pr.amount,
-            type:       pr.type,
-            categoryId: checked ? categoryId : null,
-            localeId:   checked ? localeId : null,
-            skip:       !checked
+            date:        pr.date,
+            description: pr.description,
+            amount:      pr.amount,
+            type:        pr.type,
+            categoryId:  checked ? categoryId : null,
+            localeId:    checked ? localeId : null,
+            skip:        !checked
         })
     })
 
@@ -423,6 +468,7 @@ function handleConfirm() {
         contentType: 'application/json',
         data:        JSON.stringify({ accountId: Number(accountId), rows }),
         success: result => {
+            document.body.classList.remove('review-mode')
             document.getElementById('review-section').style.display = 'none'
             const resultCard = document.getElementById('import-result')
             const resultText = document.getElementById('import-result-text')

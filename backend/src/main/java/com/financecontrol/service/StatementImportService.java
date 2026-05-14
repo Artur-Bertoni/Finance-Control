@@ -70,6 +70,8 @@ public class StatementImportService {
         for (ImportRowRequest row : rows) {
             if (row.skip() || row.categoryId() == null) continue;
 
+            categoryService.learnAlias(userId, row.description(), row.categoryId());
+
             LocalDate date = LocalDate.parse(row.date());
             transactionService.create(userId, new TransactionRequest(
                 accountId, row.categoryId(), row.localeId(), row.amount(), date, row.type(), 0, null, null

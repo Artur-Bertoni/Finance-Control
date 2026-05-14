@@ -70,14 +70,38 @@ public class CategoryService {
     // Used by statement import preview: finds an existing category by alias name.
     @Transactional(readOnly = true)
     public Optional<Category> findByAlias(Long userId, String aliasName) {
-        return categoryAliasRepository.findByCategoryUserIdAndAliasName(userId, aliasName)
+        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName)
                 .map(CategoryAlias::getCategory);
+    }
+
+    // Called after the user confirms import: ensures the description maps to the chosen category.
+    // If the alias already belongs to a different category it is migrated; if it matches, no-op.
+    @Transactional
+    public void learnAlias(Long userId, String aliasName, @NonNull Long categoryId) {
+        if (aliasName == null || aliasName.isBlank()) return;
+
+        categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName)
+                .ifPresentOrElse(
+                    existing -> {
+                        if (!existing.getCategory().getId().equals(categoryId)) {
+                            categoryAliasRepository.delete(existing);
+                            Category target = categoryRepository.findById(categoryId)
+                                    .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                            categoryAliasRepository.save(new CategoryAlias(target, aliasName));
+                        }
+                    },
+                    () -> {
+                        Category target = categoryRepository.findById(categoryId)
+                                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                        categoryAliasRepository.save(new CategoryAlias(target, aliasName));
+                    }
+                );
     }
 
     // Used by legacy auto-import flow: finds or creates a category by alias name.
     @Transactional
     public Category findOrCreateByInternalName(Long userId, String internalName) {
-        return categoryAliasRepository.findByCategoryUserIdAndAliasName(userId, internalName)
+        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, internalName)
                 .map(CategoryAlias::getCategory)
                 .orElseGet(() -> {
                     Category c = new Category();

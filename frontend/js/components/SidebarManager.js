@@ -33,6 +33,7 @@ export class SidebarManager {
     }
 
     static onNavigate() {
+        document.body.classList.remove('review-mode')
         SidebarManager.setupActiveLink()
         SidebarManager.renderDataIcons()
         InputMasks.autoInit()

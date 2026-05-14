@@ -1,5 +1,5 @@
 import { SidebarManager } from './components/SidebarManager.js'
-import { showConfirmAsync, showPendingToast } from '../utils/FrontendFunctions.js'
+import { setBreadcrumb, showConfirmAsync, showPendingToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
 const routes = {
@@ -70,7 +70,8 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
 
     document.title = doc.title
 
-    // Reset breadcrumb to single item before updating title
+    // Reset breadcrumb — clear both DOM and module state so stale crumbs don't re-render on language change
+    setBreadcrumb([])
     const breadcrumbNav = document.getElementById('breadcrumb')
     const appTitleEl    = document.getElementById('page-title-text')
     if (breadcrumbNav && appTitleEl) {

@@ -249,5 +249,7 @@
   "includeRow": "Include in import",
   "missingCategoryForRows": "Please select a category for all checked transactions.",
   "selectCategory": "Select category...",
-  "transactionDescription": "Description"
+  "transactionDescription": "Description",
+  "shouldImport": "Should Import",
+  "shouldImportHint": "Toggle on to include this transaction in the import. Toggle off to skip it."
 }

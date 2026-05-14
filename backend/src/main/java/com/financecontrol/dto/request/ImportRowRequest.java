@@ -4,6 +4,7 @@ import com.financecontrol.enums.TransactionType;
 
 public record ImportRowRequest(
     String date,
+    String description,
     double amount,
     TransactionType type,
     Long categoryId,

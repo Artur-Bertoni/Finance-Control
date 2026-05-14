@@ -67,15 +67,18 @@
           <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px" id="review-hint" data-i18n="reviewHint">
             Revise as transações abaixo, selecione a categoria de cada uma e clique em Importar.
           </p>
-          <div style="overflow-x:auto">
+          <div class="review-table-wrapper">
             <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:700px" id="review-table">
               <thead>
                 <tr style="border-bottom:1px solid var(--border);text-align:left">
-                  <th style="padding:8px 6px;width:52px">
-                    <label class="toggle-switch" style="margin:0" aria-label="Selecionar todos">
-                      <input type="checkbox" id="select-all-check" class="toggle-input" checked>
-                      <span class="toggle-track"><span class="toggle-thumb"></span></span>
-                    </label>
+                  <th style="padding:8px 6px;white-space:nowrap">
+                    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+                      <span data-i18n="shouldImport" style="font-size:12px;font-weight:600">Deve Importar</span>
+                      <label class="toggle-switch" style="margin:0" aria-label="Selecionar todos">
+                        <input type="checkbox" id="select-all-check" class="toggle-input" checked>
+                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                      </label>
+                    </div>
                   </th>
                   <th style="padding:8px 6px;white-space:nowrap" data-i18n="transactionDate">Data</th>
                   <th style="padding:8px 6px" data-i18n="transactionDescription">Descrição</th>
@@ -89,7 +92,7 @@
             </table>
           </div>
           <div class="form-actions" style="margin-top:16px">
-            <button class="btn btn-secondary" id="back-btn" type="button" data-i18n="back">Voltar</button>
+            <button class="btn btn-secondary" id="review-back-btn" type="button" data-i18n="back">Voltar</button>
             <button class="btn btn-primary" id="confirm-btn" type="button" data-i18n="importSelected">Importar Selecionadas</button>
           </div>
         </div>

@@ -506,6 +506,19 @@ button { font-family: inherit; }
   max-width: none;
 }
 
+.review-table-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+#review-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 2;
+  box-shadow: 0 1px 0 var(--border);
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1256,7 +1269,9 @@ body.user-guest .toast-container {
 }
 .info-hint-btn:hover { color: var(--primary-500); }
 .info-hint-btn svg { width: 15px; height: 15px; }
-.info-hint-btn[data-tooltip]::after {
+.toggle-switch[data-tooltip] { position: relative; }
+.info-hint-btn[data-tooltip]::after,
+.toggle-switch[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: calc(100% + 8px);
@@ -1279,7 +1294,8 @@ body.user-guest .toast-container {
   visibility: hidden;
   transition: opacity 0.15s ease, visibility 0.15s ease;
 }
-.info-hint-btn[data-tooltip]:hover::after {
+.info-hint-btn[data-tooltip]:hover::after,
+.toggle-switch[data-tooltip]:hover::after {
   opacity: 1;
   visibility: visible;
 }
@@ -1963,6 +1979,26 @@ body.page-dashboard .dashboard-items-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+}
+
+/* ===== STATEMENT IMPORT REVIEW — STATIC LAYOUT ===== */
+body.review-mode { overflow: hidden; }
+body.review-mode .app-shell { height: 100vh; overflow: hidden; }
+body.review-mode .main-container { height: 100vh; min-height: unset; overflow: hidden; }
+body.review-mode .page-content {
+  overflow: hidden;
+}
+body.review-mode #review-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+body.review-mode #review-section .form-card.wide {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ===== DASHBOARD SEARCH BAR ===== */

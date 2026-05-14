@@ -249,5 +249,7 @@
   "includeRow": "Incluir en la importación",
   "missingCategoryForRows": "Seleccione una categoría para todas las transacciones marcadas.",
   "selectCategory": "Seleccione categoría...",
-  "transactionDescription": "Descripción"
+  "transactionDescription": "Descripción",
+  "shouldImport": "Debe Importar",
+  "shouldImportHint": "Active para incluir esta transacción en la importación. Desactive para ignorarla."
 }
