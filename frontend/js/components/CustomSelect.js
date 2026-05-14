@@ -2,10 +2,11 @@ import { I18n } from '../i18n.js'
 
 export class CustomSelect {
     constructor(select) {
-        this.select   = select
-        this.wrapper  = null
-        this.trigger  = null
-        this.dropdown = null
+        this.select       = select
+        this.wrapper      = null
+        this.trigger      = null
+        this.dropdown     = null
+        this._searchInput = null
         this._build()
         this._patchValueSetter()
         this._patchOptions()
@@ -58,8 +59,8 @@ export class CustomSelect {
         trigger.addEventListener('keydown', e => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._toggle() }
             if (e.key === 'Escape')    { this._close(); trigger.focus() }
-            if (e.key === 'ArrowDown') { e.preventDefault(); this._open(); this._focusItem(0) }
-            if (e.key === 'ArrowUp')   { e.preventDefault(); this._open(); this._focusItem(-1) }
+            if (e.key === 'ArrowDown') { e.preventDefault(); this._open() }
+            if (e.key === 'ArrowUp')   { e.preventDefault(); this._open(); requestAnimationFrame(() => this._getVisibleOptions().at(-1)?.focus()) }
             if (e.key === 'Tab')       this._close()
         })
 
@@ -80,7 +81,26 @@ export class CustomSelect {
     _buildOptions() {
         const sel = this.select
         this.dropdown.innerHTML = ''
+        this._searchInput = null
 
+        // --- Search input ---
+        const searchWrapper = document.createElement('div')
+        searchWrapper.className = 'cs-search-wrapper'
+        const searchInput = document.createElement('input')
+        searchInput.type = 'text'
+        searchInput.className = 'cs-search'
+        searchInput.placeholder = I18n.t('filterOptions')
+        searchInput.autocomplete = 'off'
+        searchWrapper.appendChild(searchInput)
+        this.dropdown.appendChild(searchWrapper)
+        this._searchInput = searchInput
+
+        // --- Options container (scrollable) ---
+        const optsList = document.createElement('div')
+        optsList.className = 'cs-options'
+        this.dropdown.appendChild(optsList)
+
+        // --- Clear option ---
         if (sel.value !== '') {
             const clearItem = document.createElement('div')
             clearItem.className = 'cs-option cs-clear'
@@ -96,19 +116,26 @@ export class CustomSelect {
             clearItem.addEventListener('keydown', e => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doClear() }
                 if (e.key === 'Escape')    { this._close(); this.trigger.focus() }
-                if (e.key === 'ArrowDown') { e.preventDefault(); clearItem.nextElementSibling?.focus() }
-                if (e.key === 'ArrowUp')   { e.preventDefault(); this.trigger.focus() }
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault()
+                    const visible = this._getVisibleOptions()
+                    const idx = visible.indexOf(clearItem)
+                    visible[idx + 1]?.focus()
+                }
+                if (e.key === 'ArrowUp')   { e.preventDefault(); this._searchInput?.focus() }
                 if (e.key === 'Tab')       this._close()
             })
-            this.dropdown.appendChild(clearItem)
+            optsList.appendChild(clearItem)
         }
 
+        // --- Regular options ---
         Array.from(sel.options).forEach(opt => {
             if (opt.disabled) return
             const item = document.createElement('div')
             item.className = 'cs-option' + (opt.selected ? ' cs-selected' : '')
             item.textContent = opt.text
             item.tabIndex = -1
+            item.dataset.value = opt.value
             item.addEventListener('mousedown', e => {
                 e.preventDefault()
                 sel.value = opt.value
@@ -125,16 +152,70 @@ export class CustomSelect {
                     this.trigger.focus()
                 }
                 if (e.key === 'Escape')    { this._close(); this.trigger.focus() }
-                if (e.key === 'ArrowDown') { e.preventDefault(); item.nextElementSibling?.focus() }
-                if (e.key === 'ArrowUp')   {
+                if (e.key === 'ArrowDown') {
                     e.preventDefault()
-                    const prev = item.previousElementSibling
-                    if (prev) prev.focus(); else this.trigger.focus()
+                    const visible = this._getVisibleOptions()
+                    const idx = visible.indexOf(item)
+                    visible[idx + 1]?.focus()
+                }
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault()
+                    const visible = this._getVisibleOptions()
+                    const idx = visible.indexOf(item)
+                    if (idx === 0) this._searchInput?.focus()
+                    else visible[idx - 1]?.focus()
                 }
                 if (e.key === 'Tab') this._close()
             })
-            this.dropdown.appendChild(item)
+            optsList.appendChild(item)
         })
+
+        // --- No results placeholder ---
+        const noResults = document.createElement('div')
+        noResults.className = 'cs-no-results'
+        noResults.textContent = I18n.t('noResults')
+        noResults.style.display = 'none'
+        optsList.appendChild(noResults)
+
+        // --- Filter logic ---
+        searchInput.addEventListener('input', () => this._applyFilter())
+        searchInput.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                this._getVisibleOptions()[0]?.focus()
+            }
+            if (e.key === 'Escape') { this._close(); this.trigger.focus() }
+            if (e.key === 'Tab')    this._close()
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                const visible = this._getVisibleOptions().filter(i => !i.classList.contains('cs-clear'))
+                if (visible.length === 1) {
+                    sel.value = visible[0].dataset.value
+                    sel.dispatchEvent(new Event('change', { bubbles: true }))
+                    this._close()
+                    this.trigger.focus()
+                }
+            }
+        })
+    }
+
+    _applyFilter() {
+        const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+        const query = norm(this._searchInput?.value || '')
+        const opts = [...this.dropdown.querySelectorAll('.cs-options .cs-option:not(.cs-clear)')]
+        let hasVisible = false
+        opts.forEach(item => {
+            const text = norm(item.textContent)
+            const visible = text.includes(query)
+            item.style.display = visible ? '' : 'none'
+            if (visible) hasVisible = true
+        })
+        const noResults = this.dropdown.querySelector('.cs-no-results')
+        if (noResults) noResults.style.display = hasVisible ? 'none' : ''
+    }
+
+    _getVisibleOptions() {
+        return [...this.dropdown.querySelectorAll('.cs-options .cs-option')].filter(i => i.style.display !== 'none')
     }
 
     _toggle() {
@@ -159,6 +240,7 @@ export class CustomSelect {
                 this.dropdown.style.top    = '100%'
                 this.dropdown.style.bottom = 'auto'
             }
+            this._searchInput?.focus()
             this.dropdown.querySelector('.cs-selected')?.scrollIntoView({ block: 'nearest' })
         })
     }
@@ -166,11 +248,12 @@ export class CustomSelect {
     _close() {
         this.wrapper.classList.remove('cs-open')
         this.trigger.setAttribute('aria-expanded', 'false')
+        this._searchInput = null
     }
 
     _focusItem(index) {
-        const items = [...this.dropdown.querySelectorAll('.cs-option')]
-        if (!items.length) return
+        const items = this._getVisibleOptions()
+        if (!items.length) { this._searchInput?.focus(); return }
         const target = index === -1 ? items.at(-1) : items[0]
         target?.focus()
     }

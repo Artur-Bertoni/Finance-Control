@@ -109,7 +109,7 @@ function getPeriodDates() {
         return { startDate: `${today.getFullYear()}-01-01`, endDate: todayStr }
     }
 
-    const months = period === '3m' ? 3 : period === '12m' ? 12 : 6
+    const months = period === '1m' ? 1 : period === '3m' ? 3 : period === '6m' ? 6 : 12
     const start = new Date(today.getFullYear(), today.getMonth() - months, 1)
     return { startDate: toDateStr(start), endDate: todayStr }
 }

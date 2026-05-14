@@ -195,6 +195,8 @@
   "leaveAnyway": "Sair mesmo assim",
   "clearFilters": "Limpar filtros",
   "clearSelection": "Limpar seleção",
+  "filterOptions": "Filtrar...",
+  "noResults": "Nenhum resultado",
   "searchByName": "Buscar por nome",
 
   "personalData": "Dados Pessoais",
@@ -255,6 +257,7 @@
 
   "dashboard": "Dashboard",
   "dashboardPeriod": "Período",
+  "period1m": "Este mês",
   "period3m": "Últimos 3 meses",
   "period6m": "Últimos 6 meses",
   "period12m": "Últimos 12 meses",

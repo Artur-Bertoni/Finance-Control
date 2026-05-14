@@ -1525,6 +1525,7 @@ body.page-home .transactions-list {
 
 .cs-dropdown {
   display: none;
+  flex-direction: column;
   position: absolute;
   left: 0;
   right: 0;
@@ -1533,18 +1534,57 @@ body.page-home .transactions-list {
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: 0 6px 20px rgba(0,0,0,.10);
-  max-height: 224px;
-  overflow-y: auto;
+  max-height: 268px;
+  overflow: hidden;
   z-index: 300;
+}
+
+.cs-wrapper.cs-open .cs-dropdown { display: flex; }
+
+.cs-search-wrapper {
+  flex-shrink: 0;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cs-search {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: calc(var(--radius-sm) - 1px);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.cs-search:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(76,175,80,.12);
+}
+
+.cs-options {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
-.cs-dropdown::-webkit-scrollbar       { width: 4px; }
-.cs-dropdown::-webkit-scrollbar-track { background: transparent; }
-.cs-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.cs-options::-webkit-scrollbar       { width: 4px; }
+.cs-options::-webkit-scrollbar-track { background: transparent; }
+.cs-options::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-.cs-wrapper.cs-open .cs-dropdown { display: block; }
+.cs-no-results {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
 
 .cs-option {
   padding: 9px 14px;

@@ -195,6 +195,8 @@
   "leaveAnyway": "Leave Anyway",
   "clearFilters": "Clear filters",
   "clearSelection": "Clear selection",
+  "filterOptions": "Filter...",
+  "noResults": "No results",
   "searchByName": "Search by name",
 
   "personalData": "Personal Data",
@@ -255,6 +257,7 @@
 
   "dashboard": "Dashboard",
   "dashboardPeriod": "Period",
+  "period1m": "This month",
   "period3m": "Last 3 months",
   "period6m": "Last 6 months",
   "period12m": "Last 12 months",
