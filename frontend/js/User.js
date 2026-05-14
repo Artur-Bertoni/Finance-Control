@@ -223,7 +223,7 @@ function setupNotificationSection(user) {
     langSelect.value = user.language ?? 'pt'
 
     // clicking the track toggles the checkbox
-    document.querySelector('.toggle-track').addEventListener('click', () => {
+    document.querySelector('#notification-section .toggle-track').addEventListener('click', () => {
         checkbox.checked = !checkbox.checked
         updateNotificationLabel(label, checkbox.checked)
     })
