@@ -1,6 +1,7 @@
 package com.financecontrol.controller;
 
 import com.financecontrol.entity.User;
+import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.exception.UnauthorizedException;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,14 +26,22 @@ public class AdminEmailController extends BaseController {
     private final EmailService emailService;
 
     @PostMapping("/send-test")
-    public ResponseEntity<Void> sendTestEmail(HttpSession session) {
+    public ResponseEntity<Void> sendTestEmail(
+            HttpSession session,
+            @RequestParam(defaultValue = "weekly") String type) {
         Long userId = requireUserId(session);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.user"));
         if (!user.isAdmin()) throw new UnauthorizedException("error.unauthorized");
         try {
-            emailService.sendTestEmail(user);
+            if ("weekly".equals(type)) {
+                emailService.sendTestEmail(user);
+            } else {
+                emailService.sendTestGoalEmail(user, GoalNotificationType.valueOf(type));
+            }
             return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("error.email.sendFailed");
         } catch (Exception e) {
             log.error("Falha ao enviar e-mail de teste para {}: {}", user.getEmail(), e.getMessage());
             throw new BusinessException("error.email.sendFailed");

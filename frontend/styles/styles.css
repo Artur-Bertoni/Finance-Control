@@ -1685,6 +1685,219 @@ body.page-home .transactions-list {
   font-size: 13px;
 }
 
+/* ===== FINANCIAL GOALS ===== */
+
+.goals-grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.goal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goal-type-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Status badges */
+.goal-status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.goal-status-active    { background: var(--primary-50);  color: var(--primary); }
+.goal-status-completed { background: #F0FDF4;            color: #16A34A; }
+.goal-status-expired   { background: #FEF2F2;            color: #DC2626; }
+.goal-status-archived  { background: var(--surface-2);   color: var(--text-muted); }
+
+/* Progress */
+.goal-progress-section { display: flex; flex-direction: column; gap: 6px; }
+
+.goal-progress-bar-bg {
+  height: 10px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.goal-progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  min-width: 4px;
+}
+
+.goal-progress-amounts {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.goal-amount-current {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.goal-amount-current.goal-exceeded { color: var(--danger); }
+
+.goal-amount-target { color: var(--text-muted); }
+
+/* Tags (category / locale chips) */
+.goal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.goal-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.goal-period { font-size: 12px; color: var(--text-muted); }
+
+/* Multi-checkbox list (categories / locales in goal form) */
+.multi-check-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+/* Checkbox group (notification options) */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.checkbox-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background-color 0.15s;
+  position: relative;
+  display: grid;
+  place-content: center;
+}
+
+.checkbox-label input[type="checkbox"]::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: #fff;
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: transform 0.1s ease-in-out;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+}
+
+.checkbox-label input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.checkbox-label:hover input[type="checkbox"]:not(:checked) {
+  border-color: var(--primary-400);
+}
+
+.checkbox-label input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* ===== GOAL VIEW ===== */
+.goal-type-badge {
+  background: var(--primary-50);
+  color: var(--primary);
+}
+
+.goal-view-bar {
+  height: 14px;
+  margin-bottom: 0;
+}
+
+.goal-view-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+
+.goal-view-amounts {
+  display: flex;
+  gap: 28px;
+}
+
+.goal-view-amounts .detail-label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.goal-view-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.goal-view-amount.goal-exceeded { color: var(--danger); }
+
+.goal-view-pct {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.goal-notify-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* ===== FLATPICKR OVERRIDES ===== */
 .flatpickr-calendar {
   font-family: inherit;

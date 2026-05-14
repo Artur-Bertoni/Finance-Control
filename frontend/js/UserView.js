@@ -28,13 +28,14 @@ export function init() {
         document.getElementById('admin-section-header').style.display = ''
         document.getElementById('admin-section-grid').style.display = ''
         document.getElementById('send-test-email-btn').addEventListener('click', () => {
+            const type    = document.getElementById('test-email-type').value
             const overlay = document.createElement('div')
             overlay.className = 'loading-overlay'
             overlay.innerHTML = '<div class="loading-spinner"></div>'
             document.body.appendChild(overlay)
 
             $.ajax({
-                url:  '/api/admin/email/send-test',
+                url:  `/api/admin/email/send-test?type=${encodeURIComponent(type)}`,
                 type: 'POST',
                 success:  () => showToast(I18n.t('testEmailSent'), 'success'),
                 error:    xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSendingTestEmail'), 'error'),

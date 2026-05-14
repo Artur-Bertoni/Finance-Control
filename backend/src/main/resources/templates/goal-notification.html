@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#F3F6F3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F3F6F3;padding:40px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- Card -->
+        <table width="560" cellpadding="0" cellspacing="0"
+               style="background-color:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1A2B1B;padding:24px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 auto 10px;">
+                <tr>
+                  <td style="padding-right:10px;vertical-align:middle;">
+                    <img src="cid:emailLogo" alt="Finance Control" width="40" height="40"
+                         style="display:block;border-radius:8px;">
+                  </td>
+                  <td style="vertical-align:middle;">
+                    <span style="font-size:24px;font-weight:800;color:#F0F0F0;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;line-height:1;">Finance<span style="color:#4CAF50;">Control</span></span>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;font-size:13px;font-weight:500;color:#A5D6A7;letter-spacing:0.02em;">
+                {{emailSubtitle}}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Accent bar -->
+          <tr>
+            <td style="background-color:#2E7D32;height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 40px 28px;">
+
+              <p style="margin:0 0 6px;font-size:15px;color:#4B5563;">
+                {{emailGreeting}}
+              </p>
+
+              <p style="margin:0 0 24px;font-size:22px;font-weight:700;color:#111827;line-height:1.35;">
+                {{emailTitle}}
+              </p>
+
+              <p style="margin:0 0 20px;font-size:14px;color:#4B5563;line-height:1.7;">
+                {{emailBody}}
+              </p>
+
+              <!-- Progress bar -->
+              {{emailProgressBar}}
+
+              <!-- Amounts -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 28px;">
+                <tr>
+                  <td style="width:50%;padding-right:8px;">
+                    <div style="background:#F9FAFB;border-radius:10px;padding:14px 16px;">
+                      <p style="margin:0 0 4px;font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;">{{emailProgressLabel}}</p>
+                      <p style="margin:0;font-size:20px;font-weight:700;color:#111827;">{{emailCurrentAmount}}</p>
+                    </div>
+                  </td>
+                  <td style="width:50%;padding-left:8px;">
+                    <div style="background:#F9FAFB;border-radius:10px;padding:14px 16px;">
+                      <p style="margin:0 0 4px;font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;">{{emailTargetLabel}}</p>
+                      <p style="margin:0;font-size:20px;font-weight:700;color:#111827;">{{emailTargetAmount}}</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#2E7D32;border-radius:10px;">
+                    <a href="{{baseUrl}}/pages/GoalDashboard.html"
+                       style="display:inline-block;padding:13px 28px;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:0.01em;">
+                      {{emailCtaLabel}}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 40px;">
+              <div style="border-top:1px solid #E5E7EB;"></div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px 28px;">
+              <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.7;">
+                {{emailFooterPrefix}}
+                <a href="{{baseUrl}}/pages/GoalDashboard.html"
+                   style="color:#4CAF50;text-decoration:none;">{{emailProfileLinkText}}</a>.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Card -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

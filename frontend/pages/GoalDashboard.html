@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Metas Financeiras | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/GoalDashboard.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" data-i18n="goals">Metas Financeiras</h1>
+      <div class="topbar-actions" id="header-actions">
+        <a href="/pages/Goal.html" class="btn btn-primary btn-sm" data-i18n="newGoal">Nova Meta</a>
+      </div>
+    </header>
+    <main class="page-content">
+      <div class="dashboard-search-bar">
+        <div class="field">
+          <label for="search-input" data-i18n="searchByName">Buscar por nome</label>
+          <input type="text" id="search-input" autocomplete="off" data-i18n-placeholder="searchByNamePlaceholder" placeholder="Digite o nome...">
+        </div>
+        <div class="field">
+          <label for="status-filter" data-i18n="goalFilters">Filtros</label>
+          <select id="status-filter">
+            <option value="" data-i18n="allGoals">Todas as Metas</option>
+            <option value="active" data-i18n="activeGoals">Ativas</option>
+            <option value="completed" data-i18n="completedGoals">Concluídas</option>
+            <option value="expired" data-i18n="expiredGoals">Expiradas</option>
+            <option value="archived" data-i18n="archivedGoals">Arquivadas</option>
+          </select>
+        </div>
+        <div class="filter-clear-field">
+          <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-search-btn" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros"></button>
+        </div>
+      </div>
+      <div class="dashboard-items-scroll">
+        <div id="goals-list" class="items-grid goals-grid"></div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

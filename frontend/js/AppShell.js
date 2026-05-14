@@ -23,6 +23,9 @@ const routes = {
     '/pages/TransactionLocaleDashboard.html':        () => import('./TransactionLocaleDashboard.js'),
     '/pages/User.html':                              () => import('./User.js'),
     '/pages/UserView.html':                          () => import('./UserView.js'),
+    '/pages/GoalDashboard.html':                     () => import('./GoalDashboard.js'),
+    '/pages/GoalView.html':                          () => import('./GoalView.js'),
+    '/pages/Goal.html':                              () => import('./Goal.js'),
 }
 
 let currentSpaUrl = location.pathname + location.search

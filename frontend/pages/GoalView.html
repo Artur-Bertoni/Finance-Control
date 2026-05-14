@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Meta Financeira | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/GoalView.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" id="page-title-text" data-i18n="goals">Metas Financeiras</h1>
+      <div class="topbar-actions" id="header-actions">
+        <button class="btn btn-danger    btn-sm" id="delete-btn"  type="button" data-i18n="delete">Excluir</button>
+        <button class="btn btn-secondary btn-sm" id="archive-btn" type="button" data-i18n="archiveGoal" style="display:none">Arquivar Meta</button>
+        <button class="btn btn-primary   btn-sm" id="edit-btn"   type="button" data-i18n="edit">Editar</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="detail-card">
+
+        <div class="section-divider section-divider--first">
+          <span data-i18n="goalDetails">Detalhes da Meta</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field" style="grid-column: 1 / -1">
+            <label for="detail-name" data-i18n="goalName">Nome da Meta</label>
+            <p id="detail-name">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-type" data-i18n="goalType">Tipo de Meta</label>
+            <p id="detail-type">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-status" data-i18n="goalStatus">Status</label>
+            <p id="detail-status">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-target" data-i18n="goalTargetAmount">Valor Alvo</label>
+            <p id="detail-target">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-start-date" data-i18n="goalStartDate">Data de Início</label>
+            <p id="detail-start-date">—</p>
+          </div>
+          <div class="detail-field">
+            <label for="detail-end-date" data-i18n="goalEndDate">Data de Término</label>
+            <p id="detail-end-date">—</p>
+          </div>
+          <div class="detail-field" style="grid-column: 1 / -1">
+            <label for="detail-description" data-i18n="goalDescription">Descrição</label>
+            <p id="detail-description">—</p>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <span data-i18n="goalProgress">Progresso</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field" style="grid-column: 1 / -1">
+            <div class="goal-progress-bar-bg goal-view-bar">
+              <div id="detail-progress-bar" class="goal-progress-bar-fill"></div>
+            </div>
+            <span id="detail-pct" class="goal-view-pct"></span>
+            <div class="goal-view-progress-meta">
+              <div class="goal-view-amounts">
+                <span>
+                  <span class="detail-label" data-i18n="goalCurrent">Atual</span>
+                  <span id="detail-current" class="goal-view-amount"></span>
+                </span>
+                <span>
+                  <span class="detail-label" data-i18n="goalTarget">Meta</span>
+                  <span id="detail-goal-target" class="goal-view-amount"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="detail-filters-section" style="display:none">
+          <div class="section-divider">
+            <span data-i18n="goalFilters">Filtros</span>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-field" id="detail-categories-field" style="display:none">
+              <label for="detail-categories" data-i18n="goalCategories">Categorias</label>
+              <div id="detail-categories" class="goal-tags" style="margin-top:6px"></div>
+            </div>
+            <div class="detail-field" id="detail-locales-field" style="display:none">
+              <label for="detail-locales" data-i18n="goalLocales">Locais</label>
+              <div id="detail-locales" class="goal-tags" style="margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <span data-i18n="goalNotifications">Notificações por E-mail</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field" style="grid-column: 1 / -1">
+            <div id="detail-notifications" class="goal-notify-list"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

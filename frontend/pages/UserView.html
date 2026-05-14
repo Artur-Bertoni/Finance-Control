@@ -64,6 +64,18 @@
         </div>
         <div id="admin-section-grid" class="detail-grid" style="display:none">
           <div class="detail-field">
+            <label for="test-email-type" data-i18n="testEmailType">Tipo de E-mail</label>
+            <select id="test-email-type">
+              <option value="weekly"           data-i18n="emailTypeWeekly">Lembrete Semanal</option>
+              <option value="MILESTONE_50"     data-i18n="emailTypeGoalMilestone50">Meta — Marco 50%</option>
+              <option value="MILESTONE_75"     data-i18n="emailTypeGoalMilestone75">Meta — Marco 75%</option>
+              <option value="MILESTONE_90"     data-i18n="emailTypeGoalMilestone90">Meta — Marco 90%</option>
+              <option value="COMPLETED"        data-i18n="emailTypeGoalCompleted">Meta — Concluída</option>
+              <option value="DEADLINE_WARNING" data-i18n="emailTypeGoalDeadline">Meta — Aviso de Prazo</option>
+              <option value="EXCEEDED"         data-i18n="emailTypeGoalExceeded">Meta — Limite Excedido</option>
+            </select>
+          </div>
+          <div class="detail-field" style="display:flex;align-items:flex-end">
             <button class="btn btn-secondary btn-sm" type="button" id="send-test-email-btn" data-i18n="sendTestEmail">
               Enviar E-mail de Teste
             </button>

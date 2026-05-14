@@ -1,6 +1,7 @@
 package com.financecontrol.repository;
 
 import com.financecontrol.entity.Transaction;
+import com.financecontrol.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,4 +49,36 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("accountId") Long accountId);
+
+    @Query("SELECT COALESCE(SUM(t.value), 0.0) FROM Transaction t " +
+           "WHERE t.userId = :userId AND t.date BETWEEN :startDate AND :endDate " +
+           "AND t.type = :type AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    Double sumForGoal(@Param("userId") Long userId, @Param("startDate") LocalDate startDate,
+                      @Param("endDate") LocalDate endDate, @Param("type") TransactionType type);
+
+    @Query("SELECT COALESCE(SUM(t.value), 0.0) FROM Transaction t " +
+           "WHERE t.userId = :userId AND t.date BETWEEN :startDate AND :endDate " +
+           "AND t.type = :type AND t.category.id IN :categoryIds " +
+           "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    Double sumForGoalByCategories(@Param("userId") Long userId, @Param("startDate") LocalDate startDate,
+                                  @Param("endDate") LocalDate endDate, @Param("type") TransactionType type,
+                                  @Param("categoryIds") List<Long> categoryIds);
+
+    @Query("SELECT COALESCE(SUM(t.value), 0.0) FROM Transaction t " +
+           "WHERE t.userId = :userId AND t.date BETWEEN :startDate AND :endDate " +
+           "AND t.type = :type AND t.transactionLocale.id IN :localeIds " +
+           "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    Double sumForGoalByLocales(@Param("userId") Long userId, @Param("startDate") LocalDate startDate,
+                               @Param("endDate") LocalDate endDate, @Param("type") TransactionType type,
+                               @Param("localeIds") List<Long> localeIds);
+
+    @Query("SELECT COALESCE(SUM(t.value), 0.0) FROM Transaction t " +
+           "WHERE t.userId = :userId AND t.date BETWEEN :startDate AND :endDate " +
+           "AND t.type = :type AND t.category.id IN :categoryIds " +
+           "AND t.transactionLocale.id IN :localeIds " +
+           "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    Double sumForGoalByCategoriesAndLocales(@Param("userId") Long userId, @Param("startDate") LocalDate startDate,
+                                            @Param("endDate") LocalDate endDate, @Param("type") TransactionType type,
+                                            @Param("categoryIds") List<Long> categoryIds,
+                                            @Param("localeIds") List<Long> localeIds);
 }
