@@ -63,6 +63,8 @@ export function init() {
         })
     }
 
+    I18n.onChange(() => renderAliases())
+
     document.getElementById('add-alias-btn').addEventListener('click', () => {
         aliases.push('')
         renderAliases()

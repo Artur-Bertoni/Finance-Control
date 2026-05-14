@@ -697,6 +697,18 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 
 .radio-option input[type="radio"] { display: none; }
 
+/* ===== REQUIRED / OPTIONAL LABELS ===== */
+.required-mark {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.optional-label {
+  color: var(--text-muted);
+  font-size: 0.82em;
+  font-weight: 400;
+}
+
 /* ===== FIELD VALIDATION ===== */
 input.field-error,
 select.field-error,

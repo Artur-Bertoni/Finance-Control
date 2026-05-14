@@ -1,4 +1,5 @@
 import { Icons } from './icons/IconLibrary.js'
+import { I18n } from './i18n.js'
 
 export class ThemeManager {
     static initialize() {
@@ -71,7 +72,7 @@ export class ThemeManager {
     static updateToggleIcon() {
         const isDark = document.documentElement.dataset.theme === 'dark'
         const icon  = isDark ? Icons.sun() : Icons.moon()
-        const title = isDark ? 'Modo claro' : 'Modo escuro'
+        const title = isDark ? I18n.t('switchToLightMode') : I18n.t('switchToDarkMode')
 
         document.querySelectorAll('.theme-toggle, .theme-toggle-floating').forEach(btn => {
             btn.innerHTML = icon

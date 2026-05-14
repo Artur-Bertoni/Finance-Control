@@ -28,9 +28,9 @@
       <div class="form-card">
         <div class="form-grid">
           <div class="field">
-            <label for="account-input" data-i18n="mandatoryTransactionAccount">Conta *</label>
+            <label for="account-input" data-i18n="transactionAccount">Conta</label>
             <div class="select-with-add">
-              <select id="account-input">
+              <select id="account-input" required>
                 <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
               </select>
               <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
@@ -38,9 +38,9 @@
           </div>
 
           <div class="field">
-            <label for="category-input" data-i18n="categories">Categoria *</label>
+            <label for="category-input" data-i18n="transactionCategory">Categoria</label>
             <div class="select-with-add">
-              <select id="category-input">
+              <select id="category-input" required>
                 <option disabled selected value="" data-i18n="selectCategory">Selecione a categoria</option>
               </select>
               <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="newCategory" title="Nova categoria" data-icon="add"></button>
@@ -63,12 +63,12 @@
 
           <div class="form-grid two-col">
             <div class="field">
-              <label for="date-input" data-i18n="transactionDate">Data *</label>
-              <input id="date-input" type="date">
+              <label for="date-input" data-i18n="transactionDate">Data</label>
+              <input id="date-input" type="date" required>
             </div>
             <div class="field">
-              <label for="value-input" data-i18n="transactionValue">Valor ($) *</label>
-              <input id="value-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="valueZero" placeholder="0,00">
+              <label for="value-input" data-i18n="transactionValue">Valor ($)</label>
+              <input id="value-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="valueZero" placeholder="0,00" required>
             </div>
           </div>
 
@@ -78,7 +78,7 @@
           </div>
 
           <div class="field">
-            <label for="transaction-locale-input" data-i18n="transactionLocale">Local da Transação</label>
+            <label for="transaction-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transação</label>
             <div class="select-with-add">
               <select id="transaction-locale-input">
                 <option disabled selected value="" data-i18n="selectLocale">Selecione o local (opcional)</option>
@@ -88,7 +88,7 @@
           </div>
 
           <div class="field">
-            <label for="obs-input" data-i18n="observations">Observações</label>
+            <label for="obs-input" data-i18n="observations" data-optional-label>Observações</label>
             <textarea id="obs-input" data-i18n-placeholder="observationsPlaceholder" placeholder="Detalhes adicionais sobre a transação…"></textarea>
           </div>
 

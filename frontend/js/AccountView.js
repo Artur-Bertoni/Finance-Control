@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, setBreadcrumb } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
@@ -48,18 +48,6 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Account.html?id=${accountId}`)
     )
-
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        showConfirm(I18n.t('deleteConfirm'), () => {
-            $.ajax({
-                url:   `/api/accounts/${accountId}`,
-                type:  'DELETE',
-                async: false,
-                success: () => navigate('/pages/AccountDashboard.html'),
-                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingAccount'), 'error')
-            })
-        })
-    })
 }
 
 if (!globalThis.__appRouter) init()

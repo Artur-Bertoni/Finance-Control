@@ -25,29 +25,29 @@
       <div class="form-card">
         <div class="form-grid">
           <div class="field">
-            <label for="name-input" data-i18n="accountName">Nome / Apelido *</label>
-            <input id="name-input" type="text" data-i18n-placeholder="accountNamePlaceholder" placeholder="Ex: Nubank, Carteira, C6...">
+            <label for="name-input" data-i18n="accountName">Nome / Apelido</label>
+            <input id="name-input" type="text" data-i18n-placeholder="accountNamePlaceholder" placeholder="Ex: Nubank, Carteira, C6..." required>
           </div>
           <div class="field">
-            <label for="financial-institution-input" data-i18n="financialInstitution">InstituiÃ§Ã£o Financeira *</label>
+            <label for="financial-institution-input" data-i18n="financialInstitution">Instituição Financeira</label>
             <div class="select-with-add">
-              <select id="financial-institution-input">
+              <select id="financial-institution-input" required>
                 <option disabled selected value="" data-i18n="selectInstitution">Selecione a instituiÃ§Ã£o</option>
               </select>
               <button type="button" class="btn-add-inline" id="fi-add-btn" data-i18n-title="newFinancialInstitution" title="Nova instituiÃ§Ã£o financeira" data-icon="add"></button>
             </div>
           </div>
           <div class="field">
-            <label for="contact-input" data-i18n="contact">Contato</label>
+            <label for="contact-input" data-i18n="contact" data-optional-label>Contato</label>
             <input id="contact-input" type="text" data-i18n-placeholder="contactPlaceholder" placeholder="Telefone ou e-mail de contato (opcional)">
           </div>
           <div class="field">
-            <label for="description-input" data-i18n="description">DescriÃ§Ã£o</label>
-            <textarea id="description-input" data-i18n-placeholder="descriptionPlaceholder" placeholder="Detalhes sobre a conta (opcional)"></textarea>
+            <label for="description-input" data-i18n="description" data-optional-label>Descrição</label>
+            <textarea id="description-input" data-i18n-placeholder="descriptionPlaceholder" placeholder="Detalhes sobre a conta..."></textarea>
           </div>
           <div class="field">
-            <label for="balance-input" data-i18n="currentBalance">Saldo Atual ($) *</label>
-            <input id="balance-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="currentBalancePlaceholder" placeholder="0,00">
+            <label for="balance-input" data-i18n="currentBalance">Saldo Atual ($)</label>
+            <input id="balance-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="currentBalancePlaceholder" placeholder="0,00" required>
           </div>
         </div>
         <div class="form-actions">

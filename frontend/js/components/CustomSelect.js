@@ -1,6 +1,8 @@
 import { I18n } from '../i18n.js'
 
 export class CustomSelect {
+    static _instances = []
+
     constructor(select) {
         this.select       = select
         this.wrapper      = null
@@ -11,6 +13,7 @@ export class CustomSelect {
         this._patchValueSetter()
         this._patchOptions()
         this._observe()
+        CustomSelect._instances.push(this)
     }
 
     static wrap(select) {
@@ -26,6 +29,11 @@ export class CustomSelect {
 
     static _initNew() {
         document.querySelectorAll('select:not([data-cs-init])').forEach(sel => new CustomSelect(sel))
+    }
+
+    static syncAll() {
+        CustomSelect._instances = CustomSelect._instances.filter(cs => document.contains(cs.wrapper))
+        CustomSelect._instances.forEach(cs => cs._syncDisplay())
     }
 
     _build() {

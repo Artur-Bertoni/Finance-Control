@@ -29,7 +29,7 @@ export class SidebarManager {
         NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         LanguageSwitcher.initialize()
-        I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb() })
+        I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb(); SidebarManager.updateDatePickerLocales() })
     }
 
     static onNavigate() {
@@ -82,6 +82,41 @@ export class SidebarManager {
 
         document.querySelectorAll('[data-i18n-aria]').forEach(el => {
             el.setAttribute('aria-label', I18n.t(el.dataset.i18nAria))
+        })
+
+        document.querySelectorAll('.detail-empty').forEach(el => {
+            el.textContent = I18n.t('notInformed')
+        })
+
+        CustomSelect.syncAll()
+
+        document.querySelectorAll('label[for]').forEach(label => {
+            const input = document.getElementById(label.htmlFor)
+            label.querySelectorAll('.required-mark, .optional-label').forEach(m => m.remove())
+            if (!input) return
+            if (input.required) {
+                const mark = document.createElement('span')
+                mark.className = 'required-mark'
+                mark.textContent = ' *'
+                label.appendChild(mark)
+            } else if (label.hasAttribute('data-optional-label')) {
+                const mark = document.createElement('span')
+                mark.className = 'optional-label'
+                mark.textContent = ' ' + I18n.t('optionalLabel')
+                label.appendChild(mark)
+            }
+        })
+
+        ThemeManager.updateToggleIcon()
+    }
+
+    static updateDatePickerLocales() {
+        if (typeof flatpickr === 'undefined') return
+        const lang      = I18n.getLanguage()
+        const localeKey = FLATPICKR_LOCALES[lang]
+        const locale    = localeKey ? (flatpickr.l10ns?.[localeKey] ?? flatpickr.l10ns.default) : flatpickr.l10ns.default
+        document.querySelectorAll('input[data-fp-init]').forEach(input => {
+            input._flatpickr?.set('locale', locale)
         })
     }
 

@@ -195,7 +195,8 @@ export function addDeleteIcon() {
     btn.className = 'btn btn-danger btn-sm'
     btn.id = 'delete-btn'
     btn.type = 'button'
-    btn.innerHTML = `${Icons.delete()} ${I18n.t('delete')}`
+    btn.dataset.i18n = 'delete'
+    btn.textContent = I18n.t('delete')
 
     const container = document.getElementById('header-actions')
     if (container) container.appendChild(btn)

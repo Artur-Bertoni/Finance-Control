@@ -29,18 +29,18 @@
         <div class="form-grid">
           <div class="form-grid two-col">
             <div class="field">
-              <label for="origin-account-input" data-i18n="sourceAccount">Conta de Origem *</label>
+              <label for="origin-account-input" data-i18n="sourceAccount">Conta de Origem</label>
               <div class="select-with-add">
-                <select id="origin-account-input">
+                <select id="origin-account-input" required>
                   <option disabled selected value="" data-i18n="selectOrigin">Selecione a origem</option>
                 </select>
                 <button type="button" class="btn-add-inline" id="origin-account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
               </div>
             </div>
             <div class="field">
-              <label for="destination-account-input" data-i18n="destinationAccount">Conta de Destino *</label>
+              <label for="destination-account-input" data-i18n="destinationAccount">Conta de Destino</label>
               <div class="select-with-add">
-                <select id="destination-account-input">
+                <select id="destination-account-input" required>
                   <option disabled selected value="" data-i18n="selectDestination">Selecione o destino</option>
                 </select>
                 <button type="button" class="btn-add-inline" id="dest-account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
@@ -49,9 +49,9 @@
           </div>
 
           <div class="field">
-            <label for="category-input" data-i18n="categories">Categoria *</label>
+            <label for="category-input" data-i18n="transactionCategory">Categoria</label>
             <div class="select-with-add">
-              <select id="category-input">
+              <select id="category-input" required>
                 <option disabled selected value="" data-i18n="selectCategory">Selecione a categoria</option>
               </select>
               <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="newCategory" title="Nova categoria" data-icon="add"></button>
@@ -60,17 +60,17 @@
 
           <div class="form-grid two-col">
             <div class="field">
-              <label for="value-input" data-i18n="transactionValue">Valor ($) *</label>
-              <input id="value-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="valueZero" placeholder="0,00">
+              <label for="value-input" data-i18n="transactionValue">Valor ($)</label>
+              <input id="value-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="valueZero" placeholder="0,00" required>
             </div>
             <div class="field">
-              <label for="date-input" data-i18n="transactionDate">Data *</label>
-              <input id="date-input" type="date">
+              <label for="date-input" data-i18n="transactionDate">Data</label>
+              <input id="date-input" type="date" required>
             </div>
           </div>
 
           <div class="field">
-            <label for="transfer-locale-input" data-i18n="transactionLocale">Local da Transferência</label>
+            <label for="transfer-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transferência</label>
             <div class="select-with-add">
               <select id="transfer-locale-input">
                 <option disabled selected value="" data-i18n="selectLocale">Selecione o local (opcional)</option>
@@ -80,7 +80,7 @@
           </div>
 
           <div class="field">
-            <label for="obs-input" data-i18n="observations">Observações</label>
+            <label for="obs-input" data-i18n="observations" data-optional-label>Observações</label>
             <textarea id="obs-input" data-i18n-placeholder="transferDescription" placeholder="Detalhes adicionais sobre a transferência…"></textarea>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { doRequest, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, setBreadcrumb } from '../utils/FrontendFunctions.js'
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
@@ -43,18 +43,6 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Category.html?id=${categoryId}`)
     )
-
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        showConfirm(I18n.t('deleteConfirm'), () => {
-            $.ajax({
-                url:   `/api/categories/${categoryId}`,
-                type:  'DELETE',
-                async: false,
-                success: () => navigate('/pages/CategoryDashboard.html'),
-                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingCategory'), 'error')
-            })
-        })
-    })
 }
 
 if (!globalThis.__appRouter) init()

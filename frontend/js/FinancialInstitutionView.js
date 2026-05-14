@@ -1,4 +1,4 @@
-import { doRequest, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate, setBreadcrumb } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
@@ -38,18 +38,6 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/FinancialInstitution.html?id=${fiId}`)
     )
-
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        showConfirm(I18n.t('deleteConfirm'), () => {
-            $.ajax({
-                url:   `/api/financial-institutions/${fiId}`,
-                type:  'DELETE',
-                async: false,
-                success: () => navigate('/pages/FinancialInstitutionDashboard.html'),
-                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingInstitution'), 'error')
-            })
-        })
-    })
 }
 
 if (!globalThis.__appRouter) init()

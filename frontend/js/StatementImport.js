@@ -167,7 +167,7 @@ function handleAnalyze() {
         success: rows => {
             parsedRows = rows
             if (rows.length === 0) {
-                showToast(I18n.t('noTransactionsFound'), 'warning')
+                showToast(I18n.t('noTransactionsInPdf'), 'warning')
                 return
             }
             buildReviewTable(rows)

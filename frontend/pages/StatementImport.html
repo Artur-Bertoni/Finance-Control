@@ -30,13 +30,13 @@
 
             <div class="field">
               <div style="display:flex;align-items:center;gap:6px">
-                <label for="account-input" data-i18n="mandatoryTransactionAccount">Conta *</label>
+                <label for="account-input" data-i18n="transactionAccount">Conta</label>
                 <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
                 </button>
               </div>
               <div class="select-with-add">
-                <select id="account-input">
+                <select id="account-input" required>
                   <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
                 </select>
                 <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
@@ -48,7 +48,7 @@
               <div class="file-drop-zone" id="file-drop-zone">
                 <span data-icon="upload"></span>
                 <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo PDF aqui, ou clique para selecionar</span>
-                <input type="file" id="file-input" accept=".pdf" style="display:none">
+                <input type="file" id="file-input" accept=".pdf" style="display:none" required>
               </div>
             </div>
 
