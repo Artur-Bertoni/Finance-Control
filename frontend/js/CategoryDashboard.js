@@ -51,14 +51,16 @@ function renderList() {
         const description = cat.description
             ? `</br><div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
             : ''
+        const aliasText = cat.aliases.length > 0 ? cat.aliases.join(', ') : ''
+        const aliasMeta = aliasText
+            ? `<div class="item-card-meta"><span class="item-card-row">${aliasText}</span></div>`
+            : ''
         card.innerHTML = `
             <div class="item-card-header">
                 <span class="item-card-name">${cat.name}</span>
                 <span class="item-card-badge"></span>
             </div>
-            <div class="item-card-meta">
-                <span class="item-card-row">${cat.internalName}</span>
-            </div>
+            ${aliasMeta}
             ${description}`
         list.appendChild(card)
     }

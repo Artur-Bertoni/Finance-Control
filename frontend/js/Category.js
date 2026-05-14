@@ -4,18 +4,18 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
 
-export function init() {
-    SidebarManager.initialize()
+let aliases = [] // Array of alias strings managed in this form
 
+export function init() {
+    aliases = []
+    SidebarManager.initialize()
     setupRequiredFieldValidation(['name-input'])
 
     const urlParams  = new URLSearchParams(globalThis.location.search)
     const categoryId = urlParams.get('id')
+    const nameInput  = document.getElementById('name-input')
 
-    const nameInput         = document.getElementById('name-input')
-    const internalNameInput = document.getElementById('internal-name-input')
-    let originalInternalName       = null
-    let internalNameManuallyEdited = false
+    let originalAliases = null
 
     if (categoryId) {
         const saveBtn = document.getElementById('save-btn')
@@ -27,10 +27,11 @@ export function init() {
         const response = doRequest(`/api/categories/${categoryId}`, 'GET')
         if (response?.id !== undefined) {
             const cat = Category.processCategory(response)
-            nameInput.value         = cat.name ?? ''
+            nameInput.value = cat.name ?? ''
             document.getElementById('description-input').value = cat.description ?? ''
-            internalNameInput.value = cat.internalName ?? cat.name ?? ''
-            originalInternalName    = internalNameInput.value
+            aliases = [...cat.aliases]
+            originalAliases = [...cat.aliases]
+            renderAliases()
 
             setBreadcrumb([
                 { i18nKey: 'categories', url: '/pages/CategoryDashboard.html' },
@@ -50,15 +51,25 @@ export function init() {
             })
         }
     } else {
+        // On create: sync first alias with the name field until the user edits aliases manually
+        aliases = ['']
+        renderAliases()
+
         nameInput.addEventListener('input', () => {
-            if (!internalNameManuallyEdited) {
-                internalNameInput.value = nameInput.value
+            if (aliases.length === 1 && !aliasManuallyEdited) {
+                aliases[0] = nameInput.value
+                renderAliases()
             }
         })
-        internalNameInput.addEventListener('input', () => {
-            internalNameManuallyEdited = true
-        })
     }
+
+    document.getElementById('add-alias-btn').addEventListener('click', () => {
+        aliases.push('')
+        renderAliases()
+        // Focus the new input
+        const inputs = document.querySelectorAll('.alias-input')
+        inputs[inputs.length - 1]?.focus()
+    })
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
         navigate(categoryId ? `/pages/CategoryView.html?id=${categoryId}` : '/pages/CategoryDashboard.html')
@@ -73,14 +84,15 @@ export function init() {
             return
         }
 
-        const currentInternalName = internalNameInput.value.trim() || nameInput.value.trim()
-        const internalNameChanged  = categoryId && originalInternalName !== null && currentInternalName !== originalInternalName
+        const currentAliases = aliases.filter(a => a.trim() !== '')
+        const aliasesChanged = categoryId && originalAliases !== null &&
+            JSON.stringify(currentAliases) !== JSON.stringify(originalAliases)
 
         function doSave() {
             const body = {
-                name:         nameInput.value,
-                description:  document.getElementById('description-input').value || null,
-                internalName: currentInternalName
+                name:        nameInput.value,
+                description: document.getElementById('description-input').value || null,
+                aliases:     currentAliases.length > 0 ? currentAliases : [nameInput.value]
             }
 
             $.ajax({
@@ -98,14 +110,54 @@ export function init() {
             })
         }
 
-        if (internalNameChanged) {
-            showConfirm(I18n.t('internalNameChangeWarning'), doSave, I18n.t('confirmAction'))
+        if (aliasesChanged) {
+            showConfirm(I18n.t('aliasChangeWarning'), doSave, I18n.t('confirmAction'))
         } else {
             doSave()
         }
     })
 
     setupDirtyGuard()
+}
+
+let aliasManuallyEdited = false
+
+function renderAliases() {
+    const container = document.getElementById('aliases-list')
+    if (!container) return
+    container.innerHTML = ''
+
+    aliases.forEach((alias, index) => {
+        const row = document.createElement('div')
+        row.className = 'alias-row'
+        row.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;align-items:center'
+
+        const input = document.createElement('input')
+        input.type = 'text'
+        input.className = 'alias-input'
+        input.value = alias
+        input.style.flex = '1'
+        input.addEventListener('input', () => {
+            aliases[index] = input.value
+            aliasManuallyEdited = true
+        })
+
+        const removeBtn = document.createElement('button')
+        removeBtn.type = 'button'
+        removeBtn.className = 'btn btn-ghost btn-sm'
+        removeBtn.style.cssText = 'padding:4px 8px;color:var(--text-muted);flex-shrink:0'
+        removeBtn.textContent = '×'
+        removeBtn.title = I18n.t('remove')
+        removeBtn.addEventListener('click', () => {
+            aliases.splice(index, 1)
+            aliasManuallyEdited = true
+            renderAliases()
+        })
+
+        row.appendChild(input)
+        row.appendChild(removeBtn)
+        container.appendChild(row)
+    })
 }
 
 if (!globalThis.__appRouter) init()

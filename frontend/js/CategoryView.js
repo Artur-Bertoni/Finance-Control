@@ -28,9 +28,16 @@ export function init() {
         descEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
     }
 
-    if (cat.internalName) {
-        document.getElementById('detail-internal-name').textContent = cat.internalName
-        document.getElementById('internal-name-row').style.display = ''
+    if (cat.aliases.length > 0) {
+        const aliasesRow = document.getElementById('aliases-row')
+        const aliasesEl  = document.getElementById('detail-aliases')
+        aliasesRow.style.display = ''
+        cat.aliases.forEach(a => {
+            const tag = document.createElement('span')
+            tag.style.cssText = 'background:var(--surface-raised);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:13px;font-family:monospace;color:var(--text-muted)'
+            tag.textContent = a
+            aliasesEl.appendChild(tag)
+        })
     }
 
     document.getElementById('edit-btn').addEventListener('click', () =>

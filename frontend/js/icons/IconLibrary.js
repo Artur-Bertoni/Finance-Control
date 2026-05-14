@@ -6,7 +6,7 @@ export const Icons = {
     
     transfer: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/></svg>`,
     
-    accounts: () => `<svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 20 20"fill="currentColor"aria-hidden="true"><path d="M3 5a2 2 0 012-2h8a2 2 0 012 2v1H5a1 1 0 000 2h10v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/><path d="M15 8H5a1 1 0 010-2h10a1 1 0 110 2z"/><circle cx="12.5" cy="11.5" r="1"/></svg>`,
+    accounts: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 4.5A1.5 1.5 0 013.5 3h13A1.5 1.5 0 0118 4.5H2z"/><path fill-rule="evenodd" d="M1 6.75C1 5.784 1.784 5 2.75 5h14.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0117.25 16H2.75A1.75 1.75 0 011 14.25v-7.5zm10.5 2a.75.75 0 00-.75.75v1.5c0 .414.336.75.75.75h2a.75.75 0 00.75-.75v-1.5a.75.75 0 00-.75-.75h-2z" clip-rule="evenodd"/></svg>`,
     
     categories: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>`,
     

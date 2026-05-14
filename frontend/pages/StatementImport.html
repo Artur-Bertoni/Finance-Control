@@ -22,44 +22,84 @@
     </header>
 
     <main class="page-content">
-      <div class="form-card">
-        <div class="form-grid">
 
-          <div class="field">
-            <div style="display:flex;align-items:center;gap:6px">
-              <label for="account-input" data-i18n="mandatoryTransactionAccount">Conta *</label>
-              <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
-              </button>
+      <!-- Step 1: Upload form -->
+      <div id="upload-section">
+        <div class="form-card">
+          <div class="form-grid">
+
+            <div class="field">
+              <div style="display:flex;align-items:center;gap:6px">
+                <label for="account-input" data-i18n="mandatoryTransactionAccount">Conta *</label>
+                <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
+                </button>
+              </div>
+              <div class="select-with-add">
+                <select id="account-input">
+                  <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
+                </select>
+                <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
+              </div>
             </div>
-            <div class="select-with-add">
-              <select id="account-input">
-                <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
-              </select>
-              <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
+
+            <div class="field">
+              <label for="file-input" data-i18n="importFile">Arquivo PDF do extrato *</label>
+              <div class="file-drop-zone" id="file-drop-zone">
+                <span data-icon="upload"></span>
+                <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo PDF aqui, ou clique para selecionar</span>
+                <input type="file" id="file-input" accept=".pdf" style="display:none">
+              </div>
             </div>
+
           </div>
 
-          <div class="field">
-            <label for="file-input" data-i18n="importFile">Arquivo PDF do extrato *</label>
-            <div class="file-drop-zone" id="file-drop-zone">
-              <span data-icon="upload"></span>
-              <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo PDF aqui, ou clique para selecionar</span>
-              <input type="file" id="file-input" accept=".pdf" style="display:none">
-            </div>
+          <div class="form-actions">
+            <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+            <button class="btn btn-primary" id="analyze-btn" type="button" data-i18n="analyzeStatement">Analisar Extrato</button>
           </div>
-
-        </div>
-
-        <div class="form-actions">
-          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
-          <button class="btn btn-primary" id="import-btn" type="button" data-i18n="statementImport">Importar Extrato</button>
         </div>
       </div>
 
+      <!-- Step 2: Review table (hidden until preview loads) -->
+      <div id="review-section" style="display:none">
+        <div class="form-card wide">
+          <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px" id="review-hint" data-i18n="reviewHint">
+            Revise as transações abaixo, selecione a categoria de cada uma e clique em Importar.
+          </p>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:700px" id="review-table">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);text-align:left">
+                  <th style="padding:8px 6px;width:52px">
+                    <label class="toggle-switch" style="margin:0" aria-label="Selecionar todos">
+                      <input type="checkbox" id="select-all-check" class="toggle-input" checked>
+                      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    </label>
+                  </th>
+                  <th style="padding:8px 6px;white-space:nowrap" data-i18n="transactionDate">Data</th>
+                  <th style="padding:8px 6px" data-i18n="transactionDescription">Descrição</th>
+                  <th style="padding:8px 6px;white-space:nowrap" data-i18n="transactionValue">Valor</th>
+                  <th style="padding:8px 6px" data-i18n="transactionType">Tipo</th>
+                  <th style="padding:8px 6px;min-width:220px" data-i18n="transactionCategory">Categoria *</th>
+                  <th style="padding:8px 6px;min-width:180px" data-i18n="transactionLocale">Local</th>
+                </tr>
+              </thead>
+              <tbody id="review-tbody"></tbody>
+            </table>
+          </div>
+          <div class="form-actions" style="margin-top:16px">
+            <button class="btn btn-secondary" id="back-btn" type="button" data-i18n="back">Voltar</button>
+            <button class="btn btn-primary" id="confirm-btn" type="button" data-i18n="importSelected">Importar Selecionadas</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Result card (hidden until import done) -->
       <div class="form-card import-result-card" id="import-result" style="display:none;margin-top:16px">
         <p id="import-result-text"></p>
       </div>
+
     </main>
   </div>
 </div>

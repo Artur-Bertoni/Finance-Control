@@ -72,6 +72,7 @@
   "mandatoryTransactionAccount": "Account *",
   "selectAccount": "Select an account",
   "transactionType": "Transaction Type",
+  "transactionCategory": "Category",
   "transactionDate": "Date",
   "transactionValue": "Value ($)",
   "valueZero": "0.00",
@@ -223,8 +224,14 @@
   "categoryInternalName": "Internal Name",
   "categoryInternalNameHint": "Identifier used during statement imports. Change the Name above to something more readable; the Internal Name stays fixed so re-imports find this category automatically.",
   "internalNameChangeWarning": "Warning: changing the Internal Name may cause issues with future statement imports, as the system may not recognize this category. Only change it if you know what you are doing.",
+  "categoryAliases": "Internal Names",
+  "categoryAliasesHint": "Identifiers used during statement imports. Add multiple names so different PDF descriptions map to this category (e.g. 'Grocery' and 'Supermarket' → category 'Supermarket').",
+  "aliasChangeWarning": "Warning: changing the Internal Names may cause issues with future statement imports, as the system may not recognize this category. Only change them if you know what you are doing.",
+  "addAlias": "+ Add internal name",
+  "remove": "Remove",
 
   "statementImport": "Import Statement",
+  "analyzeStatement": "Analyze Statement",
   "statementImportHint": "Currently only Sicredi bank statements are officially supported. Other bank statements may not work correctly.",
   "importFile": "Statement PDF file *",
   "dragDropFile": "Drag & drop the PDF file here, or click to select",
@@ -233,5 +240,14 @@
   "fileSelected": "File selected: {name}",
   "importSuccess": "{count} transaction(s) imported successfully!",
   "viewImported": "View Records",
-  "importError": "Error importing statement. Please verify the file is a valid PDF."
+  "importError": "Error importing statement. Please verify the file is a valid PDF.",
+  "noTransactionsFound": "No transactions found in the statement.",
+  "reviewHint": "Review the transactions below, select a category for each one, and click Import.",
+  "importSelected": "Import Selected",
+  "back": "Back",
+  "newCategoryInline": "+ New category...",
+  "includeRow": "Include in import",
+  "missingCategoryForRows": "Please select a category for all checked transactions.",
+  "selectCategory": "Select category...",
+  "transactionDescription": "Description"
 }

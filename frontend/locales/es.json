@@ -72,6 +72,7 @@
   "mandatoryTransactionAccount": "Cuenta *",
   "selectAccount": "Seleccione una cuenta",
   "transactionType": "Tipo de Transacción",
+  "transactionCategory": "Categoría",
   "transactionDate": "Fecha",
   "transactionValue": "Valor ($)",
   "valueZero": "0,00",
@@ -223,8 +224,14 @@
   "categoryInternalName": "Nombre Interno",
   "categoryInternalNameHint": "Identificador usado en la importación de extractos. Cambie el Nombre arriba por uno más legible; el Nombre Interno permanece fijo para que las reimportaciones encuentren esta categoría automáticamente.",
   "internalNameChangeWarning": "Atención: cambiar el Nombre Interno puede causar problemas en futuras importaciones de extractos, ya que el sistema puede no reconocer esta categoría. Cámbielo solo si sabe lo que está haciendo.",
+  "categoryAliases": "Nombres Internos",
+  "categoryAliasesHint": "Identificadores usados en la importación de extractos. Agregue múltiples nombres para que distintas descripciones del PDF se asignen a esta categoría (ej: 'Mercado' y 'Supermercado' → categoría 'Supermercado').",
+  "aliasChangeWarning": "Atención: cambiar los Nombres Internos puede causar problemas en futuras importaciones de extractos, ya que el sistema puede no reconocer esta categoría. Cámbielos solo si sabe lo que está haciendo.",
+  "addAlias": "+ Agregar nombre interno",
+  "remove": "Eliminar",
 
   "statementImport": "Importar Extracto",
+  "analyzeStatement": "Analizar Extracto",
   "statementImportHint": "Actualmente solo hay soporte oficial para extractos del banco Sicredi. Los extractos de otros bancos pueden no funcionar correctamente.",
   "importFile": "Archivo PDF del extracto *",
   "dragDropFile": "Arrastre y suelte el archivo PDF aquí, o haga clic para seleccionar",
@@ -233,5 +240,14 @@
   "fileSelected": "Archivo seleccionado: {name}",
   "importSuccess": "¡{count} transacción(es) importada(s) con éxito!",
   "viewImported": "Ver Registros",
-  "importError": "Error al importar extracto. Verifique que el archivo sea un PDF válido."
+  "importError": "Error al importar extracto. Verifique que el archivo sea un PDF válido.",
+  "noTransactionsFound": "No se encontraron transacciones en el extracto.",
+  "reviewHint": "Revise las transacciones a continuación, seleccione una categoría para cada una y haga clic en Importar.",
+  "importSelected": "Importar Seleccionadas",
+  "back": "Volver",
+  "newCategoryInline": "+ Nueva categoría...",
+  "includeRow": "Incluir en la importación",
+  "missingCategoryForRows": "Seleccione una categoría para todas las transacciones marcadas.",
+  "selectCategory": "Seleccione categoría...",
+  "transactionDescription": "Descripción"
 }

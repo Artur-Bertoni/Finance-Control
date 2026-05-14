@@ -1,7 +1,9 @@
 package com.financecontrol.dto.request;
 
+import java.util.List;
+
 public record CategoryRequest(
     String name,
     String description,
-    String internalName
+    List<String> aliases
 ) {}

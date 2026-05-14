@@ -1,7 +1,9 @@
 package com.financecontrol.service;
 
+import com.financecontrol.dto.request.ImportRowRequest;
 import com.financecontrol.dto.request.TransactionRequest;
 import com.financecontrol.dto.response.ImportResult;
+import com.financecontrol.dto.response.ParsedTransactionResponse;
 import com.financecontrol.entity.Category;
 import com.financecontrol.enums.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,21 +46,37 @@ public class StatementImportService {
     private final TransactionService transactionService;
     private final CategoryService    categoryService;
 
-    public ImportResult statementImport(Long userId, Long accountId, MultipartFile file) {
+    // Parses the PDF and returns rows with category suggestions — nothing is saved.
+    @Transactional(readOnly = true)
+    public List<ParsedTransactionResponse> previewStatement(Long userId, MultipartFile file) {
         List<String> blocks = buildBlocks(extractLines(file));
-
-        int imported  = 0;
-        LocalDate minDate = null;
-        LocalDate maxDate = null;
-        Set<String> seen  = new HashSet<>();
+        List<ParsedTransactionResponse> rows = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
 
         for (String block : blocks) {
-            LocalDate date = processBlock(block.trim(), userId, accountId, seen);
-            if (date != null) {
-                imported++;
-                if (minDate == null || date.isBefore(minDate)) minDate = date;
-                if (maxDate == null || date.isAfter(maxDate))  maxDate = date;
-            }
+            ParsedTransactionResponse row = parseBlock(block.trim(), userId, seen);
+            if (row != null) rows.add(row);
+        }
+        return rows;
+    }
+
+    // Saves the user-reviewed rows as transactions.
+    @Transactional
+    public ImportResult confirmImport(Long userId, Long accountId, List<ImportRowRequest> rows) {
+        int imported = 0;
+        LocalDate minDate = null;
+        LocalDate maxDate = null;
+
+        for (ImportRowRequest row : rows) {
+            if (row.skip() || row.categoryId() == null) continue;
+
+            LocalDate date = LocalDate.parse(row.date());
+            transactionService.create(userId, new TransactionRequest(
+                accountId, row.categoryId(), row.localeId(), row.amount(), date, row.type(), 0, null, null
+            ));
+            imported++;
+            if (minDate == null || date.isBefore(minDate)) minDate = date;
+            if (maxDate == null || date.isAfter(maxDate))  maxDate = date;
         }
 
         String startDate = minDate != null ? minDate.format(DateTimeFormatter.ISO_LOCAL_DATE) : null;
@@ -64,21 +84,26 @@ public class StatementImportService {
         return new ImportResult(imported, startDate, endDate);
     }
 
-    private LocalDate processBlock(String block, Long userId, Long accountId, Set<String> seen) {
+    private ParsedTransactionResponse parseBlock(String block, Long userId, Set<String> seen) {
         Matcher m = TX_PATTERN.matcher(block);
         if (!seen.add(block) || !m.matches()) return null;
 
-        LocalDate date       = LocalDate.parse(m.group(1), DATE_FMT);
-        String categoryLabel = m.group(2).trim();
-        char sign            = m.group(3).charAt(0);
-        double value         = parseAmount(m.group(4));
-        TransactionType type = sign == '+' ? TransactionType.CREDIT : TransactionType.DEBIT;
+        LocalDate date        = LocalDate.parse(m.group(1), DATE_FMT);
+        String description    = m.group(2).trim();
+        char sign             = m.group(3).charAt(0);
+        double value          = parseAmount(m.group(4));
+        TransactionType type  = sign == '+' ? TransactionType.CREDIT : TransactionType.DEBIT;
 
-        Category category = categoryService.findOrCreateByInternalName(userId, categoryLabel);
-        transactionService.create(userId, new TransactionRequest(
-            accountId, category.getId(), null, value, date, type, 0, null, null
-        ));
-        return date;
+        Optional<Category> suggestion = categoryService.findByAlias(userId, description);
+
+        return new ParsedTransactionResponse(
+            date.format(DateTimeFormatter.ISO_LOCAL_DATE),
+            description,
+            value,
+            type,
+            suggestion.map(Category::getId).orElse(null),
+            suggestion.map(Category::getName).orElse(null)
+        );
     }
 
     private List<String> extractLines(MultipartFile file) {

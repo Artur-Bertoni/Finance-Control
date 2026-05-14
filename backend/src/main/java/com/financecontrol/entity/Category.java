@@ -3,10 +3,14 @@ package com.financecontrol.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "category")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class Category {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -17,5 +21,8 @@ public class Category {
     private String description;
 
     @Column(name = "internal_name")
-    private String internalName;
+    private String internalName; // legacy column — not set for new records
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryAlias> aliases = new ArrayList<>();
 }

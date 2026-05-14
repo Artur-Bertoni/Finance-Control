@@ -108,6 +108,7 @@ export class SidebarManager {
                 }
             })
             fp.calendarContainer.addEventListener('wheel', e => {
+                if (document.activeElement && document.activeElement.tagName === 'SELECT') return
                 e.preventDefault()
                 fp.changeMonth(e.deltaY > 0 ? 1 : -1)
             }, { passive: false })
