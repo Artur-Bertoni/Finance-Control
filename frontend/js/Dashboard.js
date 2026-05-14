@@ -11,6 +11,7 @@ const DONUT_COLORS = [
 ]
 
 let chartInstances = {}
+let _themeObserver = null
 
 // ── Canvas-reveal animation helpers ──────────────────────────────────────────
 function easeInOutSine(t) { return -(Math.cos(Math.PI * t) - 1) / 2 }
@@ -75,6 +76,10 @@ export async function init() {
     document.getElementById('account-input').addEventListener('change', loadAndRender)
     I18n.onChange(() => loadAndRender())
 
+    _themeObserver?.disconnect()
+    _themeObserver = new MutationObserver(loadAndRender)
+    _themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+
     await loadChartJs()
     loadAndRender()
 }
@@ -114,7 +119,7 @@ function toDateStr(d) {
 }
 
 function loadAndRender() {
-    if (!globalThis.Chart) return
+    if (!globalThis.Chart || !document.getElementById('chart-monthly')) return
 
     const { startDate, endDate } = getPeriodDates()
     const accountId = document.getElementById('account-input')?.value ?? ''
@@ -169,8 +174,8 @@ function themeColors() {
         surface:       dark ? '#262626' : '#FFFFFF',
         income:        '#16A34A',
         expenses:      '#DC2626',
-        wealth:        '#2563EB',
-        wealthFill:    dark ? 'rgba(37,99,235,.18)' : 'rgba(37,99,235,.08)',
+        wealth:        '#15803D',
+        wealthFill:    dark ? 'rgba(21,128,61,.22)' : 'rgba(21,128,61,.10)',
     }
 }
 
@@ -206,13 +211,18 @@ function renderMonthlyChart(monthlyData) {
 
     const existing = chartInstances['chart-monthly']
     if (existing) {
-        existing._revealProgress        = 1
-        existing.data.labels            = labels
-        existing.data.datasets[0].label = I18n.t('income')
-        existing.data.datasets[0].data  = monthlyData.map(m => m.income ?? 0)
-        existing.data.datasets[1].label = I18n.t('expenses')
-        existing.data.datasets[1].data  = monthlyData.map(m => m.expenses ?? 0)
-        existing.options.animation      = { duration: 400, easing: 'easeOutQuart' }
+        existing._revealProgress                             = 1
+        existing.data.labels                                 = labels
+        existing.data.datasets[0].label                      = I18n.t('income')
+        existing.data.datasets[0].data                       = monthlyData.map(m => m.income ?? 0)
+        existing.data.datasets[1].label                      = I18n.t('expenses')
+        existing.data.datasets[1].data                       = monthlyData.map(m => m.expenses ?? 0)
+        existing.options.plugins.legend.labels.color         = c.text
+        existing.options.scales.x.ticks.color                = c.textSecondary
+        existing.options.scales.x.grid.color                 = c.border
+        existing.options.scales.y.ticks.color                = c.textSecondary
+        existing.options.scales.y.grid.color                 = c.border
+        existing.options.animation                           = { duration: 400, easing: 'easeOutQuart' }
         existing.update()
         return
     }
@@ -255,11 +265,18 @@ function renderWealthChart(wealthData) {
 
     const existing = chartInstances['chart-wealth']
     if (existing) {
-        existing._revealProgress        = 1
-        existing.data.labels            = labels
-        existing.data.datasets[0].label = I18n.t('patrimony')
-        existing.data.datasets[0].data  = values
-        existing.options.animation      = { duration: 400, easing: 'easeOutQuart' }
+        existing._revealProgress                             = 1
+        existing.data.labels                                 = labels
+        existing.data.datasets[0].label                      = I18n.t('patrimony')
+        existing.data.datasets[0].data                       = values
+        existing.data.datasets[0].borderColor                = c.wealth
+        existing.data.datasets[0].backgroundColor            = c.wealthFill
+        existing.options.plugins.legend.labels.color         = c.text
+        existing.options.scales.x.ticks.color                = c.textSecondary
+        existing.options.scales.x.grid.color                 = c.border
+        existing.options.scales.y.ticks.color                = c.textSecondary
+        existing.options.scales.y.grid.color                 = c.border
+        existing.options.animation                           = { duration: 400, easing: 'easeOutQuart' }
         existing.update()
         return
     }
@@ -369,9 +386,11 @@ function renderDonutChart(canvasId, categoryData) {
         existing.data.datasets[0].backgroundColor = colors
         existing._categoryIds                     = categoryIds
         existing._othersDetails                   = othersDetails
-        existing._othersIndex                     = othersIndex
-        existing._revealProgress                  = 1
-        existing.options.animation                = { duration: 400, easing: 'easeOutQuart' }
+        existing._othersIndex                             = othersIndex
+        existing._revealProgress                          = 1
+        existing.data.datasets[0].borderColor             = c.surface
+        existing.options.plugins.legend.labels.color      = c.text
+        existing.options.animation                        = { duration: 400, easing: 'easeOutQuart' }
         existing.update()
         return
     }
