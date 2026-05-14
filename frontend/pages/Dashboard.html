@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Dashboard | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="../js/Dashboard.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" data-i18n="dashboard">Dashboard</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="field">
+          <label for="period-input" data-i18n="dashboardPeriod">Período</label>
+          <select id="period-input">
+            <option value="3m" data-i18n="period3m">Últimos 3 meses</option>
+            <option value="6m" selected data-i18n="period6m">Últimos 6 meses</option>
+            <option value="12m" data-i18n="period12m">Últimos 12 meses</option>
+            <option value="ytd" data-i18n="periodYtd">Este ano</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="account-input" data-i18n="accounts">Conta</label>
+          <select id="account-input">
+            <option value="" data-i18n="allAccounts">Todas as contas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card-label" data-i18n="totalIncome">Total Receitas</div>
+          <div class="stat-card-value positive" id="stat-income">$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label" data-i18n="totalExpenses">Total Despesas</div>
+          <div class="stat-card-value negative" id="stat-expenses">$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label" data-i18n="netResult">Resultado</div>
+          <div class="stat-card-value" id="stat-net">$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label" data-i18n="currentWealth">Patrimônio Atual</div>
+          <div class="stat-card-value" id="stat-wealth">$ 0,00</div>
+        </div>
+      </div>
+
+      <!-- Charts 2x2 grid -->
+      <div class="dashboard-charts-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" data-i18n="incomeVsExpenses">Receitas vs Despesas</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-monthly"></canvas>
+            <div class="chart-empty-state" id="chart-monthly-empty" style="display:none">
+              <p data-i18n="noData">Sem dados no período</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" data-i18n="expensesByCategory">Despesas por Categoria</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-cat-expenses"></canvas>
+            <div class="chart-empty-state" id="chart-cat-expenses-empty" style="display:none">
+              <p data-i18n="noData">Sem dados no período</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" data-i18n="wealthEvolution">Evolução Patrimonial</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-wealth"></canvas>
+            <div class="chart-empty-state" id="chart-wealth-empty" style="display:none">
+              <p data-i18n="noData">Sem dados no período</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" data-i18n="incomeByCategory">Receitas por Categoria</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-cat-income"></canvas>
+            <div class="chart-empty-state" id="chart-cat-income-empty" style="display:none">
+              <p data-i18n="noData">Sem dados no período</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

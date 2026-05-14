@@ -145,6 +145,7 @@ export class SidebarManager {
     static renderIcons() {
         const iconMap = {
             'HomePage.html': 'home',
+            'Dashboard.html': 'dashboard',
             'Transaction.html': 'transaction',
             'Transfer.html': 'transfer',
             'AccountDashboard.html': 'accounts',

@@ -251,5 +251,25 @@
   "selectCategory": "Select category...",
   "transactionDescription": "Description",
   "shouldImport": "Should Import",
-  "shouldImportHint": "Toggle on to include this transaction in the import. Toggle off to skip it."
+  "shouldImportHint": "Toggle on to include this transaction in the import. Toggle off to skip it.",
+
+  "dashboard": "Dashboard",
+  "dashboardPeriod": "Period",
+  "period3m": "Last 3 months",
+  "period6m": "Last 6 months",
+  "period12m": "Last 12 months",
+  "periodYtd": "This year",
+  "totalIncome": "Total Income",
+  "totalExpenses": "Total Expenses",
+  "netResult": "Net Result",
+  "currentWealth": "Current Wealth",
+  "incomeVsExpenses": "Income vs Expenses",
+  "wealthEvolution": "Wealth Evolution",
+  "expensesByCategory": "Expenses by Category",
+  "incomeByCategory": "Income by Category",
+  "income": "Income",
+  "expenses": "Expenses",
+  "patrimony": "Wealth",
+  "others": "Others",
+  "noData": "No data for this period"
 }

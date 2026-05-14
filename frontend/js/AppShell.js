@@ -3,6 +3,7 @@ import { setBreadcrumb, showConfirmAsync, showPendingToast } from '../utils/Fron
 import { I18n } from './i18n.js'
 
 const routes = {
+    '/pages/Dashboard.html':                         () => import('./Dashboard.js'),
     '/pages/HomePage.html':                          () => import('./HomePage.js'),
     '/pages/Transaction.html':                       () => import('./Transaction.js'),
     '/pages/TransactionView.html':                   () => import('./TransactionView.js'),

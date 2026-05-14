@@ -251,5 +251,25 @@
   "selectCategory": "Selecione a categoria...",
   "transactionDescription": "Descrição",
   "shouldImport": "Deve Importar",
-  "shouldImportHint": "Ative para incluir esta transação na importação. Desative para ignorá-la."
+  "shouldImportHint": "Ative para incluir esta transação na importação. Desative para ignorá-la.",
+
+  "dashboard": "Dashboard",
+  "dashboardPeriod": "Período",
+  "period3m": "Últimos 3 meses",
+  "period6m": "Últimos 6 meses",
+  "period12m": "Últimos 12 meses",
+  "periodYtd": "Este ano",
+  "totalIncome": "Total Receitas",
+  "totalExpenses": "Total Despesas",
+  "netResult": "Resultado",
+  "currentWealth": "Patrimônio Atual",
+  "incomeVsExpenses": "Receitas vs Despesas",
+  "wealthEvolution": "Evolução Patrimonial",
+  "expensesByCategory": "Despesas por Categoria",
+  "incomeByCategory": "Receitas por Categoria",
+  "income": "Receitas",
+  "expenses": "Despesas",
+  "patrimony": "Patrimônio",
+  "others": "Outros",
+  "noData": "Sem dados no período"
 }
