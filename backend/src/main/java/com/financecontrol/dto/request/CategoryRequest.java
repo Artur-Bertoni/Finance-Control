@@ -5,5 +5,6 @@ import java.util.List;
 public record CategoryRequest(
     String name,
     String description,
+    String iconKey,
     List<String> aliases
 ) {}

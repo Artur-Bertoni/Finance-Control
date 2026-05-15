@@ -29,7 +29,7 @@ public class FinancialInstitutionService {
 
     @Transactional
     public FinancialInstitutionResponse create(Long userId, FinancialInstitutionRequest req) {
-        FinancialInstitution fi = new FinancialInstitution(null, userId, req.name(), req.address(), req.contact());
+        FinancialInstitution fi = new FinancialInstitution(null, userId, req.name(), req.address(), req.contact(), req.iconKey());
         return FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
     }
 
@@ -40,6 +40,7 @@ public class FinancialInstitutionService {
         fi.setName(req.name());
         fi.setAddress(req.address());
         fi.setContact(req.contact());
+        fi.setIconKey(req.iconKey());
 
         return FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
     }

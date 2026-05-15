@@ -21,4 +21,7 @@ public class Account {
     private String contact;
     private String description;
     private Double balance;
+
+    @Column(name = "icon_key")
+    private String iconKey;
 }

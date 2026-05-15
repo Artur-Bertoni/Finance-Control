@@ -10,6 +10,11 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUserIdOrderByIdDesc(Long userId);
 
+    long countByUserId(Long userId);
+
+    @Query("SELECT COUNT(DISTINCT a.financialInstitution.id) FROM Account a WHERE a.userId = :userId AND a.financialInstitution IS NOT NULL")
+    long countDistinctInstitutionsByUserId(@Param("userId") Long userId);
+
     @Query("SELECT COALESCE(SUM(a.balance), 0) FROM Account a WHERE a.userId = :userId AND (:accountId IS NULL OR a.id = :accountId)")
     Double sumBalance(@Param("userId") Long userId, @Param("accountId") Long accountId);
 

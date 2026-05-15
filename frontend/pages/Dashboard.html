@@ -83,11 +83,14 @@
           <div class="card-header">
             <span class="card-title" data-i18n="expensesByCategory">Despesas por Categoria</span>
           </div>
-          <div class="chart-container">
-            <canvas id="chart-cat-expenses"></canvas>
-            <div class="chart-empty-state" id="chart-cat-expenses-empty" style="display:none">
-              <p data-i18n="noData">Sem dados no período</p>
+          <div class="chart-donut-wrap">
+            <div class="chart-container">
+              <canvas id="chart-cat-expenses"></canvas>
+              <div class="chart-empty-state" id="chart-cat-expenses-empty" style="display:none">
+                <p data-i18n="noData">Sem dados no período</p>
+              </div>
             </div>
+            <div class="donut-legend" id="chart-cat-expenses-legend"></div>
           </div>
         </div>
 
@@ -107,11 +110,14 @@
           <div class="card-header">
             <span class="card-title" data-i18n="incomeByCategory">Receitas por Categoria</span>
           </div>
-          <div class="chart-container">
-            <canvas id="chart-cat-income"></canvas>
-            <div class="chart-empty-state" id="chart-cat-income-empty" style="display:none">
-              <p data-i18n="noData">Sem dados no período</p>
+          <div class="chart-donut-wrap">
+            <div class="chart-container">
+              <canvas id="chart-cat-income"></canvas>
+              <div class="chart-empty-state" id="chart-cat-income-empty" style="display:none">
+                <p data-i18n="noData">Sem dados no período</p>
+              </div>
             </div>
+            <div class="donut-legend" id="chart-cat-income-legend"></div>
           </div>
         </div>
       </div>

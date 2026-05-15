@@ -55,9 +55,12 @@ function renderList() {
         const aliasMeta = aliasText
             ? `<div class="item-card-meta"><span class="item-card-row">${aliasText}</span></div>`
             : ''
+        const iconHtml = cat.iconKey
+            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${cat.iconKey}"></i></span>`
+            : ''
         card.innerHTML = `
             <div class="item-card-header">
-                <span class="item-card-name">${cat.name}</span>
+                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${cat.name}</span></span>
                 <span class="item-card-badge"></span>
             </div>
             ${aliasMeta}

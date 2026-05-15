@@ -18,7 +18,7 @@ export function init() {
 
     InputMasks.money(document.getElementById('target-input'))
 
-    initDatePickers()
+    initDatePickers(goalId)
     loadDropdownData()
 
     if (goalId) {
@@ -43,13 +43,13 @@ export function init() {
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
-function initDatePickers() {
+function initDatePickers(goalId) {
     if (typeof flatpickr === 'undefined') return
     const lang   = I18n.getLanguage()
     const locale = FLATPICKR_LOCALES[lang]
         ? (flatpickr.l10ns?.[FLATPICKR_LOCALES[lang]] ?? undefined)
         : undefined
-    const opts = {
+    const base = {
         dateFormat:    'Y-m-d',
         altInput:      true,
         altFormat:     'd/m/Y',
@@ -58,8 +58,9 @@ function initDatePickers() {
         allowInput:    false,
         ...(locale ? { locale } : {}),
     }
-    flatpickr('#start-date-input', opts)
-    flatpickr('#end-date-input',   opts)
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1)
+    flatpickr('#start-date-input', { ...base, ...(goalId ? {} : { defaultDate: tomorrow }) })
+    flatpickr('#end-date-input',   base)
 }
 
 // ── load dropdown options ──────────────────────────────────────────────────

@@ -7,6 +7,8 @@ import com.financecontrol.entity.CategoryAlias;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.CategoryAliasRepository;
 import com.financecontrol.repository.CategoryRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
@@ -22,6 +24,9 @@ public class CategoryService {
 
     private final CategoryRepository      categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAllByUser(Long userId) {
@@ -40,6 +45,7 @@ public class CategoryService {
         c.setUserId(userId);
         c.setName(req.name());
         c.setDescription(req.description());
+        c.setIconKey(req.iconKey());
         categoryRepository.save(c);
 
         List<String> aliasNames = (req.aliases() != null && !req.aliases().isEmpty())
@@ -56,8 +62,11 @@ public class CategoryService {
         Category c = getOrThrow(id);
         c.setName(req.name());
         c.setDescription(req.description());
+        c.setIconKey(req.iconKey());
 
         c.getAliases().clear();
+        entityManager.flush(); // force DELETEs before INSERTs to avoid unique-key violation
+
         if (req.aliases() != null && !req.aliases().isEmpty()) {
             req.aliases().stream()
                     .filter(a -> a != null && !a.isBlank())

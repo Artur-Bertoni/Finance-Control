@@ -39,7 +39,7 @@ export function init() {
 
     const currentEl = document.getElementById('detail-current')
     currentEl.textContent = formatAmount(goal.currentAmount ?? 0)
-    if (pct > 100) currentEl.classList.add('goal-exceeded')
+    if (pct > 100 && goal.type === 'expense_limit') currentEl.classList.add('goal-exceeded')
 
     document.getElementById('detail-goal-target').textContent = formatAmount(goal.targetAmount ?? 0)
     document.getElementById('detail-pct').textContent         = `${pct.toFixed(1)}%`

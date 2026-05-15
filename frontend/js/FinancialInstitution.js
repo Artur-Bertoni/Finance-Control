@@ -3,9 +3,11 @@ import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
+import { IconPicker } from './components/IconPicker.js'
 
 export function init() {
     SidebarManager.initialize()
+    IconPicker.init(iconKey => IconPicker.setValue(iconKey))
 
     setupRequiredFieldValidation(['name-input'])
 
@@ -25,6 +27,7 @@ export function init() {
             document.getElementById('name-input').value    = fi.name    ?? ''
             document.getElementById('address-input').value = fi.address ?? ''
             document.getElementById('contact-input').value = fi.contact ?? ''
+            if (fi.iconKey) IconPicker.setValue(fi.iconKey)
 
             setBreadcrumb([
                 { i18nKey: 'financialInstitutions', url: '/pages/FinancialInstitutionDashboard.html' },
@@ -61,7 +64,8 @@ export function init() {
         const body = {
             name:    document.getElementById('name-input').value,
             address: document.getElementById('address-input').value || null,
-            contact: document.getElementById('contact-input').value || null
+            contact: document.getElementById('contact-input').value || null,
+            iconKey: IconPicker.getValue() || null
         }
 
         $.ajax({

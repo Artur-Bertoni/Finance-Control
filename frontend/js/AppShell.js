@@ -26,6 +26,7 @@ const routes = {
     '/pages/GoalDashboard.html':                     () => import('./GoalDashboard.js'),
     '/pages/GoalView.html':                          () => import('./GoalView.js'),
     '/pages/Goal.html':                              () => import('./Goal.js'),
+    '/pages/AchievementDashboard.html':              () => import('./AchievementDashboard.js'),
 }
 
 let currentSpaUrl = location.pathname + location.search

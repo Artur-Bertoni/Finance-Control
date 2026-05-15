@@ -31,16 +31,24 @@ public class FinancialGoalService {
     private final TransactionLocaleRepository localeRepository;
     private final TransactionRepository transactionRepository;
 
+    @Transactional
     public List<FinancialGoalResponse> findAllByUser(Long userId) {
         return goalRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
-                .map(g -> FinancialGoalResponse.from(g, calculateCurrentAmount(g)))
+                .map(g -> {
+                    double current = calculateCurrentAmount(g);
+                    tryAutoComplete(g, current);
+                    return FinancialGoalResponse.from(g, current);
+                })
                 .toList();
     }
 
+    @Transactional
     public FinancialGoalResponse findById(@NonNull Long id) {
         FinancialGoal g = getOrThrow(id);
-        return FinancialGoalResponse.from(g, calculateCurrentAmount(g));
+        double current = calculateCurrentAmount(g);
+        tryAutoComplete(g, current);
+        return FinancialGoalResponse.from(g, current);
     }
 
     @Transactional
@@ -91,6 +99,18 @@ public class FinancialGoalService {
             result = transactionRepository.sumForGoalByCategoriesAndLocales(goal.getUserId(), goal.getStartDate(), endDate, txType, catIds, locIds);
         }
         return result != null ? result : 0.0;
+    }
+
+    private void tryAutoComplete(FinancialGoal g, double current) {
+        if (g.getStatus() != GoalStatus.ACTIVE) return;
+        boolean shouldComplete = switch (g.getType()) {
+            case SAVINGS, INCOME -> current >= g.getTargetAmount();
+            case EXPENSE_LIMIT   -> false;
+        };
+        if (shouldComplete) {
+            g.setStatus(GoalStatus.COMPLETED);
+            goalRepository.save(g);
+        }
     }
 
     FinancialGoal getOrThrow(@NonNull Long id) {

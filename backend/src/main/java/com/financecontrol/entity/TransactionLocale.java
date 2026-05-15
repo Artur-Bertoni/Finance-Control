@@ -15,4 +15,7 @@ public class TransactionLocale {
 
     private String name;
     private String address;
+
+    @Column(name = "icon_key")
+    private String iconKey;
 }

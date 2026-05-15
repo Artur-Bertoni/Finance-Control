@@ -16,4 +16,7 @@ public class FinancialInstitution {
     private String name;
     private String address;
     private String contact;
+
+    @Column(name = "icon_key")
+    private String iconKey;
 }

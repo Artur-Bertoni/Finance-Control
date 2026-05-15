@@ -57,7 +57,7 @@ export function doRequest(url, httpMethod = 'GET', body = null) {
 
 const TOAST_DURATION = 4500
 
-export function showToast(message, type = 'info') {
+export function showToast(message, type = 'info', action = null) {
     let container = document.getElementById('toast-container')
     if (!container) {
         container = document.createElement('div')
@@ -77,10 +77,22 @@ export function showToast(message, type = 'info') {
     toast.className = `toast ${type}`
     toast.innerHTML = `
         <span class="toast-icon">${icons[type] || icons.info}</span>
-        <span class="toast-text">${message}</span>
+        <div class="toast-body">
+            <span class="toast-text">${message}</span>
+            ${action ? `<button class="toast-action-link">${action.label} →</button>` : ''}
+        </div>
         <button class="toast-close" aria-label="${I18n.t('close')}">×</button>
         <div class="toast-progress-bar"></div>
     `
+
+    if (action) {
+        toast.querySelector('.toast-action-link').addEventListener('click', () => {
+            clearTimeout(timerId)
+            cancelAnimationFrame(rafId)
+            dismissToast(toast)
+            navigate(action.url)
+        })
+    }
 
     const progressBar = toast.querySelector('.toast-progress-bar')
     let elapsed = 0
@@ -277,7 +289,7 @@ export function addOptionToSelect(selectIds, value, label) {
     }
 }
 
-export function populateSelect(elementId, apiUrl) {
+export function populateSelect(elementId, apiUrl, iconKeyField = null) {
     const items = doRequest(apiUrl, 'GET') ?? []
     const list  = document.getElementById(elementId)
     if (!list) return
@@ -285,6 +297,7 @@ export function populateSelect(elementId, apiUrl) {
         const opt = document.createElement('option')
         opt.value     = item.id
         opt.innerText = item.name
+        if (iconKeyField && item[iconKeyField]) opt.dataset.iconKey = item[iconKeyField]
         list.appendChild(opt)
     }
 }

@@ -29,7 +29,7 @@ public class TransactionLocaleService {
 
     @Transactional
     public TransactionLocaleResponse create(Long userId, TransactionLocaleRequest req) {
-        TransactionLocale tl = new TransactionLocale(null, userId, req.name(), req.address());
+        TransactionLocale tl = new TransactionLocale(null, userId, req.name(), req.address(), req.iconKey());
         return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }
 
@@ -39,6 +39,7 @@ public class TransactionLocaleService {
 
         tl.setName(req.name());
         tl.setAddress(req.address());
+        tl.setIconKey(req.iconKey());
 
         return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }

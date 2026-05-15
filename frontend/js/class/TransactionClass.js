@@ -1,8 +1,9 @@
 ﻿export class Transaction {
-    constructor(id, account, category, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId) {
+    constructor({ id, account, category, categoryIconKey, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId }) {
         this.id = id
         this.account = account
         this.category = category
+        this.categoryIconKey = categoryIconKey
         this.transactionLocale = transactionLocale
         this.value = value
         this.date = date
@@ -13,18 +14,19 @@
     }
 
     static processTransaction(data) {
-        return new Transaction(
-            Number(data.id),
-            data.account?.name ?? '',
-            data.category?.name ?? '',
-            data.transactionLocale?.name ?? null,
-            Number(data.value),
-            data.date,
-            data.type,
-            Number(data.installmentsNumber),
-            data.obs ?? '',
-            Number(data.transferPartnerId ?? 0)
-        )
+        return new Transaction({
+            id:                Number(data.id),
+            account:           data.account?.name ?? '',
+            category:          data.category?.name ?? '',
+            categoryIconKey:   data.category?.iconKey ?? null,
+            transactionLocale: data.transactionLocale?.name ?? null,
+            value:             Number(data.value),
+            date:              data.date,
+            type:              data.type,
+            installmentsNumber: Number(data.installmentsNumber),
+            obs:               data.obs ?? '',
+            transferPartnerId: Number(data.transferPartnerId ?? 0),
+        })
     }
 
     static formatLabel(tx) {

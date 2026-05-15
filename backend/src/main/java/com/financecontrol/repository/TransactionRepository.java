@@ -37,13 +37,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("endDate") LocalDate endDate,
             @Param("accountId") Long accountId);
 
-    @Query("SELECT t.category.id, t.category.name, t.type, SUM(t.value) " +
+    @Query("SELECT t.category.id, t.category.name, t.category.iconKey, t.type, SUM(t.value) " +
            "FROM Transaction t " +
            "WHERE t.userId = :userId " +
            "AND t.date BETWEEN :startDate AND :endDate " +
            "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0) " +
            "AND (:accountId IS NULL OR t.account.id = :accountId) " +
-           "GROUP BY t.category.id, t.category.name, t.type")
+           "GROUP BY t.category.id, t.category.name, t.category.iconKey, t.type")
     List<Object[]> findCategoryTotals(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
@@ -81,4 +81,24 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                             @Param("endDate") LocalDate endDate, @Param("type") TransactionType type,
                                             @Param("categoryIds") List<Long> categoryIds,
                                             @Param("localeIds") List<Long> localeIds);
+
+    long countByUserId(Long userId);
+
+    @Query("SELECT COUNT(DISTINCT t.date) FROM Transaction t WHERE t.userId = :userId AND t.date >= :since")
+    long countDistinctDatesSince(@Param("userId") Long userId, @Param("since") LocalDate since);
+
+    @Query(value = "SELECT COUNT(DISTINCT YEARWEEK(date, 3)) FROM `transaction` WHERE user_id = :userId AND date >= :since", nativeQuery = true)
+    long countDistinctWeeksSince(@Param("userId") Long userId, @Param("since") LocalDate since);
+
+    @Query(value = "SELECT COUNT(DISTINCT EXTRACT(YEAR_MONTH FROM date)) FROM `transaction` WHERE user_id = :userId AND date >= :since", nativeQuery = true)
+    long countDistinctMonthsSince(@Param("userId") Long userId, @Param("since") LocalDate since);
+
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.userId = :userId AND t.date BETWEEN :start AND :end AND t.category IS NULL AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    long countUncategorizedInPeriod(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    @Query("SELECT COUNT(DISTINCT t.category.id) FROM Transaction t WHERE t.userId = :userId AND t.category IS NOT NULL")
+    long countDistinctCategoriesUsed(@Param("userId") Long userId);
+
+    @Query("SELECT MAX(cnt) FROM (SELECT COUNT(t) AS cnt FROM Transaction t WHERE t.userId = :userId GROUP BY t.date) sub")
+    Long maxTransactionsOnSameDate(@Param("userId") Long userId);
 }

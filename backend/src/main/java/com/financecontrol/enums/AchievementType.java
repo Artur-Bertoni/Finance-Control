@@ -1,0 +1,27 @@
+package com.financecontrol.enums;
+
+public enum AchievementType {
+
+    // First steps
+    FIRST_ACCOUNT,
+    FIRST_TRANSACTION,
+    FIRST_GOAL,
+    FIRST_CUSTOM_CATEGORY,
+
+    // Goals & consistency
+    GOAL_COMPLETED,
+    FIVE_GOALS_COMPLETED,
+    TEN_GOALS_COMPLETED,
+    GOAL_EARLY_COMPLETION,
+    TRANSACTIONS_7_DIFF_DAYS,
+    TRANSACTIONS_WEEKLY_MONTH,
+    TRANSACTIONS_MONTHLY_YEAR,
+
+    // Organisation
+    ALL_TRANSACTIONS_CATEGORIZED,
+    STATEMENT_IMPORTED,
+
+    // Diversification
+    THREE_INSTITUTIONS,
+    FIVE_CATEGORIES_USED,
+}

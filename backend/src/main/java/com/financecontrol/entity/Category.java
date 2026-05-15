@@ -20,6 +20,9 @@ public class Category {
     private String name;
     private String description;
 
+    @Column(name = "icon_key")
+    private String iconKey;
+
     @Column(name = "internal_name")
     private String internalName; // legacy column — not set for new records
 

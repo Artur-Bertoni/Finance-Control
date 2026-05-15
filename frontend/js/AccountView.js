@@ -21,6 +21,13 @@ export function init() {
 
     document.getElementById('detail-name').textContent = acc.name
 
+    if (acc.iconKey) {
+        const iconRow = document.getElementById('icon-row')
+        const iconEl  = document.getElementById('detail-icon')
+        if (iconRow) iconRow.style.display = ''
+        if (iconEl)  iconEl.innerHTML = `<i class="ph ${acc.iconKey}"></i>`
+    }
+
     document.getElementById('detail-institution').textContent =
         acc.financialInstitution || I18n.t('notInformed')
 

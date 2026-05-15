@@ -107,9 +107,13 @@ function renderList() {
         if (acc.balance > 0) balClass = 'positive'
         else if (acc.balance < 0) balClass = 'negative'
 
+        const iconHtml = acc.iconKey
+            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${acc.iconKey}"></i></span>`
+            : ''
+
         card.innerHTML = `
             <div class="item-card-header">
-                <span class="item-card-name">${acc.name}</span>
+                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${acc.name}</span></span>
                 <span class="item-card-badge"></span>
             </div>
             <div class="item-card-meta">

@@ -48,12 +48,15 @@ function renderList() {
         const card = document.createElement('div')
         card.className = 'item-card'
         card.addEventListener('click', () => navigate(`/pages/TransactionLocaleView.html?id=${loc.id}`))
+        const iconHtml = loc.iconKey
+            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${loc.iconKey}"></i></span>`
+            : ''
         const addressHtml = loc.address
             ? '<div class="item-card-meta"><div class="item-card-row">' + Icons.locations() + loc.address + '</div></div>'
             : ''
         card.innerHTML = `
             <div class="item-card-header">
-                <span class="item-card-name">${loc.name}</span>
+                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${loc.name}</span></span>
                 <span class="item-card-badge"></span>
             </div>
             ${addressHtml}`

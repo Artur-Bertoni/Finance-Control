@@ -5,9 +5,10 @@ import com.financecontrol.entity.TransactionLocale;
 public record TransactionLocaleResponse(
     Long id,
     String name,
-    String address
+    String address,
+    String iconKey
 ) {
     public static TransactionLocaleResponse from(TransactionLocale tl) {
-        return new TransactionLocaleResponse(tl.getId(), tl.getName(), tl.getAddress());
+        return new TransactionLocaleResponse(tl.getId(), tl.getName(), tl.getAddress(), tl.getIconKey());
     }
 }

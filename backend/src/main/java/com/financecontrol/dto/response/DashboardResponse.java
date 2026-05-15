@@ -9,6 +9,6 @@ public record DashboardResponse(
         List<WealthDataPoint> wealthEvolution
 ) {
     public record MonthlyDataPoint(String month, Double income, Double expenses) {}
-    public record CategoryDataPoint(Long categoryId, String categoryName, Double total) {}
+    public record CategoryDataPoint(Long categoryId, String categoryName, String iconKey, Double total) {}
     public record WealthDataPoint(String month, Double balance) {}
 }

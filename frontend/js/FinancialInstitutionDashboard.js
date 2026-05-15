@@ -48,9 +48,12 @@ function renderList() {
         const card = document.createElement('div')
         card.className = 'item-card'
         card.addEventListener('click', () => navigate(`/pages/FinancialInstitutionView.html?id=${fi.id}`))
+        const iconHtml = fi.iconKey
+            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${fi.iconKey}"></i></span>`
+            : ''
         card.innerHTML = `
             <div class="item-card-header">
-                <span class="item-card-name">${fi.name}</span>
+                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${fi.name}</span></span>
                 <span class="item-card-badge"></span>
             </div>
             <div class="item-card-meta">

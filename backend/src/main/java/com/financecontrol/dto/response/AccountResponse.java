@@ -8,12 +8,14 @@ public record AccountResponse(
     String name,
     String contact,
     String description,
-    Double balance
+    Double balance,
+    String iconKey
 ) {
     public static AccountResponse from(Account a) {
         return new AccountResponse(
                 a.getId(),
                 FinancialInstitutionResponse.from(a.getFinancialInstitution()),
-                a.getName(), a.getContact(), a.getDescription(), a.getBalance());
+                a.getName(), a.getContact(), a.getDescription(), a.getBalance(),
+                a.getIconKey());
     }
 }

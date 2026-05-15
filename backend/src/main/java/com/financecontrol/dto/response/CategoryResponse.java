@@ -9,12 +9,13 @@ public record CategoryResponse(
     Long id,
     String name,
     String description,
+    String iconKey,
     List<String> aliases
 ) {
     public static CategoryResponse from(Category c) {
         List<String> aliasesList = c.getAliases().stream()
                 .map(CategoryAlias::getAliasName)
                 .toList();
-        return new CategoryResponse(c.getId(), c.getName(), c.getDescription(), aliasesList);
+        return new CategoryResponse(c.getId(), c.getName(), c.getDescription(), c.getIconKey(), aliasesList);
     }
 }

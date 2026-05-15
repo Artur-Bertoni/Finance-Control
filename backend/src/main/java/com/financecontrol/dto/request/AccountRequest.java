@@ -7,5 +7,6 @@ public record AccountRequest(
     String name,
     String contact,
     String description,
-    Double balance
+    Double balance,
+    String iconKey
 ) {}

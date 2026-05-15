@@ -2,6 +2,7 @@ import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast,
 import { Category } from './class/CategoryClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
+import { IconPicker } from './components/IconPicker.js'
 import { I18n } from './i18n.js'
 
 let aliases = [] // Array of alias strings managed in this form
@@ -10,6 +11,7 @@ export function init() {
     aliases = []
     SidebarManager.initialize()
     setupRequiredFieldValidation(['name-input'])
+    IconPicker.init(key => { IconPicker.setValue(key); setupDirtyGuard() })
 
     const urlParams  = new URLSearchParams(globalThis.location.search)
     const categoryId = urlParams.get('id')
@@ -29,6 +31,7 @@ export function init() {
             const cat = Category.processCategory(response)
             nameInput.value = cat.name ?? ''
             document.getElementById('description-input').value = cat.description ?? ''
+            if (cat.iconKey) IconPicker.setValue(cat.iconKey)
             aliases = [...cat.aliases]
             originalAliases = [...cat.aliases]
             renderAliases()
@@ -94,6 +97,7 @@ export function init() {
             const body = {
                 name:        nameInput.value,
                 description: document.getElementById('description-input').value || null,
+                iconKey:     IconPicker.getValue(),
                 aliases:     currentAliases.length > 0 ? currentAliases : [nameInput.value]
             }
 

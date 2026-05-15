@@ -38,7 +38,7 @@ public class AccountService {
     public AccountResponse create(Long userId, AccountRequest req) {
         FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
-        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance());
+        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey());
         return AccountResponse.from(accountRepository.save(account));
     }
 
@@ -53,6 +53,7 @@ public class AccountService {
         account.setContact(req.contact());
         account.setDescription(req.description());
         account.setBalance(req.balance());
+        account.setIconKey(req.iconKey());
 
         return AccountResponse.from(accountRepository.save(account));
     }

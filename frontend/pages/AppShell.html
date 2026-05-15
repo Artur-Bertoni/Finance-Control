@@ -8,6 +8,7 @@
   <title>Finance Control</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <link href="../styles/styles.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -23,10 +24,24 @@
       <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
       <div class="sidebar-logo-text">Finance<span>Control</span></div>
     </div>
+    <div class="sidebar-search">
+      <button class="sidebar-search-toggle" id="search-toggle-btn" aria-expanded="false" aria-controls="search-panel">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/></svg>
+        <span data-i18n="quickSearch">Busca Rápida</span>
+        <span class="search-global-shortcut">(Ctrl+Shift+F)</span>
+        <svg class="search-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="sidebar-search-panel" id="search-panel">
+        <input type="text" id="search-input" class="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Digite para buscar..." autocomplete="off" spellcheck="false">
+        <div id="search-shortcuts-hint" class="search-shortcuts-hint"></div>
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </div>
     <nav class="sidebar-nav" aria-label="Menu principal">
       <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
       <a href="/pages/Dashboard.html" class="sidebar-link" data-i18n="dashboard">Dashboard</a>
       <a href="/pages/GoalDashboard.html" class="sidebar-link" data-i18n="goals">Metas Financeiras</a>
+      <a href="/pages/AchievementDashboard.html" class="sidebar-link" data-i18n="achievements">Conquistas</a>
       <div class="sidebar-section" data-i18n="movements">Movimentações</div>
       <a href="/pages/Transaction.html" class="sidebar-link" data-i18n="newTransaction">Nova Transação</a>
       <a href="/pages/Transfer.html" class="sidebar-link" data-i18n="transfer">Transferência</a>

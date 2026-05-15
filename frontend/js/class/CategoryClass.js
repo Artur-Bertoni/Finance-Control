@@ -1,15 +1,16 @@
 import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Category {
-    constructor(id, name, description, aliases) {
+    constructor(id, name, description, iconKey, aliases) {
         this.id = id
         this.name = name
         this.description = description
+        this.iconKey = iconKey ?? null
         this.aliases = aliases ?? []
     }
 
     static addCategories(elementId) {
-        populateSelect(elementId, '/api/categories')
+        populateSelect(elementId, '/api/categories', 'iconKey')
     }
 
     static processCategory(data) {
@@ -17,6 +18,7 @@ export class Category {
             Number(data.id),
             data.name,
             data.description ?? '',
+            data.iconKey ?? null,
             data.aliases ?? []
         )
     }

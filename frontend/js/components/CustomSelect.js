@@ -81,7 +81,15 @@ export class CustomSelect {
         const sel     = this.select
         const opt     = sel.options[sel.selectedIndex]
         const isEmpty = !opt || opt.disabled || opt.value === ''
-        this.trigger.textContent = opt ? opt.text : ''
+        this.trigger.replaceChildren()
+        if (!isEmpty && opt.dataset.iconKey) {
+            const icon = document.createElement('i')
+            icon.className = `ph ${opt.dataset.iconKey}`
+            this.trigger.appendChild(icon)
+        }
+        const label = document.createElement('span')
+        label.textContent = opt ? opt.text : ''
+        this.trigger.appendChild(label)
         this.trigger.classList.toggle('cs-placeholder', isEmpty)
         this.trigger.classList.toggle('field-error', sel.classList.contains('field-error'))
     }
@@ -141,9 +149,16 @@ export class CustomSelect {
             if (opt.disabled) return
             const item = document.createElement('div')
             item.className = 'cs-option' + (opt.selected ? ' cs-selected' : '')
-            item.textContent = opt.text
             item.tabIndex = -1
             item.dataset.value = opt.value
+            if (opt.dataset.iconKey) {
+                const icon = document.createElement('i')
+                icon.className = `ph ${opt.dataset.iconKey}`
+                item.appendChild(icon)
+            }
+            const label = document.createElement('span')
+            label.textContent = opt.text
+            item.appendChild(label)
             item.addEventListener('mousedown', e => {
                 e.preventDefault()
                 sel.value = opt.value
@@ -213,7 +228,8 @@ export class CustomSelect {
         const opts = [...this.dropdown.querySelectorAll('.cs-options .cs-option:not(.cs-clear)')]
         let hasVisible = false
         opts.forEach(item => {
-            const text = norm(item.textContent)
+            const label = item.querySelector('span') ?? item
+            const text = norm(label.textContent)
             const visible = text.includes(query)
             item.style.display = visible ? '' : 'none'
             if (visible) hasVisible = true

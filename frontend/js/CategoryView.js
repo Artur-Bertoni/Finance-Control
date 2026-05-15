@@ -19,6 +19,13 @@ export function init() {
         { label: cat.name }
     ])
 
+    if (cat.iconKey) {
+        const iconRow = document.getElementById('icon-row')
+        const iconEl  = document.getElementById('detail-icon')
+        if (iconRow) iconRow.style.display = ''
+        if (iconEl)  iconEl.innerHTML = `<i class="ph ${cat.iconKey}"></i>`
+    }
+
     document.getElementById('detail-name').textContent = cat.name
 
     const descEl = document.getElementById('detail-description')

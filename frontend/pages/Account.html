@@ -49,6 +49,20 @@
             <label for="balance-input" data-i18n="currentBalance">Saldo Atual ($)</label>
             <input id="balance-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="currentBalancePlaceholder" placeholder="0,00" required>
           </div>
+          <div class="field" style="grid-column: 1 / -1">
+            <label for="icon-picker-trigger" data-i18n="categoryIcon" data-optional-label>Ícone</label>
+            <button type="button" class="icon-picker-trigger" id="icon-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="icon-picker-dropdown">
+              <span class="icon-picker-preview" id="icon-picker-preview">
+                <i class="ph ph-bank" style="font-size:20px"></i>
+              </span>
+              <span class="icon-picker-label" id="icon-picker-label" data-i18n="iconPickerChoose">Escolher ícone...</span>
+              <input type="hidden" id="icon-key-input">
+            </button>
+            <dialog class="icon-picker-dropdown" id="icon-picker-dropdown">
+              <input type="text" class="icon-picker-search" id="icon-picker-search" data-i18n-placeholder="searchPlaceholder" placeholder="Digite para buscar..." autocomplete="off">
+              <div class="icon-picker-grid" id="icon-picker-grid"></div>
+            </dialog>
+          </div>
         </div>
         <div class="form-actions">
           <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>

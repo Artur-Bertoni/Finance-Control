@@ -222,7 +222,14 @@ function createTransactionInfo(tx) {
 
     const cat = document.createElement('div')
     cat.className = 'tx-category'
-    cat.textContent = tx.category
+    if (tx.categoryIconKey) {
+        const icon = document.createElement('i')
+        icon.className = `ph ${tx.categoryIconKey}`
+        cat.appendChild(icon)
+    }
+    const catName = document.createElement('span')
+    catName.textContent = tx.category
+    cat.appendChild(catName)
 
     info.appendChild(cat)
     info.appendChild(createTransactionMeta(tx))

@@ -5,7 +5,8 @@ import { I18n } from '../i18n.js'
 import { LanguageSwitcher } from './LanguageSwitcher.js'
 import { InputMasks } from '../utils/InputMasks.js'
 import { NumberSpinner } from '../utils/NumberSpinner.js'
-import { rerenderBreadcrumb } from '../../utils/FrontendFunctions.js'
+import { rerenderBreadcrumb, showToast } from '../../utils/FrontendFunctions.js'
+import { SearchManager } from './SearchManager.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
@@ -29,7 +30,10 @@ export class SidebarManager {
         NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         LanguageSwitcher.initialize()
+        SearchManager.initialize()
         I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb(); SidebarManager.updateDatePickerLocales() })
+        SidebarManager.checkAchievements()
+        SidebarManager.checkGoalCompletions()
     }
 
     static onNavigate() {
@@ -40,6 +44,10 @@ export class SidebarManager {
         NumberSpinner.autoInit()
         SidebarManager.initDatePickers()
         SidebarManager.initTranslations()
+        SearchManager.invalidateCache()
+        SearchManager.reset()
+        SidebarManager.checkAchievements()
+        SidebarManager.checkGoalCompletions()
     }
 
     static initTranslations() {
@@ -99,7 +107,7 @@ export class SidebarManager {
                 mark.className = 'required-mark'
                 mark.textContent = ' *'
                 label.appendChild(mark)
-            } else if (label.hasAttribute('data-optional-label')) {
+            } else if ('optionalLabel' in label.dataset) {
                 const mark = document.createElement('span')
                 mark.className = 'optional-label'
                 mark.textContent = ' ' + I18n.t('optionalLabel')
@@ -144,7 +152,7 @@ export class SidebarManager {
                 }
             })
             fp.calendarContainer.addEventListener('wheel', e => {
-                if (document.activeElement && document.activeElement.tagName === 'SELECT') return
+                if (document.activeElement?.tagName === 'SELECT') return
                 e.preventDefault()
                 fp.changeMonth(e.deltaY > 0 ? 1 : -1)
             }, { passive: false })
@@ -189,6 +197,7 @@ export class SidebarManager {
             'FinancialInstitutionDashboard.html': 'institutions',
             'TransactionLocaleDashboard.html': 'locations',
             'StatementImport.html': 'statementImport',
+            'AchievementDashboard.html': 'achievements',
             'UserView.html': 'profile'
         }
 
@@ -248,5 +257,47 @@ export class SidebarManager {
             sidebar?.classList.remove('open')
             overlay.classList.remove('show')
         })
+    }
+
+    static checkGoalCompletions() {
+        const pendingUrl = sessionStorage.getItem('__spa_url') ?? ''
+        if (pendingUrl.includes('?guest=true')) return
+        try {
+            let goals = null
+            $.ajax({ url: '/api/goals', type: 'GET', async: false, success: data => { goals = data } })
+            if (!goals) return
+            const TOAST_KEY = 'goalsCompletedSeen'
+            const seen      = new Set(JSON.parse(localStorage.getItem(TOAST_KEY) ?? '[]'))
+            const newlyDone = goals.filter(g => g.status === 'completed' && !seen.has(g.id))
+            for (const g of newlyDone) {
+                showToast(`🎯 ${I18n.t('goalCompletedToast')}: ${g.name}`, 'success', {
+                    label: I18n.t('view'),
+                    url:   `/pages/GoalDashboard.html?highlight=${g.id}`
+                })
+            }
+            const allDone = goals.filter(g => g.status === 'completed').map(g => g.id)
+            localStorage.setItem(TOAST_KEY, JSON.stringify(allDone))
+        } catch {}
+    }
+
+    static checkAchievements() {
+        const pendingUrl = sessionStorage.getItem('__spa_url') ?? ''
+        if (pendingUrl.includes('?guest=true')) return
+        try {
+            let achievements = null
+            $.ajax({ url: '/api/achievements', type: 'GET', async: false, success: data => { achievements = data } })
+            if (!achievements) return
+            const TOAST_KEY = 'achievementsLastSeen'
+            const seen      = new Set(JSON.parse(localStorage.getItem(TOAST_KEY) ?? '[]'))
+            const newOnes   = achievements.filter(a => a.earned && !seen.has(a.type))
+            for (const a of newOnes) {
+                showToast(`🏆 ${I18n.t('achievementUnlocked')}: ${I18n.t(`achievement_${a.type}_title`)}`, 'success', {
+                    label: I18n.t('view'),
+                    url:   `/pages/AchievementDashboard.html?highlight=${a.type}`
+                })
+            }
+            const allEarned = achievements.filter(a => a.earned).map(a => a.type)
+            localStorage.setItem(TOAST_KEY, JSON.stringify(allEarned))
+        } catch {}
     }
 }

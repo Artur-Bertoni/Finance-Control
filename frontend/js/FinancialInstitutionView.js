@@ -21,6 +21,13 @@ export function init() {
 
     document.getElementById('detail-name').textContent = fi.name
 
+    if (fi.iconKey) {
+        const iconRow = document.getElementById('icon-row')
+        const iconEl  = document.getElementById('detail-icon')
+        if (iconRow) iconRow.style.display = ''
+        if (iconEl)  iconEl.innerHTML = `<i class="ph ${fi.iconKey}"></i>`
+    }
+
     const addressEl = document.getElementById('detail-address')
     if (fi.address) {
         addressEl.textContent = fi.address

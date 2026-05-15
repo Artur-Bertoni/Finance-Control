@@ -4,10 +4,12 @@ import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
+import { IconPicker } from './components/IconPicker.js'
 
 export function init() {
     SidebarManager.initialize()
     FinancialInstitution.addFinancialInstitutions()
+    IconPicker.init(iconKey => IconPicker.setValue(iconKey))
 
     setupRequiredFieldValidation(['name-input', 'financial-institution-input', 'balance-input'])
 
@@ -65,6 +67,7 @@ function loadEditMode(accountId) {
     document.getElementById('description-input').value = acc.description ?? ''
     document.getElementById('balance-input').value     = acc.balance === undefined ? '' : acc.balance.toFixed(2)
 
+    if (acc.iconKey) IconPicker.setValue(acc.iconKey)
     selectOptionByText('financial-institution-input', acc.financialInstitution)
 
     const deleteBtn = addDeleteIcon()
@@ -105,7 +108,8 @@ function handleSave(accountId) {
         financialInstitutionId: Number(financialInstitutionId),
         contact:     document.getElementById('contact-input').value     || null,
         description: document.getElementById('description-input').value || null,
-        balance:     Number(balance)
+        balance:     Number(balance),
+        iconKey:     IconPicker.getValue() || null
     }
 
     $.ajax({

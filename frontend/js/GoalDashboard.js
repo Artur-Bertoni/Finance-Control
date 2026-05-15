@@ -79,15 +79,26 @@ function renderList() {
     for (const g of goals) {
         list.appendChild(buildGoalCard(g))
     }
+
+    const highlightId = new URLSearchParams(location.search).get('highlight')
+    if (highlightId) {
+        const card = list.querySelector(`[data-goal-id="${highlightId}"]`)
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            card.classList.add('card-highlighted')
+            card.addEventListener('animationend', () => card.classList.remove('card-highlighted'), { once: true })
+        }
+    }
 }
 
 function buildGoalCard(g) {
     const card = document.createElement('div')
     card.className = 'item-card goal-card'
+    card.dataset.goalId = g.id
     card.addEventListener('click', () => navigate(`/pages/GoalView.html?id=${g.id}`))
 
     const pct        = Math.min(g.progressPercent ?? 0, 100)
-    const exceeded   = (g.progressPercent ?? 0) > 100
+    const exceeded   = g.type === 'expense_limit' && (g.progressPercent ?? 0) > 100
     const barColor   = goalBarColor(g)
     const statusKey  = statusI18nKey(g.status)
     const typeLabel  = typeI18nLabel(g.type)

@@ -1,7 +1,7 @@
 import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Account {
-    constructor(id, name, financialInstitution, contact, description, balance, financialInstitutionId) {
+    constructor({ id, name, financialInstitution, contact, description, balance, financialInstitutionId, iconKey }) {
         this.id = id
         this.name = name
         this.financialInstitution = financialInstitution
@@ -9,21 +9,23 @@ export class Account {
         this.description = description
         this.balance = balance
         this.financialInstitutionId = financialInstitutionId
+        this.iconKey = iconKey ?? null
     }
 
     static addAccounts(elementId) {
-        populateSelect(elementId, '/api/accounts')
+        populateSelect(elementId, '/api/accounts', 'iconKey')
     }
 
     static processAccount(data) {
-        return new Account(
-            Number(data.id),
-            data.name,
-            data.financialInstitution?.name ?? '',
-            data.contact ?? '',
-            data.description ?? '',
-            Number(data.balance),
-            data.financialInstitution?.id ?? null
-        )
+        return new Account({
+            id:                   Number(data.id),
+            name:                 data.name,
+            financialInstitution: data.financialInstitution?.name ?? '',
+            contact:              data.contact ?? '',
+            description:          data.description ?? '',
+            balance:              Number(data.balance),
+            financialInstitutionId: data.financialInstitution?.id ?? null,
+            iconKey:              data.iconKey ?? null,
+        })
     }
 }

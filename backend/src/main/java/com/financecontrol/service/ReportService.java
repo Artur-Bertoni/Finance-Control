@@ -63,21 +63,25 @@ public class ReportService {
     private void buildCategoryData(List<Object[]> rows,
                                     List<DashboardResponse.CategoryDataPoint> expenses,
                                     List<DashboardResponse.CategoryDataPoint> incomes) {
-        Map<Long, String> names = new LinkedHashMap<>();
-        Map<Long, double[]> map = new LinkedHashMap<>();
+        Map<Long, String>   names   = new LinkedHashMap<>();
+        Map<Long, String>   icons   = new LinkedHashMap<>();
+        Map<Long, double[]> map     = new LinkedHashMap<>();
         for (Object[] row : rows) {
+            // row: [catId, name, iconKey, type, sum]
             Long catId = (Long) row[0];
             names.put(catId, (String) row[1]);
+            icons.put(catId, (String) row[2]);
             double[] arr = map.computeIfAbsent(catId, k -> new double[2]);
-            if (extractType(row[2]) == TransactionType.CREDIT) arr[0] += ((Number) row[3]).doubleValue();
-            else arr[1] += ((Number) row[3]).doubleValue();
+            if (extractType(row[3]) == TransactionType.CREDIT) arr[0] += ((Number) row[4]).doubleValue();
+            else arr[1] += ((Number) row[4]).doubleValue();
         }
 
         for (Long catId : map.keySet()) {
-            double[] arr = map.get(catId);
-            String name = names.get(catId);
-            if (arr[0] > 0) incomes.add(new DashboardResponse.CategoryDataPoint(catId, name, arr[0]));
-            if (arr[1] > 0) expenses.add(new DashboardResponse.CategoryDataPoint(catId, name, arr[1]));
+            double[] arr  = map.get(catId);
+            String name   = names.get(catId);
+            String icon   = icons.get(catId);
+            if (arr[0] > 0) incomes.add(new DashboardResponse.CategoryDataPoint(catId, name, icon, arr[0]));
+            if (arr[1] > 0) expenses.add(new DashboardResponse.CategoryDataPoint(catId, name, icon, arr[1]));
         }
         expenses.sort((a, b) -> Double.compare(b.total(), a.total()));
         incomes.sort((a, b) -> Double.compare(b.total(), a.total()));

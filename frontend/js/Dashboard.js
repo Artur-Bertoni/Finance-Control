@@ -243,7 +243,27 @@ function renderMonthlyChart(monthlyData) {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { labels: { color: c.text, boxRadius: 4 } },
+                    legend: {
+                        labels: { color: c.text, boxRadius: 4 },
+                        onHover: (_, legendItem) => {
+                            const chart = chartInstances['chart-monthly']
+                            if (!chart) return
+                            const col = themeColors()
+                            const full = [col.income, col.expenses]
+                            chart.data.datasets.forEach((ds, i) => {
+                                ds.backgroundColor = i === legendItem.datasetIndex ? full[i] : full[i] + '55'
+                            })
+                            chart.update('none')
+                        },
+                        onLeave: () => {
+                            const chart = chartInstances['chart-monthly']
+                            if (!chart) return
+                            const col = themeColors()
+                            chart.data.datasets[0].backgroundColor = col.income
+                            chart.data.datasets[1].backgroundColor = col.expenses
+                            chart.update('none')
+                        },
+                    },
                     tooltip: { callbacks: { label: ctx => ` $ ${formatCurrency(ctx.raw)}` } },
                 },
                 scales: commonScaleOptions(c),
@@ -356,23 +376,25 @@ function renderDonutChart(canvasId, categoryData) {
     const c = themeColors()
 
     const MAX = 9
-    let labels, values, colors, categoryIds, othersDetails, othersIndex
+    let labels, values, colors, categoryIds, iconKeys, othersDetails, othersIndex
 
     if (categoryData.length <= MAX) {
-        labels       = categoryData.map(d => d.categoryName)
-        values       = categoryData.map(d => d.total)
-        colors       = categoryData.map((_, i) => DONUT_COLORS[i % DONUT_COLORS.length])
-        categoryIds  = categoryData.map(d => d.categoryId)
+        labels        = categoryData.map(d => d.categoryName)
+        values        = categoryData.map(d => d.total)
+        colors        = categoryData.map((_, i) => DONUT_COLORS[i % DONUT_COLORS.length])
+        categoryIds   = categoryData.map(d => d.categoryId)
+        iconKeys      = categoryData.map(d => d.iconKey ?? null)
         othersDetails = []
-        othersIndex  = -1
+        othersIndex   = -1
     } else {
-        const top     = categoryData.slice(0, MAX - 1)
-        const rest    = categoryData.slice(MAX - 1)
+        const top      = categoryData.slice(0, MAX - 1)
+        const rest     = categoryData.slice(MAX - 1)
         const othersTotal = rest.reduce((s, d) => s + d.total, 0)
         labels        = [...top.map(d => d.categoryName), I18n.t('others')]
         values        = [...top.map(d => d.total), othersTotal]
         colors        = [...top.map((_, i) => DONUT_COLORS[i]), '#9CA3AF']
         categoryIds   = [...top.map(d => d.categoryId), null]
+        iconKeys      = [...top.map(d => d.iconKey ?? null), null]
         othersDetails = rest.map(d => ({ name: d.categoryName, total: d.total }))
         othersIndex   = labels.length - 1
     }
@@ -385,13 +407,14 @@ function renderDonutChart(canvasId, categoryData) {
         existing.data.datasets[0].data            = values
         existing.data.datasets[0].backgroundColor = colors
         existing._categoryIds                     = categoryIds
+        existing._iconKeys                        = iconKeys
         existing._othersDetails                   = othersDetails
-        existing._othersIndex                             = othersIndex
-        existing._revealProgress                          = 1
-        existing.data.datasets[0].borderColor             = c.surface
-        existing.options.plugins.legend.labels.color      = c.text
-        existing.options.animation                        = { duration: 400, easing: 'easeOutQuart' }
+        existing._othersIndex                     = othersIndex
+        existing._revealProgress                  = 1
+        existing.data.datasets[0].borderColor     = c.surface
+        existing.options.animation                = { duration: 400, easing: 'easeOutQuart' }
         existing.update()
+        renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total)
         return
     }
 
@@ -406,6 +429,7 @@ function renderDonutChart(canvasId, categoryData) {
                     backgroundColor: colors,
                     borderWidth:     2,
                     borderColor:     c.surface,
+                    hoverOffset:     14,
                 }],
             },
             options: {
@@ -422,19 +446,7 @@ function renderDonutChart(canvasId, categoryData) {
                     goToHomepageFiltered(catId)
                 },
                 plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: { color: c.text, boxRadius: 4, padding: 10, font: { size: 11 }, boxWidth: 12 },
-                        onHover: (event, legendItem) => {
-                            const inst = chartInstances[canvasId]
-                            if (!inst || legendItem.index !== inst._othersIndex || !inst._othersDetails?.length) {
-                                hideOthersLegendTip()
-                                return
-                            }
-                            showOthersLegendTip(event.native, inst._othersDetails)
-                        },
-                        onLeave: () => hideOthersLegendTip(),
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: ctx => {
@@ -454,9 +466,72 @@ function renderDonutChart(canvasId, categoryData) {
         }
     )
     chartInstances[canvasId]._categoryIds   = categoryIds
+    chartInstances[canvasId]._iconKeys      = iconKeys
     chartInstances[canvasId]._othersDetails = othersDetails
     chartInstances[canvasId]._othersIndex   = othersIndex
     startReveal(chartInstances[canvasId])
+    renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total)
+}
+
+function renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total) {
+    const container = document.getElementById(`${canvasId}-legend`)
+    if (!container) return
+
+    container.innerHTML = ''
+    labels.forEach((label, i) => {
+        const item = document.createElement('div')
+        item.className = 'donut-legend-item'
+        item.dataset.index = String(i)
+
+        const swatch = document.createElement('span')
+        swatch.className = 'donut-legend-swatch'
+        swatch.style.background = colors[i]
+
+        const iconEl = document.createElement('span')
+        iconEl.className = 'donut-legend-icon'
+        if (iconKeys[i]) {
+            iconEl.innerHTML = `<i class="ph ${iconKeys[i]}"></i>`
+        }
+
+        const nameEl = document.createElement('span')
+        nameEl.className = 'donut-legend-name'
+        nameEl.textContent = label
+
+        const pct = total > 0 ? Math.round((chartInstances[canvasId]?.data?.datasets?.[0]?.data?.[i] ?? 0) / total * 100) : 0
+        const pctEl = document.createElement('span')
+        pctEl.className = 'donut-legend-pct'
+        pctEl.textContent = `${pct}%`
+
+        item.appendChild(swatch)
+        if (iconKeys[i]) item.appendChild(iconEl)
+        item.appendChild(nameEl)
+        item.appendChild(pctEl)
+
+        item.addEventListener('mouseenter', () => {
+            const inst = chartInstances[canvasId]
+            if (!inst) return
+            inst.setActiveElements([{ datasetIndex: 0, index: i }])
+            inst.update('none')
+            container.querySelectorAll('.donut-legend-item').forEach((el, j) => {
+                el.classList.toggle('dimmed', j !== i)
+            })
+            if (i === othersIndex && othersDetails.length) {
+                showOthersLegendTip({ clientX: item.getBoundingClientRect().right, clientY: item.getBoundingClientRect().top }, othersDetails)
+            }
+        })
+        item.addEventListener('mouseleave', () => {
+            const inst = chartInstances[canvasId]
+            if (inst) { inst.setActiveElements([]); inst.update('none') }
+            container.querySelectorAll('.donut-legend-item').forEach(el => el.classList.remove('dimmed'))
+            hideOthersLegendTip()
+        })
+        item.addEventListener('click', () => {
+            const catId = categoryIds[i]
+            if (catId != null) goToHomepageFiltered(catId)
+        })
+
+        container.appendChild(item)
+    })
 }
 
 if (!globalThis.__appRouter) init()

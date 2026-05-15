@@ -3,9 +3,11 @@ import { TransactionLocale } from './class/TransactionLocaleClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
 import { I18n } from './i18n.js'
+import { IconPicker } from './components/IconPicker.js'
 
 export function init() {
     SidebarManager.initialize()
+    IconPicker.init(iconKey => IconPicker.setValue(iconKey))
 
     setupRequiredFieldValidation(['name-input'])
 
@@ -24,6 +26,7 @@ export function init() {
             const locale = TransactionLocale.processTransactionLocale(response)
             document.getElementById('name-input').value    = locale.name    ?? ''
             document.getElementById('address-input').value = locale.address ?? ''
+            if (locale.iconKey) IconPicker.setValue(locale.iconKey)
 
             setBreadcrumb([
                 { i18nKey: 'locations', url: '/pages/TransactionLocaleDashboard.html' },
@@ -59,7 +62,8 @@ export function init() {
 
         const body = {
             name:    document.getElementById('name-input').value,
-            address: document.getElementById('address-input').value || null
+            address: document.getElementById('address-input').value || null,
+            iconKey: IconPicker.getValue() || null
         }
 
         $.ajax({
