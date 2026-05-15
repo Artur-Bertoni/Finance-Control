@@ -39,11 +39,12 @@ public class AdminEmailController extends BaseController {
             } else {
                 emailService.sendTestGoalEmail(user, GoalNotificationType.valueOf(type));
             }
+            log.info("E-mail de teste '{}' enviado com sucesso para {}", type, user.getEmail());
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             throw new BusinessException("error.email.sendFailed");
         } catch (Exception e) {
-            log.error("Falha ao enviar e-mail de teste para {}: {}", user.getEmail(), e.getMessage());
+            log.error("Falha ao enviar e-mail de teste para {} (tipo={}): {}", user.getEmail(), type, e.getMessage(), e);
             throw new BusinessException("error.email.sendFailed");
         }
     }

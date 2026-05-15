@@ -62,6 +62,7 @@ public class StatementImportService {
 
     // Saves the user-reviewed rows as transactions.
     @Transactional
+    @SuppressWarnings("null")
     public ImportResult confirmImport(Long userId, Long accountId, List<ImportRowRequest> rows) {
         int imported = 0;
         LocalDate minDate = null;

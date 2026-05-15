@@ -63,12 +63,13 @@ public class GoalNotificationScheduler {
         }
     }
 
+    @SuppressWarnings("null")
     private void processGoal(FinancialGoal goal, LocalDate today) {
         double current = goalService.calculateCurrentAmount(goal);
         double pct     = percentOf(current, goal.getTargetAmount());
 
         User user = userRepository.findById(goal.getUserId()).orElse(null);
-        if (user == null) return;
+        if (user == null || !user.isGoalEmailNotificationEnabled()) return;
 
         if (today.isAfter(goal.getEndDate())) {
             finalizeGoal(goal, user, pct, current);

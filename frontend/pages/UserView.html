@@ -50,12 +50,21 @@
         </div>
         <div class="detail-grid">
           <div class="detail-field">
-            <label for="detail-notification-status" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
-            <p><span id="detail-notification-status" class="tx-badge">—</span></p>
+            <div style="display:flex;align-items:flex-start;gap:0">
+              <div>
+                <label for="detail-notification-status" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
+                <p><span id="detail-notification-status" class="tx-badge">—</span></p>
+              </div>
+              <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
+              <div>
+                <label for="detail-notification-day" data-i18n="notificationDayLabel">Dia de envio</label>
+                <p id="detail-notification-day">—</p>
+              </div>
+            </div>
           </div>
           <div class="detail-field">
-            <label for="detail-notification-day" data-i18n="notificationDayLabel">Dia preferido para receber</label>
-            <p id="detail-notification-day">—</p>
+            <label for="detail-goal-notification-status" data-i18n="goalNotificationsLabel">Notificações de metas financeiras</label>
+            <p><span id="detail-goal-notification-status" class="tx-badge">—</span></p>
           </div>
         </div>
 

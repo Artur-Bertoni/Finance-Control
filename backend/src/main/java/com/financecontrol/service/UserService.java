@@ -51,6 +51,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(req.password()));
         user.setEmailNotificationEnabled(Boolean.TRUE.equals(req.emailNotificationEnabled()));
         user.setEmailNotificationDay(req.emailNotificationDay() != null ? req.emailNotificationDay() : 5);
+        user.setGoalEmailNotificationEnabled(true);
         user.setLanguage("pt");
         user.setAdmin(false);
         return UserResponse.from(userRepository.save(user));
@@ -69,6 +70,8 @@ public class UserService {
             user.setEmailNotificationEnabled(req.emailNotificationEnabled());
         if (req.emailNotificationDay() != null)
             user.setEmailNotificationDay(req.emailNotificationDay());
+        if (req.goalEmailNotificationEnabled() != null)
+            user.setGoalEmailNotificationEnabled(req.goalEmailNotificationEnabled());
         if (req.language() != null)
             user.setLanguage(req.language());
         return UserResponse.from(userRepository.save(user));

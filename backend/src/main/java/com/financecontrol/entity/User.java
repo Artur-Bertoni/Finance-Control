@@ -14,6 +14,7 @@ public class User {
     private String password;
     private boolean emailNotificationEnabled;
     private int emailNotificationDay;
+    private boolean goalEmailNotificationEnabled;
     private String language;
     private boolean admin;
 }

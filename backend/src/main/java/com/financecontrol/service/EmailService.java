@@ -46,8 +46,6 @@ public class EmailService {
         this.mailFrom      = Objects.requireNonNull(mailFrom, "app.mail.from must be configured");
     }
 
-    // ── Weekly reminder ───────────────────────────────────────────────────
-
     @Async("emailTaskExecutor")
     public void sendWeeklyReminder(User user) {
         try {
@@ -63,7 +61,16 @@ public class EmailService {
     }
 
     public void sendTestGoalEmail(User user, GoalNotificationType type) throws MessagingException, IOException {
-        doSendGoal(user, buildSampleGoal(), type, 2500.0);
+        FinancialGoal sample = buildSampleGoal();
+        double current = switch (type) {
+            case MILESTONE_50     -> sample.getTargetAmount() * 0.50;
+            case MILESTONE_75     -> sample.getTargetAmount() * 0.75;
+            case MILESTONE_90     -> sample.getTargetAmount() * 0.90;
+            case COMPLETED        -> sample.getTargetAmount();
+            case DEADLINE_WARNING -> sample.getTargetAmount() * 0.40;
+            case EXCEEDED         -> sample.getTargetAmount() * 1.10;
+        };
+        doSendGoal(user, sample, type, current);
     }
 
     @SuppressWarnings("null")
@@ -91,8 +98,6 @@ public class EmailService {
 
         sendMimeMessage(user.getEmail(), subject, html);
     }
-
-    // ── Goal notifications ────────────────────────────────────────────────
 
     @Async("emailTaskExecutor")
     public void sendGoalNotification(User user, FinancialGoal goal,
@@ -201,11 +206,10 @@ public class EmailService {
         };
     }
 
-    // ── Shared infrastructure ─────────────────────────────────────────────
-
     @SuppressWarnings("null")
     private void sendMimeMessage(String to, String subject, String html)
             throws MessagingException {
+        log.info("[EMAIL] Preparando envio → de={} para={} assunto='{}'", mailFrom, to, subject);
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom(mailFrom);
@@ -213,9 +217,12 @@ public class EmailService {
         helper.setSubject(subject);
         helper.setText(html, true);
         helper.addInline("emailLogo", new ClassPathResource("templates/logo.png"), "image/png");
+        long start = System.currentTimeMillis();
         mailSender.send(message);
+        log.info("[EMAIL] SMTP aceitou a mensagem → para={} ({}ms)", to, System.currentTimeMillis() - start);
     }
 
+    @SuppressWarnings("null")
     private String loadTemplate(String templatePath) throws IOException {
         ClassPathResource resource = new ClassPathResource(templatePath);
         return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);

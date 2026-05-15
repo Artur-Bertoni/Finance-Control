@@ -83,6 +83,7 @@ export function init() {
     document.getElementById('confirm-btn').addEventListener('click', handleConfirm)
     document.getElementById('select-all-check').addEventListener('change', function () {
         document.querySelectorAll('.row-check').forEach(cb => { cb.checked = this.checked })
+        this.indeterminate = false
     })
 
     I18n.onChange(() => {
@@ -186,6 +187,14 @@ function handleAnalyze() {
     })
 }
 
+function syncSelectAll() {
+    const all  = document.querySelectorAll('.row-check')
+    const checked = document.querySelectorAll('.row-check:checked')
+    const headerCb = document.getElementById('select-all-check')
+    headerCb.checked = all.length > 0 && checked.length === all.length
+    headerCb.indeterminate = checked.length > 0 && checked.length < all.length
+}
+
 function buildReviewTable(rows) {
     const tbody = document.getElementById('review-tbody')
     tbody.innerHTML = ''
@@ -195,25 +204,21 @@ function buildReviewTable(rows) {
         tr.style.borderBottom = '1px solid var(--border)'
         tr.dataset.index = index
 
-        // Toggle checkbox
+        // Checkbox
         const tdCheck = document.createElement('td')
-        tdCheck.style.padding = '8px 6px'
-        const toggleLabel = document.createElement('label')
-        toggleLabel.className = 'toggle-switch row-toggle-label'
-        toggleLabel.style.margin = '0'
-        toggleLabel.title = I18n.t('shouldImportHint')
-        toggleLabel.dataset.i18nTitle = 'shouldImportHint'
-        toggleLabel.dataset.i18nAria = 'includeRow'
+        tdCheck.style.cssText = 'padding:8px 6px;text-align:center'
+        const checkLabel = document.createElement('label')
+        checkLabel.className = 'checkbox-label row-toggle-label'
+        checkLabel.style.cssText = 'display:inline-flex;margin:0'
+        checkLabel.title = I18n.t('shouldImportHint')
+        checkLabel.dataset.i18nTitle = 'shouldImportHint'
         const check = document.createElement('input')
         check.type = 'checkbox'
         check.checked = true
-        check.className = 'toggle-input row-check'
-        const track = document.createElement('span')
-        track.className = 'toggle-track'
-        track.innerHTML = '<span class="toggle-thumb"></span>'
-        toggleLabel.appendChild(check)
-        toggleLabel.appendChild(track)
-        tdCheck.appendChild(toggleLabel)
+        check.className = 'row-check'
+        check.addEventListener('change', syncSelectAll)
+        checkLabel.appendChild(check)
+        tdCheck.appendChild(checkLabel)
 
         // Date
         const tdDate = document.createElement('td')

@@ -7,5 +7,6 @@ public record UserRequest(
     String passwordConfirmation,
     Boolean emailNotificationEnabled,
     Integer emailNotificationDay,
+    Boolean goalEmailNotificationEnabled,
     String language
 ) {}

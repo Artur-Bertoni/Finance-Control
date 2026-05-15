@@ -4,6 +4,7 @@ import {
 } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from './utils/FieldValidation.js'
+import { InputMasks } from './utils/InputMasks.js'
 import { I18n } from './i18n.js'
 
 const REQUIRED = ['name-input', 'type-select', 'target-input', 'start-date-input', 'end-date-input']
@@ -14,6 +15,8 @@ export function init() {
 
     const params = new URLSearchParams(globalThis.location.search)
     const goalId = params.get('id')
+
+    InputMasks.money(document.getElementById('target-input'))
 
     initDatePickers()
     loadDropdownData()
@@ -33,7 +36,7 @@ export function init() {
     document.getElementById('save-btn')?.addEventListener('click', () => handleSave(goalId))
 
     setupDirtyGuard()
-    I18n.onChange(() => refreshI18nSelectOptions())
+    I18n.onChange(() => { refreshI18nSelectOptions(); InputMasks.reformatAll() })
 }
 
 // ── flatpickr ──────────────────────────────────────────────────────────────
@@ -90,7 +93,7 @@ function loadGoal(goalId) {
 
     document.getElementById('name-input').value        = goal.name ?? ''
     document.getElementById('description-input').value = goal.description ?? ''
-    document.getElementById('target-input').value      = goal.targetAmount ?? ''
+    document.getElementById('target-input').value = goal.targetAmount ?? ''
 
     const typeSelect = document.getElementById('type-select')
     typeSelect.value = goal.type ?? ''
@@ -165,7 +168,7 @@ function handleSave(goalId) {
         name:            document.getElementById('name-input').value,
         description:     document.getElementById('description-input').value || null,
         type:            document.getElementById('type-select').value,
-        targetAmount:    parseFloat(document.getElementById('target-input').value),
+        targetAmount:    Number.parseFloat(document.getElementById('target-input').value),
         startDate:       getInputValue('start-date-input'),
         endDate:         getInputValue('end-date-input'),
         categoryIds:     getCheckedIds('categories-multi'),

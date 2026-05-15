@@ -52,6 +52,7 @@ public class FinancialGoalService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public FinancialGoalResponse update(@NonNull Long id, Long userId, FinancialGoalRequest req) {
         FinancialGoal goal = getOrThrow(id);
         applyRequest(goal, userId, req);

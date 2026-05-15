@@ -86,26 +86,41 @@
           </div>
           <div class="form-grid">
             <div class="field">
-              <span data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</span>
-              <div class="toggle-switch">
-                <input type="checkbox" id="notification-enabled-input" class="toggle-input">
-                <span class="toggle-track" role="presentation">
-                  <span class="toggle-thumb"></span>
-                </span>
-                <span class="toggle-label" id="notification-enabled-label" data-i18n="enabled">Ativado</span>
+              <div style="display:flex;align-items:flex-start;gap:0">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</span>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="notification-enabled-input" class="toggle-input">
+                    <span class="toggle-track" role="presentation">
+                      <span class="toggle-thumb"></span>
+                    </span>
+                    <span class="toggle-label" id="notification-enabled-label" data-i18n="enabled">Ativado</span>
+                  </div>
+                </div>
+                <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label for="notification-day-input" data-i18n="notificationDayLabel">Dia de envio</label>
+                  <select id="notification-day-input" style="width:auto">
+                    <option value="1" data-i18n="monday">Segunda-feira</option>
+                    <option value="2" data-i18n="tuesday">Terça-feira</option>
+                    <option value="3" data-i18n="wednesday">Quarta-feira</option>
+                    <option value="4" data-i18n="thursday">Quinta-feira</option>
+                    <option value="5" data-i18n="friday" selected>Sexta-feira</option>
+                    <option value="6" data-i18n="saturday">Sábado</option>
+                    <option value="7" data-i18n="sunday">Domingo</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="field" id="field-notification-day">
-              <label for="notification-day-input" data-i18n="notificationDayLabel">Dia preferido para receber</label>
-              <select id="notification-day-input">
-                <option value="1" data-i18n="monday">Segunda-feira</option>
-                <option value="2" data-i18n="tuesday">Terça-feira</option>
-                <option value="3" data-i18n="wednesday">Quarta-feira</option>
-                <option value="4" data-i18n="thursday">Quinta-feira</option>
-                <option value="5" data-i18n="friday" selected>Sexta-feira</option>
-                <option value="6" data-i18n="saturday">Sábado</option>
-                <option value="7" data-i18n="sunday">Domingo</option>
-              </select>
+            <div class="field">
+              <span data-i18n="goalNotificationsLabel">Notificações de metas financeiras</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="goal-notification-enabled-input" class="toggle-input">
+                <span class="toggle-track" id="goal-notification-track" role="presentation">
+                  <span class="toggle-thumb"></span>
+                </span>
+                <span class="toggle-label" id="goal-notification-enabled-label" data-i18n="enabled">Ativado</span>
+              </div>
             </div>
           </div>
 

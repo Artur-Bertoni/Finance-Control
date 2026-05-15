@@ -104,11 +104,12 @@ function handleSave() {
             async:       false,
             contentType: 'application/json',
             data:        JSON.stringify({
-                username:                   document.getElementById('username-input').value,
-                email:                      document.getElementById('email-input').value,
-                emailNotificationEnabled:   document.getElementById('notification-enabled-input').checked,
-                emailNotificationDay:       Number.parseInt(document.getElementById('notification-day-input').value, 10),
-                language:                   selectedLanguage
+                username:                      document.getElementById('username-input').value,
+                email:                         document.getElementById('email-input').value,
+                emailNotificationEnabled:      document.getElementById('notification-enabled-input').checked,
+                emailNotificationDay:          Number.parseInt(document.getElementById('notification-day-input').value, 10),
+                goalEmailNotificationEnabled:  document.getElementById('goal-notification-enabled-input').checked,
+                language:                      selectedLanguage
             }),
             success: function () {
                 clearDirtyGuard()
@@ -210,7 +211,6 @@ function setupNotificationSection(user) {
     const section = document.getElementById('notification-section')
     section.style.display = ''
 
-
     const checkbox = document.getElementById('notification-enabled-input')
     const daySelect = document.getElementById('notification-day-input')
     const label     = document.getElementById('notification-enabled-label')
@@ -219,15 +219,25 @@ function setupNotificationSection(user) {
     daySelect.value  = user.emailNotificationDay ?? 5
     updateNotificationLabel(label, checkbox.checked)
 
+    const goalCheckbox = document.getElementById('goal-notification-enabled-input')
+    const goalLabel    = document.getElementById('goal-notification-enabled-label')
+    goalCheckbox.checked = user.goalEmailNotificationEnabled !== false
+    updateNotificationLabel(goalLabel, goalCheckbox.checked)
+
     const langSelect = document.getElementById('language-select')
     langSelect.value = user.language ?? 'pt'
 
-    // clicking the track toggles the checkbox
     document.querySelector('#notification-section .toggle-track').addEventListener('click', () => {
         checkbox.checked = !checkbox.checked
         updateNotificationLabel(label, checkbox.checked)
     })
     checkbox.addEventListener('change', () => updateNotificationLabel(label, checkbox.checked))
+
+    document.getElementById('goal-notification-track').addEventListener('click', () => {
+        goalCheckbox.checked = !goalCheckbox.checked
+        updateNotificationLabel(goalLabel, goalCheckbox.checked)
+    })
+    goalCheckbox.addEventListener('change', () => updateNotificationLabel(goalLabel, goalCheckbox.checked))
 }
 
 function updateNotificationLabel(label, checked) {

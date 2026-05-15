@@ -86,6 +86,12 @@ function renderNotificationFields(user) {
     statusEl.className   = `tx-badge ${enabled ? 'enabled' : 'disabled'}`
     document.getElementById('detail-notification-day').textContent =
         I18n.t(DAY_KEYS[user.emailNotificationDay] ?? 'notInformed')
+    const goalEl = document.getElementById('detail-goal-notification-status')
+    if (goalEl) {
+        const goalEnabled = user.goalEmailNotificationEnabled !== false
+        goalEl.textContent = I18n.t(goalEnabled ? 'enabled' : 'disabled')
+        goalEl.className   = `tx-badge ${goalEnabled ? 'enabled' : 'disabled'}`
+    }
     document.getElementById('detail-language').textContent =
         I18n.t(LANG_KEYS[user.language] ?? 'notInformed')
 }
