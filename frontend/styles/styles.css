@@ -2465,12 +2465,14 @@ body.review-mode #review-section .form-card.wide {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   display: flex;
+  flex-wrap: wrap;
   gap: 14px;
   align-items: flex-end;
   flex-shrink: 0;
 }
 .dashboard-search-bar .field { flex: 1; }
 .dashboard-search-bar .field label { font-size: 11.5px; }
+.search-bar-extra-row { flex-basis: 100%; padding-top: 6px; }
 .dashboard-search-bar input[type="text"] {
   width: 100%;
   padding: 8px 12px;

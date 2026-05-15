@@ -6,6 +6,7 @@ import { I18n } from './i18n.js'
 let allGoals     = []
 let searchQuery  = ''
 let statusFilter = ''
+let showArchived = false
 
 export function init() {
     document.body.classList.add('page-dashboard')
@@ -14,15 +15,19 @@ export function init() {
     loadData()
     setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
 
-    const sel = document.getElementById('status-filter')
+    const sel      = document.getElementById('status-filter')
+    const archChk  = document.getElementById('show-archived-check')
     sel?.addEventListener('change', () => { statusFilter = sel.value; renderList() })
+    archChk?.addEventListener('change', () => { showArchived = archChk.checked; renderList() })
 
     document.getElementById('clear-search-btn')?.addEventListener('click', () => {
         const input = document.getElementById('search-input')
         if (input) input.value = ''
         if (sel) sel.value = ''
-        searchQuery = ''
+        if (archChk) archChk.checked = false
+        searchQuery  = ''
         statusFilter = ''
+        showArchived = false
         renderList()
     })
 
@@ -52,7 +57,6 @@ function populateStatusOptions() {
         <option value="active">${I18n.t('activeGoals')}</option>
         <option value="completed">${I18n.t('completedGoals')}</option>
         <option value="expired">${I18n.t('expiredGoals')}</option>
-        <option value="archived">${I18n.t('archivedGoals')}</option>
     `
     sel.value = current
 }
@@ -64,8 +68,9 @@ function renderList() {
 
     const q = searchQuery.trim().toLowerCase()
     let goals = allGoals
-    if (q)            goals = goals.filter(g => g.name.toLowerCase().includes(q))
-    if (statusFilter) goals = goals.filter(g => g.status === statusFilter)
+    if (!showArchived) goals = goals.filter(g => g.status !== 'archived')
+    if (q)             goals = goals.filter(g => g.name.toLowerCase().includes(q))
+    if (statusFilter)  goals = goals.filter(g => g.status === statusFilter)
 
     if (goals.length === 0) {
         list.innerHTML = `

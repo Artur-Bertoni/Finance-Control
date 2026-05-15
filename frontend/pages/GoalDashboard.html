@@ -29,17 +29,22 @@
           <input type="text" id="search-input" autocomplete="off" data-i18n-placeholder="searchByNamePlaceholder" placeholder="Digite o nome...">
         </div>
         <div class="field">
-          <label for="status-filter" data-i18n="goalFilters">Filtros</label>
+          <label for="status-filter" data-i18n="goalStatus">Status</label>
           <select id="status-filter">
             <option value="" data-i18n="allGoals">Todas as Metas</option>
             <option value="active" data-i18n="activeGoals">Ativas</option>
             <option value="completed" data-i18n="completedGoals">Concluídas</option>
             <option value="expired" data-i18n="expiredGoals">Expiradas</option>
-            <option value="archived" data-i18n="archivedGoals">Arquivadas</option>
           </select>
         </div>
         <div class="filter-clear-field">
           <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-search-btn" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros"></button>
+        </div>
+        <div class="search-bar-extra-row">
+          <label class="checkbox-label" for="show-archived-check">
+            <input type="checkbox" id="show-archived-check">
+            <span data-i18n="showArchived">Exibir Arquivadas</span>
+          </label>
         </div>
       </div>
       <div class="dashboard-items-scroll">
