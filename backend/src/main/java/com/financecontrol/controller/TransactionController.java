@@ -1,7 +1,10 @@
 package com.financecontrol.controller;
 
 import com.financecontrol.dto.request.TransactionRequest;
+import com.financecontrol.dto.response.AppNotificationResponse;
+import com.financecontrol.dto.response.TransactionCreateResponse;
 import com.financecontrol.dto.response.TransactionResponse;
+import com.financecontrol.service.AppNotificationService;
 import com.financecontrol.service.TransactionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController extends BaseController {
 
-    private final TransactionService transactionService;
+    private final TransactionService        transactionService;
+    private final AppNotificationService    notificationService;
 
     @GetMapping
     public ResponseEntity<List<TransactionResponse>> findAll(
@@ -36,8 +40,11 @@ public class TransactionController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<TransactionResponse> create(@RequestBody TransactionRequest req, HttpSession session) {
-        return ResponseEntity.ok(transactionService.create(requireUserId(session), req));
+    public ResponseEntity<TransactionCreateResponse> create(@RequestBody TransactionRequest req, HttpSession session) {
+        Long userId = requireUserId(session);
+        TransactionResponse tx = transactionService.create(userId, req);
+        List<AppNotificationResponse> notifications = notificationService.checkGoalImpact(userId, tx.id());
+        return ResponseEntity.ok(new TransactionCreateResponse(tx, notifications));
     }
 
     @PutMapping("/{id}")

@@ -392,5 +392,20 @@
   "goalStatus": "Estado",
   "goalSelectType": "Seleccionar tipo...",
   "goalNoCategoriesSelected": "Todas las categorías",
-  "goalNoLocalesSelected": "Todas las ubicaciones"
+  "goalNoLocalesSelected": "Todas las ubicaciones",
+
+  "notifications": "Notificaciones",
+  "notificationsTitle": "Centro de Notificaciones",
+  "noNotifications": "Sin notificaciones por ahora",
+  "markAllRead": "Marcar todas como leídas",
+  "markAsRead": "Marcar como leída",
+  "viewGoal": "Ver meta",
+  "errorGeneric": "Ocurrió un error. Por favor, inténtelo de nuevo.",
+
+  "notifGoalMilestone50": "50% de la meta alcanzado",
+  "notifGoalMilestone75": "75% de la meta alcanzado",
+  "notifGoalMilestone90": "90% de la meta alcanzado",
+  "notifGoalCompleted": "Meta completada",
+  "notifGoalExceeded": "Límite de meta superado",
+  "notifGoalDeadline": "Fecha límite de meta próxima"
 }

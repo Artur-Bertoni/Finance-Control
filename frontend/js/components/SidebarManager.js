@@ -34,6 +34,7 @@ export class SidebarManager {
         I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb(); SidebarManager.updateDatePickerLocales() })
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
+        SidebarManager.refreshNotificationBadge()
     }
 
     static onNavigate() {
@@ -48,6 +49,7 @@ export class SidebarManager {
         SearchManager.reset()
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
+        SidebarManager.refreshNotificationBadge()
     }
 
     static initTranslations() {
@@ -185,6 +187,20 @@ export class SidebarManager {
         })
     }
 
+    static refreshNotificationBadge() {
+        const pendingUrl = sessionStorage.getItem('__spa_url') ?? ''
+        if (pendingUrl.includes('?guest=true')) return
+        try {
+            let result = null
+            $.ajax({ url: '/api/notifications/unread-count', type: 'GET', async: false, success: d => { result = d } })
+            const badge = document.getElementById('notification-badge')
+            if (!badge || result === null) return
+            const count = result.count ?? 0
+            badge.textContent = count > 99 ? '99+' : String(count)
+            badge.style.display = count > 0 ? '' : 'none'
+        } catch {}
+    }
+
     static renderIcons() {
         const iconMap = {
             'HomePage.html': 'home',
@@ -198,6 +214,7 @@ export class SidebarManager {
             'TransactionLocaleDashboard.html': 'locations',
             'StatementImport.html': 'statementImport',
             'AchievementDashboard.html': 'achievements',
+            'NotificationCenter.html': 'notifications',
             'UserView.html': 'profile'
         }
 

@@ -60,7 +60,7 @@ docker compose down -v
 
 O projeto usa Liquibase para migrar o banco automaticamente. Os changelogs SQL ficam em:
 
-- `backend/src/main/resources/db/db.changelog-master.sql`
+- `backend/src/main/resources/db/db.changelog-master.xml`
 - `backend/src/main/resources/db/changelog/*.sql`
 
 Isso garante que as alterações de esquema sejam aplicadas na inicialização do backend e que cada changeset seja executado apenas uma vez.
@@ -171,7 +171,9 @@ Finance-Control/
 │   │   ├── ThemeManager.js         # Dark/light mode
 │   │   ├── components/             # Componentes reutilizáveis (Sidebar, PasswordInput)
 │   │   ├── icons/                  # Biblioteca de ícones SVG inline
+│   │   ├── class/                  # Wrappers de entidades (AccountClass, etc.)
 │   │   └── utils/                  # Funções utilitárias compartilhadas
+│   ├── locales/                    # Traduções i18n (pt.json, en.json, es.json)
 │   ├── styles/
 │   │   └── styles.css              # Estilos globais (inclui dark mode via data-theme)
 │   └── images/                     # Assets estáticos
@@ -193,5 +195,21 @@ Finance-Control/
 | Transferências | `/api/transfers` |
 | Locais | `/api/transaction-locales` |
 | Instituições Financeiras | `/api/financial-institutions` |
+| Metas Financeiras | `/api/goals` |
+| Conquistas | `/api/achievements` |
+| Notificações in-app | `/api/notifications` |
 
 Todos os endpoints (exceto login e criação de usuário) exigem sessão autenticada.
+
+---
+
+## Funcionalidades principais
+
+- **Transações** — registro de débitos e créditos com categorias, contas, locais e parcelas; transferências entre contas
+- **Importação de extrato** — upload de arquivos bancários para importação em lote
+- **Dashboard** — gráficos de receitas vs despesas com filtros por período, categoria e conta
+- **Metas Financeiras** — metas de limite de gastos, economia e receita com acompanhamento de progresso e notificações
+- **Conquistas** — sistema de gamificação baseado em hábitos financeiros
+- **Notificações in-app** — pop-ups ao atingir marcos de metas e histórico de notificações na central; e-mail para aviso de prazo (7 dias)
+- **Multi-idioma** — interface em Português, Inglês e Espanhol
+- **Tema escuro/claro** — alternância de tema com persistência via localStorage

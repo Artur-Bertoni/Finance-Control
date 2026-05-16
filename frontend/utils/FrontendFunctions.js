@@ -41,6 +41,28 @@ export function showPendingToast() {
     }
 }
 
+const NOTIF_TYPE_META = {
+    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone50', toastType: 'info'    },
+    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone75', toastType: 'info'    },
+    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone90', toastType: 'warning' },
+    GOAL_COMPLETED:        { icon: '🎯', i18nKey: 'notifGoalCompleted',   toastType: 'success' },
+    GOAL_EXCEEDED:         { icon: '⚠️', i18nKey: 'notifGoalExceeded',   toastType: 'warning' },
+    GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline',   toastType: 'warning' },
+}
+
+export function showPendingNotifications() {
+    const raw = sessionStorage.getItem('pendingNotifications')
+    if (!raw) return
+    sessionStorage.removeItem('pendingNotifications')
+    const notifications = JSON.parse(raw)
+    notifications.forEach((n, i) => {
+        const meta  = NOTIF_TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications', toastType: 'info' }
+        const label = I18n.t(meta.i18nKey)
+        const msg   = `${meta.icon} ${label}: ${n.goalName ?? ''}`
+        setTimeout(() => showToast(msg, meta.toastType, { label: I18n.t('viewGoal'), url: n.link }), 700 + i * 600)
+    })
+}
+
 export function doRequest(url, httpMethod = 'GET', body = null) {
     let result = null
     $.ajax({

@@ -9,6 +9,7 @@ import java.util.List;
 public interface FinancialGoalRepository extends JpaRepository<FinancialGoal, Long> {
     List<FinancialGoal> findByUserIdOrderByCreatedAtDesc(Long userId);
     List<FinancialGoal> findByStatus(GoalStatus status);
+    List<FinancialGoal> findByUserIdAndStatus(Long userId, GoalStatus status);
 
     long countByUserId(Long userId);
     long countByUserIdAndStatus(Long userId, GoalStatus status);

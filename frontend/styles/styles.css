@@ -2835,3 +2835,94 @@ body.page-charts .stat-card-value { font-size: 18px; }
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+/* === NOTIFICATION BADGE === */
+.sidebar-link { position: relative; }
+.notification-badge {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* === NOTIFICATION CENTER === */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.notification-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--t), border-color var(--t);
+}
+
+.notification-card--read {
+  background: var(--surface-2);
+  border-color: transparent;
+  opacity: 0.75;
+}
+
+.notification-card__icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notification-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-card__title {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 3px;
+}
+
+.notification-card__date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notification-card__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* === FINANCE BACKGROUND WATERMARK === */
+/*
+  Diagonal pattern: each 260x260 tile has 4 symbols (one per quadrant).
+  A second copy is offset by (130px, 130px), filling the gaps and
+  creating diagonal rows when both layers repeat together.
+*/
+.page-content {
+  --_fp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg fill='none' stroke='%232E7D32' stroke-width='2' opacity='0.09'%3E%3Crect x='20' y='42' width='11' height='25' rx='2'/%3E%3Crect x='35' y='28' width='11' height='39' rx='2'/%3E%3Crect x='50' y='35' width='11' height='32' rx='2'/%3E%3Crect x='65' y='14' width='11' height='53' rx='2'/%3E%3Ccircle cx='192' cy='52' r='24'/%3E%3Ccircle cx='192' cy='52' r='15'/%3E%3Cpolyline points='36,215 55,188 74,215' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='55' y1='188' x2='55' y2='237' stroke-linecap='round'/%3E%3Cpolyline points='150,242 167,222 184,229 201,207 218,214 235,194' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='150' cy='242' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='167' cy='222' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='201' cy='207' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='235' cy='194' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: var(--_fp), var(--_fp);
+  background-size: 260px 260px, 260px 260px;
+  background-position: 0 0, 130px 130px;
+  background-repeat: repeat;
+}

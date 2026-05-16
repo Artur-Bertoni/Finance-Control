@@ -1,5 +1,5 @@
 import { SidebarManager } from './components/SidebarManager.js'
-import { setBreadcrumb, showConfirmAsync, showPendingToast } from '../utils/FrontendFunctions.js'
+import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotifications } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
 const routes = {
@@ -27,6 +27,7 @@ const routes = {
     '/pages/GoalView.html':                          () => import('./GoalView.js'),
     '/pages/Goal.html':                              () => import('./Goal.js'),
     '/pages/AchievementDashboard.html':              () => import('./AchievementDashboard.js'),
+    '/pages/NotificationCenter.html':                () => import('./NotificationCenter.js'),
 }
 
 let currentSpaUrl = location.pathname + location.search
@@ -84,7 +85,6 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
         breadcrumbNav.appendChild(appTitleEl)
     }
 
-    // Resolve page title via data-i18n key when available
     const pageTitleEl = doc.querySelector('.topbar .page-title')
     if (appTitleEl) {
         const i18nKey = pageTitleEl?.dataset?.i18n
@@ -120,6 +120,7 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     }
 
     showPendingToast()
+    showPendingNotifications()
 }
 
 document.addEventListener('click', e => {

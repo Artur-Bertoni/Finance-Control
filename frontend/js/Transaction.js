@@ -125,8 +125,12 @@ function handleSave(transactionId) {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success: () => {
+        success: (data) => {
             clearDirtyGuard()
+            const notifications = (!transactionId && data?.notifications?.length) ? data.notifications : []
+            if (notifications.length > 0) {
+                sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
+            }
             const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
             navigateWithToast('/pages/HomePage.html', msg, 'success')
         },

@@ -392,5 +392,20 @@
   "goalStatus": "Status",
   "goalSelectType": "Selecione o tipo...",
   "goalNoCategoriesSelected": "Todas as categorias",
-  "goalNoLocalesSelected": "Todos os locais"
+  "goalNoLocalesSelected": "Todos os locais",
+
+  "notifications": "Notificações",
+  "notificationsTitle": "Central de Notificações",
+  "noNotifications": "Nenhuma notificação por aqui ainda",
+  "markAllRead": "Marcar todas como lidas",
+  "markAsRead": "Marcar como lida",
+  "viewGoal": "Ver meta",
+  "errorGeneric": "Ocorreu um erro. Tente novamente.",
+
+  "notifGoalMilestone50": "50% da meta atingidos",
+  "notifGoalMilestone75": "75% da meta atingidos",
+  "notifGoalMilestone90": "90% da meta atingidos",
+  "notifGoalCompleted": "Meta concluída",
+  "notifGoalExceeded": "Limite de meta ultrapassado",
+  "notifGoalDeadline": "Prazo da meta se aproximando"
 }

@@ -392,5 +392,20 @@
   "goalStatus": "Status",
   "goalSelectType": "Select type...",
   "goalNoCategoriesSelected": "All categories",
-  "goalNoLocalesSelected": "All locations"
+  "goalNoLocalesSelected": "All locations",
+
+  "notifications": "Notifications",
+  "notificationsTitle": "Notification Center",
+  "noNotifications": "No notifications yet",
+  "markAllRead": "Mark all as read",
+  "markAsRead": "Mark as read",
+  "viewGoal": "View goal",
+  "errorGeneric": "An error occurred. Please try again.",
+
+  "notifGoalMilestone50": "50% of goal reached",
+  "notifGoalMilestone75": "75% of goal reached",
+  "notifGoalMilestone90": "90% of goal reached",
+  "notifGoalCompleted": "Goal completed",
+  "notifGoalExceeded": "Goal limit exceeded",
+  "notifGoalDeadline": "Goal deadline approaching"
 }
