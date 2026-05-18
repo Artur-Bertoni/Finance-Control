@@ -132,7 +132,8 @@ function handleSave(transactionId) {
                 sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
             }
             const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
-            navigateWithToast('/pages/HomePage.html', msg, 'success')
+            const id  = transactionId ?? data?.transaction?.id ?? data?.id
+            navigateWithToast('/pages/HomePage.html', msg, 'success', id ? `/pages/TransactionView.html?id=${id}` : null)
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error')
     })

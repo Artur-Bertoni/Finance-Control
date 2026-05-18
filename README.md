@@ -1,6 +1,6 @@
 # Finance Control
 
-Aplicação web de controle financeiro pessoal. Permite gerenciar contas bancárias, categorias, transações, transferências, locais de transação e instituições financeiras — tudo vinculado a um usuário autenticado.
+Aplicação web de controle financeiro pessoal. Permite gerenciar contas bancárias, categorias, transações, transferências, locais de transação e instituições financeiras - tudo vinculado a um usuário autenticado.
 
 Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Especiais, originalmente com PHP, HTML, CSS, JavaScript e MySQL. Após a conclusão da cadeira, o projeto continuou em desenvolvimento pessoal e passou por uma reestruturação completa: o backend foi reescrito em Java com Spring Boot e o frontend reorganizado em uma arquitetura modular de páginas estáticas.
 
@@ -11,12 +11,12 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 | Camada | Tecnologia | Versão |
 |---|---|---|
 | Backend | Java + Spring Boot | 17 / 3.5.x |
-| Persistência | Spring Data JPA + Hibernate | — |
+| Persistência | Spring Data JPA + Hibernate | - |
 | Banco de dados | MySQL | 9.x |
-| Frontend | HTML + CSS + JavaScript (ES6 modules) | — |
+| Frontend | HTML + CSS + JavaScript (ES6 modules) | - |
 | HTTP client | jQuery | 3.6.0 |
 | Proxy (Docker) | Nginx | alpine |
-| Proxy (local) | Node.js | — |
+| Proxy (local) | Node.js | - |
 | Build | Maven | 3.x |
 
 ---
@@ -92,7 +92,7 @@ mvn clean compile
 
 ### 3. Iniciar o backend em modo debug
 
-**VS Code** — crie `.vscode/launch.json`:
+**VS Code** - crie `.vscode/launch.json`:
 ```json
 {
   "version": "0.2.0",
@@ -109,7 +109,7 @@ mvn clean compile
 ```
 Pressione `F5`.
 
-**IntelliJ IDEA** — abra a pasta `backend/`, localize `FinanceControlApplication.java` e clique no ícone de debug ao lado do método `main`.
+**IntelliJ IDEA** - abra a pasta `backend/`, localize `FinanceControlApplication.java` e clique no ícone de debug ao lado do método `main`.
 
 O backend sobe em: **http://localhost:8081**
 
@@ -169,7 +169,7 @@ Finance-Control/
 │   ├── js/
 │   │   ├── *.js                    # Módulo JS de cada página
 │   │   ├── ThemeManager.js         # Dark/light mode
-│   │   ├── components/             # Componentes reutilizáveis (Sidebar, PasswordInput)
+│   │   ├── components/             # Componentes reutilizáveis (Sidebar, MascotManager, PasswordInput…)
 │   │   ├── icons/                  # Biblioteca de ícones SVG inline
 │   │   ├── class/                  # Wrappers de entidades (AccountClass, etc.)
 │   │   └── utils/                  # Funções utilitárias compartilhadas
@@ -198,6 +198,7 @@ Finance-Control/
 | Metas Financeiras | `/api/goals` |
 | Conquistas | `/api/achievements` |
 | Notificações in-app | `/api/notifications` |
+| Relatórios / Dashboard | `/api/reports` |
 
 Todos os endpoints (exceto login e criação de usuário) exigem sessão autenticada.
 
@@ -210,6 +211,8 @@ Todos os endpoints (exceto login e criação de usuário) exigem sessão autenti
 - **Dashboard** — gráficos de receitas vs despesas com filtros por período, categoria e conta
 - **Metas Financeiras** — metas de limite de gastos, economia e receita com acompanhamento de progresso e notificações
 - **Conquistas** — sistema de gamificação baseado em hábitos financeiros
-- **Notificações in-app** — pop-ups ao atingir marcos de metas e histórico de notificações na central; e-mail para aviso de prazo (7 dias)
+- **Notificações in-app** — pop-ups ao atingir marcos de metas, histórico persistido no banco; e-mail para aviso de prazo (7 dias)
+- **Mascote Finny** — porquinho cofre como botão flutuante (FAB) com painel de dicas financeiras e central de notificações; dicas rotativas a cada 30 minutos com countdown; página dedicada `/pages/FinnyCenter.html`
 - **Multi-idioma** — interface em Português, Inglês e Espanhol
 - **Tema escuro/claro** — alternância de tema com persistência via localStorage
+- **Atalhos de teclado** — `Alt+1`–`0` e `Alt+Q`–`P` para navegação direta pelos itens da sidebar

@@ -407,5 +407,15 @@
   "notifGoalMilestone90": "90% of goal reached",
   "notifGoalCompleted": "Goal completed",
   "notifGoalExceeded": "Goal limit exceeded",
-  "notifGoalDeadline": "Goal deadline approaching"
+  "notifGoalDeadline": "Goal deadline approaching",
+
+  "viewTransactions": "View Transactions",
+  "mascotTipTitle": "Finny's Tip",
+  "mascotTabTips": "Tips",
+  "mascotTabMessages": "Notifications",
+  "mascotNoMessages": "No messages here yet",
+  "finnyLink": "Finny",
+  "mascotAssistant": "Your financial assistant",
+  "tipCountdownLabel": "New tip in",
+  "clickToView": "Click to view"
 }

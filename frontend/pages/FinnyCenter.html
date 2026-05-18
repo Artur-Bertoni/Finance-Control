@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Finny | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="../js/NotificationCenter.js" type="module"></script>
+</head>
+<body>
+<header class="topbar">
+  <span class="page-title" data-i18n="finnyLink">Finny</span>
+  <div id="header-actions"></div>
+</header>
+<main class="page-content">
+
+  <!-- Hero -->
+  <div class="finny-page-hero">
+    <svg class="finny-page-hero-svg" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 52 C4 52, 4 38, 15 38" stroke="#fda4c0" stroke-width="4.5" stroke-linecap="round"/>
+      <ellipse cx="55" cy="54" rx="34" ry="28" fill="#fdb8ce"/>
+      <rect x="41" y="23" width="18" height="5" rx="2.5" fill="#e87aaa"/>
+      <ellipse cx="79" cy="27" rx="8" ry="11" fill="#fdb8ce"/>
+      <ellipse cx="79" cy="28.5" rx="4.5" ry="7" fill="#f9a0c0"/>
+      <circle cx="84" cy="46" r="22" fill="#fdb8ce"/>
+      <circle cx="91" cy="38" r="4" fill="white"/>
+      <circle cx="92" cy="38" r="2" fill="#1a1a2e"/>
+      <circle cx="92.8" cy="37.2" r="0.8" fill="white"/>
+      <ellipse cx="101" cy="51" rx="9.5" ry="7" fill="#f9a0c0"/>
+      <circle cx="98" cy="51" r="2.5" fill="#d4608a"/>
+      <circle cx="104" cy="51" r="2.5" fill="#d4608a"/>
+      <path d="M95 57 Q101 63 107 57" stroke="#d4608a" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="28" y="77" width="11" height="12" rx="5.5" fill="#fdb8ce"/>
+      <rect x="43" y="80" width="11" height="12" rx="5.5" fill="#fdb8ce"/>
+      <rect x="58" y="80" width="11" height="12" rx="5.5" fill="#fdb8ce"/>
+      <rect x="73" y="77" width="11" height="12" rx="5.5" fill="#fdb8ce"/>
+    </svg>
+    <div class="finny-page-hero-text">
+      <h2 class="finny-page-hero-name">Finny</h2>
+      <p class="finny-page-hero-sub" data-i18n="mascotAssistant">Seu assistente financeiro</p>
+    </div>
+  </div>
+
+  <!-- Abas -->
+  <div class="finny-page-tabs">
+    <button id="nc-tab-tips" class="finny-page-tab finny-page-tab--active" type="button" data-i18n="mascotTabTips">Dicas</button>
+    <button id="nc-tab-messages" class="finny-page-tab" type="button">
+      <span data-i18n="mascotTabMessages">Mensagens</span>
+      <span id="nc-tab-badge" class="mascot-tab-badge" hidden></span>
+    </button>
+  </div>
+
+  <!-- Conteúdo: Dicas -->
+  <div id="nc-content-tips" class="finny-page-tab-content">
+    <div class="finny-page-tip-body">
+      <p id="nc-tip-text" class="finny-page-tip-text"></p>
+    </div>
+    <div class="finny-page-tip-nav">
+      <span id="nc-tip-countdown" class="mascot-tip-countdown"></span>
+    </div>
+  </div>
+
+  <!-- Conteúdo: Mensagens -->
+  <div id="nc-content-messages" class="finny-page-tab-content" hidden>
+    <div class="finny-page-msg-toolbar">
+      <button id="nc-mark-all-read" class="btn btn-ghost btn-sm" type="button" data-i18n="markAllRead">Marcar todas como lidas</button>
+    </div>
+    <div id="nc-notifications-list" class="finny-page-notif-list"></div>
+  </div>
+
+</main>
+</body>
+</html>

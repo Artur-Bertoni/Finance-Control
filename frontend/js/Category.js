@@ -107,10 +107,11 @@ export function init() {
                 async:       false,
                 contentType: 'application/json',
                 data:        JSON.stringify(body),
-                success:     function () {
+                success:     function (data) {
                     clearDirtyGuard()
                     const msg = categoryId ? I18n.t('categoryUpdatedSuccess') : I18n.t('categoryCreatedSuccess')
-                    navigateWithToast('/pages/CategoryDashboard.html', msg, 'success')
+                    const id  = categoryId ?? data?.id
+                    navigateWithToast('/pages/CategoryDashboard.html', msg, 'success', id ? `/pages/CategoryView.html?id=${id}` : null)
                 },
                 error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
             })

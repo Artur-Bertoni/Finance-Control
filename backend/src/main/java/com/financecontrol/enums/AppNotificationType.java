@@ -6,5 +6,6 @@ public enum AppNotificationType {
     GOAL_MILESTONE_90,
     GOAL_COMPLETED,
     GOAL_EXCEEDED,
-    GOAL_DEADLINE_WARNING
+    GOAL_DEADLINE_WARNING,
+    USER_ACTION
 }

@@ -188,10 +188,11 @@ function handleSave(goalId) {
         async:       false,
         contentType: 'application/json',
         data:        JSON.stringify(body),
-        success: () => {
+        success: (data) => {
             clearDirtyGuard()
             const msg = goalId ? I18n.t('goalUpdatedSuccess') : I18n.t('goalCreatedSuccess')
-            navigateWithToast('/pages/GoalDashboard.html', msg, 'success')
+            const id  = goalId ?? data?.id
+            navigateWithToast('/pages/GoalDashboard.html', msg, 'success', id ? `/pages/GoalView.html?id=${id}` : null)
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingGoal'), 'error')
     })

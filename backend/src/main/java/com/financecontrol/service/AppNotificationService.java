@@ -102,6 +102,20 @@ public class AppNotificationService {
         notificationRepository.markAllAsReadByUserId(userId);
     }
 
+    @Transactional
+    @SuppressWarnings("null")
+    public AppNotificationResponse saveUserAction(Long userId, String message, String severity, String link) {
+        AppNotification n = new AppNotification();
+        n.setUserId(userId);
+        n.setType(AppNotificationType.USER_ACTION);
+        n.setMessage(message);
+        n.setSeverity(severity != null ? severity : "info");
+        n.setLink(link);
+        n.setRead(true);
+        n.setCreatedAt(LocalDateTime.now());
+        return AppNotificationResponse.from(notificationRepository.save(n));
+    }
+
     @SuppressWarnings("null")
     private Optional<AppNotificationResponse> tryCreate(Long userId, FinancialGoal goal,
             Long transactionId, GoalNotificationType logType, AppNotificationType appType) {

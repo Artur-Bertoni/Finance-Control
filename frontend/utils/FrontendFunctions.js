@@ -1,6 +1,8 @@
 import { Icons } from '../js/icons/IconLibrary.js'
 import { I18n } from '../js/i18n.js'
 
+const FINNY_FACE_SVG = `<svg class="toast-finny" viewBox="58 14 54 62" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="79" cy="27" rx="8" ry="11" fill="#fdb8ce"/><ellipse cx="79" cy="28.5" rx="4.5" ry="7" fill="#f9a0c0"/><circle cx="84" cy="46" r="22" fill="#fdb8ce"/><circle cx="91" cy="38" r="4" fill="white"/><circle cx="92" cy="38" r="2" fill="#1a1a2e"/><circle cx="92.8" cy="37.2" r="0.8" fill="white"/><ellipse cx="101" cy="51" rx="9.5" ry="7" fill="#f9a0c0"/><circle cx="98" cy="51" r="2.5" fill="#d4608a"/><circle cx="104" cy="51" r="2.5" fill="#d4608a"/><path d="M95 57 Q101 63 107 57" stroke="#d4608a" stroke-width="2.5" stroke-linecap="round"/></svg>`
+
 const CURRENCY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
 
 export function formatCurrency(value) {
@@ -23,8 +25,8 @@ export function navigate(url) {
     }
 }
 
-export function navigateWithToast(url, message, type = 'success') {
-    sessionStorage.setItem('pendingToast', JSON.stringify({ message, type }))
+export function navigateWithToast(url, message, type = 'success', viewLink = null) {
+    sessionStorage.setItem('pendingToast', JSON.stringify({ message, type, link: viewLink ?? url }))
     if (globalThis.__appRouter?.navigate && !url.includes('Login.html')) {
         globalThis.__appRouter.navigate(url)
     } else {
@@ -35,9 +37,10 @@ export function navigateWithToast(url, message, type = 'success') {
 export function showPendingToast() {
     const pending = sessionStorage.getItem('pendingToast')
     if (pending) {
-        const { message, type } = JSON.parse(pending)
+        const { message, type, link } = JSON.parse(pending)
         sessionStorage.removeItem('pendingToast')
-        setTimeout(() => showToast(message, type), 100)
+        const action = link ? { label: I18n.t('view'), url: link } : null
+        setTimeout(() => showToast(message, type, action), 100)
     }
 }
 
@@ -59,7 +62,7 @@ export function showPendingNotifications() {
         const meta  = NOTIF_TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications', toastType: 'info' }
         const label = I18n.t(meta.i18nKey)
         const msg   = `${meta.icon} ${label}: ${n.goalName ?? ''}`
-        setTimeout(() => showToast(msg, meta.toastType, { label: I18n.t('viewGoal'), url: n.link }), 700 + i * 600)
+        setTimeout(() => showToast(msg, meta.toastType, { label: I18n.t('viewGoal'), url: n.link }, { saveToHistory: false }), 700 + i * 600)
     })
 }
 
@@ -79,7 +82,24 @@ export function doRequest(url, httpMethod = 'GET', body = null) {
 
 const TOAST_DURATION = 4500
 
-export function showToast(message, type = 'info', action = null) {
+const FINNY_HISTORY_KEY = '__finny_history'
+const FINNY_HISTORY_MAX = 200
+
+export function saveToFinnyHistory(message, type = 'info', link = null) {
+    try {
+        $.ajax({
+            url: '/api/notifications/history',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ message, severity: type, link: link ?? null }),
+            async: true,
+            error: () => {}
+        })
+    } catch { /* silencioso */ }
+}
+
+export function showToast(message, type = 'info', action = null, { saveToHistory = true } = {}) {
+    if (saveToHistory) saveToFinnyHistory(message, type, action?.url ?? null)
     let container = document.getElementById('toast-container')
     if (!container) {
         container = document.createElement('div')
@@ -88,27 +108,21 @@ export function showToast(message, type = 'info', action = null) {
         document.body.appendChild(container)
     }
 
-    const icons = {
-        success: Icons.check(),
-        error:   Icons.error(),
-        warning: Icons.warning(),
-        info:    Icons.info()
-    }
-
     const toast = document.createElement('div')
-    toast.className = `toast ${type}`
+    toast.className = `toast ${type}${action ? ' toast--clickable' : ''}`
     toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-icon">${FINNY_FACE_SVG}</span>
         <div class="toast-body">
             <span class="toast-text">${message}</span>
-            ${action ? `<button class="toast-action-link">${action.label} →</button>` : ''}
+            ${action ? `<span class="toast-click-hint">(${I18n.t('clickToView')})</span>` : ''}
         </div>
         <button class="toast-close" aria-label="${I18n.t('close')}">×</button>
         <div class="toast-progress-bar"></div>
     `
 
     if (action) {
-        toast.querySelector('.toast-action-link').addEventListener('click', () => {
+        toast.addEventListener('click', e => {
+            if (e.target.closest('.toast-close')) return
             clearTimeout(timerId)
             cancelAnimationFrame(rafId)
             dismissToast(toast)

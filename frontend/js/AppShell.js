@@ -1,4 +1,5 @@
 import { SidebarManager } from './components/SidebarManager.js'
+import { MascotManager } from './components/MascotManager.js'
 import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotifications } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
@@ -27,13 +28,14 @@ const routes = {
     '/pages/GoalView.html':                          () => import('./GoalView.js'),
     '/pages/Goal.html':                              () => import('./Goal.js'),
     '/pages/AchievementDashboard.html':              () => import('./AchievementDashboard.js'),
-    '/pages/NotificationCenter.html':                () => import('./NotificationCenter.js'),
+    '/pages/FinnyCenter.html':                       () => import('./NotificationCenter.js'),
 }
 
 let currentSpaUrl = location.pathname + location.search
 
 globalThis.__appRouter = { navigate }
 await SidebarManager.initialize()
+MascotManager.initFloating()
 
 document.getElementById('back-btn')?.addEventListener('click', () => history.back())
 
@@ -112,6 +114,7 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     updateBackButton(path)
 
     SidebarManager.onNavigate()
+    MascotManager.refreshBadge()
 
     const loader = routes[path]
     if (loader) {

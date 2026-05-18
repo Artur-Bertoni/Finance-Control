@@ -5,7 +5,7 @@ import { I18n } from '../i18n.js'
 import { LanguageSwitcher } from './LanguageSwitcher.js'
 import { InputMasks } from '../utils/InputMasks.js'
 import { NumberSpinner } from '../utils/NumberSpinner.js'
-import { rerenderBreadcrumb, showToast } from '../../utils/FrontendFunctions.js'
+import { rerenderBreadcrumb, showToast, navigate } from '../../utils/FrontendFunctions.js'
 import { SearchManager } from './SearchManager.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
@@ -35,6 +35,7 @@ export class SidebarManager {
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
         SidebarManager.refreshNotificationBadge()
+        SidebarManager.setupKeyboardShortcuts()
     }
 
     static onNavigate() {
@@ -65,7 +66,6 @@ export class SidebarManager {
             } else if (el.tagName === 'SPAN' && el.parentElement?.classList.contains('radio-option')) {
                 el.textContent = text
             } else if (el.querySelector('[data-i18n]')) {
-                // Has nested i18n children — update only the first text node to avoid destroying them
                 for (const node of el.childNodes) {
                     if (node.nodeType === Node.TEXT_NODE) {
                         node.textContent = text + ' '
@@ -214,7 +214,7 @@ export class SidebarManager {
             'TransactionLocaleDashboard.html': 'locations',
             'StatementImport.html': 'statementImport',
             'AchievementDashboard.html': 'achievements',
-            'NotificationCenter.html': 'notifications',
+            'FinnyCenter.html': 'finny',
             'UserView.html': 'profile'
         }
 
@@ -295,6 +295,37 @@ export class SidebarManager {
             const allDone = goals.filter(g => g.status === 'completed').map(g => g.id)
             localStorage.setItem(TOAST_KEY, JSON.stringify(allDone))
         } catch {}
+    }
+
+    static setupKeyboardShortcuts() {
+        const QWERTY_ROW = ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP']
+
+        document.addEventListener('keydown', e => {
+            if (!e.altKey) return
+            const tag = document.activeElement?.tagName
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+            if (document.activeElement?.isContentEditable) return
+
+            let linkIdx
+            if (e.code.startsWith('Digit')) {
+                const digit = e.code.slice(5)
+                linkIdx = digit === '0' ? 9 : Number(digit) - 1
+            } else {
+                const qIdx = QWERTY_ROW.indexOf(e.code)
+                if (qIdx === -1) return
+                linkIdx = 10 + qIdx
+            }
+
+            const links = [
+                ...document.querySelectorAll('.sidebar-nav .sidebar-link[href]'),
+                ...document.querySelectorAll('.sidebar-footer .sidebar-link[href]'),
+            ]
+            const link = links[linkIdx]
+            if (!link) return
+
+            e.preventDefault()
+            navigate(link.getAttribute('href'))
+        })
     }
 
     static checkAchievements() {

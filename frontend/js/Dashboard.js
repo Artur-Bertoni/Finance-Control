@@ -1,6 +1,7 @@
 import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { MascotManager } from './components/MascotManager.js'
 import { I18n } from './i18n.js'
 
 const CHART_CDN = 'https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js'
@@ -135,6 +136,8 @@ function loadAndRender() {
     renderWealthChart(data.wealthEvolution)
     renderDonutChart('chart-cat-expenses', data.categoryExpenses)
     renderDonutChart('chart-cat-income', data.categoryIncomes)
+    MascotManager.renderDashboardWidget(data)
+    MascotManager.refreshFloatingTips(data)
 }
 
 function updateStatCards(data) {
@@ -412,8 +415,7 @@ function renderDonutChart(canvasId, categoryData) {
         existing._othersIndex                     = othersIndex
         existing._revealProgress                  = 1
         existing.data.datasets[0].borderColor     = c.surface
-        existing.options.animation                = { duration: 400, easing: 'easeOutQuart' }
-        existing.update()
+        existing.update('none')
         renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total)
         return
     }

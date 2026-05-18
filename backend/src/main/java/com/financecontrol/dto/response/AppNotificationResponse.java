@@ -12,6 +12,8 @@ public record AppNotificationResponse(
         Long transactionId,
         String link,
         boolean read,
+        String message,
+        String severity,
         LocalDateTime createdAt
 ) {
     public static AppNotificationResponse from(AppNotification n) {
@@ -23,6 +25,8 @@ public record AppNotificationResponse(
                 n.getTransactionId(),
                 n.getLink(),
                 n.isRead(),
+                n.getMessage(),
+                n.getSeverity(),
                 n.getCreatedAt()
         );
     }

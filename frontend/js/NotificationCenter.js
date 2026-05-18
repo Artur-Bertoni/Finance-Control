@@ -1,97 +1,171 @@
-import { doRequest, navigate, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, navigate } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { MascotManager } from './components/MascotManager.js'
 
 const TYPE_META = {
-    GOAL_MILESTONE_50:    { icon: '📊', i18nKey: 'notifGoalMilestone50', toastType: 'info'    },
-    GOAL_MILESTONE_75:    { icon: '📈', i18nKey: 'notifGoalMilestone75', toastType: 'info'    },
-    GOAL_MILESTONE_90:    { icon: '🔥', i18nKey: 'notifGoalMilestone90', toastType: 'warning' },
-    GOAL_COMPLETED:       { icon: '🎯', i18nKey: 'notifGoalCompleted',   toastType: 'success' },
-    GOAL_EXCEEDED:        { icon: '⚠️', i18nKey: 'notifGoalExceeded',   toastType: 'warning' },
-    GOAL_DEADLINE_WARNING:{ icon: '⏰', i18nKey: 'notifGoalDeadline',   toastType: 'warning' },
+    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone50' },
+    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone75' },
+    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone90' },
+    GOAL_COMPLETED:        { icon: '🎯', i18nKey: 'notifGoalCompleted'   },
+    GOAL_EXCEEDED:         { icon: '⚠️', i18nKey: 'notifGoalExceeded'   },
+    GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline'   },
 }
+
+const TYPE_COLOR = { success: '#22c55e', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' }
+
+let _activeTab      = 'tips'
+let _countdownTimer = null
 
 export function init() {
-    SidebarManager.initialize()
-    loadNotifications()
-
-    document.getElementById('mark-all-read-btn').addEventListener('click', () => {
-        $.ajax({
-            url: '/api/notifications/read-all', type: 'PUT', async: false,
-            success: () => { loadNotifications(); SidebarManager.refreshNotificationBadge() },
-            error:   ()  => showToast(I18n.t('errorGeneric'), 'error')
-        })
-    })
+    _stopCountdown()
+    _setupTabs()
+    _switchTab('tips')
+    _syncBadge()
 }
 
-function loadNotifications() {
-    const notifications = doRequest('/api/notifications', 'GET') ?? []
-    const list          = document.getElementById('notifications-list')
-    const empty         = document.getElementById('notifications-empty')
+function _setupTabs() {
+    document.getElementById('nc-tab-tips')?.addEventListener('click',     () => _switchTab('tips'))
+    document.getElementById('nc-tab-messages')?.addEventListener('click', () => _switchTab('messages'))
+}
 
-    list.querySelectorAll('.notification-card').forEach(el => el.remove())
+function _switchTab(tab) {
+    _activeTab = tab
 
-    if (notifications.length === 0) {
-        empty.style.display = ''
-        document.getElementById('mark-all-read-btn').style.display = 'none'
+    const tipsEl = document.getElementById('nc-content-tips')
+    const msgEl  = document.getElementById('nc-content-messages')
+    const tipBtn = document.getElementById('nc-tab-tips')
+    const msgBtn = document.getElementById('nc-tab-messages')
+
+    if (tipsEl) tipsEl.hidden = tab !== 'tips'
+    if (msgEl)  msgEl.hidden  = tab !== 'messages'
+    tipBtn?.classList.toggle('finny-page-tab--active', tab === 'tips')
+    msgBtn?.classList.toggle('finny-page-tab--active', tab === 'messages')
+
+    if (tab === 'tips')     { _loadTips() }
+    if (tab === 'messages') { _stopCountdown(); _loadMessages() }
+}
+
+function _loadTips() {
+    const tipEl = document.getElementById('nc-tip-text')
+    if (tipEl) tipEl.textContent = MascotManager._currentTip || ''
+    _startCountdown()
+}
+
+function _startCountdown() {
+    _stopCountdown()
+    const tick = () => {
+        const el = document.getElementById('nc-tip-countdown')
+        if (!el) { _stopCountdown(); return }
+        const ms = Math.max(0, MascotManager._nextTipTime - Date.now())
+        el.textContent = `${I18n.t('tipCountdownLabel')} ${MascotManager._formatCountdown(ms)}`
+    }
+    tick()
+    _countdownTimer = setInterval(tick, 1000)
+}
+
+function _stopCountdown() {
+    if (_countdownTimer) { clearInterval(_countdownTimer); _countdownTimer = null }
+}
+
+function _loadMessages() {
+    const list = document.getElementById('nc-notifications-list')
+    if (!list) return
+
+    list.innerHTML = `<div class="mascot-notif-empty mascot-notif-loading">…</div>`
+
+    const allNotifs = doRequest('/api/notifications', 'GET') ?? []
+
+    list.innerHTML = ''
+
+    if (allNotifs.length === 0) {
+        list.innerHTML = `<div class="mascot-notif-empty">${I18n.t('mascotNoMessages')}</div>`
+        document.getElementById('nc-mark-all-read').style.display = 'none'
         return
     }
 
-    empty.style.display = 'none'
-    document.getElementById('mark-all-read-btn').style.display = ''
+    document.getElementById('nc-mark-all-read').style.display = ''
 
-    for (const n of notifications) {
-        list.appendChild(buildCard(n))
+    for (const item of allNotifs) {
+        list.appendChild(item.type === 'USER_ACTION' ? _buildLocalCard(item) : _buildBackendCard(item))
     }
+
+    document.getElementById('nc-mark-all-read')?.addEventListener('click', () => {
+        doRequest('/api/notifications/read-all', 'PUT')
+        SidebarManager.refreshNotificationBadge()
+        MascotManager.refreshBadge()
+        _loadMessages()
+        _syncBadge()
+    })
 }
 
-function buildCard(n) {
-    const meta    = TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications', toastType: 'info' }
+function _buildBackendCard(n) {
+    const meta    = TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications' }
     const label   = I18n.t(meta.i18nKey)
     const dateStr = new Date(n.createdAt).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
 
     const card = document.createElement('div')
-    card.className = `notification-card${n.read ? ' notification-card--read' : ''}`
-    card.dataset.id = n.id
+    card.className = `mascot-notif-card finny-page-notif-card${n.read ? ' mascot-notif-card--read' : ''}`
     card.innerHTML = `
-        <div class="notification-card__icon">${meta.icon}</div>
-        <div class="notification-card__body">
-            <p class="notification-card__title">${label}: <strong>${escapeHtml(n.goalName ?? '')}</strong></p>
-            <p class="notification-card__date">${dateStr}</p>
+        <span class="mascot-notif-icon">${meta.icon}</span>
+        <div class="mascot-notif-body">
+            <p class="mascot-notif-title">${label}: <strong>${escapeHtml(n.goalName ?? '')}</strong></p>
+            <p class="mascot-notif-date">${dateStr}</p>
         </div>
-        <div class="notification-card__actions">
-            ${n.link ? `<button class="btn btn-ghost btn-sm notif-view-btn" data-i18n="view">${I18n.t('view')}</button>` : ''}
-            ${!n.read ? `<button class="btn btn-ghost btn-sm notif-read-btn" data-i18n="markAsRead">${I18n.t('markAsRead')}</button>` : ''}
+        <div class="mascot-notif-actions">
+            ${n.link ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('view')}</button>` : ''}
+            ${n.read ? '' : `<button class="btn btn-ghost btn-sm notif-read-btn">${I18n.t('markAsRead')}</button>`}
         </div>
     `
 
     card.querySelector('.notif-view-btn')?.addEventListener('click', () => {
-        markRead(n.id, card)
+        _markRead(n.id, card)
         navigate(n.link)
     })
-
     card.querySelector('.notif-read-btn')?.addEventListener('click', () => {
-        markRead(n.id, card)
+        _markRead(n.id, card)
     })
 
     return card
 }
 
-function markRead(id, card) {
-    $.ajax({
-        url: `/api/notifications/${id}/read`, type: 'PUT', async: false,
-        success: () => {
-            card.classList.add('notification-card--read')
-            card.querySelector('.notif-read-btn')?.remove()
-            SidebarManager.refreshNotificationBadge()
-        }
-    })
+function _buildLocalCard(n) {
+    const color   = TYPE_COLOR[n.severity] ?? TYPE_COLOR.info
+    const dateStr = new Date(n.createdAt).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
+
+    const card = document.createElement('div')
+    card.className = 'mascot-notif-card finny-page-notif-card mascot-notif-card--read mascot-notif-card--local'
+    card.style.setProperty('--local-card-color', color)
+    card.innerHTML = `
+        <span class="mascot-notif-local-bar"></span>
+        <div class="mascot-notif-body">
+            <p class="mascot-notif-title">${escapeHtml(n.message)}</p>
+            <p class="mascot-notif-date">${dateStr}</p>
+        </div>
+        ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('view')}</button></div>` : ''}
+    `
+    card.querySelector('.local-view-btn')?.addEventListener('click', () => navigate(n.link))
+    return card
+}
+
+function _markRead(id, card) {
+    doRequest(`/api/notifications/${id}/read`, 'PUT')
+    card.classList.add('mascot-notif-card--read')
+    card.querySelector('.notif-read-btn')?.remove()
+    SidebarManager.refreshNotificationBadge()
+    MascotManager.refreshBadge()
+    _syncBadge()
+}
+
+function _syncBadge() {
+    try {
+        const raw   = doRequest('/api/notifications/unread-count', 'GET')
+        const count = Math.max(0, Number(raw) || 0)
+        const badge = document.getElementById('nc-tab-badge')
+        if (badge) { badge.textContent = count > 99 ? '99+' : String(count); badge.hidden = false }
+    } catch { /* silencioso */ }
 }
 
 function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    return String(str ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 }
-
-export { TYPE_META }
-
-if (!globalThis.__appRouter) init()

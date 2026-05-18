@@ -74,10 +74,11 @@ export function init() {
             async:       false,
             contentType: 'application/json',
             data:        JSON.stringify(body),
-            success:     function () {
+            success:     function (data) {
                 clearDirtyGuard()
                 const msg = fiId ? I18n.t('institutionUpdatedSuccess') : I18n.t('institutionCreatedSuccess')
-                navigateWithToast('/pages/FinancialInstitutionDashboard.html', msg, 'success')
+                const id  = fiId ?? data?.id
+                navigateWithToast('/pages/FinancialInstitutionDashboard.html', msg, 'success', id ? `/pages/FinancialInstitutionView.html?id=${id}` : null)
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingInstitution'), 'error') }
         })

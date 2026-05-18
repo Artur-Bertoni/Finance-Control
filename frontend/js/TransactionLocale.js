@@ -72,10 +72,11 @@ export function init() {
             async:       false,
             contentType: 'application/json',
             data:        JSON.stringify(body),
-            success:     function () {
+            success:     function (data) {
                 clearDirtyGuard()
                 const msg = localeId ? I18n.t('localeUpdatedSuccess') : I18n.t('localeCreatedSuccess')
-                navigateWithToast('/pages/TransactionLocaleDashboard.html', msg, 'success')
+                const id  = localeId ?? data?.id
+                navigateWithToast('/pages/TransactionLocaleDashboard.html', msg, 'success', id ? `/pages/TransactionLocaleView.html?id=${id}` : null)
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error') }
         })

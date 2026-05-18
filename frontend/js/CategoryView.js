@@ -50,6 +50,18 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Category.html?id=${categoryId}`)
     )
+
+    document.getElementById('view-transactions-btn')?.addEventListener('click', () => {
+        const today = new Date()
+        const firstOfYear = new Date(today.getFullYear(), 0, 1)
+        const toStr = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
+        sessionStorage.setItem('__homeFilters', JSON.stringify({
+            category:  categoryId,
+            startDate: toStr(firstOfYear),
+            endDate:   toStr(today),
+        }))
+        navigate('/pages/HomePage.html')
+    })
 }
 
 if (!globalThis.__appRouter) init()

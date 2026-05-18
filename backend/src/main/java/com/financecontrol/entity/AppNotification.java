@@ -35,6 +35,12 @@ public class AppNotification {
     @Column(name = "is_read")
     private boolean read = false;
 
+    @Column(name = "message", length = 512)
+    private String message;
+
+    @Column(name = "severity", length = 20)
+    private String severity;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

@@ -407,5 +407,15 @@
   "notifGoalMilestone90": "90% de la meta alcanzado",
   "notifGoalCompleted": "Meta completada",
   "notifGoalExceeded": "Límite de meta superado",
-  "notifGoalDeadline": "Fecha límite de meta próxima"
+  "notifGoalDeadline": "Fecha límite de meta próxima",
+
+  "viewTransactions": "Ver Transacciones",
+  "mascotTipTitle": "Consejo de Finny",
+  "mascotTabTips": "Consejos",
+  "mascotTabMessages": "Notificaciones",
+  "mascotNoMessages": "Sin mensajes por aquí todavía",
+  "finnyLink": "Finny",
+  "mascotAssistant": "Tu asistente financiero",
+  "tipCountdownLabel": "Nueva pista en",
+  "clickToView": "Clic para ver"
 }
