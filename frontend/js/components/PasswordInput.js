@@ -6,19 +6,13 @@ export class PasswordInput {
             const input = document.getElementById(inputId)
             const button = document.getElementById(buttonId)
 
-            if (!input || !button) {
-                console.warn(`PasswordInput: não encontrado input="${inputId}" ou button="${buttonId}"`)
-                return
-            }
+            if (!input || !button) return
 
             button.type = 'button'
             button.setAttribute('aria-label', 'Mostrar/ocultar senha')
 
             const iconSvg = Icons.eyeOpen()
-            if (!iconSvg) {
-                console.error('Erro ao carregar ícone eyeOpen')
-                return
-            }
+            if (!iconSvg) return
             button.innerHTML = iconSvg
 
             button.addEventListener('click', (event) => {

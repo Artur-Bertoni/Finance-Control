@@ -20,8 +20,7 @@ function loadData() {
     try {
         const data = doRequest('/api/transaction-locales', 'GET')
         allLocales = (data ?? []).map(el => TransactionLocale.processTransactionLocale(el))
-    } catch (e) {
-        console.error('Erro ao carregar locais:', e)
+    } catch {
         allLocales = []
     }
     renderList()

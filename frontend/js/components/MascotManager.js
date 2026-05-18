@@ -2,7 +2,6 @@ import { doRequest, navigate, showToast } from '../../utils/FrontendFunctions.js
 import { SidebarManager } from './SidebarManager.js'
 import { I18n } from '../i18n.js'
 
-// ── Banco de dicas estáticas por idioma ────────────────────────────────────
 const STATIC_TIPS = {
     pt: [
         'A regra 50/30/20 é simples: 50% para necessidades, 30% para desejos e 20% para poupança. Que tal tentar este mês?',
@@ -51,7 +50,6 @@ const TYPE_META = {
     GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline'   },
 }
 
-// ── Dicas personalizadas geradas a partir dos dados da API ─────────────────
 function buildPersonalizedTips(data, lang) {
     const tips = []
     if (!data) return tips
@@ -104,7 +102,6 @@ function escapeHtml(str) {
     return String(str ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 }
 
-// ── MascotManager ──────────────────────────────────────────────────────────
 export class MascotManager {
     static _tips           = []
     static _currentTip     = ''
@@ -118,7 +115,6 @@ export class MascotManager {
     static _STORAGE_TIP    = 'fc_finny_tip'
     static _STORAGE_NEXT   = 'fc_finny_next'
 
-    // ── Inicialização do widget flutuante ──────────────────────────────────
     static initFloating() {
         const fab      = document.getElementById('mascot-fab')
         const panel    = document.getElementById('mascot-panel')
@@ -164,7 +160,6 @@ export class MascotManager {
         this._startPushSchedule()
     }
 
-    // ── Push de dicas periódico ───────────────────────────────────────────
     static _startPushSchedule() {
         if (this._pushTimer) return
 
@@ -206,7 +201,6 @@ export class MascotManager {
         }
     }
 
-    // ── Abas ──────────────────────────────────────────────────────────────
     static _setupTabs() {
         document.getElementById('mascot-tab-tips')?.addEventListener('click', () => this._switchTab('tips'))
         document.getElementById('mascot-tab-messages')?.addEventListener('click', () => this._switchTab('messages'))
@@ -236,7 +230,6 @@ export class MascotManager {
         }
     }
 
-    // ── Dicas ─────────────────────────────────────────────────────────────
     static _loadFloatingTips() {
         const lang       = I18n.getLanguage()
         const staticTips = [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
@@ -255,7 +248,6 @@ export class MascotManager {
         if (tipEl) tipEl.textContent = this._currentTip || ''
     }
 
-    // ── Countdown ─────────────────────────────────────────────────────────
     static _formatCountdown(ms) {
         if (ms <= 0) return '00:00'
         const totalSec = Math.floor(ms / 1000)
@@ -283,7 +275,6 @@ export class MascotManager {
         if (this._countdownTimer) { clearInterval(this._countdownTimer); this._countdownTimer = null }
     }
 
-    // ── Notificações ──────────────────────────────────────────────────────
     static _loadNotifications(listId = 'mascot-notifications-list', footerId = 'mascot-notif-footer', markAllId = 'mascot-mark-all-read') {
         const list   = document.getElementById(listId)
         const footer = document.getElementById(footerId)
@@ -373,7 +364,6 @@ export class MascotManager {
         SidebarManager.refreshNotificationBadge()
     }
 
-    // ── Badge do FAB ──────────────────────────────────────────────────────
     static refreshBadge() {
         try {
             const raw    = doRequest('/api/notifications/unread-count', 'GET')
@@ -388,7 +378,6 @@ export class MascotManager {
         } catch { /* silencioso — usuário pode não estar autenticado */ }
     }
 
-    // Called by Dashboard.js after loadAndRender so floating tips pool stays fresh
     static refreshFloatingTips(data) {
         const lang = I18n.getLanguage()
         const personalized = buildPersonalizedTips(data, lang)
@@ -397,7 +386,6 @@ export class MascotManager {
         if (panel && !panel.hidden && this._activeTab === 'tips') this._renderFloatingTip()
     }
 
-    // ── Helpers expostos para reutilização ───────────────────────────────
     static _getStaticTips(lang) {
         return [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
     }
@@ -406,7 +394,6 @@ export class MascotManager {
         return buildPersonalizedTips(data, lang)
     }
 
-    // ── Widget do Dashboard ───────────────────────────────────────────────
     static renderDashboardWidget(data) {
         const lang = I18n.getLanguage()
         const personalized = buildPersonalizedTips(data, lang)

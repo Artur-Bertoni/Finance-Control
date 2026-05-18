@@ -14,7 +14,6 @@ const DONUT_COLORS = [
 let chartInstances = {}
 let _themeObserver = null
 
-// ── Canvas-reveal animation helpers ──────────────────────────────────────────
 function easeInOutSine(t) { return -(Math.cos(Math.PI * t) - 1) / 2 }
 
 function createRevealPlugin(id, buildPath) {
@@ -349,7 +348,6 @@ function goToHomepageFiltered(categoryId) {
     navigate('/pages/HomePage.html')
 }
 
-// ── Legend "Others" tooltip helpers ──────────────────────────────────────────
 function showOthersLegendTip(nativeEvent, details) {
     hideOthersLegendTip()
     const tip = document.createElement('div')
@@ -370,7 +368,6 @@ function hideOthersLegendTip() {
     document.getElementById('__others-tip')?.remove()
 }
 
-// ── Donut chart ───────────────────────────────────────────────────────────────
 function renderDonutChart(canvasId, categoryData) {
     const hasData = categoryData?.length > 0
     setChartVisibility(canvasId, hasData)
@@ -416,7 +413,7 @@ function renderDonutChart(canvasId, categoryData) {
         existing._revealProgress                  = 1
         existing.data.datasets[0].borderColor     = c.surface
         existing.update('none')
-        renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total)
+        renderDonutLegend(canvasId, { labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total })
         return
     }
 
@@ -472,10 +469,10 @@ function renderDonutChart(canvasId, categoryData) {
     chartInstances[canvasId]._othersDetails = othersDetails
     chartInstances[canvasId]._othersIndex   = othersIndex
     startReveal(chartInstances[canvasId])
-    renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total)
+    renderDonutLegend(canvasId, { labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total })
 }
 
-function renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total) {
+function renderDonutLegend(canvasId, { labels, colors, iconKeys, categoryIds, othersDetails, othersIndex, total }) {
     const container = document.getElementById(`${canvasId}-legend`)
     if (!container) return
 
@@ -536,4 +533,4 @@ function renderDonutLegend(canvasId, labels, colors, iconKeys, categoryIds, othe
     })
 }
 
-if (!globalThis.__appRouter) init()
+if (!globalThis.__appRouter) await init()

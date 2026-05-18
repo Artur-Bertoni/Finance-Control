@@ -5,7 +5,7 @@ import { setupRequiredFieldValidation, validateRequiredFields } from './utils/Fi
 import { IconPicker } from './components/IconPicker.js'
 import { I18n } from './i18n.js'
 
-let aliases = [] // Array of alias strings managed in this form
+let aliases = []
 
 export function init() {
     aliases = []
@@ -71,7 +71,6 @@ export function init() {
     document.getElementById('add-alias-btn').addEventListener('click', () => {
         aliases.push('')
         renderAliases()
-        // Focus the new input
         const inputs = document.querySelectorAll('.alias-input')
         inputs[inputs.length - 1]?.focus()
     })

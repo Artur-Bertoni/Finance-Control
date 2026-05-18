@@ -16,15 +16,14 @@ export class I18n {
         try {
             const response = await fetch(`/locales/${lang}.json`)
             this._translations[lang] = await response.json()
-        } catch (error) {
-            console.error(`Failed to load language: ${lang}`, error)
+        } catch {
+            // language file missing — key fallback handles missing translations
         }
     }
 
     static t(key, params = {}) {
         let text = this._translations[this._currentLanguage]?.[key] || key
 
-        // Replace placeholders like {name}, {page}, {total}, etc.
         if (Object.keys(params).length > 0) {
             Object.entries(params).forEach(([k, v]) => {
                 text = text.replaceAll(new RegExp(`{${k}}`, 'g'), v)

@@ -75,7 +75,6 @@ export function doRequest(url, httpMethod = 'GET', body = null) {
         contentType: 'application/json',
         data: body === null ? undefined : JSON.stringify(body),
         success: function (response) { result = response },
-        error: function (xhr) { console.error('Request error:', xhr.status, xhr.responseText) }
     })
     return result
 }

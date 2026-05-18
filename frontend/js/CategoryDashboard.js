@@ -20,8 +20,7 @@ function loadData() {
     try {
         const data = doRequest('/api/categories', 'GET')
         allCategories = (data ?? []).map(el => Category.processCategory(el))
-    } catch (e) {
-        console.error('Erro ao carregar categorias:', e)
+    } catch {
         allCategories = []
     }
     renderList()

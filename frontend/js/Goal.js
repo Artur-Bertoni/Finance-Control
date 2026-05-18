@@ -25,12 +25,11 @@ export function init() {
         loadGoal(goalId)
     }
 
-    // Show/hide "notify exceed" row based on goal type
     document.getElementById('type-select')?.addEventListener('change', toggleExceedRow)
     toggleExceedRow()
 
     document.getElementById('cancel-btn')?.addEventListener('click', () =>
-        navigate(goalId ? '/pages/GoalDashboard.html' : '/pages/GoalDashboard.html')
+        navigate('/pages/GoalDashboard.html')
     )
 
     document.getElementById('save-btn')?.addEventListener('click', () => handleSave(goalId))
@@ -38,8 +37,6 @@ export function init() {
     setupDirtyGuard()
     I18n.onChange(() => { refreshI18nSelectOptions(); InputMasks.reformatAll() })
 }
-
-// ── flatpickr ──────────────────────────────────────────────────────────────
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
@@ -63,16 +60,12 @@ function initDatePickers(goalId) {
     flatpickr('#end-date-input',   base)
 }
 
-// ── load dropdown options ──────────────────────────────────────────────────
-
 function loadDropdownData() {
     const categories = doRequest('/api/categories', 'GET') ?? []
     const locales    = doRequest('/api/transaction-locales', 'GET') ?? []
     renderMultiCheckList('categories-multi', categories, [])
     renderMultiCheckList('locales-multi',    locales,    [])
 }
-
-// ── load existing goal (edit mode) ─────────────────────────────────────────
 
 function loadGoal(goalId) {
     const goal = doRequest(`/api/goals/${goalId}`, 'GET')
@@ -100,11 +93,9 @@ function loadGoal(goalId) {
     typeSelect.value = goal.type ?? ''
     toggleExceedRow()
 
-    // Dates via flatpickr
     setFlatpickrDate('start-date-input', goal.startDate)
     setFlatpickrDate('end-date-input',   goal.endDate)
 
-    // Notification checkboxes
     setCheck('notify-50',       goal.notifyAt50)
     setCheck('notify-75',       goal.notifyAt75)
     setCheck('notify-90',       goal.notifyAt90)
@@ -112,7 +103,6 @@ function loadGoal(goalId) {
     setCheck('notify-deadline', goal.notifyOnDeadline)
     setCheck('notify-exceed',   goal.notifyOnExceed)
 
-    // Multi-check lists (re-render with selected ids)
     const selectedCatIds = (goal.categories ?? []).map(c => c.id)
     const selectedLocIds = (goal.locales     ?? []).map(l => l.id)
     const categories = doRequest('/api/categories', 'GET') ?? []
@@ -120,7 +110,6 @@ function loadGoal(goalId) {
     renderMultiCheckList('categories-multi', categories, selectedCatIds)
     renderMultiCheckList('locales-multi',    locales,    selectedLocIds)
 
-    // Delete and archive buttons
     const deleteBtn = addDeleteIcon()
     deleteBtn.addEventListener('click', () => {
         showConfirm(I18n.t('goalDeleteConfirm'), () => {
@@ -148,8 +137,6 @@ function loadGoal(goalId) {
     })
     document.getElementById('header-actions')?.prepend(archiveBtn)
 }
-
-// ── save ───────────────────────────────────────────────────────────────────
 
 function handleSave(goalId) {
     const fieldLabels = {
@@ -198,8 +185,6 @@ function handleSave(goalId) {
     })
 }
 
-// ── helpers ────────────────────────────────────────────────────────────────
-
 function renderMultiCheckList(containerId, items, selectedIds) {
     const container = document.getElementById(containerId)
     if (!container) return
@@ -225,7 +210,7 @@ function renderMultiCheckList(containerId, items, selectedIds) {
 
 function getCheckedIds(containerId) {
     return [...document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)]
-        .map(cb => parseInt(cb.value, 10))
+        .map(cb => Number.parseInt(cb.value, 10))
 }
 
 function getCheck(id) {

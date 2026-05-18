@@ -19,7 +19,6 @@ export function init() {
     const titleEl = document.getElementById('page-title-text')
     if (titleEl) titleEl.textContent = goal.name
 
-    // Static fields
     document.getElementById('detail-name').textContent       = goal.name
     document.getElementById('detail-target').textContent     = formatAmount(goal.targetAmount ?? 0)
     document.getElementById('detail-start-date').textContent = formatDate(goal.startDate)
@@ -32,7 +31,6 @@ export function init() {
         descEl.innerHTML = `<span class="detail-empty"></span>`
     }
 
-    // Progress bar
     const pct = goal.progressPercent ?? 0
     document.getElementById('detail-progress-bar').style.cssText =
         `width:${Math.min(pct, 100)}%;background:${goalBarColor(goal)}`
@@ -44,7 +42,6 @@ export function init() {
     document.getElementById('detail-goal-target').textContent = formatAmount(goal.targetAmount ?? 0)
     document.getElementById('detail-pct').textContent         = `${pct.toFixed(1)}%`
 
-    // Categories & locales
     const cats = goal.categories ?? []
     const locs  = goal.locales    ?? []
     if (cats.length || locs.length) {
@@ -53,11 +50,9 @@ export function init() {
         if (locs.length) renderTags('detail-locales-field',    'detail-locales',    locs)
     }
 
-    // Language-reactive content
     renderDynamic(goal)
     I18n.onChange(() => renderDynamic(goal))
 
-    // Archive button (active goals only)
     const archiveBtn = document.getElementById('archive-btn')
     if (goal.status === 'active') {
         archiveBtn.style.display = ''
@@ -72,7 +67,6 @@ export function init() {
         )
     }
 
-    // Delete button
     document.getElementById('delete-btn').addEventListener('click', () =>
         showConfirm(I18n.t('goalDeleteConfirm'), () => {
             $.ajax({
@@ -83,13 +77,10 @@ export function init() {
         }, I18n.t('confirmAction'))
     )
 
-    // Edit button
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Goal.html?id=${goalId}`)
     )
 }
-
-// ── Helpers ────────────────────────────────────────────────────────────────
 
 function renderDynamic(goal) {
     document.getElementById('detail-type').innerHTML =

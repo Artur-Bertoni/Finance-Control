@@ -46,7 +46,6 @@ public class StatementImportService {
     private final TransactionService transactionService;
     private final CategoryService    categoryService;
 
-    // Parses the PDF and returns rows with category suggestions — nothing is saved.
     @Transactional(readOnly = true)
     public List<ParsedTransactionResponse> previewStatement(Long userId, MultipartFile file) {
         List<String> blocks = buildBlocks(extractLines(file));
@@ -60,7 +59,6 @@ public class StatementImportService {
         return rows;
     }
 
-    // Saves the user-reviewed rows as transactions.
     @Transactional
     @SuppressWarnings("null")
     public ImportResult confirmImport(Long userId, Long accountId, List<ImportRowRequest> rows) {

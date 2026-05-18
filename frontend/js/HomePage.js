@@ -118,8 +118,8 @@ function loadTransactions(data) {
     const transactions = []
     try {
         for (const el of data) transactions.push(Transaction.processTransaction(el))
-    } catch (e) {
-        console.error('Erro ao carregar transações:', e)
+    } catch {
+        // silent fail — caller receives empty array
     }
     return transactions
 }

@@ -69,8 +69,7 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
         const res = await fetch(full)
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         html = await res.text()
-    } catch (e) {
-        console.error('Navigation failed:', e)
+    } catch {
         return
     }
 

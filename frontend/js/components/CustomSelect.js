@@ -99,7 +99,6 @@ export class CustomSelect {
         this.dropdown.innerHTML = ''
         this._searchInput = null
 
-        // --- Search input ---
         const searchWrapper = document.createElement('div')
         searchWrapper.className = 'cs-search-wrapper'
         const searchInput = document.createElement('input')
@@ -111,12 +110,10 @@ export class CustomSelect {
         this.dropdown.appendChild(searchWrapper)
         this._searchInput = searchInput
 
-        // --- Options container (scrollable) ---
         const optsList = document.createElement('div')
         optsList.className = 'cs-options'
         this.dropdown.appendChild(optsList)
 
-        // --- Clear option ---
         if (sel.value !== '') {
             const clearItem = document.createElement('div')
             clearItem.className = 'cs-option cs-clear'
@@ -144,7 +141,6 @@ export class CustomSelect {
             optsList.appendChild(clearItem)
         }
 
-        // --- Regular options ---
         Array.from(sel.options).forEach(opt => {
             if (opt.disabled) return
             const item = document.createElement('div')
@@ -193,14 +189,12 @@ export class CustomSelect {
             optsList.appendChild(item)
         })
 
-        // --- No results placeholder ---
         const noResults = document.createElement('div')
         noResults.className = 'cs-no-results'
         noResults.textContent = I18n.t('noResults')
         noResults.style.display = 'none'
         optsList.appendChild(noResults)
 
-        // --- Filter logic ---
         searchInput.addEventListener('input', () => this._applyFilter())
         searchInput.addEventListener('keydown', e => {
             if (e.key === 'ArrowDown') {

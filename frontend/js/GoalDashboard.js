@@ -40,8 +40,7 @@ export function init() {
 function loadData() {
     try {
         allGoals = doRequest('/api/goals', 'GET') ?? []
-    } catch (e) {
-        console.error('Erro ao carregar metas:', e)
+    } catch {
         allGoals = []
     }
     populateStatusOptions()

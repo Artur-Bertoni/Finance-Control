@@ -1,6 +1,5 @@
 import { I18n } from '../i18n.js'
 
-// Curated Phosphor icon set for financial categories
 export const CATEGORY_ICONS = [
     { key: 'ph-fork-knife',          label: 'Alimentação' },
     { key: 'ph-shopping-cart',       label: 'Compras' },

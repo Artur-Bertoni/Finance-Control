@@ -20,8 +20,7 @@ function loadData() {
     try {
         const data = doRequest('/api/financial-institutions', 'GET')
         allInstitutions = (data ?? []).map(el => FinancialInstitution.processFinancialInstitution(el))
-    } catch (e) {
-        console.error('Erro ao carregar instituições:', e)
+    } catch {
         allInstitutions = []
     }
     renderList()

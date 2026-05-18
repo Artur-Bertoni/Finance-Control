@@ -140,7 +140,6 @@ function showUploadSection() {
     document.getElementById('import-result').style.display  = 'none'
 }
 
-// Step 1 → 2: send PDF to /preview and build the review table
 function handleAnalyze() {
     const accountId = document.getElementById('account-input').value
     if (!accountId) {
@@ -204,7 +203,6 @@ function buildReviewTable(rows) {
         tr.style.borderBottom = '1px solid var(--border)'
         tr.dataset.index = index
 
-        // Checkbox
         const tdCheck = document.createElement('td')
         tdCheck.style.cssText = 'padding:8px 6px;text-align:center'
         const checkLabel = document.createElement('label')
@@ -220,24 +218,20 @@ function buildReviewTable(rows) {
         checkLabel.appendChild(check)
         tdCheck.appendChild(checkLabel)
 
-        // Date
         const tdDate = document.createElement('td')
         tdDate.style.cssText = 'padding:8px 6px;white-space:nowrap;color:var(--text-muted);font-size:13px'
         tdDate.textContent = formatDate(row.date)
 
-        // Description
         const tdDesc = document.createElement('td')
         tdDesc.style.cssText = 'padding:8px 6px;font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help'
         tdDesc.title = row.description
         tdDesc.textContent = row.description
 
-        // Amount
         const tdAmount = document.createElement('td')
         tdAmount.style.cssText = 'padding:8px 6px;white-space:nowrap;font-weight:600'
         tdAmount.style.color = row.type === 'credit' ? 'var(--color-credit, #22c55e)' : 'var(--color-debit, #ef4444)'
         tdAmount.textContent = (row.type === 'credit' ? '+ ' : '- ') + formatCurrency(row.amount)
 
-        // Type badge
         const tdType = document.createElement('td')
         tdType.style.padding = '8px 6px'
         const badge = document.createElement('span')
@@ -245,12 +239,10 @@ function buildReviewTable(rows) {
         badge.textContent = I18n.t(row.type)
         tdType.appendChild(badge)
 
-        // Category selector
         const tdCat = document.createElement('td')
         tdCat.style.padding = '6px'
         tdCat.appendChild(buildCategoryCell(row, index))
 
-        // Locale selector (optional)
         const tdLocale = document.createElement('td')
         tdLocale.style.padding = '6px'
         tdLocale.appendChild(buildLocaleCell(index))
@@ -297,7 +289,6 @@ function buildCategoryCell(row, index) {
     newOpt.dataset.i18n = 'newCategoryInline'
     select.appendChild(newOpt)
 
-    // Inline input for new category (hidden by default)
     const newInput = document.createElement('input')
     newInput.type = 'text'
     newInput.className = 'row-new-category-input'
@@ -326,7 +317,6 @@ function buildCategoryCell(row, index) {
             data:        JSON.stringify({ name, aliases: [name] }),
             success: cat => {
                 allCategories.push({ id: cat.id, name: cat.name })
-                // Add to all dropdowns on the page
                 document.querySelectorAll('.row-category-select').forEach(sel => {
                     const opt = document.createElement('option')
                     opt.value = cat.id
@@ -428,7 +418,6 @@ function buildLocaleCell(index) {
     return wrapper
 }
 
-// Step 2 → 3: send confirmed rows to /confirm
 function handleConfirm() {
     const accountId = document.getElementById('account-input').value
     const rows = []

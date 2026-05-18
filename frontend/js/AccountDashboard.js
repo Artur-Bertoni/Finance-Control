@@ -34,8 +34,7 @@ function loadData() {
     try {
         const data = doRequest('/api/accounts', 'GET')
         allAccounts = (data ?? []).map(el => Account.processAccount(el))
-    } catch (e) {
-        console.error('Erro ao carregar contas:', e)
+    } catch {
         allAccounts = []
     }
 
@@ -43,8 +42,7 @@ function loadData() {
         const data = doRequest('/api/financial-institutions', 'GET')
         allFinancialInstitutions = data ?? []
         populateFinancialInstitutionFilter()
-    } catch (e) {
-        console.error('Erro ao carregar instituições financeiras:', e)
+    } catch {
         allFinancialInstitutions = []
     }
 

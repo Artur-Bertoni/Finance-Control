@@ -25,6 +25,8 @@ public class CategoryService {
     private final CategoryRepository      categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
 
+    private static final String CATEGORY_NOT_FOUND = "error.notFound.category";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -65,7 +67,7 @@ public class CategoryService {
         c.setIconKey(req.iconKey());
 
         c.getAliases().clear();
-        entityManager.flush(); // force DELETEs before INSERTs to avoid unique-key violation
+        entityManager.flush(); // garante que os DELETEs são executados antes dos INSERTs para evitar violação de chave única
 
         if (req.aliases() != null && !req.aliases().isEmpty()) {
             req.aliases().stream()
@@ -76,15 +78,12 @@ public class CategoryService {
         return CategoryResponse.from(categoryRepository.save(c));
     }
 
-    // Used by statement import preview: finds an existing category by alias name.
     @Transactional(readOnly = true)
     public Optional<Category> findByAlias(Long userId, String aliasName) {
         return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName)
                 .map(CategoryAlias::getCategory);
     }
 
-    // Called after the user confirms import: ensures the description maps to the chosen category.
-    // If the alias already belongs to a different category it is migrated; if it matches, no-op.
     @Transactional
     public void learnAlias(Long userId, String aliasName, @NonNull Long categoryId) {
         if (aliasName == null || aliasName.isBlank()) return;
@@ -95,19 +94,18 @@ public class CategoryService {
                         if (!existing.getCategory().getId().equals(categoryId)) {
                             categoryAliasRepository.delete(existing);
                             Category target = categoryRepository.findById(categoryId)
-                                    .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                                    .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
                             categoryAliasRepository.save(new CategoryAlias(target, aliasName));
                         }
                     },
                     () -> {
                         Category target = categoryRepository.findById(categoryId)
-                                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
                         categoryAliasRepository.save(new CategoryAlias(target, aliasName));
                     }
                 );
     }
 
-    // Used by legacy auto-import flow: finds or creates a category by alias name.
     @Transactional
     public Category findOrCreateByInternalName(Long userId, String internalName) {
         return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, internalName)
@@ -131,6 +129,6 @@ public class CategoryService {
 
     private Category getOrThrow(@NonNull Long id) {
         return categoryRepository.findByIdWithAliases(id)
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
     }
 }

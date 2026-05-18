@@ -67,7 +67,7 @@ public class ReportService {
         Map<Long, String>   icons   = new LinkedHashMap<>();
         Map<Long, double[]> map     = new LinkedHashMap<>();
         for (Object[] row : rows) {
-            // row: [catId, name, iconKey, type, sum]
+            // linha: [catId, name, iconKey, type, sum]
             Long catId = (Long) row[0];
             names.put(catId, (String) row[1]);
             icons.put(catId, (String) row[2]);
