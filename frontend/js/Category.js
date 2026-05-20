@@ -108,9 +108,12 @@ export function init() {
                 data:        JSON.stringify(body),
                 success:     function (data) {
                     clearDirtyGuard()
-                    const msg = categoryId ? I18n.t('categoryUpdatedSuccess') : I18n.t('categoryCreatedSuccess')
-                    const id  = categoryId ?? data?.id
-                    navigateWithToast('/pages/CategoryDashboard.html', msg, 'success', id ? `/pages/CategoryView.html?id=${id}` : null)
+                    const id = categoryId ?? data?.id
+                    if (categoryId) {
+                        navigate(`/pages/CategoryView.html?id=${id}`)
+                    } else {
+                        navigateWithToast('/pages/CategoryDashboard.html', I18n.t('categoryCreatedSuccess'), 'success', id ? `/pages/CategoryView.html?id=${id}` : null)
+                    }
                 },
                 error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
             })
@@ -127,6 +130,11 @@ export function init() {
 }
 
 let aliasManuallyEdited = false
+
+function syncAddButton() {
+    const btn = document.getElementById('add-alias-btn')
+    if (btn) btn.disabled = aliases.some(a => a.trim() === '')
+}
 
 function renderAliases() {
     const container = document.getElementById('aliases-list')
@@ -146,6 +154,7 @@ function renderAliases() {
         input.addEventListener('input', () => {
             aliases[index] = input.value
             aliasManuallyEdited = true
+            syncAddButton()
         })
 
         const removeBtn = document.createElement('button')
@@ -164,6 +173,8 @@ function renderAliases() {
         row.appendChild(removeBtn)
         container.appendChild(row)
     })
+
+    syncAddButton()
 }
 
 if (!globalThis.__appRouter) init()

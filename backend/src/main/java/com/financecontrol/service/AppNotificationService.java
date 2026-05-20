@@ -103,7 +103,6 @@ public class AppNotificationService {
     }
 
     @Transactional
-    @SuppressWarnings("null")
     public AppNotificationResponse saveUserAction(Long userId, String message, String severity, String link) {
         AppNotification n = new AppNotification();
         n.setUserId(userId);

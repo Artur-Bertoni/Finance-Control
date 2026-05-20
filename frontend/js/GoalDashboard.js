@@ -8,17 +8,24 @@ let searchQuery  = ''
 let statusFilter = ''
 let showArchived = false
 
+function syncClearBtn() {
+    const btn = document.getElementById('clear-search-btn')
+    const wrapper = btn?.closest('.filter-clear-field') ?? btn
+    if (!wrapper) return
+    wrapper.style.display = (searchQuery || statusFilter || showArchived) ? 'flex' : 'none'
+}
+
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
     loadData()
-    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
+    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() }, syncClearBtn)
 
-    const sel      = document.getElementById('status-filter')
-    const archChk  = document.getElementById('show-archived-check')
-    sel?.addEventListener('change', () => { statusFilter = sel.value; renderList() })
-    archChk?.addEventListener('change', () => { showArchived = archChk.checked; renderList() })
+    const sel     = document.getElementById('status-filter')
+    const archChk = document.getElementById('show-archived-check')
+    sel?.addEventListener('change', () => { statusFilter = sel.value; syncClearBtn(); renderList() })
+    archChk?.addEventListener('change', () => { showArchived = archChk.checked; syncClearBtn(); renderList() })
 
     document.getElementById('clear-search-btn')?.addEventListener('click', () => {
         const input = document.getElementById('search-input')
@@ -28,6 +35,7 @@ export function init() {
         searchQuery  = ''
         statusFilter = ''
         showArchived = false
+        syncClearBtn()
         renderList()
     })
 
@@ -72,11 +80,20 @@ function renderList() {
     if (statusFilter)  goals = goals.filter(g => g.status === statusFilter)
 
     if (goals.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-                ${Icons.emptyCategory()}
-                <p>${I18n.t('noGoalsRegistered')}</p>
-            </div>`
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allGoals.length === 0) {
+            empty.innerHTML = `${Icons.goals()}<p>${I18n.t('noGoalsEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newGoal')
+            btn.addEventListener('click', () => navigate('/pages/Goal.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.goals()}<p>${I18n.t('noGoalsRegistered')}</p>`
+        }
+        list.appendChild(empty)
         return
     }
 

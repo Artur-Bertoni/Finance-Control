@@ -3,8 +3,10 @@ import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
 import { I18n } from './i18n.js'
+import { FinnySvg } from './utils/FinnySvg.js'
 
 const CHART_CDN = 'https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js'
+const FILTERS_KEY = '__dashboardFilters'
 const DONUT_COLORS = [
     '#4CAF50', '#2563EB', '#DC2626', '#F59E0B', '#8B5CF6',
     '#06B6D4', '#EC4899', '#F97316', '#14B8A6', '#84CC16',
@@ -64,7 +66,49 @@ function startReveal(chart) {
     requestAnimationFrame(frame)
 }
 
+function saveFilters() {
+    const period  = document.getElementById('period-input')?.value  ?? '1m'
+    const account = document.getElementById('account-input')?.value ?? ''
+    localStorage.setItem(FILTERS_KEY, JSON.stringify({ period, account }))
+}
+
+function restoreFilters() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(FILTERS_KEY) ?? 'null')
+        if (!saved) return
+        const periodEl  = document.getElementById('period-input')
+        const accountEl = document.getElementById('account-input')
+        if (periodEl  && saved.period  !== undefined) periodEl.value  = saved.period
+        if (accountEl && saved.account !== undefined) accountEl.value = saved.account
+    } catch { /* ignore */ }
+}
+
+function syncClearBtn() {
+    const btn = document.getElementById('clear-filters-btn')
+    if (!btn) return
+    const period  = document.getElementById('period-input')?.value  ?? '1m'
+    const account = document.getElementById('account-input')?.value ?? ''
+    btn.style.display = (period === '1m' && account === '') ? 'none' : ''
+}
+
+function clearFilters() {
+    localStorage.removeItem(FILTERS_KEY)
+    const periodEl  = document.getElementById('period-input')
+    const accountEl = document.getElementById('account-input')
+    if (periodEl)  periodEl.value  = '1m'
+    if (accountEl) accountEl.value = ''
+    syncClearBtn()
+    loadAndRender()
+}
+
+function onFilterChange() {
+    saveFilters()
+    syncClearBtn()
+    loadAndRender()
+}
+
 export async function init() {
+    FinnySvg.autoInit()
     Object.keys(chartInstances).forEach(destroyChart)
     hideOthersLegendTip()
     document.body.classList.add('page-charts')
@@ -72,9 +116,13 @@ export async function init() {
     showPendingToast()
     Account.addAccounts('account-input')
 
-    document.getElementById('period-input').addEventListener('change', loadAndRender)
-    document.getElementById('account-input').addEventListener('change', loadAndRender)
+    document.getElementById('period-input').addEventListener('change', onFilterChange)
+    document.getElementById('account-input').addEventListener('change', onFilterChange)
+    document.getElementById('clear-filters-btn')?.addEventListener('click', clearFilters)
     I18n.onChange(() => loadAndRender())
+
+    restoreFilters()
+    syncClearBtn()
 
     _themeObserver?.disconnect()
     _themeObserver = new MutationObserver(loadAndRender)
@@ -132,7 +180,7 @@ function loadAndRender() {
 
     updateStatCards(data)
     renderMonthlyChart(data.monthlyData)
-    renderWealthChart(data.wealthEvolution)
+    renderWealthChart(data.balanceEvolution)
     renderDonutChart('chart-cat-expenses', data.categoryExpenses)
     renderDonutChart('chart-cat-income', data.categoryIncomes)
     MascotManager.renderDashboardWidget(data)
@@ -143,7 +191,7 @@ function updateStatCards(data) {
     const totalIncome   = data.monthlyData.reduce((s, m) => s + (m.income   ?? 0), 0)
     const totalExpenses = data.monthlyData.reduce((s, m) => s + (m.expenses ?? 0), 0)
     const net           = totalIncome - totalExpenses
-    const wealth        = data.wealthEvolution.at(-1)?.balance ?? 0
+    const wealth        = data.balanceEvolution.at(-1)?.balance ?? 0
 
     setCard('stat-income',   totalIncome,   'positive')
     setCard('stat-expenses', totalExpenses, 'negative')

@@ -1,5 +1,5 @@
-const SVG_UP   = `<svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="1,5 5,1 9,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-const SVG_DOWN = `<svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="1,1 5,5 9,1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+const SVG_UP   = `<i class="ph ph-caret-up" aria-hidden="true"></i>`
+const SVG_DOWN = `<i class="ph ph-caret-down" aria-hidden="true"></i>`
 
 export class NumberSpinner {
     static autoInit() {

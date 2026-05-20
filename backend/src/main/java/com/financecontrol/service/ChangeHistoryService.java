@@ -29,7 +29,6 @@ public class ChangeHistoryService {
     private final EntityChangeLogRepository repository;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    @SuppressWarnings("null")
     public void recordChanges(String entityType, Long entityId, Long userId, Map<String, String[]> diff) {
         if (diff == null || diff.isEmpty()) return;
         String groupId    = UUID.randomUUID().toString();
@@ -40,14 +39,12 @@ public class ChangeHistoryService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    @SuppressWarnings("null")
     public void recordCreation(String entityType, Long entityId, Long userId) {
         String groupId = UUID.randomUUID().toString();
         repository.save(EntityChangeLog.of(entityType, entityId, userId, FIELD_CREATED, null, null, LocalDateTime.now(), groupId));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    @SuppressWarnings("null")
     public void recordPasswordChange(Long userId) {
         String groupId = UUID.randomUUID().toString();
         repository.save(EntityChangeLog.of(ENTITY_USER, userId, userId, FIELD_PASSWORD_CHANGED, null, null, LocalDateTime.now(), groupId));

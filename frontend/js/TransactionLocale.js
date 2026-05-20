@@ -74,9 +74,12 @@ export function init() {
             data:        JSON.stringify(body),
             success:     function (data) {
                 clearDirtyGuard()
-                const msg = localeId ? I18n.t('localeUpdatedSuccess') : I18n.t('localeCreatedSuccess')
-                const id  = localeId ?? data?.id
-                navigateWithToast('/pages/TransactionLocaleDashboard.html', msg, 'success', id ? `/pages/TransactionLocaleView.html?id=${id}` : null)
+                const id = localeId ?? data?.id
+                if (localeId) {
+                    navigate(`/pages/TransactionLocaleView.html?id=${id}`)
+                } else {
+                    navigateWithToast('/pages/TransactionLocaleDashboard.html', I18n.t('localeCreatedSuccess'), 'success', id ? `/pages/TransactionLocaleView.html?id=${id}` : null)
+                }
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error') }
         })

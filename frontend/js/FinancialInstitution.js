@@ -76,9 +76,12 @@ export function init() {
             data:        JSON.stringify(body),
             success:     function (data) {
                 clearDirtyGuard()
-                const msg = fiId ? I18n.t('institutionUpdatedSuccess') : I18n.t('institutionCreatedSuccess')
-                const id  = fiId ?? data?.id
-                navigateWithToast('/pages/FinancialInstitutionDashboard.html', msg, 'success', id ? `/pages/FinancialInstitutionView.html?id=${id}` : null)
+                const id = fiId ?? data?.id
+                if (fiId) {
+                    navigate(`/pages/FinancialInstitutionView.html?id=${id}`)
+                } else {
+                    navigateWithToast('/pages/FinancialInstitutionDashboard.html', I18n.t('institutionCreatedSuccess'), 'success', id ? `/pages/FinancialInstitutionView.html?id=${id}` : null)
+                }
             },
             error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingInstitution'), 'error') }
         })

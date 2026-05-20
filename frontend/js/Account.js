@@ -120,9 +120,12 @@ function handleSave(accountId) {
         data:        JSON.stringify(body),
         success: (data) => {
             clearDirtyGuard()
-            const msg = accountId ? I18n.t('accountUpdatedSuccess') : I18n.t('accountCreatedSuccess')
-            const id  = accountId ?? data?.id
-            navigateWithToast('/pages/AccountDashboard.html', msg, 'success', id ? `/pages/AccountView.html?id=${id}` : null)
+            const id = accountId ?? data?.id
+            if (accountId) {
+                navigate(`/pages/AccountView.html?id=${id}`)
+            } else {
+                navigateWithToast('/pages/AccountDashboard.html', I18n.t('accountCreatedSuccess'), 'success', id ? `/pages/AccountView.html?id=${id}` : null)
+            }
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingAccount'), 'error')
     })

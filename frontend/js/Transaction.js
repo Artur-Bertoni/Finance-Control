@@ -131,9 +131,12 @@ function handleSave(transactionId) {
             if (notifications.length > 0) {
                 sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
             }
-            const msg = transactionId ? I18n.t('transactionUpdatedSuccess') : I18n.t('transactionCreatedSuccess')
-            const id  = transactionId ?? data?.transaction?.id ?? data?.id
-            navigateWithToast('/pages/HomePage.html', msg, 'success', id ? `/pages/TransactionView.html?id=${id}` : null)
+            const id = transactionId ?? data?.transaction?.id ?? data?.id
+            if (transactionId) {
+                navigate(`/pages/TransactionView.html?id=${id}`)
+            } else {
+                navigateWithToast('/pages/HomePage.html', I18n.t('transactionCreatedSuccess'), 'success', id ? `/pages/TransactionView.html?id=${id}` : null)
+            }
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error')
     })

@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "app.base-url",
+      "type": "java.lang.String",
+      "description": "Base URL of the application used in email links."
+    },
+    {
+      "name": "app.mail.from",
+      "type": "java.lang.String",
+      "description": "From address used when sending emails."
+    },
+    {
+      "name": "app.scheduler.timezone",
+      "type": "java.lang.String",
+      "description": "Timezone used by scheduled tasks (e.g. goal notification cron)."
+    }
+  ]
+}

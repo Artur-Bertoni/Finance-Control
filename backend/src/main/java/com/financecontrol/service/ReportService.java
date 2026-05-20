@@ -34,9 +34,9 @@ public class ReportService {
         Double currentBalance = accountRepository.sumBalance(userId, null);
         LocalDate wealthStart = startDate.isAfter(today) ? today.minusMonths(1) : startDate;
         List<Object[]> wealthRows = transactionRepository.findMonthlyTotals(userId, wealthStart, today, null);
-        List<DashboardResponse.WealthDataPoint> wealthEvolution = buildWealthEvolution(wealthRows, wealthStart, today, currentBalance);
+        List<DashboardResponse.WealthDataPoint> balanceEvolution = buildBalanceEvolution(wealthRows, wealthStart, today, currentBalance);
 
-        return new DashboardResponse(monthlyData, categoryExpenses, categoryIncomes, wealthEvolution);
+        return new DashboardResponse(monthlyData, categoryExpenses, categoryIncomes, balanceEvolution);
     }
 
     private List<DashboardResponse.MonthlyDataPoint> buildMonthlyData(List<Object[]> rows, LocalDate startDate, LocalDate endDate) {
@@ -87,7 +87,7 @@ public class ReportService {
         incomes.sort((a, b) -> Double.compare(b.total(), a.total()));
     }
 
-    private List<DashboardResponse.WealthDataPoint> buildWealthEvolution(List<Object[]> rows,
+    private List<DashboardResponse.WealthDataPoint> buildBalanceEvolution(List<Object[]> rows,
                                                                           LocalDate startDate,
                                                                           LocalDate today,
                                                                           Double currentBalance) {

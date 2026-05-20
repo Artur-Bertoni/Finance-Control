@@ -7,7 +7,7 @@ import { setupRequiredFieldValidation, validateRequiredFields } from './utils/Fi
 import { InputMasks } from './utils/InputMasks.js'
 import { I18n } from './i18n.js'
 
-const REQUIRED = ['name-input', 'type-select', 'target-input', 'start-date-input', 'end-date-input']
+const REQUIRED = ['name-input', 'type-select', 'target-input', 'start-date-input']
 
 export function init() {
     SidebarManager.initialize()
@@ -145,7 +145,6 @@ function handleSave(goalId) {
         'type-select':      I18n.t('goalType'),
         'target-input':     I18n.t('goalTargetAmount'),
         'start-date-input': I18n.t('goalStartDate'),
-        'end-date-input':   I18n.t('goalEndDate'),
     }
     const empty = validateRequiredFields(REQUIRED, fieldLabels)
     if (empty.length) {
@@ -158,16 +157,16 @@ function handleSave(goalId) {
         description:     document.getElementById('description-input').value || null,
         type:            document.getElementById('type-select').value,
         targetAmount:    Number.parseFloat(document.getElementById('target-input').value),
-        startDate:       getInputValue('start-date-input'),
-        endDate:         getInputValue('end-date-input'),
-        categoryIds:     getCheckedIds('categories-multi'),
-        localeIds:       getCheckedIds('locales-multi'),
-        notifyAt50:      getCheck('notify-50'),
-        notifyAt75:      getCheck('notify-75'),
-        notifyAt90:      getCheck('notify-90'),
-        notifyOnComplete:getCheck('notify-complete'),
-        notifyOnDeadline:getCheck('notify-deadline'),
-        notifyOnExceed:  getCheck('notify-exceed'),
+        startDate:        getInputValue('start-date-input'),
+        endDate:          getInputValue('end-date-input') || null,
+        categoryIds:      getCheckedIds('categories-multi'),
+        localeIds:        getCheckedIds('locales-multi'),
+        notifyAt50:       getCheck('notify-50'),
+        notifyAt75:       getCheck('notify-75'),
+        notifyAt90:       getCheck('notify-90'),
+        notifyOnComplete: getCheck('notify-complete'),
+        notifyOnDeadline: getCheck('notify-deadline'),
+        notifyOnExceed:   getCheck('notify-exceed'),
     }
 
     $.ajax({
@@ -178,9 +177,12 @@ function handleSave(goalId) {
         data:        JSON.stringify(body),
         success: (data) => {
             clearDirtyGuard()
-            const msg = goalId ? I18n.t('goalUpdatedSuccess') : I18n.t('goalCreatedSuccess')
-            const id  = goalId ?? data?.id
-            navigateWithToast('/pages/GoalDashboard.html', msg, 'success', id ? `/pages/GoalView.html?id=${id}` : null)
+            const id = goalId ?? data?.id
+            if (goalId) {
+                navigate(`/pages/GoalView.html?id=${id}`)
+            } else {
+                navigateWithToast('/pages/GoalDashboard.html', I18n.t('goalCreatedSuccess'), 'success', id ? `/pages/GoalView.html?id=${id}` : null)
+            }
         },
         error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingGoal'), 'error')
     })
@@ -237,8 +239,8 @@ function setFlatpickrDate(id, dateStr) {
 }
 
 function toggleExceedRow() {
-    const type     = document.getElementById('type-select')?.value
-    const row      = document.getElementById('notify-exceed-row')
+    const type = document.getElementById('type-select')?.value
+    const row  = document.getElementById('notify-exceed-row')
     if (!row) return
     row.style.display = type === 'expense_limit' ? '' : 'none'
 }

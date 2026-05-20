@@ -74,7 +74,7 @@ public class GoalNotificationScheduler {
         User user = userRepository.findById(goal.getUserId()).orElse(null);
         if (user == null) return;
 
-        if (today.isAfter(goal.getEndDate())) {
+        if (goal.getEndDate() != null && today.isAfter(goal.getEndDate())) {
             finalizeGoal(goal, user, current);
             return;
         }
@@ -97,6 +97,7 @@ public class GoalNotificationScheduler {
 
     private void checkDeadlineWarning(FinancialGoal goal, User user, LocalDate today, double current) {
         if (!Boolean.TRUE.equals(goal.getNotifyOnDeadline())) return;
+        if (goal.getEndDate() == null) return;
         if (today.isBefore(goal.getEndDate().minusDays(7))) return;
         if (logRepository.existsByGoalIdAndNotificationType(goal.getId(), GoalNotificationType.DEADLINE_WARNING)) return;
 
@@ -117,7 +118,6 @@ public class GoalNotificationScheduler {
         log.info("Aviso de prazo registrado para meta '{}' (user={})", goal.getName(), user.getEmail());
     }
 
-    @SuppressWarnings("null")
     private void sendInAppIfNotSent(FinancialGoal goal, User user,
                                     GoalNotificationType logType, AppNotificationType appType) {
         if (logRepository.existsByGoalIdAndNotificationType(goal.getId(), logType)) return;

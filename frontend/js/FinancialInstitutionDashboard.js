@@ -35,11 +35,20 @@ function renderList() {
     const institutions = q ? allInstitutions.filter(fi => fi.name.toLowerCase().includes(q)) : allInstitutions
 
     if (institutions.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-                ${Icons.emptyBuilding()}
-                <p>${I18n.t('noInstitutionsRegistered')}</p>
-            </div>`
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allInstitutions.length === 0) {
+            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newInstitution')
+            btn.addEventListener('click', () => navigate('/pages/FinancialInstitution.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsRegistered')}</p>`
+        }
+        list.appendChild(empty)
         return
     }
 

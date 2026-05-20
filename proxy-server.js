@@ -12,7 +12,8 @@ const PORT      = 8080
 const MIME = {
   '.html': 'text/html', '.css': 'text/css', '.js': 'application/javascript',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon', '.json': 'application/json'
+  '.ico': 'image/x-icon', '.json': 'application/json',
+  '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf'
 }
 
 createServer((req, res) => {

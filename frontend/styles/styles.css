@@ -213,9 +213,12 @@ button { font-family: inherit; }
   flex-shrink: 0;
   opacity: .75;
 }
+.sidebar-link .ph { font-size: 17px; flex-shrink: 0; opacity: .75; }
 
 .sidebar-link:hover svg,
 .sidebar-link.active svg { opacity: 1; }
+.sidebar-link:hover .ph,
+.sidebar-link.active .ph { opacity: 1; }
 
 .sidebar-finny-icon {
   width: 18px;
@@ -814,6 +817,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 }
 .pw-toggle:hover { color: var(--text-secondary); }
 .pw-toggle svg { width: 17px; height: 17px; }
+.pw-toggle .ph { font-size: 17px; }
 
 /* ===== RADIO TYPE SELECTOR ===== */
 .radio-group {
@@ -924,6 +928,8 @@ textarea.field-error {
   border: none;
 }
 .btn-ghost:hover { background-color: var(--surface-2); color: var(--text); }
+
+.btn:disabled, .btn[disabled] { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
 .btn-sm { padding: 7px 14px; font-size: 12.5px; }
 .btn-lg { padding: 11px 28px; font-size: 15px; }
@@ -1123,6 +1129,7 @@ textarea.field-error {
 }
 
 .empty-state svg { width: 44px; height: 44px; opacity: .35; }
+.empty-state .ph { font-size: 44px; opacity: .35; }
 .empty-state p { font-size: 15px; font-weight: 500; }
 
 /* ===== LOGIN PAGE ===== */
@@ -1395,6 +1402,7 @@ body.user-guest .toast-container {
   border-color: var(--primary-400);
 }
 .btn-add-inline svg { width: 16px; height: 16px; }
+.btn-add-inline .ph { font-size: 16px; }
 
 /* ===== QUICK-ADD MODAL ===== */
 .quick-add-card { max-width: 460px !important; }
@@ -1528,6 +1536,7 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
   width: 15px;
   height: 15px;
 }
+.theme-toggle .ph { font-size: 15px; }
 
 .theme-toggle-floating {
   position: fixed;
@@ -1556,6 +1565,7 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
   width: 17px;
   height: 17px;
 }
+.theme-toggle-floating .ph { font-size: 17px; }
 
 [data-theme="dark"] select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23616161'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");

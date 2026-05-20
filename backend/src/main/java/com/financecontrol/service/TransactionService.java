@@ -177,7 +177,6 @@ public class TransactionService {
         t.setTransferPartnerId(req.transferPartnerId() != null ? req.transferPartnerId() : 0L);
     }
 
-    @SuppressWarnings("null")
     private Map<String, String[]> buildDiff(Transaction t, TransactionRequest req, TransactionDeps newDeps) {
         Map<String, String[]> diff = new LinkedHashMap<>();
         if (differs(t.getAccount().getId(), req.accountId()))

@@ -2,6 +2,7 @@ import { doRequest, navigate } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
+import { FinnySvg } from './utils/FinnySvg.js'
 
 const TYPE_META = {
     GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone50' },
@@ -18,6 +19,7 @@ let _activeTab      = 'tips'
 let _countdownTimer = null
 
 export function init() {
+    FinnySvg.autoInit()
     _stopCountdown()
     _setupTabs()
     _switchTab('tips')

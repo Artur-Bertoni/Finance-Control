@@ -98,7 +98,8 @@ public class FinancialGoalService {
                 ? TransactionType.DEBIT : TransactionType.CREDIT;
         List<Long> catIds  = goal.getCategories().stream().map(Category::getId).toList();
         List<Long> locIds  = goal.getLocales().stream().map(TransactionLocale::getId).toList();
-        LocalDate  endDate = goal.getEndDate().isBefore(LocalDate.now()) ? goal.getEndDate() : LocalDate.now();
+        LocalDate  endDate = goal.getEndDate() != null && goal.getEndDate().isBefore(LocalDate.now())
+                ? goal.getEndDate() : LocalDate.now();
 
         Double result;
         if (catIds.isEmpty() && locIds.isEmpty()) {

@@ -73,7 +73,6 @@ public class EmailService {
         doSendGoal(user, sample, type, current);
     }
 
-    @SuppressWarnings("null")
     private void doSendWeekly(User user) throws MessagingException, IOException {
         Locale locale = resolveLocale(user.getLanguage());
 
@@ -110,7 +109,6 @@ public class EmailService {
         }
     }
 
-    @SuppressWarnings("null")
     private void doSendGoal(User user, FinancialGoal goal,
                             GoalNotificationType type, double current)
             throws MessagingException, IOException {
@@ -228,13 +226,14 @@ public class EmailService {
         return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 
+    @NonNull
     private Locale resolveLocale(String language) {
-        if (language == null) return Locale.forLanguageTag("pt");
-        return switch (language) {
+        if (language == null) return Objects.requireNonNull(Locale.forLanguageTag("pt"));
+        return Objects.requireNonNull(switch (language) {
             case "en" -> Locale.ENGLISH;
             case "es" -> Locale.forLanguageTag("es");
             default   -> Locale.forLanguageTag("pt");
-        };
+        });
     }
 
     @NonNull

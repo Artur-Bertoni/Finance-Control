@@ -10,6 +10,13 @@ let allFinancialInstitutions = []
 let searchQuery = ''
 let selectedFinancialInstitutionId = ''
 
+function syncClearBtn() {
+    const btn = document.getElementById('clear-search-btn')
+    const wrapper = btn?.closest('.filter-clear-field') ?? btn
+    if (!wrapper) return
+    wrapper.style.display = (searchQuery || selectedFinancialInstitutionId) ? 'flex' : 'none'
+}
+
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
@@ -24,7 +31,8 @@ export function init() {
             const fiFilter = document.getElementById('fi-filter')
             if (fiFilter) fiFilter.value = ''
             renderList()
-        }
+        },
+        syncClearBtn
     )
     setupFinancialInstitutionFilter()
     I18n.onChange(renderList)
@@ -67,6 +75,7 @@ function setupFinancialInstitutionFilter() {
 
     select.addEventListener('change', () => {
         selectedFinancialInstitutionId = select.value
+        syncClearBtn()
         renderList()
     })
 }
@@ -88,11 +97,20 @@ function renderList() {
     }
 
     if (accounts.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-                ${Icons.emptyBuilding()}
-                <p>${I18n.t('noAccountsRegistered')}</p>
-            </div>`
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allAccounts.length === 0) {
+            empty.innerHTML = `${Icons.accounts()}<p>${I18n.t('noAccountsEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newAccount')
+            btn.addEventListener('click', () => navigate('/pages/Account.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.accounts()}<p>${I18n.t('noAccountsRegistered')}</p>`
+        }
+        list.appendChild(empty)
         return
     }
 

@@ -79,19 +79,36 @@ function configureFilters() {
     document.getElementById('account-input').addEventListener('change', refresh)
 
     const clearBtn = document.getElementById('clear-filters-btn')
-    if (clearBtn) clearBtn.innerHTML = Icons.broom()
 
     clearBtn?.addEventListener('click', () => {
         sessionStorage.removeItem(FILTER_KEY)
         resetFilterDefaults(startInput, endInput, today)
         currentPage = 1
         populateTransactionsList()
+        syncClearBtn()
     })
+
+    syncClearBtn()
+}
+
+function syncClearBtn() {
+    const btn = document.getElementById('clear-filters-btn')
+    const wrapper = btn?.closest('.filter-clear-field') ?? btn
+    if (!wrapper) return
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    const d = new Date(); d.setDate(1)
+    const defaultStart = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
+    const start = document.getElementById('start-date-input')?.value  ?? ''
+    const end   = document.getElementById('end-date-input')?.value    ?? ''
+    const cat   = document.getElementById('category-input')?.value    ?? ''
+    const acc   = document.getElementById('account-input')?.value     ?? ''
+    wrapper.style.display = (start === defaultStart && end === today && !cat && !acc) ? 'none' : 'flex'
 }
 
 function refresh() {
     currentPage = 1
     saveFilters()
+    syncClearBtn()
     populateTransactionsList()
 }
 

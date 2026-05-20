@@ -35,11 +35,20 @@ function renderList() {
     const categories = q ? allCategories.filter(c => c.name.toLowerCase().includes(q)) : allCategories
 
     if (categories.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-                ${Icons.emptyCategory()}
-                <p>${I18n.t('noCategoriesRegistered')}</p>
-            </div>`
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allCategories.length === 0) {
+            empty.innerHTML = `${Icons.categories()}<p>${I18n.t('noCategoriesEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newCategory')
+            btn.addEventListener('click', () => navigate('/pages/Category.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.categories()}<p>${I18n.t('noCategoriesRegistered')}</p>`
+        }
+        list.appendChild(empty)
         return
     }
 

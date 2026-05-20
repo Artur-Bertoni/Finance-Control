@@ -1,7 +1,8 @@
 import { Icons } from '../js/icons/IconLibrary.js'
 import { I18n } from '../js/i18n.js'
+import { FinnySvg } from '../js/utils/FinnySvg.js'
 
-const FINNY_FACE_SVG = `<svg class="toast-finny" viewBox="58 14 54 62" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="79" cy="27" rx="8" ry="11" fill="#fdb8ce"/><ellipse cx="79" cy="28.5" rx="4.5" ry="7" fill="#f9a0c0"/><circle cx="84" cy="46" r="22" fill="#fdb8ce"/><circle cx="91" cy="38" r="4" fill="white"/><circle cx="92" cy="38" r="2" fill="#1a1a2e"/><circle cx="92.8" cy="37.2" r="0.8" fill="white"/><ellipse cx="101" cy="51" rx="9.5" ry="7" fill="#f9a0c0"/><circle cx="98" cy="51" r="2.5" fill="#d4608a"/><circle cx="104" cy="51" r="2.5" fill="#d4608a"/><path d="M95 57 Q101 63 107 57" stroke="#d4608a" stroke-width="2.5" stroke-linecap="round"/></svg>`
+const FINNY_FACE_SVG = FinnySvg.faceSvg('toast-finny')
 
 const CURRENCY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
 
@@ -309,15 +310,23 @@ function _renderBreadcrumb() {
     })
 }
 
-export function setupSearch(onInput, onClear) {
-    const input = document.getElementById('search-input')
-    const clearBtn = document.getElementById('clear-search-btn')
-    if (clearBtn) clearBtn.innerHTML = Icons.broom()
-    input?.addEventListener('input', () => onInput(input.value))
+export function setupSearch(onInput, onClear, syncFn) {
+    const input    = document.querySelector('#view #search-input')    ?? document.getElementById('search-input')
+    const clearBtn = document.querySelector('#view #clear-search-btn') ?? document.getElementById('clear-search-btn')
+
+    const defaultSync = () => {
+        const wrapper = clearBtn?.closest('.filter-clear-field') ?? clearBtn
+        if (wrapper) wrapper.style.display = input?.value ? 'flex' : 'none'
+    }
+    const sync = syncFn ?? defaultSync
+
+    input?.addEventListener('input', () => { onInput(input.value); sync() })
     clearBtn?.addEventListener('click', () => {
         if (input) input.value = ''
         onClear?.()
+        sync()
     })
+    sync()
 }
 
 export function selectOptionByText(selectId, text) {

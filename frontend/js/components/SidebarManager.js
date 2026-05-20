@@ -58,7 +58,7 @@ export class SidebarManager {
             const key  = el.dataset.i18n
             const text = I18n.t(key)
             if (el.tagName === 'A') {
-                const icon = el.querySelector('svg')
+                const icon = el.querySelector('svg, i.ph')
                 el.innerHTML = icon ? icon.outerHTML : ''
                 el.appendChild(document.createTextNode(text))
             } else if (el.tagName === 'OPTION') {

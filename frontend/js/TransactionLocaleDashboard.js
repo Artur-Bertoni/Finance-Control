@@ -35,11 +35,20 @@ function renderList() {
     const locales = q ? allLocales.filter(l => l.name.toLowerCase().includes(q)) : allLocales
 
     if (locales.length === 0) {
-        list.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-                ${Icons.emptyLocation()}
-                <p>${I18n.t('noLocalesRegistered')}</p>
-            </div>`
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allLocales.length === 0) {
+            empty.innerHTML = `${Icons.locations()}<p>${I18n.t('noLocalesEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newLocation')
+            btn.addEventListener('click', () => navigate('/pages/TransactionLocale.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.locations()}<p>${I18n.t('noLocalesRegistered')}</p>`
+        }
+        list.appendChild(empty)
         return
     }
 

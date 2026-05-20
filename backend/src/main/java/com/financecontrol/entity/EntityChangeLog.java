@@ -2,6 +2,7 @@ package com.financecontrol.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.lang.NonNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,6 +37,7 @@ public class EntityChangeLog {
     @Column(name = "group_id", nullable = false, length = 36)
     private String groupId;
 
+    @NonNull
     public static EntityChangeLog of(String entityType, Long entityId, Long userId,
                                      String fieldName, String oldValue, String newValue,
                                      LocalDateTime changedAt, String groupId) {

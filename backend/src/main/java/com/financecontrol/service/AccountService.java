@@ -79,7 +79,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void patchBalance(Long id, Double delta) {
+    public void patchBalance(@NonNull Long id, Double delta) {
         Account account    = getOrThrow(id);
         double oldBalance  = account.getBalance() != null ? account.getBalance() : 0.0;
         double newBalance  = oldBalance + delta;
@@ -93,7 +93,6 @@ public class AccountService {
         return accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
     }
 
-    @SuppressWarnings("null")
     private Map<String, String[]> buildDiff(Account a, AccountRequest req, FinancialInstitution newFi) {
         Map<String, String[]> diff = new LinkedHashMap<>();
         if (differs(a.getName(), req.name()))

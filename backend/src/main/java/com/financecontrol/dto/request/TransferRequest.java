@@ -1,10 +1,11 @@
 package com.financecontrol.dto.request;
 
 import java.time.LocalDate;
+import org.springframework.lang.NonNull;
 
 public record TransferRequest(
-        Long originAccountId,
-        Long destinationAccountId,
+        @NonNull Long originAccountId,
+        @NonNull Long destinationAccountId,
         Long categoryId,
         Long transactionLocaleId,
         Double value,
