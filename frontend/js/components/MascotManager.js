@@ -50,31 +50,124 @@ const TYPE_META = {
     GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline'   },
 }
 
-function buildPersonalizedTips(data, lang) {
-    const tips = []
-    if (!data) return tips
+// ── Tip-building helpers ────────────────────────────────────────────────────
+
+function buildSavingsTip(totalIncome, net, lang) {
+    if (totalIncome <= 0 || net <= 0) return null
+    const pct = Math.round((net / totalIncome) * 100)
+    if (pct < 10) return ({
+        pt: `Você está economizando apenas ${pct}% da sua renda. Tente aumentar gradualmente para pelo menos 20%!`,
+        en: `You're saving only ${pct}% of your income. Try to gradually increase to at least 20%!`,
+        es: `Estás ahorrando solo el ${pct}% de tus ingresos. ¡Intenta aumentar gradualmente al menos al 20%!`,
+    }[lang] ?? '')
+    if (pct < 20) return ({
+        pt: `Você está economizando ${pct}% da sua renda. Bom progresso! Tente chegar a 20% para maior segurança.`,
+        en: `You're saving ${pct}% of your income. Good progress! Try to reach 20% for greater security.`,
+        es: `Estás ahorrando el ${pct}% de tus ingresos. ¡Buen progreso! Intenta llegar al 20% para mayor seguridad.`,
+    }[lang] ?? '')
+    return ({
+        pt: `Ótimo trabalho! Você está economizando ${pct}% da sua renda no período. Continue assim!`,
+        en: `Great job! You're saving ${pct}% of your income this period. Keep it up!`,
+        es: `¡Excelente trabajo! Estás ahorrando ${pct}% de tus ingresos en este período. ¡Sigue así!`,
+    }[lang] ?? '')
+}
+
+function buildBalanceTip(balances, lang) {
+    if (!balances || balances.length < 2) return null
+    const last = balances[balances.length - 1]?.balance ?? 0
+    const prev = balances[balances.length - 2]?.balance ?? 0
+    if (prev <= 0 || last >= prev) return null
+    const dropPct = Math.round(((prev - last) / prev) * 100)
+    if (dropPct < 5) return null
+    return ({
+        pt: `Seu patrimônio caiu ${dropPct}% no último período. Que tal revisar seus gastos?`,
+        en: `Your net worth dropped ${dropPct}% in the last period. How about reviewing your expenses?`,
+        es: `Tu patrimonio cayó un ${dropPct}% en el último período. ¿Qué tal revisar tus gastos?`,
+    }[lang] ?? '')
+}
+
+function buildSingleGoalTip(type, pct, name, lang) {
+    if (type === 'EXPENSE_LIMIT') {
+        if (pct >= 90) return ({
+            pt: `Atenção! Você atingiu ${Math.round(pct)}% do limite de gastos em "${name}". Cuidado com novos gastos!`,
+            en: `Watch out! You've used ${Math.round(pct)}% of your spending limit for "${name}". Be careful with new expenses!`,
+            es: `¡Atención! Has utilizado el ${Math.round(pct)}% de tu límite de gastos en "${name}". ¡Cuidado con nuevos gastos!`,
+        }[lang] ?? '')
+        if (pct >= 70) return ({
+            pt: `Você está em ${Math.round(pct)}% do limite de gastos em "${name}". Fique atento!`,
+            en: `You're at ${Math.round(pct)}% of your spending limit for "${name}". Keep an eye on it!`,
+            es: `Estás al ${Math.round(pct)}% de tu límite de gastos en "${name}". ¡Presta atención!`,
+        }[lang] ?? '')
+    } else {
+        if (pct >= 75) return ({
+            pt: `Você está quase lá! ${Math.round(pct)}% da meta "${name}" conquistada. Continue!`,
+            en: `Almost there! You've reached ${Math.round(pct)}% of your "${name}" goal. Keep going!`,
+            es: `¡Casi llegas! Has alcanzado el ${Math.round(pct)}% de tu meta "${name}". ¡Sigue así!`,
+        }[lang] ?? '')
+        if (pct >= 50) return ({
+            pt: `Metade do caminho! Você atingiu ${Math.round(pct)}% da meta "${name}".`,
+            en: `Halfway there! You've reached ${Math.round(pct)}% of your "${name}" goal.`,
+            es: `¡A mitad de camino! Has alcanzado el ${Math.round(pct)}% de tu meta "${name}".`,
+        }[lang] ?? '')
+    }
+    return null
+}
+
+function buildDeadlineTip(endDate, name, today, lang) {
+    const daysLeft = Math.ceil((new Date(endDate) - today) / (1000 * 60 * 60 * 24))
+    if (daysLeft <= 0 || daysLeft > 7) return null
+    return ({
+        pt: `Sua meta "${name}" vence em ${daysLeft} dia${daysLeft === 1 ? '' : 's'}. Não desista!`,
+        en: `Your goal "${name}" expires in ${daysLeft} day${daysLeft === 1 ? '' : 's'}. Don't give up!`,
+        es: `Tu meta "${name}" vence en ${daysLeft} día${daysLeft === 1 ? '' : 's'}. ¡No te rindas!`,
+    }[lang] ?? '')
+}
+
+function buildGoalTips(goals, lang) {
+    const tips  = []
+    const today = new Date()
+    let count   = 0
+    for (const goal of goals) {
+        if (goal.status !== 'ACTIVE' || count >= 3) continue
+        const pct  = goal.progressPercent ?? 0
+        const name = goal.name ?? ''
+        const tip  = buildSingleGoalTip(goal.type, pct, name, lang)
+        if (tip) { tips.push(tip); count++ }
+        if (goal.endDate && count < 3) {
+            const deadline = buildDeadlineTip(goal.endDate, name, today, lang)
+            if (deadline) { tips.push(deadline); count++ }
+        }
+    }
+    return tips
+}
+
+function buildPersonalizedTips(data, lang, goals = []) {
+    if (!data) return []
 
     const totalIncome   = data.monthlyData?.reduce((s, m) => s + (m.income   ?? 0), 0) ?? 0
     const totalExpenses = data.monthlyData?.reduce((s, m) => s + (m.expenses ?? 0), 0) ?? 0
-    const net = totalIncome - totalExpenses
+    const net           = totalIncome - totalExpenses
+    const tips          = []
+
+    if (totalIncome === 0 && totalExpenses === 0) {
+        tips.push({
+            pt: 'Registre suas receitas e despesas para receber dicas personalizadas ao seu perfil financeiro!',
+            en: 'Log your income and expenses to get tips tailored to your financial profile!',
+            es: '¡Registra tus ingresos y gastos para recibir consejos personalizados a tu perfil financiero!',
+        }[lang] ?? '')
+    }
 
     if (totalIncome > 0 && totalExpenses > totalIncome) {
         const pct = Math.round((totalExpenses / totalIncome - 1) * 100)
         tips.push({
-            pt: `Atenção! Seus gastos este mês estão ${pct}% acima da sua renda. Que tal revisar onde dá para economizar?`,
-            en: `Watch out! Your expenses this month are ${pct}% above your income. How about reviewing where you can cut back?`,
-            es: `¡Atención! Tus gastos este mes son ${pct}% superiores a tus ingresos. ¿Qué tal revisar dónde puedes ahorrar?`,
+            pt: `Atenção! Seus gastos estão ${pct}% acima da sua renda no período. Que tal revisar onde dá para economizar?`,
+            en: `Watch out! Your expenses are ${pct}% above your income this period. How about reviewing where you can cut back?`,
+            es: `¡Atención! Tus gastos son ${pct}% superiores a tus ingresos en este período. ¿Qué tal revisar dónde puedes ahorrar?`,
         }[lang] ?? '')
     }
 
-    if (totalIncome > 0 && net > 0) {
-        const savePct = Math.round((net / totalIncome) * 100)
-        tips.push({
-            pt: `Ótimo trabalho! Você está economizando ${savePct}% da sua renda este mês. Continue assim!`,
-            en: `Great job! You're saving ${savePct}% of your income this month. Keep it up!`,
-            es: `¡Excelente trabajo! Estás ahorrando ${savePct}% de tus ingresos este mes. ¡Sigue así!`,
-        }[lang] ?? '')
-    }
+    const savingsTip = buildSavingsTip(totalIncome, net, lang)
+    if (savingsTip) tips.push(savingsTip)
 
     const topCategory = data.categoryExpenses?.[0]
     if (topCategory?.categoryName) {
@@ -85,8 +178,15 @@ function buildPersonalizedTips(data, lang) {
         }[lang] ?? '')
     }
 
+    const balanceTip = buildBalanceTip(data.balanceEvolution, lang)
+    if (balanceTip) tips.push(balanceTip)
+
+    tips.push(...buildGoalTips(goals, lang))
+
     return tips.filter(Boolean)
 }
+
+// ── Utilities ───────────────────────────────────────────────────────────────
 
 function toDateStr(d) {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
@@ -101,6 +201,12 @@ function currentMonthRange() {
 function escapeHtml(str) {
     return String(str ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 }
+
+function fetchGoals() {
+    try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] }
+}
+
+// ── MascotManager ───────────────────────────────────────────────────────────
 
 export class MascotManager {
     static _tips           = []
@@ -235,8 +341,9 @@ export class MascotManager {
         const staticTips = [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
         try {
             const { startDate, endDate } = currentMonthRange()
-            const data = doRequest(`/api/reports/dashboard?startDate=${startDate}&endDate=${endDate}`, 'GET')
-            const personalized = buildPersonalizedTips(data, lang)
+            const data  = doRequest(`/api/reports/dashboard?startDate=${startDate}&endDate=${endDate}`, 'GET')
+            const goals = fetchGoals()
+            const personalized = buildPersonalizedTips(data, lang, goals)
             this._tips = [...personalized, ...staticTips]
         } catch {
             this._tips = staticTips
@@ -378,9 +485,9 @@ export class MascotManager {
         } catch { /* silencioso — usuário pode não estar autenticado */ }
     }
 
-    static refreshFloatingTips(data) {
+    static refreshFloatingTips(data, goals = []) {
         const lang = I18n.getLanguage()
-        const personalized = buildPersonalizedTips(data, lang)
+        const personalized = buildPersonalizedTips(data, lang, goals)
         this._tips = [...personalized, ...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
         const panel = document.getElementById('mascot-panel')
         if (panel && !panel.hidden && this._activeTab === 'tips') this._renderFloatingTip()
@@ -390,13 +497,13 @@ export class MascotManager {
         return [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
     }
 
-    static _buildPersonalized(data, lang) {
-        return buildPersonalizedTips(data, lang)
+    static _buildPersonalized(data, lang, goals = []) {
+        return buildPersonalizedTips(data, lang, goals)
     }
 
-    static renderDashboardWidget(data) {
+    static renderDashboardWidget(data, goals = []) {
         const lang = I18n.getLanguage()
-        const personalized = buildPersonalizedTips(data, lang)
+        const personalized = buildPersonalizedTips(data, lang, goals)
         this._dashTips  = [...personalized, ...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
         this._dashIndex = 0
         this._renderDashboardTip()

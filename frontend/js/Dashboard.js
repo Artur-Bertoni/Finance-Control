@@ -178,13 +178,15 @@ function loadAndRender() {
     const data = doRequest(`/api/reports/dashboard?${params}`, 'GET')
     if (!data) return
 
+    const goals = (() => { try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] } })()
+
     updateStatCards(data)
     renderMonthlyChart(data.monthlyData)
     renderWealthChart(data.balanceEvolution)
     renderDonutChart('chart-cat-expenses', data.categoryExpenses)
     renderDonutChart('chart-cat-income', data.categoryIncomes)
-    MascotManager.renderDashboardWidget(data)
-    MascotManager.refreshFloatingTips(data)
+    MascotManager.renderDashboardWidget(data, goals)
+    MascotManager.refreshFloatingTips(data, goals)
 }
 
 function updateStatCards(data) {
