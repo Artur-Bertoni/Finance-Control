@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Transação | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="../../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="../../js/crud/Transaction.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" id="page-title-text" data-i18n="newTransaction">Nova Transação</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="field">
+            <label for="account-input" data-i18n="transactionAccount">Conta</label>
+            <div class="select-with-add">
+              <select id="account-input" required>
+                <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="category-input" data-i18n="transactionCategory">Categoria</label>
+            <div class="select-with-add">
+              <select id="category-input" required>
+                <option disabled selected value="" data-i18n="selectCategory">Selecione a categoria</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="newCategory" title="Nova categoria" data-icon="add"></button>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label" style="font-size:12.5px;font-weight:600;color:var(--text-secondary)" data-i18n="transactionType">Tipo de Transação *</span>
+            <div class="radio-group">
+              <label class="radio-option" id="debit-option">
+                <input type="radio" name="typeRadio" id="debit-radio" value="debit">
+                <span data-i18n="debit">Débito</span>
+              </label>
+              <label class="radio-option" id="credit-option">
+                <input type="radio" name="typeRadio" id="credit-radio" value="credit">
+                <span data-i18n="credit">Crédito</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid two-col">
+            <div class="field">
+              <label for="date-input" data-i18n="transactionDate">Data</label>
+              <input id="date-input" type="date" required>
+            </div>
+            <div class="field">
+              <label for="value-input" data-i18n="transactionValue">Valor ($)</label>
+              <input id="value-input" type="text" inputmode="decimal" data-mask="money" data-i18n-placeholder="valueZero" placeholder="0,00" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="installments-number-input" data-i18n="installmentsNumber">Nº de Parcelas <span style="color:var(--text-muted);font-weight:400" data-i18n="installmentsHelper">(deixe 0 para à vista)</span></label>
+            <input id="installments-number-input" type="number" min="0" placeholder="0">
+          </div>
+
+          <div class="field">
+            <label for="transaction-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transação</label>
+            <div class="select-with-add">
+              <select id="transaction-locale-input">
+                <option disabled selected value="" data-i18n="selectLocale">Selecione o local (opcional)</option>
+              </select>
+              <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="newLocale" title="Novo local" data-icon="add"></button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="obs-input" data-i18n="observations" data-optional-label>Observações</label>
+            <textarea id="obs-input" data-i18n-placeholder="observationsPlaceholder" placeholder="Detalhes adicionais sobre a transação…"></textarea>
+          </div>
+
+          <input type="hidden" id="transfer-partner-id" value="0">
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary" id="save-btn" type="button" data-i18n="saveTransaction">Salvar Transação</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

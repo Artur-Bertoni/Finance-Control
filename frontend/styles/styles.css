@@ -1044,6 +1044,7 @@ textarea.field-error {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 16px;
+  padding-top: 4px;
 }
 
 .item-card {
@@ -1603,6 +1604,7 @@ body.page-home .transactions-list {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding-top: 4px;
 }
 
 /* ===== PAGINATION ===== */

@@ -22,7 +22,7 @@ InputMasks.autoInit()
 I18n.onChange(applyTranslations)
 
 document.getElementById('register-btn').addEventListener('click', function () {
-    globalThis.location.href = '/pages/User.html?guest=true'
+    globalThis.location.href = '/pages/crud/User.html?guest=true'
 })
 
 document.getElementById('login-btn').addEventListener('click', function () {

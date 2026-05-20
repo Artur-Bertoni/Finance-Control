@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Local de Transação | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../js/crud/TransactionLocale.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" id="page-title-text" data-i18n="newLocale">Novo Local de Transação</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+    <main class="page-content">
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="field">
+            <label for="name-input" data-i18n="localeName">Nome</label>
+            <input id="name-input" type="text" data-i18n-placeholder="localeNamePlaceholder" placeholder="Nome do local..." required>
+          </div>
+          <div class="field">
+            <label for="address-input" data-i18n="localeAddress" data-optional-label>Endereço</label>
+            <input id="address-input" type="text" data-i18n-placeholder="localeAddressPlaceholder" placeholder="Endereço do local...">
+          </div>
+          <div class="field" style="grid-column: 1 / -1">
+            <label for="icon-picker-trigger" data-i18n="categoryIcon" data-optional-label>Ícone</label>
+            <button type="button" class="icon-picker-trigger" id="icon-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="icon-picker-dropdown">
+              <span class="icon-picker-preview" id="icon-picker-preview">
+                <i class="ph ph-map-pin" style="font-size:20px"></i>
+              </span>
+              <span class="icon-picker-label" id="icon-picker-label" data-i18n="iconPickerChoose">Escolher ícone...</span>
+              <input type="hidden" id="icon-key-input">
+            </button>
+            <dialog class="icon-picker-dropdown" id="icon-picker-dropdown">
+              <input type="text" class="icon-picker-search" id="icon-picker-search" data-i18n-placeholder="searchPlaceholder" placeholder="Digite para buscar..." autocomplete="off">
+              <div class="icon-picker-grid" id="icon-picker-grid"></div>
+            </dialog>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" id="cancel-btn" type="button" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary"   id="save-btn"   type="button" data-i18n="saveLocale">Salvar Local</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+import { doRequest, navigate, setupSearch, showPendingToast } from '../../utils/FrontendFunctions.js'
+import { FinancialInstitution } from '../class/FinancialInstitutionClass.js'
+import { SidebarManager } from '../components/SidebarManager.js'
+import { Icons } from '../icons/IconLibrary.js'
+import { I18n } from '../i18n.js'
+
+let allInstitutions = []
+let searchQuery = ''
+
+export function init() {
+    document.body.classList.add('page-dashboard')
+    SidebarManager.initialize()
+    showPendingToast()
+    loadData()
+    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
+    I18n.onChange(renderList)
+}
+
+function loadData() {
+    try {
+        const data = doRequest('/api/financial-institutions', 'GET')
+        allInstitutions = (data ?? []).map(el => FinancialInstitution.processFinancialInstitution(el))
+    } catch {
+        allInstitutions = []
+    }
+    renderList()
+}
+
+function renderList() {
+    const list = document.getElementById('financial-institutions-list')
+    if (!list) return
+    list.innerHTML = ''
+
+    const q = searchQuery.trim().toLowerCase()
+    const institutions = q ? allInstitutions.filter(fi => fi.name.toLowerCase().includes(q)) : allInstitutions
+
+    if (institutions.length === 0) {
+        const empty = document.createElement('div')
+        empty.className = 'empty-state'
+        empty.style.gridColumn = '1 / -1'
+        if (allInstitutions.length === 0) {
+            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsEmpty')}</p>`
+            const btn = document.createElement('button')
+            btn.className = 'btn btn-primary btn-sm'
+            btn.textContent = I18n.t('newInstitution')
+            btn.addEventListener('click', () => navigate('/pages/crud/FinancialInstitution.html'))
+            empty.appendChild(btn)
+        } else {
+            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsRegistered')}</p>`
+        }
+        list.appendChild(empty)
+        return
+    }
+
+    for (const fi of institutions) {
+        const card = document.createElement('div')
+        card.className = 'item-card'
+        card.addEventListener('click', () => navigate(`/pages/views/FinancialInstitutionView.html?id=${fi.id}`))
+        const iconHtml = fi.iconKey
+            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${fi.iconKey}"></i></span>`
+            : ''
+        card.innerHTML = `
+            <div class="item-card-header">
+                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${fi.name}</span></span>
+                <span class="item-card-badge"></span>
+            </div>
+            <div class="item-card-meta">
+                ${fi.address ? `<div class="item-card-row">${Icons.locations()}${fi.address}</div>` : ''}
+                ${fi.contact ? `<div class="item-card-row">${Icons.phone()}${fi.contact}</div>` : ''}
+            </div>`
+        list.appendChild(card)
+    }
+}
+
+if (!globalThis.__appRouter) init()

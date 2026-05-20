@@ -208,15 +208,15 @@ export class SidebarManager {
         const iconMap = {
             'HomePage.html': 'home',
             'Dashboard.html': 'dashboard',
-            'GoalDashboard.html': 'goals',
+            'GoalList.html': 'goals',
             'Transaction.html': 'transaction',
             'Transfer.html': 'transfer',
-            'AccountDashboard.html': 'accounts',
-            'CategoryDashboard.html': 'categories',
-            'FinancialInstitutionDashboard.html': 'institutions',
-            'TransactionLocaleDashboard.html': 'locations',
+            'AccountList.html': 'accounts',
+            'CategoryList.html': 'categories',
+            'FinancialInstitutionList.html': 'institutions',
+            'TransactionLocaleList.html': 'locations',
             'StatementImport.html': 'statementImport',
-            'AchievementDashboard.html': 'achievements',
+            'AchievementList.html': 'achievements',
             'FinnyCenter.html': 'finny',
             'UserView.html': 'profile'
         }
@@ -292,7 +292,7 @@ export class SidebarManager {
             for (const g of newlyDone) {
                 showToast(`🎯 ${I18n.t('goalCompletedToast')}: ${g.name}`, 'success', {
                     label: I18n.t('view'),
-                    url:   `/pages/GoalDashboard.html?highlight=${g.id}`
+                    url:   `/pages/lists/GoalList.html?highlight=${g.id}`
                 })
             }
             const allDone = goals.filter(g => g.status === 'completed').map(g => g.id)
@@ -346,7 +346,7 @@ export class SidebarManager {
                 const title = I18n.t(`achievement_${a.type}_title`)
                 showToast(`🏆 ${I18n.t('achievementUnlocked')}: ${title}`, 'success', {
                     label: I18n.t('view'),
-                    url:   `/pages/AchievementDashboard.html?highlight=${a.type}`
+                    url:   `/pages/lists/AchievementList.html?highlight=${a.type}`
                 })
             }
             localStorage.setItem(TOAST_KEY, String(now))

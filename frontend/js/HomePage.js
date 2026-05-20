@@ -216,7 +216,7 @@ function createTransactionItem(tx) {
 
     const item = document.createElement('div')
     item.className = `transaction-item ${typeClass}`
-    item.addEventListener('click', () => navigate(`/pages/TransactionView.html?id=${tx.id}`))
+    item.addEventListener('click', () => navigate(`/pages/views/TransactionView.html?id=${tx.id}`))
 
     const indicator = document.createElement('div')
     indicator.className = `tx-indicator ${typeClass}`

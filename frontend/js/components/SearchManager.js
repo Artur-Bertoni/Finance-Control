@@ -2,11 +2,11 @@ import { doRequest, navigate } from '../../utils/FrontendFunctions.js'
 import { I18n } from '../i18n.js'
 
 const ENTITY_TYPES = [
-    { key: 'accounts',     shortcut: 'A', api: '/api/accounts',              viewPath: '/pages/AccountView.html',              dashboardPath: '/pages/AccountDashboard.html',              i18nKey: 'accounts' },
-    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/GoalView.html',                 dashboardPath: '/pages/GoalDashboard.html',                 i18nKey: 'goals' },
-    { key: 'categories',   shortcut: 'C', api: '/api/categories',            viewPath: '/pages/CategoryView.html',             dashboardPath: '/pages/CategoryDashboard.html',             i18nKey: 'categories' },
-    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/FinancialInstitutionView.html', dashboardPath: '/pages/FinancialInstitutionDashboard.html', i18nKey: 'financialInstitutions' },
-    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/TransactionLocaleView.html',    dashboardPath: '/pages/TransactionLocaleDashboard.html',    i18nKey: 'locations' },
+    { key: 'accounts',     shortcut: 'A', api: '/api/accounts',              viewPath: '/pages/views/AccountView.html',              dashboardPath: '/pages/lists/AccountList.html',              i18nKey: 'accounts' },
+    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/views/GoalView.html',                 dashboardPath: '/pages/lists/GoalList.html',                 i18nKey: 'goals' },
+    { key: 'categories',   shortcut: 'C', api: '/api/categories',            viewPath: '/pages/views/CategoryView.html',             dashboardPath: '/pages/lists/CategoryList.html',             i18nKey: 'categories' },
+    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/views/FinancialInstitutionView.html', dashboardPath: '/pages/lists/FinancialInstitutionList.html', i18nKey: 'financialInstitutions' },
+    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/views/TransactionLocaleView.html',    dashboardPath: '/pages/lists/TransactionLocaleList.html',    i18nKey: 'locations' },
 ]
 
 let _open    = false
