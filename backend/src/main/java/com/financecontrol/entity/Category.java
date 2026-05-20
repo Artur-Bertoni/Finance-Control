@@ -3,6 +3,7 @@ package com.financecontrol.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,4 +29,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryAlias> aliases = new ArrayList<>();
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

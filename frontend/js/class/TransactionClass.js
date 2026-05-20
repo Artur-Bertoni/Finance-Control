@@ -1,4 +1,6 @@
-﻿export class Transaction {
+﻿import { formatDate } from '../../utils/FrontendFunctions.js'
+
+export class Transaction {
     constructor({ id, account, category, categoryIconKey, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId }) {
         this.id = id
         this.account = account
@@ -30,8 +32,6 @@
     }
 
     static formatLabel(tx) {
-        const d = new Date(tx.date)
-        const dateStr = `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
-        return `${tx.category} – ${dateStr}`
+        return `${tx.category} – ${formatDate(tx.date)}`
     }
 }

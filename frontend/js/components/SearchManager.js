@@ -2,11 +2,11 @@ import { doRequest, navigate } from '../../utils/FrontendFunctions.js'
 import { I18n } from '../i18n.js'
 
 const ENTITY_TYPES = [
-    { key: 'accounts',     shortcut: 'A', api: '/api/accounts',              viewPath: '/pages/AccountView.html',              i18nKey: 'accounts' },
-    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/GoalView.html',                 i18nKey: 'goals' },
-    { key: 'categories',   shortcut: 'C', api: '/api/categories',            viewPath: '/pages/CategoryView.html',             i18nKey: 'categories' },
-    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/FinancialInstitutionView.html', i18nKey: 'financialInstitutions' },
-    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/TransactionLocaleView.html',    i18nKey: 'locations' },
+    { key: 'accounts',     shortcut: 'A', api: '/api/accounts',              viewPath: '/pages/AccountView.html',              dashboardPath: '/pages/AccountDashboard.html',              i18nKey: 'accounts' },
+    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/GoalView.html',                 dashboardPath: '/pages/GoalDashboard.html',                 i18nKey: 'goals' },
+    { key: 'categories',   shortcut: 'C', api: '/api/categories',            viewPath: '/pages/CategoryView.html',             dashboardPath: '/pages/CategoryDashboard.html',             i18nKey: 'categories' },
+    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/FinancialInstitutionView.html', dashboardPath: '/pages/FinancialInstitutionDashboard.html', i18nKey: 'financialInstitutions' },
+    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/TransactionLocaleView.html',    dashboardPath: '/pages/TransactionLocaleDashboard.html',    i18nKey: 'locations' },
 ]
 
 let _open    = false
@@ -60,19 +60,26 @@ export class SearchManager {
                 SearchManager.open()
                 return
             }
-            if (!_open || !e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return
-            const active = document.activeElement
-            if (active && active.id !== 'search-input' &&
+            if (!e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return
+            const active        = document.activeElement
+            const isSearchInput = active?.id === 'search-input'
+            if (!isSearchInput && active &&
                 (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return
 
             const key    = e.key.toUpperCase()
             const entity = ENTITY_TYPES.find(t => t.shortcut === key)
             if (!entity) return
-            const hits = _results[entity.key]
-            if (hits?.length) {
-                e.preventDefault()
-                navigate(`${entity.viewPath}?id=${hits[0].id}`)
+
+            if (isSearchInput) {
+                const hits = _results[entity.key]
+                if (hits?.length) {
+                    e.preventDefault()
+                    navigate(`${entity.viewPath}?id=${hits[0].id}`)
+                }
+                return
             }
+            e.preventDefault()
+            navigate(entity.dashboardPath)
         })
 
         _renderShortcutsHint()

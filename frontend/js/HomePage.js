@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, formatDate, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
@@ -262,9 +262,8 @@ function createTransactionMeta(tx) {
 }
 
 function createDateSpan(date) {
-    const d = new Date(date)
     const dateSpan = document.createElement('span')
-    dateSpan.textContent = `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
+    dateSpan.textContent = formatDate(date)
     return dateSpan
 }
 

@@ -125,8 +125,10 @@ export class SidebarManager {
         const lang      = I18n.getLanguage()
         const localeKey = FLATPICKR_LOCALES[lang]
         const locale    = localeKey ? (flatpickr.l10ns?.[localeKey] ?? flatpickr.l10ns.default) : flatpickr.l10ns.default
+        const altFormat = lang === 'en' ? 'm/d/Y' : 'd/m/Y'
         document.querySelectorAll('input[data-fp-init]').forEach(input => {
             input._flatpickr?.set('locale', locale)
+            input._flatpickr?.set('altFormat', altFormat)
         })
     }
 
@@ -137,12 +139,13 @@ export class SidebarManager {
             ? (flatpickr.l10ns?.[FLATPICKR_LOCALES[lang]] ?? undefined)
             : undefined
 
+        const altFormat = lang === 'en' ? 'm/d/Y' : 'd/m/Y'
         document.querySelectorAll('input[type="date"]:not([data-fp-init])').forEach(input => {
             input.dataset.fpInit = '1'
             const fp = flatpickr(input, {
                 dateFormat:     'Y-m-d',
                 altInput:       true,
-                altFormat:      'd/m/Y',
+                altFormat,
                 altInputClass:  'flatpickr-input fc-date-input',
                 maxDate:        'today',
                 defaultDate:    input.value || 'today',

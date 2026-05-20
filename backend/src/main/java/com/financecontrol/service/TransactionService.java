@@ -8,12 +8,19 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.*;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.financecontrol.service.ChangeHistoryService.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +33,8 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
     private final TransactionLocaleRepository transactionLocaleRepository;
+    private final ChangeHistoryService changeHistoryService;
+    @Lazy private final AccountService accountService;
 
     public List<TransactionResponse> findAllByUser(Long userId, LocalDate startDate, LocalDate endDate,
                                                     Long categoryId, Long accountId) {
@@ -41,7 +50,9 @@ public class TransactionService {
     @SuppressWarnings("null")
     public TransactionResponse create(Long userId, TransactionRequest req) {
         applyBalanceDelta(req.accountId(), req.type(), req.value());
-        return TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));
+        TransactionResponse result = TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));
+        changeHistoryService.recordCreation(ENTITY_TRANSACTION, result.id(), userId);
+        return result;
     }
 
     @Transactional
@@ -75,7 +86,7 @@ public class TransactionService {
         double revert = TYPE_CREDIT == oldType ? -existing.getValue() : existing.getValue();
         Long accountId = existing.getAccount().getId();
         if (accountId != null) {
-            accountRepository.patchBalance(accountId, revert);
+            accountService.patchBalance(accountId, revert);
         }
         applyBalanceDelta(req.accountId(), req.type(), req.value());
 
@@ -96,8 +107,12 @@ public class TransactionService {
             }
         }
 
-        updateEntity(existing, userId, req);
-        return TransactionResponse.from(transactionRepository.save(existing));
+        TransactionDeps newDeps = loadDeps(req);
+        Map<String, String[]> diff = buildDiff(existing, req, newDeps);
+        applyUpdateWithDeps(existing, userId, req, newDeps);
+        TransactionResponse result = TransactionResponse.from(transactionRepository.save(existing));
+        changeHistoryService.recordChanges(ENTITY_TRANSACTION, id, userId, diff);
+        return result;
     }
 
     @SuppressWarnings("null")
@@ -106,7 +121,7 @@ public class TransactionService {
         double revert = TYPE_CREDIT == t.getType() ? -t.getValue() : t.getValue();
         Long accountId = t.getAccount().getId();
         if (accountId != null) {
-            accountRepository.patchBalance(accountId, revert);
+            accountService.patchBalance(accountId, revert);
         }
 
         Long partnerId = t.getTransferPartnerId();
@@ -119,7 +134,7 @@ public class TransactionService {
 
     private void applyBalanceDelta(@NonNull Long accountId, TransactionType type, Double value) {
         double delta = TYPE_CREDIT == type ? value : -value;
-        accountRepository.patchBalance(accountId, delta);
+        accountService.patchBalance(accountId, delta);
     }
 
     private boolean isTransferPartner(Long partnerId) {
@@ -145,14 +160,11 @@ public class TransactionService {
         Integer installmentsNumber = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
         Long transferPartnerId = req.transferPartnerId() != null ? req.transferPartnerId() : 0L;
         return new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
-                req.value(), req.date(), req.type(),
-                installmentsNumber,
-                req.obs(),
-                transferPartnerId);
+                req.value(), req.date(), req.type(), installmentsNumber, req.obs(),
+                transferPartnerId, LocalDateTime.now());
     }
 
-    private void updateEntity(Transaction t, Long userId, TransactionRequest req) {
-        TransactionDeps deps = loadDeps(req);
+    private void applyUpdateWithDeps(Transaction t, Long userId, TransactionRequest req, TransactionDeps deps) {
         t.setUserId(userId);
         t.setAccount(deps.account());
         t.setCategory(deps.category());
@@ -163,5 +175,34 @@ public class TransactionService {
         t.setInstallmentsNumber(req.installmentsNumber() != null ? req.installmentsNumber() : 0);
         t.setObs(req.obs());
         t.setTransferPartnerId(req.transferPartnerId() != null ? req.transferPartnerId() : 0L);
+    }
+
+    @SuppressWarnings("null")
+    private Map<String, String[]> buildDiff(Transaction t, TransactionRequest req, TransactionDeps newDeps) {
+        Map<String, String[]> diff = new LinkedHashMap<>();
+        if (differs(t.getAccount().getId(), req.accountId()))
+            diff.put("account", diff(t.getAccount().getName(), newDeps.account().getName()));
+        if (differs(t.getCategory().getId(), req.categoryId()))
+            diff.put("category", diff(t.getCategory().getName(), newDeps.category().getName()));
+        if (differs(t.getValue(), req.value()))
+            diff.put("value", diff(t.getValue(), req.value()));
+        if (differs(t.getDate(), req.date()))
+            diff.put("date", diff(t.getDate() != null ? t.getDate().toString() : null,
+                                  req.date() != null ? req.date().toString() : null));
+        if (differs(t.getType(), req.type()))
+            diff.put("type", diff(t.getType() != null ? t.getType().getValue() : null,
+                                  req.type() != null ? req.type().getValue() : null));
+        int oldInstall = t.getInstallmentsNumber() != null ? t.getInstallmentsNumber() : 0;
+        int newInstall = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
+        if (oldInstall != newInstall)
+            diff.put("installmentsNumber", diff(String.valueOf(oldInstall), String.valueOf(newInstall)));
+        if (differs(t.getObs(), req.obs()))
+            diff.put("obs", diff(t.getObs(), req.obs()));
+        String oldLocale = t.getTransactionLocale() != null ? t.getTransactionLocale().getName() : null;
+        String newLocale = newDeps.locale() != null ? newDeps.locale().getName() : null;
+        Long oldLocaleId = t.getTransactionLocale() != null ? t.getTransactionLocale().getId() : null;
+        if (differs(oldLocaleId, req.transactionLocaleId()))
+            diff.put("transactionLocale", diff(oldLocale, newLocale));
+        return diff;
     }
 }

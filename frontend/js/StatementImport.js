@@ -1,6 +1,6 @@
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
-import { doRequest, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 
 let selectedFile  = null
@@ -504,11 +504,6 @@ function showOverlay() {
     return overlay
 }
 
-function formatDate(isoDate) {
-    if (!isoDate) return ''
-    const [y, m, d] = isoDate.split('-')
-    return `${d}/${m}/${y}`
-}
 
 function formatCurrency(value) {
     return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

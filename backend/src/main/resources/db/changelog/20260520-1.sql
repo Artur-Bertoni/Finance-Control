@@ -1,0 +1,223 @@
+--liquibase formatted sql
+--changeset artur:20260520-1
+--comment: convert all id and foreign-key columns from INT to BIGINT
+
+-- ════════════════════════════════════════════
+-- Step 1: Drop all foreign key constraints
+-- (uses INFORMATION_SCHEMA so names are resolved dynamically)
+-- ════════════════════════════════════════════
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'financial_institution' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `financial_institution` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'account' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `account` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'account' AND COLUMN_NAME = 'financial_institution_id' AND REFERENCED_TABLE_NAME = 'financial_institution' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `account` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction_locale' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `transaction_locale` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'category' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `category` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `transaction` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction' AND COLUMN_NAME = 'account_id' AND REFERENCED_TABLE_NAME = 'account' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `transaction` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction' AND COLUMN_NAME = 'category_id' AND REFERENCED_TABLE_NAME = 'category' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `transaction` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction' AND COLUMN_NAME = 'transaction_locale_id' AND REFERENCED_TABLE_NAME = 'transaction_locale' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `transaction` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'category_alias' AND COLUMN_NAME = 'category_id' AND REFERENCED_TABLE_NAME = 'category' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `category_alias` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'financial_goal' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `financial_goal` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'goal_category' AND COLUMN_NAME = 'goal_id' AND REFERENCED_TABLE_NAME = 'financial_goal' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `goal_category` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'goal_category' AND COLUMN_NAME = 'category_id' AND REFERENCED_TABLE_NAME = 'category' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `goal_category` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'goal_locale' AND COLUMN_NAME = 'goal_id' AND REFERENCED_TABLE_NAME = 'financial_goal' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `goal_locale` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'goal_locale' AND COLUMN_NAME = 'locale_id' AND REFERENCED_TABLE_NAME = 'transaction_locale' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `goal_locale` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'goal_notification_log' AND COLUMN_NAME = 'goal_id' AND REFERENCED_TABLE_NAME = 'financial_goal' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `goal_notification_log` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'app_notification' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `app_notification` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @fk = (SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'entity_change_log' AND COLUMN_NAME = 'user_id' AND REFERENCED_TABLE_NAME = 'user' LIMIT 1);
+SET @sql = IF(@fk IS NOT NULL, CONCAT('ALTER TABLE `entity_change_log` DROP FOREIGN KEY `', @fk, '`'), 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- ════════════════════════════════════════════
+-- Step 2: Modify all PK and FK columns to BIGINT
+-- ════════════════════════════════════════════
+
+ALTER TABLE user
+    MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE financial_institution
+    MODIFY COLUMN id      BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id BIGINT NOT NULL;
+
+ALTER TABLE account
+    MODIFY COLUMN id                       BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id                  BIGINT NOT NULL,
+    MODIFY COLUMN financial_institution_id BIGINT NOT NULL;
+
+ALTER TABLE transaction_locale
+    MODIFY COLUMN id      BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id BIGINT NOT NULL;
+
+ALTER TABLE category
+    MODIFY COLUMN id      BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id BIGINT NOT NULL;
+
+ALTER TABLE transaction
+    MODIFY COLUMN id                    BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id               BIGINT NOT NULL,
+    MODIFY COLUMN account_id            BIGINT NOT NULL,
+    MODIFY COLUMN category_id           BIGINT NOT NULL,
+    MODIFY COLUMN transaction_locale_id BIGINT,
+    MODIFY COLUMN transfer_partner_id   BIGINT;
+
+ALTER TABLE category_alias
+    MODIFY COLUMN id          BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN category_id BIGINT NOT NULL;
+
+ALTER TABLE financial_goal
+    MODIFY COLUMN id      BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id BIGINT NOT NULL;
+
+ALTER TABLE goal_category
+    MODIFY COLUMN goal_id     BIGINT NOT NULL,
+    MODIFY COLUMN category_id BIGINT NOT NULL;
+
+ALTER TABLE goal_locale
+    MODIFY COLUMN goal_id   BIGINT NOT NULL,
+    MODIFY COLUMN locale_id BIGINT NOT NULL;
+
+ALTER TABLE goal_notification_log
+    MODIFY COLUMN id      BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN goal_id BIGINT NOT NULL;
+
+ALTER TABLE app_notification
+    MODIFY COLUMN id             BIGINT NOT NULL AUTO_INCREMENT,
+    MODIFY COLUMN user_id        BIGINT NOT NULL,
+    MODIFY COLUMN goal_id        BIGINT,
+    MODIFY COLUMN transaction_id BIGINT;
+
+ALTER TABLE entity_change_log
+    MODIFY COLUMN user_id BIGINT NOT NULL;
+
+-- ════════════════════════════════════════════
+-- Step 3: Re-add all foreign key constraints with explicit names
+-- ════════════════════════════════════════════
+
+ALTER TABLE financial_institution
+    ADD CONSTRAINT fk_fi_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+
+ALTER TABLE account
+    ADD CONSTRAINT fk_account_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_account_fi   FOREIGN KEY (financial_institution_id) REFERENCES financial_institution(id) ON DELETE CASCADE;
+
+ALTER TABLE transaction_locale
+    ADD CONSTRAINT fk_tl_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+
+ALTER TABLE category
+    ADD CONSTRAINT fk_category_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+
+ALTER TABLE transaction
+    ADD CONSTRAINT fk_tx_user     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_tx_account  FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_tx_category FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_tx_locale   FOREIGN KEY (transaction_locale_id) REFERENCES transaction_locale(id) ON DELETE CASCADE;
+
+ALTER TABLE category_alias
+    ADD CONSTRAINT fk_alias_category FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE;
+
+ALTER TABLE financial_goal
+    ADD CONSTRAINT fk_goal_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+
+ALTER TABLE goal_category
+    ADD CONSTRAINT fk_goal_cat_goal FOREIGN KEY (goal_id) REFERENCES financial_goal(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_goal_cat_cat  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE;
+
+ALTER TABLE goal_locale
+    ADD CONSTRAINT fk_goal_loc_goal   FOREIGN KEY (goal_id) REFERENCES financial_goal(id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_goal_loc_locale FOREIGN KEY (locale_id) REFERENCES transaction_locale(id) ON DELETE CASCADE;
+
+ALTER TABLE goal_notification_log
+    ADD CONSTRAINT fk_gnl_goal FOREIGN KEY (goal_id) REFERENCES financial_goal(id) ON DELETE CASCADE;
+
+ALTER TABLE app_notification
+    ADD CONSTRAINT fk_appnotif_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+
+ALTER TABLE entity_change_log
+    ADD CONSTRAINT fk_ecl_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;

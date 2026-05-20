@@ -15,8 +15,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.financecontrol.service.ChangeHistoryService.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +30,7 @@ public class CategoryService {
 
     private final CategoryRepository      categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
+    private final ChangeHistoryService    changeHistoryService;
 
     private static final String CATEGORY_NOT_FOUND = "error.notFound.category";
 
@@ -48,6 +55,7 @@ public class CategoryService {
         c.setName(req.name());
         c.setDescription(req.description());
         c.setIconKey(req.iconKey());
+        c.setCreatedAt(LocalDateTime.now());
         categoryRepository.save(c);
 
         List<String> aliasNames = (req.aliases() != null && !req.aliases().isEmpty())
@@ -56,12 +64,26 @@ public class CategoryService {
 
         aliasNames.forEach(a -> c.getAliases().add(new CategoryAlias(c, a)));
 
-        return CategoryResponse.from(categoryRepository.save(c));
+        CategoryResponse result = CategoryResponse.from(categoryRepository.save(c));
+        changeHistoryService.recordCreation(ENTITY_CATEGORY, result.id(), userId);
+        return result;
     }
 
     @Transactional
     public CategoryResponse update(@NonNull Long id, CategoryRequest req) {
         Category c = getOrThrow(id);
+
+        String oldAliases = c.getAliases().stream()
+                .map(CategoryAlias::getAliasName).sorted().collect(Collectors.joining(", "));
+
+        Map<String, String[]> diff = new LinkedHashMap<>();
+        if (differs(c.getName(), req.name()))
+            diff.put("name", diff(c.getName(), req.name()));
+        if (differs(c.getDescription(), req.description()))
+            diff.put("description", diff(c.getDescription(), req.description()));
+        if (differs(c.getIconKey(), req.iconKey()))
+            diff.put("iconKey", diff(c.getIconKey(), req.iconKey()));
+
         c.setName(req.name());
         c.setDescription(req.description());
         c.setIconKey(req.iconKey());
@@ -75,7 +97,14 @@ public class CategoryService {
                     .forEach(a -> c.getAliases().add(new CategoryAlias(c, a)));
         }
 
-        return CategoryResponse.from(categoryRepository.save(c));
+        CategoryResponse result = CategoryResponse.from(categoryRepository.save(c));
+
+        String newAliases = result.aliases().stream().sorted().collect(Collectors.joining(", "));
+        if (differs(oldAliases, newAliases))
+            diff.put("aliases", diff(oldAliases, newAliases));
+
+        changeHistoryService.recordChanges(ENTITY_CATEGORY, id, c.getUserId(), diff);
+        return result;
     }
 
     @Transactional(readOnly = true)

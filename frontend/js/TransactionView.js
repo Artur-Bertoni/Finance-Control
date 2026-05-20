@@ -1,6 +1,7 @@
-import { doRequest, formatCurrency, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, formatDate, navigate, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { ChangeHistoryManager } from './components/ChangeHistoryManager.js'
 import { I18n } from './i18n.js'
 
 export function init() {
@@ -31,9 +32,10 @@ export function init() {
     typeEl.textContent  = typeLabel
     typeEl.className    = `tx-badge ${typeClass}`
 
-    const d = new Date(tx.date)
-    document.getElementById('detail-date').textContent =
-        `${d.getUTCDate().toString().padStart(2,'0')}/${(d.getUTCMonth()+1).toString().padStart(2,'0')}/${d.getUTCFullYear()}`
+    const dateEl = document.getElementById('detail-date')
+    const renderDate = () => { dateEl.textContent = formatDate(tx.date) }
+    renderDate()
+    I18n.onChange(renderDate)
 
     const valueEl = document.getElementById('detail-value')
     valueEl.className = `detail-balance ${tx.type === 'credit' ? 'positive' : 'negative'}`
@@ -73,6 +75,21 @@ export function init() {
                 success: () => navigate('/pages/HomePage.html'),
                 error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
             })
+        })
+    })
+
+    let historyLoaded = false
+    document.querySelectorAll('.view-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab
+            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
+            btn.classList.add('view-tab--active')
+            document.getElementById('tab-details').style.display = tab === 'details' ? '' : 'none'
+            document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
+            if (tab === 'history' && !historyLoaded) {
+                historyLoaded = true
+                ChangeHistoryManager.loadAndRender('transaction', transactionId, response.createdAt, 'history-container')
+            }
         })
     })
 }

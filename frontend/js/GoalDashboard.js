@@ -1,4 +1,4 @@
-import { doRequest, navigate, setupSearch, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, setupSearch, showPendingToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
@@ -177,11 +177,6 @@ function formatAmount(value) {
     return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return ''
-    const [y, m, d] = dateStr.split('-')
-    return `${d}/${m}/${y}`
-}
 
 function escapeHtml(str) {
     return String(str ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')

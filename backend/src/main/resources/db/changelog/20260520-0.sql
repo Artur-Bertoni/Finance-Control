@@ -1,0 +1,45 @@
+--liquibase formatted sql
+--changeset artur:20260520-0
+--comment: add createdAt to all main entities and create entity_change_log table
+
+SET @s = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `account` ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP', 'SELECT 1') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'account' AND COLUMN_NAME = 'created_at');
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @s = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `transaction` ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP', 'SELECT 1') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'transaction' AND COLUMN_NAME = 'created_at');
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @s = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `category` ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP', 'SELECT 1') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'category' AND COLUMN_NAME = 'created_at');
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @s = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `financial_institution` ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP', 'SELECT 1') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'financial_institution' AND COLUMN_NAME = 'created_at');
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @s = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `user` ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP', 'SELECT 1') FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'user' AND COLUMN_NAME = 'created_at');
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+CREATE TABLE IF NOT EXISTS entity_change_log
+(
+    id          BIGINT       AUTO_INCREMENT PRIMARY KEY,
+    entity_type VARCHAR(50)  NOT NULL,
+    entity_id   BIGINT       NOT NULL,
+    user_id     INT          NOT NULL,
+    field_name  VARCHAR(100) NOT NULL,
+    old_value   VARCHAR(500),
+    new_value   VARCHAR(500),
+    changed_at  DATETIME     NOT NULL,
+    group_id    VARCHAR(36)  NOT NULL,
+
+    INDEX idx_ecl_entity (entity_type, entity_id),
+    INDEX idx_ecl_changed_at (changed_at),
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+);

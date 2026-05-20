@@ -19,17 +19,20 @@ export class LanguageSwitcher {
         wrapper.className = 'language-switcher'
         wrapper.innerHTML = `
             <button class="language-trigger" title="${I18n.t('selectLanguage')}" aria-label="${I18n.t('selectLanguage')}">
-                <span class="flag-icon" id="current-flag">🇧🇷</span>
+                <span class="fi fi-squared flag-icon" id="current-flag"></span>
             </button>
             <div class="language-menu" id="language-menu">
                 <button class="language-option" data-lang="pt" title="Português" aria-label="Português">
-                    <span class="flag-icon">🇧🇷</span>
+                    <span class="fi fi-squared fi-br flag-icon"></span>
+                    <span class="language-option-label">Português</span>
                 </button>
                 <button class="language-option" data-lang="en" title="English" aria-label="English">
-                    <span class="flag-icon">🇺🇸</span>
+                    <span class="fi fi-squared fi-us flag-icon"></span>
+                    <span class="language-option-label">English</span>
                 </button>
                 <button class="language-option" data-lang="es" title="Español" aria-label="Español">
-                    <span class="flag-icon">🇪🇸</span>
+                    <span class="fi fi-squared fi-es flag-icon"></span>
+                    <span class="language-option-label">Español</span>
                 </button>
             </div>
         `
@@ -66,9 +69,12 @@ export class LanguageSwitcher {
 
     static updateActive() {
         const currentLang = I18n.getLanguage()
-        const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' }
+        const flagCodes   = { pt: 'fi-br', en: 'fi-us', es: 'fi-es' }
 
-        document.getElementById('current-flag').textContent = flags[currentLang]
+        const currentFlag = document.getElementById('current-flag')
+        if (currentFlag) {
+            currentFlag.className = `fi fi-squared ${flagCodes[currentLang] ?? 'fi-br'} flag-icon`
+        }
         document.querySelectorAll('.language-option').forEach(option => {
             option.classList.toggle('active', option.dataset.lang === currentLang)
         })

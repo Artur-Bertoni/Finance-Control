@@ -1,6 +1,7 @@
 import { doRequest, navigate, setBreadcrumb } from '../utils/FrontendFunctions.js'
 import { FinancialInstitution } from './class/FinancialInstitutionClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { ChangeHistoryManager } from './components/ChangeHistoryManager.js'
 import { I18n } from './i18n.js'
 
 export function init() {
@@ -45,6 +46,21 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/FinancialInstitution.html?id=${fiId}`)
     )
+
+    let historyLoaded = false
+    document.querySelectorAll('.view-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab
+            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
+            btn.classList.add('view-tab--active')
+            document.getElementById('tab-details').style.display = tab === 'details' ? '' : 'none'
+            document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
+            if (tab === 'history' && !historyLoaded) {
+                historyLoaded = true
+                ChangeHistoryManager.loadAndRender('financial_institution', fiId, response.createdAt, 'history-container')
+            }
+        })
+    })
 }
 
 if (!globalThis.__appRouter) init()

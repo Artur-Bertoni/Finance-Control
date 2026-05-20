@@ -26,31 +26,42 @@
 
     <main class="page-content">
       <div class="detail-card">
-        <div class="detail-grid">
-          <div class="detail-field">
-            <label for="detail-name" data-i18n="accountName">Nome / Apelido</label>
-            <p id="detail-name">—</p>
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab view-tab--active" data-tab="details" role="tab" data-i18n="tabDetails">Detalhes</button>
+          <button class="view-tab" data-tab="history" role="tab" data-i18n="tabHistory">Histórico</button>
+        </div>
+
+        <div id="tab-details" class="view-tab-content">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label for="detail-name" data-i18n="accountName">Nome / Apelido</label>
+              <p id="detail-name">—</p>
+            </div>
+            <div class="detail-field" id="icon-row" style="display:none">
+              <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
+              <div id="detail-icon" style="display:flex;align-items:center;gap:8px;font-size:22px;color:var(--primary)"></div>
+            </div>
+            <div class="detail-field">
+              <label for="detail-institution" data-i18n="financialInstitution">Instituição Financeira</label>
+              <p id="detail-institution">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-contact" data-i18n="contact">Contato</label>
+              <p id="detail-contact">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-balance" data-i18n="currentBalance">Saldo ($)</label>
+              <p id="detail-balance">—</p>
+            </div>
+            <div class="detail-field" style="grid-column: 1 / -1">
+              <label for="detail-description" data-i18n="description">Descrição</label>
+              <p id="detail-description">—</p>
+            </div>
           </div>
-          <div class="detail-field" id="icon-row" style="display:none">
-            <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
-            <div id="detail-icon" style="display:flex;align-items:center;gap:8px;font-size:22px;color:var(--primary)"></div>
-          </div>
-          <div class="detail-field">
-            <label for="detail-institution" data-i18n="financialInstitution">Instituição Financeira</label>
-            <p id="detail-institution">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-contact" data-i18n="contact">Contato</label>
-            <p id="detail-contact">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-balance" data-i18n="currentBalance">Saldo ($)</label>
-            <p id="detail-balance">—</p>
-          </div>
-          <div class="detail-field" style="grid-column: 1 / -1">
-            <label for="detail-description" data-i18n="description">Descrição</label>
-            <p id="detail-description">—</p>
-          </div>
+        </div>
+
+        <div id="tab-history" class="view-tab-content" style="display:none">
+          <div id="history-container"></div>
         </div>
       </div>
     </main>

@@ -2,6 +2,7 @@ package com.financecontrol.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "financial_institution")
@@ -19,4 +20,7 @@ public class FinancialInstitution {
 
     @Column(name = "icon_key")
     private String iconKey;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

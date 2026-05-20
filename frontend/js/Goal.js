@@ -46,10 +46,11 @@ function initDatePickers(goalId) {
     const locale = FLATPICKR_LOCALES[lang]
         ? (flatpickr.l10ns?.[FLATPICKR_LOCALES[lang]] ?? undefined)
         : undefined
+    const altFormat = lang === 'en' ? 'm/d/Y' : 'd/m/Y'
     const base = {
         dateFormat:    'Y-m-d',
         altInput:      true,
-        altFormat:     'd/m/Y',
+        altFormat,
         altInputClass: 'flatpickr-input fc-date-input',
         disableMobile: true,
         allowInput:    false,

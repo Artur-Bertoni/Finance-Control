@@ -14,6 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static com.financecontrol.service.ChangeHistoryService.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -22,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ChangeHistoryService changeHistoryService;
 
     public UserResponse login(String identifier, String password) {
         User user = identifier.contains("@")
@@ -54,7 +61,10 @@ public class UserService {
         user.setGoalEmailNotificationEnabled(true);
         user.setLanguage("pt");
         user.setAdmin(false);
-        return UserResponse.from(userRepository.save(user));
+        user.setCreatedAt(LocalDateTime.now());
+        UserResponse result = UserResponse.from(userRepository.save(user));
+        changeHistoryService.recordCreation(ENTITY_USER, result.id(), result.id());
+        return result;
     }
 
     @Transactional
@@ -64,6 +74,21 @@ public class UserService {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
+
+        Map<String, String[]> diff = new LinkedHashMap<>();
+        if (differs(user.getUsername(), req.username()))
+            diff.put("username", diff(user.getUsername(), req.username()));
+        if (differs(user.getEmail(), req.email()))
+            diff.put("email", diff(user.getEmail(), req.email()));
+        if (req.emailNotificationEnabled() != null && differs(user.isEmailNotificationEnabled(), req.emailNotificationEnabled()))
+            diff.put("emailNotificationEnabled", diff(String.valueOf(user.isEmailNotificationEnabled()), String.valueOf(req.emailNotificationEnabled())));
+        if (req.emailNotificationDay() != null && differs(user.getEmailNotificationDay(), req.emailNotificationDay()))
+            diff.put("emailNotificationDay", diff(String.valueOf(user.getEmailNotificationDay()), String.valueOf(req.emailNotificationDay())));
+        if (req.goalEmailNotificationEnabled() != null && differs(user.isGoalEmailNotificationEnabled(), req.goalEmailNotificationEnabled()))
+            diff.put("goalEmailNotificationEnabled", diff(String.valueOf(user.isGoalEmailNotificationEnabled()), String.valueOf(req.goalEmailNotificationEnabled())));
+        if (req.language() != null && differs(user.getLanguage(), req.language()))
+            diff.put("language", diff(user.getLanguage(), req.language()));
+
         user.setUsername(req.username());
         user.setEmail(req.email());
         if (req.emailNotificationEnabled() != null)
@@ -74,7 +99,10 @@ public class UserService {
             user.setGoalEmailNotificationEnabled(req.goalEmailNotificationEnabled());
         if (req.language() != null)
             user.setLanguage(req.language());
-        return UserResponse.from(userRepository.save(user));
+
+        UserResponse result = UserResponse.from(userRepository.save(user));
+        changeHistoryService.recordChanges(ENTITY_USER, id, id, diff);
+        return result;
     }
 
     @Transactional
@@ -87,6 +115,7 @@ public class UserService {
             throw new BusinessException("error.user.passwordMismatch");
         user.setPassword(passwordEncoder.encode(req.newPassword()));
         userRepository.save(user);
+        changeHistoryService.recordPasswordChange(id);
     }
 
     @Transactional

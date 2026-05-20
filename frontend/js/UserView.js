@@ -1,5 +1,6 @@
 import { navigate, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { ChangeHistoryManager } from './components/ChangeHistoryManager.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 
@@ -72,6 +73,21 @@ export function init() {
                 error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error')
             })
         }, I18n.t('deleteAccountTitle'))
+    })
+
+    let historyLoaded = false
+    document.querySelectorAll('.view-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab
+            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
+            btn.classList.add('view-tab--active')
+            document.getElementById('tab-details').style.display = tab === 'details' ? '' : 'none'
+            document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
+            if (tab === 'history' && !historyLoaded) {
+                historyLoaded = true
+                ChangeHistoryManager.loadAndRender('user', user.id, user.createdAt, 'history-container')
+            }
+        })
     })
 }
 

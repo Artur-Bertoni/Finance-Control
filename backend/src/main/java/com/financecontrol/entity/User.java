@@ -2,6 +2,7 @@ package com.financecontrol.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
@@ -17,4 +18,7 @@ public class User {
     private boolean goalEmailNotificationEnabled;
     private String language;
     private boolean admin;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

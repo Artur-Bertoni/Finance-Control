@@ -26,39 +26,50 @@
 
     <main class="page-content">
       <div class="detail-card">
-        <div class="detail-grid">
-          <div class="detail-field">
-            <label for="detail-account" data-i18n="transactionAccount">Conta</label>
-            <p id="detail-account">—</p>
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab view-tab--active" data-tab="details" role="tab" data-i18n="tabDetails">Detalhes</button>
+          <button class="view-tab" data-tab="history" role="tab" data-i18n="tabHistory">Histórico</button>
+        </div>
+
+        <div id="tab-details" class="view-tab-content">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label for="detail-account" data-i18n="transactionAccount">Conta</label>
+              <p id="detail-account">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-category" data-i18n="categories">Categoria</label>
+              <p id="detail-category">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-type" data-i18n="transactionType">Tipo</label>
+              <p id="detail-type">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-date" data-i18n="transactionDate">Data</label>
+              <p id="detail-date">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-value" data-i18n="transactionValue">Valor ($)</label>
+              <p id="detail-value">—</p>
+            </div>
+            <div class="detail-field" id="detail-installments-field">
+              <label for="detail-installments" data-i18n="installmentsNumber">Nº de Parcelas</label>
+              <p id="detail-installments">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-locale" data-i18n="transactionLocale">Local</label>
+              <p id="detail-locale">—</p>
+            </div>
+            <div class="detail-field" style="grid-column: 1 / -1">
+              <label for="detail-obs" data-i18n="observations">Observações</label>
+              <p id="detail-obs">—</p>
+            </div>
           </div>
-          <div class="detail-field">
-            <label for="detail-category" data-i18n="categories">Categoria</label>
-            <p id="detail-category">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-type" data-i18n="transactionType">Tipo</label>
-            <p id="detail-type">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-date" data-i18n="transactionDate">Data</label>
-            <p id="detail-date">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-value" data-i18n="transactionValue">Valor ($)</label>
-            <p id="detail-value">—</p>
-          </div>
-          <div class="detail-field" id="detail-installments-field">
-            <label for="detail-installments" data-i18n="installmentsNumber">Nº de Parcelas</label>
-            <p id="detail-installments">—</p>
-          </div>
-          <div class="detail-field">
-            <label for="detail-locale" data-i18n="transactionLocale">Local</label>
-            <p id="detail-locale">—</p>
-          </div>
-          <div class="detail-field" style="grid-column: 1 / -1">
-            <label for="detail-obs" data-i18n="observations">Observações</label>
-            <p id="detail-obs">—</p>
-          </div>
+        </div>
+
+        <div id="tab-history" class="view-tab-content" style="display:none">
+          <div id="history-container"></div>
         </div>
       </div>
     </main>

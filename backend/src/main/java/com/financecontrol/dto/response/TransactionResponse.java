@@ -3,6 +3,7 @@ package com.financecontrol.dto.response;
 import com.financecontrol.entity.Transaction;
 import com.financecontrol.enums.TransactionType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record TransactionResponse(
     Long id,
@@ -14,7 +15,8 @@ public record TransactionResponse(
     TransactionType type,
     Integer installmentsNumber,
     String obs,
-    Long transferPartnerId
+    Long transferPartnerId,
+    LocalDateTime createdAt
 ) {
     public static TransactionResponse from(Transaction t) {
         return new TransactionResponse(
@@ -27,6 +29,7 @@ public record TransactionResponse(
                 t.getType(),
                 t.getInstallmentsNumber(),
                 t.getObs(),
-                t.getTransferPartnerId());
+                t.getTransferPartnerId(),
+                t.getCreatedAt());
     }
 }

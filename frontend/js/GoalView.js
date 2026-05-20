@@ -1,5 +1,6 @@
-import { doRequest, navigate, navigateWithToast, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, navigateWithToast, setBreadcrumb, showConfirm, showToast } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { ChangeHistoryManager } from './components/ChangeHistoryManager.js'
 import { I18n } from './i18n.js'
 
 export function init() {
@@ -51,7 +52,11 @@ export function init() {
     }
 
     renderDynamic(goal)
-    I18n.onChange(() => renderDynamic(goal))
+    const renderDates = () => {
+        document.getElementById('detail-start-date').textContent = formatDate(goal.startDate)
+        document.getElementById('detail-end-date').textContent   = formatDate(goal.endDate)
+    }
+    I18n.onChange(() => { renderDynamic(goal); renderDates() })
 
     const archiveBtn = document.getElementById('archive-btn')
     if (goal.status === 'active') {
@@ -80,6 +85,21 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/Goal.html?id=${goalId}`)
     )
+
+    let historyLoaded = false
+    document.querySelectorAll('.view-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab
+            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
+            btn.classList.add('view-tab--active')
+            document.getElementById('tab-details').style.display = tab === 'details' ? '' : 'none'
+            document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
+            if (tab === 'history' && !historyLoaded) {
+                historyLoaded = true
+                ChangeHistoryManager.loadAndRender('goal', goalId, goal.createdAt, 'history-container')
+            }
+        })
+    })
 }
 
 function renderDynamic(goal) {
@@ -156,12 +176,6 @@ function typeI18nLabel(type) {
 
 function formatAmount(value) {
     return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return ''
-    const [y, m, d] = dateStr.split('-')
-    return `${d}/${m}/${y}`
 }
 
 if (!globalThis.__appRouter) init()

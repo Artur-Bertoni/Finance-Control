@@ -10,6 +10,21 @@ export function formatCurrency(value) {
     return new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
 }
 
+export function formatDate(isoDateStr) {
+    if (!isoDateStr) return ''
+    const [y, m, d] = isoDateStr.split('-')
+    return I18n.getLanguage() === 'en' ? `${m}/${d}/${y}` : `${d}/${m}/${y}`
+}
+
+export function formatDateTime(isoStr) {
+    if (!isoStr) return ''
+    const dt  = new Date(isoStr)
+    const pad = n => String(n).padStart(2, '0')
+    const day = pad(dt.getDate()), mo = pad(dt.getMonth() + 1), y = dt.getFullYear()
+    const time = `${pad(dt.getHours())}:${pad(dt.getMinutes())}`
+    return I18n.getLanguage() === 'en' ? `${mo}/${day}/${y} - ${time}` : `${day}/${mo}/${y} - ${time}`
+}
+
 // Send current language with every AJAX request so the backend can respond in the right locale
 $.ajaxSetup({
     beforeSend(xhr) {

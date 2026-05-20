@@ -27,7 +27,12 @@
 
     <main class="page-content">
       <div class="detail-card">
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab view-tab--active" data-tab="details" role="tab" data-i18n="tabDetails">Detalhes</button>
+          <button class="view-tab" data-tab="history" role="tab" data-i18n="tabHistory">Histórico</button>
+        </div>
 
+        <div id="tab-details" class="view-tab-content">
         <div class="section-divider section-divider--first">
           <span data-i18n="goalDetails">Detalhes da Meta</span>
         </div>
@@ -109,6 +114,11 @@
           <div class="detail-field" style="grid-column: 1 / -1">
             <div id="detail-notifications" class="goal-notify-list"></div>
           </div>
+        </div>
+        </div><!-- end tab-details -->
+
+        <div id="tab-history" class="view-tab-content" style="display:none">
+          <div id="history-container"></div>
         </div>
 
       </div>

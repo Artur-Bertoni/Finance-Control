@@ -26,28 +26,39 @@
 
     <main class="page-content">
       <div class="detail-card">
-        <div class="detail-grid">
-          <div class="detail-field">
-            <label for="detail-name" data-i18n="categoryName">Nome</label>
-            <p id="detail-name">—</p>
-          </div>
-          <div class="detail-field" id="icon-row" style="display:none">
-            <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
-            <div id="detail-icon" style="display:flex;align-items:center;gap:8px;font-size:22px;color:var(--primary)"></div>
-          </div>
-          <div class="detail-field" style="grid-column: 1 / -1">
-            <label for="detail-description" data-i18n="categoryDescription">Descrição</label>
-            <p id="detail-description">—</p>
-          </div>
-          <div class="detail-field" id="aliases-row" style="display:none;grid-column: 1 / -1">
-            <div style="display:flex;align-items:center;gap:6px">
-              <span class="detail-label" data-i18n="categoryAliases">Nomes Internos</span>
-              <button type="button" class="info-hint-btn" data-i18n-title="categoryAliasesHint" title="">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
-              </button>
+        <div class="view-tabs" role="tablist">
+          <button class="view-tab view-tab--active" data-tab="details" role="tab" data-i18n="tabDetails">Detalhes</button>
+          <button class="view-tab" data-tab="history" role="tab" data-i18n="tabHistory">Histórico</button>
+        </div>
+
+        <div id="tab-details" class="view-tab-content">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label for="detail-name" data-i18n="categoryName">Nome</label>
+              <p id="detail-name">—</p>
             </div>
-            <div id="detail-aliases" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+            <div class="detail-field" id="icon-row" style="display:none">
+              <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
+              <div id="detail-icon" style="display:flex;align-items:center;gap:8px;font-size:22px;color:var(--primary)"></div>
+            </div>
+            <div class="detail-field" style="grid-column: 1 / -1">
+              <label for="detail-description" data-i18n="categoryDescription">Descrição</label>
+              <p id="detail-description">—</p>
+            </div>
+            <div class="detail-field" id="aliases-row" style="display:none;grid-column: 1 / -1">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span class="detail-label" data-i18n="categoryAliases">Nomes Internos</span>
+                <button type="button" class="info-hint-btn" data-i18n-title="categoryAliasesHint" title="">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
+                </button>
+              </div>
+              <div id="detail-aliases" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+            </div>
           </div>
+        </div>
+
+        <div id="tab-history" class="view-tab-content" style="display:none">
+          <div id="history-container"></div>
         </div>
       </div>
     </main>

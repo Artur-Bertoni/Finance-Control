@@ -5,6 +5,7 @@ import com.financecontrol.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transaction")
@@ -41,4 +42,7 @@ public class Transaction {
 
     @Column(name = "transfer_partner_id")
     private Long transferPartnerId;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }
