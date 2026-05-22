@@ -177,7 +177,7 @@ function loadUserData() {
             document.getElementById('username-input').value = user.username ?? ''
             document.getElementById('email-input').value    = user.email    ?? ''
 
-            setupEditPasswordMode(user.id)
+            setupEditPasswordMode(user)
             setupNotificationSection(user)
             setupSocialLinkSection(user)
 
@@ -202,11 +202,17 @@ function loadUserData() {
     })
 }
 
-function setupEditPasswordMode(userId) {
+function setupEditPasswordMode(user) {
     document.getElementById('field-password').style.display         = 'none'
     document.getElementById('field-password-confirm').style.display = 'none'
     document.getElementById('field-change-password').style.display  = ''
-    document.getElementById('password-edit-btn').addEventListener('click', () => showPasswordChangeModal(userId))
+
+    const btn = document.getElementById('password-edit-btn')
+    if (!user.hasPassword) {
+        btn.dataset.i18n = 'setPassword'
+        btn.textContent  = I18n.t('setPassword')
+    }
+    btn.addEventListener('click', () => showPasswordChangeModal(user.id, user.hasPassword))
 }
 
 function setupNotificationSection(user) {
@@ -296,20 +302,21 @@ function updateNotificationLabel(label, checked) {
     label.textContent  = I18n.t(checked ? 'enabled' : 'disabled')
 }
 
-function showPasswordChangeModal(userId) {
+function showPasswordChangeModal(userId, hasPassword) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'
     overlay.innerHTML = `
         <div class="modal-card">
-            <p class="modal-title">${I18n.t('changePassword')}</p>
+            <p class="modal-title">${I18n.t(hasPassword ? 'changePassword' : 'setPassword')}</p>
             <div class="quick-add-fields">
+                ${hasPassword ? `
                 <div class="field">
                     <label>${I18n.t('currentPassword')} *</label>
                     <div class="pw-wrap">
                         <input type="password" id="modal-current-pw" placeholder="${I18n.t('currentPasswordPlaceholder')}" autocomplete="current-password">
                         <button class="pw-toggle" type="button" id="modal-current-pw-btn"></button>
                     </div>
-                </div>
+                </div>` : ''}
                 <div class="field">
                     <label>${I18n.t('newPassword')} *</label>
                     <div class="pw-wrap">
@@ -333,20 +340,20 @@ function showPasswordChangeModal(userId) {
     `
     document.body.appendChild(overlay)
 
-    PasswordInput.setupToggle('modal-current-pw', 'modal-current-pw-btn')
-    PasswordInput.setupToggle('modal-new-pw',      'modal-new-pw-btn')
-    PasswordInput.setupToggle('modal-confirm-pw',  'modal-confirm-pw-btn')
+    if (hasPassword) PasswordInput.setupToggle('modal-current-pw', 'modal-current-pw-btn')
+    PasswordInput.setupToggle('modal-new-pw',     'modal-new-pw-btn')
+    PasswordInput.setupToggle('modal-confirm-pw', 'modal-confirm-pw-btn')
 
     overlay.querySelector('#modal-pw-cancel').addEventListener('click', () => overlay.remove())
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
 
     overlay.querySelector('#modal-pw-save').addEventListener('click', () => {
-        const currentPw = overlay.querySelector('#modal-current-pw').value
+        const currentPw = hasPassword ? (overlay.querySelector('#modal-current-pw').value) : null
         const newPw     = overlay.querySelector('#modal-new-pw').value
         const confirmPw = overlay.querySelector('#modal-confirm-pw').value
 
         const missing = [
-            currentPw ? null : I18n.t('currentPassword'),
+            hasPassword && !currentPw ? I18n.t('currentPassword') : null,
             newPw     ? null : I18n.t('newPassword'),
             confirmPw ? null : I18n.t('confirmPassword')
         ].filter(Boolean)

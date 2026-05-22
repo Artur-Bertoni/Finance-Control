@@ -230,7 +230,7 @@ public class UserService {
                                PasswordChangeRequest req) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
 
-        if (!passwordEncoder.matches(req.currentPassword(), user.getPassword()))
+        if (user.getPassword() != null && !passwordEncoder.matches(req.currentPassword(), user.getPassword()))
             throw new BusinessException("error.user.wrongCurrentPassword");
         if (!req.newPassword().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");

@@ -200,6 +200,7 @@
   "deleteConfirm": "Are you sure you want to delete this item? This action cannot be undone.",
   "notInformed": "Not informed",
   "changePassword": "Change Password",
+  "setPassword": "Set Password",
   "currentPassword": "Current Password",
   "currentPasswordPlaceholder": "Enter your current password",
   "newPassword": "New Password",

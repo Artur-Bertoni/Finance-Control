@@ -200,6 +200,7 @@
   "deleteConfirm": "¿Está seguro de que desea eliminar este elemento? Esta acción no se puede deshacer.",
   "notInformed": "No informado",
   "changePassword": "Cambiar Contraseña",
+  "setPassword": "Establecer Contraseña",
   "currentPassword": "Contraseña Actual",
   "currentPasswordPlaceholder": "Ingrese su contraseña actual",
   "newPassword": "Nueva Contraseña",

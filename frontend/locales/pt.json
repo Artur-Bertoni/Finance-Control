@@ -200,6 +200,7 @@
   "deleteConfirm": "Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.",
   "notInformed": "Não informado",
   "changePassword": "Alterar Senha",
+  "setPassword": "Definir Senha",
   "currentPassword": "Senha Atual",
   "currentPasswordPlaceholder": "Digite sua senha atual",
   "newPassword": "Nova Senha",
