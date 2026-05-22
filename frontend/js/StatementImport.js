@@ -3,6 +3,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { doRequest, formatDate, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { setupRequiredFieldValidation } from './utils/FieldValidation.js'
+import { Icons } from './icons/IconLibrary.js'
 
 let selectedFile  = null
 let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
@@ -63,10 +64,16 @@ export function init() {
                         { id: 'name',    label: `${I18n.t('institutionName')} *`, type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
                         { id: 'address', label: I18n.t('institutionAddress'), type: 'text', placeholder: I18n.t('institutionAddressPlaceholder') },
                         { id: 'contact', label: I18n.t('institutionContact'),  type: 'text', placeholder: I18n.t('institutionContactPlaceholder') }
-                    ]
+                    ],
+                    buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
                   }
-                }
+                },
+                { id: 'balance', label: I18n.t('currentBalance'), type: 'number', placeholder: '0.00', step: '0.01' }
             ],
+            buildBody: v => ({
+                name: v.name, financialInstitutionId: Number(v.fiId),
+                balance: v.balance === '' ? 0 : Number(v.balance), contact: null, description: null
+            }),
             onSuccess: account => {
                 const sel = document.getElementById('account-input')
                 const opt = document.createElement('option')
@@ -98,11 +105,6 @@ export function init() {
                 blank.textContent = I18n.t('selectCategory')
                 if (sel.value === '') { sel.selectedIndex = -1; sel.selectedIndex = 0 }
             }
-            const newO = sel.querySelector('option[value="__new__"]')
-            if (newO) newO.textContent = I18n.t('newCategoryInline')
-        })
-        document.querySelectorAll('.row-new-category-input').forEach(el => {
-            el.placeholder = I18n.t('categoryNamePlaceholder')
         })
         document.querySelectorAll('.row-locale-select').forEach(sel => {
             const blank = sel.querySelector('option[value=""]')
@@ -110,11 +112,6 @@ export function init() {
                 blank.textContent = I18n.t('selectLocale')
                 if (sel.value === '') { sel.selectedIndex = -1; sel.selectedIndex = 0 }
             }
-            const newO = sel.querySelector('option[value="__new__"]')
-            if (newO) newO.textContent = I18n.t('newLocale') + '...'
-        })
-        document.querySelectorAll('.row-new-locale-input').forEach(el => {
-            el.placeholder = I18n.t('localeNamePlaceholder')
         })
         document.querySelectorAll('.row-toggle-label').forEach(lbl => {
             lbl.title = I18n.t('shouldImportHint')
@@ -294,71 +291,46 @@ function buildCategoryCell(row, index) {
         select.appendChild(opt)
     })
 
-    const newOpt = document.createElement('option')
-    newOpt.value = '__new__'
-    newOpt.textContent = I18n.t('newCategoryInline')
-    newOpt.dataset.i18n = 'newCategoryInline'
-    select.appendChild(newOpt)
-
-    const newInput = document.createElement('input')
-    newInput.type = 'text'
-    newInput.className = 'row-new-category-input'
-    newInput.placeholder = I18n.t('categoryNamePlaceholder')
-    newInput.dataset.i18nPlaceholder = 'categoryNamePlaceholder'
-    newInput.style.cssText = 'display:none;flex:1'
-
-    select.addEventListener('change', () => {
-        if (select.value === '__new__') {
-            newInput.style.display = ''
-            newInput.focus()
-        } else {
-            newInput.style.display = 'none'
-        }
-    })
-
-    function createAndSelect() {
-        const name = newInput.value.trim()
-        if (!name) { select.value = ''; newInput.style.display = 'none'; return }
-
-        $.ajax({
-            url:         '/api/categories',
-            type:        'POST',
-            contentType: 'application/json',
-            async:       false,
-            data:        JSON.stringify({ name, aliases: [name] }),
-            success: cat => {
+    const addBtn = document.createElement('button')
+    addBtn.type = 'button'
+    addBtn.className = 'btn-add-inline'
+    addBtn.title = I18n.t('newCategory')
+    addBtn.innerHTML = Icons.add()
+    addBtn.addEventListener('click', () => {
+        showQuickAdd({
+            title:  I18n.t('newCategory'),
+            apiUrl: '/api/categories',
+            fields: [
+                { id: 'name',        label: `${I18n.t('categoryName')} *`, type: 'text', required: true, placeholder: I18n.t('categoryNamePlaceholder') },
+                { id: 'description', label: I18n.t('categoryDescription'),  type: 'textarea', placeholder: I18n.t('categoryDescriptionPlaceholder') }
+            ],
+            buildBody: v => ({ name: v.name, description: v.description || null }),
+            onSuccess: cat => {
                 allCategories.push({ id: cat.id, name: cat.name })
                 document.querySelectorAll('.row-category-select').forEach(sel => {
                     const opt = document.createElement('option')
                     opt.value = cat.id
                     opt.textContent = cat.name
-                    sel.insertBefore(opt, sel.lastElementChild) // before "Nova categoria..."
+                    sel.appendChild(opt)
                 })
                 select.value = cat.id
-                newInput.style.display = 'none'
-                newInput.value = ''
-            },
-            error: xhr => {
-                showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error')
-                select.value = ''
-                newInput.style.display = 'none'
             }
         })
-    }
-
-    newInput.addEventListener('keydown', e => { if (e.key === 'Enter') createAndSelect() })
-    newInput.addEventListener('blur', createAndSelect)
+    })
 
     wrapper.appendChild(select)
-    wrapper.appendChild(newInput)
+    wrapper.appendChild(addBtn)
     return wrapper
 }
 
 function buildLocaleCell(index) {
+    const wrapper = document.createElement('div')
+    wrapper.style.cssText = 'display:flex;gap:6px;align-items:center'
+
     const select = document.createElement('select')
     select.className = 'row-locale-select'
     select.dataset.index = index
-    select.style.width = '100%'
+    select.style.flex = '1'
 
     const blankOpt = document.createElement('option')
     blankOpt.value = ''
@@ -373,59 +345,35 @@ function buildLocaleCell(index) {
         select.appendChild(opt)
     })
 
-    const newOpt = document.createElement('option')
-    newOpt.value = '__new__'
-    newOpt.textContent = I18n.t('newLocale') + '...'
-    select.appendChild(newOpt)
-
-    const newInput = document.createElement('input')
-    newInput.type = 'text'
-    newInput.className = 'row-new-locale-input'
-    newInput.placeholder = I18n.t('localeNamePlaceholder')
-    newInput.dataset.i18nPlaceholder = 'localeNamePlaceholder'
-    newInput.style.cssText = 'display:none;width:100%;margin-top:4px'
-
-    select.addEventListener('change', () => {
-        newInput.style.display = select.value === '__new__' ? '' : 'none'
-        if (select.value === '__new__') newInput.focus()
-    })
-
-    function createAndSelect() {
-        const name = newInput.value.trim()
-        if (!name) { select.value = ''; newInput.style.display = 'none'; return }
-
-        $.ajax({
-            url:         '/api/transaction-locales',
-            type:        'POST',
-            contentType: 'application/json',
-            async:       false,
-            data:        JSON.stringify({ name }),
-            success: loc => {
+    const addBtn = document.createElement('button')
+    addBtn.type = 'button'
+    addBtn.className = 'btn-add-inline'
+    addBtn.title = I18n.t('newLocation')
+    addBtn.innerHTML = Icons.add()
+    addBtn.addEventListener('click', () => {
+        showQuickAdd({
+            title:  I18n.t('newLocation'),
+            apiUrl: '/api/transaction-locales',
+            fields: [
+                { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },
+                { id: 'address', label: I18n.t('localeAddress'),      type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
+            ],
+            buildBody: v => ({ name: v.name, address: v.address || null }),
+            onSuccess: loc => {
                 allLocales.push({ id: loc.id, name: loc.name })
                 document.querySelectorAll('.row-locale-select').forEach(sel => {
                     const opt = document.createElement('option')
                     opt.value = loc.id
                     opt.textContent = loc.name
-                    sel.insertBefore(opt, sel.lastElementChild)
+                    sel.appendChild(opt)
                 })
                 select.value = loc.id
-                newInput.style.display = 'none'
-                newInput.value = ''
-            },
-            error: xhr => {
-                showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error')
-                select.value = ''
-                newInput.style.display = 'none'
             }
         })
-    }
+    })
 
-    newInput.addEventListener('keydown', e => { if (e.key === 'Enter') createAndSelect() })
-    newInput.addEventListener('blur', createAndSelect)
-
-    const wrapper = document.createElement('div')
     wrapper.appendChild(select)
-    wrapper.appendChild(newInput)
+    wrapper.appendChild(addBtn)
     return wrapper
 }
 
