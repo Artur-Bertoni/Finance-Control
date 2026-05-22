@@ -1,6 +1,6 @@
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
-import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotifications } from '../utils/FrontendFunctions.js'
+import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotifications, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 
@@ -36,6 +36,13 @@ let currentSpaUrl = location.pathname + location.search
 
 globalThis.__appRouter = { navigate }
 await SidebarManager.initialize()
+
+if (globalThis.__currentUser && !globalThis.__currentUser.emailVerified) {
+    const justRegistered = sessionStorage.getItem('showEmailVerificationNotice')
+    if (justRegistered) sessionStorage.removeItem('showEmailVerificationNotice')
+    setTimeout(() => showToast(I18n.t('verifyEmailToast'), 'warning', null, { saveToHistory: false }), 1200)
+}
+
 MascotManager.initFloating()
 FinnySvg.autoInit()
 

@@ -26,10 +26,26 @@ export function formatDateTime(isoStr) {
     return I18n.getLanguage() === 'en' ? `${mo}/${day}/${y} - ${time}` : `${day}/${mo}/${y} - ${time}`
 }
 
+let _emailVerifToastAt = 0
+
 // Send current language with every AJAX request so the backend can respond in the right locale
 $.ajaxSetup({
-    beforeSend(xhr) {
+    beforeSend(xhr, settings) {
         xhr.setRequestHeader('Accept-Language', I18n.getLanguage())
+
+        const method = (settings.type || 'GET').toUpperCase()
+        const isWrite = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)
+        const url = settings.url || ''
+        const isExempt = /\/(api\/auth|api\/users|api\/notifications)/.test(url)
+
+        if (isWrite && !isExempt && globalThis.__currentUser?.emailVerified === false) {
+            const now = Date.now()
+            if (now - _emailVerifToastAt > 4000) {
+                _emailVerifToastAt = now
+                showToast(I18n.t('emailVerificationRequired'), 'warning', null, { saveToHistory: false })
+            }
+            return false
+        }
     }
 })
 

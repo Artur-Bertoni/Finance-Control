@@ -14,7 +14,8 @@ public record UserResponse(
     boolean admin,
     LocalDateTime createdAt,
     boolean googleLinked,
-    boolean hasPassword
+    boolean hasPassword,
+    boolean emailVerified
 ) {
     public static UserResponse from(User u) {
         return new UserResponse(u.getId(), u.getUsername(), u.getEmail(),
@@ -22,6 +23,7 @@ public record UserResponse(
                 u.isGoalEmailNotificationEnabled(),
                 u.getLanguage(), u.isAdmin(), u.getCreatedAt(),
                 "google".equals(u.getProvider()),
-                u.getPassword() != null && !u.getPassword().isBlank());
+                u.getPassword() != null && !u.getPassword().isBlank(),
+                u.isEmailVerified());
     }
 }

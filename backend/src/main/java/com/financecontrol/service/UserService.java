@@ -44,9 +44,6 @@ public class UserService {
         if (user == null || !passwordEncoder.matches(password, user.getPassword()))
             throw new UnauthorizedException("error.auth.invalidCredentials");
 
-        if (!user.isEmailVerified())
-            throw new UnauthorizedException("error.auth.emailNotVerified");
-
         return UserResponse.from(user);
     }
 

@@ -24,6 +24,23 @@ export function init() {
     document.getElementById('detail-email').textContent    = user.email
     document.querySelector('label[for="detail-google-status"]').insertAdjacentHTML('afterbegin', Icons.google(16))
 
+    if (!user.emailVerified) {
+        const resendBtn = document.createElement('button')
+        resendBtn.className = 'btn btn-secondary btn-sm'
+        resendBtn.type = 'button'
+        resendBtn.style.marginTop = '8px'
+        resendBtn.textContent = I18n.t('resendVerificationEmail')
+        resendBtn.addEventListener('click', () => {
+            $.ajax({
+                url:     `/api/auth/resend-verification?email=${encodeURIComponent(user.email)}`,
+                type:    'POST',
+                success: () => showToast(I18n.t('verificationEmailSent'), 'success'),
+                error:   () => showToast(I18n.t('errorResendVerification'), 'error')
+            })
+        })
+        document.getElementById('detail-email').insertAdjacentElement('afterend', resendBtn)
+    }
+
     renderNotificationFields(user)
     renderGoogleStatus(user)
     I18n.onChange(() => { renderNotificationFields(user); renderGoogleStatus(user) })

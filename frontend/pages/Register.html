@@ -5,14 +5,14 @@
   <link rel="icon" type="image/png" href="../images/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';</script>
-  <title>Login | Finance Control</title>
+  <title>Criar Conta | Finance Control</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="../styles/fonts/phosphor/Phosphor.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../styles/fonts/phosphor/style.css">
   <link href="../styles/styles.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../js/Login.js" type="module"></script>
+  <script src="../js/Register.js" type="module"></script>
 </head>
 <body>
 <div class="login-top-controls">
@@ -33,39 +33,38 @@
   </div>
   <div class="login-card">
 
-    <p class="login-welcome" data-i18n="welcome">Bem-vindo(a) de volta!</p>
-    <p class="login-sub" data-i18n="loginSubtext">Faça login para acessar sua conta</p>
+    <p class="login-welcome" data-i18n="createAccount">Criar Conta</p>
+    <p class="login-sub" data-i18n="guestFormHeader">Preencha os dados para acessar o Finance Control</p>
 
     <div class="login-form">
       <div class="field">
-        <label for="email-input" data-i18n="emailOrUsername">E-mail ou nome de usuário</label>
-        <input id="email-input" type="text" data-i18n-placeholder="emailOrUsernamePlaceholder" placeholder="seu@email.com ou nome" autocomplete="username">
+        <label for="username-input" data-i18n="username">Nome de Usuário</label>
+        <input id="username-input" type="text" data-i18n-placeholder="usernamePlaceholder" placeholder="Seu nome de usuário..." autocomplete="username" required>
       </div>
-
+      <div class="field" style="margin-top:14px">
+        <label for="email-input" data-i18n="emailAddress">Endereço de Email</label>
+        <input id="email-input" type="email" data-mask="email" data-i18n-placeholder="emailPlaceholder" placeholder="seu@email.com" autocomplete="email" required>
+      </div>
       <div class="field" style="margin-top:14px">
         <label for="password-input" data-i18n="password">Senha</label>
         <div class="pw-wrap">
-          <input id="password-input" type="password" data-i18n-placeholder="passwordPlaceholder" placeholder="Sua senha" autocomplete="current-password">
+          <input id="password-input" type="password" data-i18n-placeholder="passwordPlaceholderNew" placeholder="Digite uma senha" autocomplete="new-password" required>
           <button class="pw-toggle" type="button" id="password-img" aria-label="Mostrar/ocultar senha"></button>
         </div>
       </div>
+      <div class="field" style="margin-top:14px">
+        <label for="password-confirm-input" data-i18n="confirmPassword">Confirmar Senha</label>
+        <div class="pw-wrap">
+          <input id="password-confirm-input" type="password" data-i18n-placeholder="confirmPasswordPlaceholder" placeholder="Repita a senha" autocomplete="new-password" required>
+          <button class="pw-toggle" type="button" id="password-confirm-img" aria-label="Mostrar/ocultar confirmação de senha"></button>
+        </div>
+      </div>
+
     </div>
 
-    <div class="login-actions">
-      <button class="btn btn-secondary btn-lg" id="register-btn" type="button" data-i18n="register">Cadastrar</button>
-      <button class="btn btn-primary btn-lg" id="login-btn" type="button" data-i18n="login">Entrar</button>
-    </div>
-
-    <!-- Divisor "ou" -->
-    <div class="login-divider">
-      <span data-i18n="orDivider">ou</span>
-    </div>
-
-    <!-- Botões de login social -->
-    <div class="login-social">
-      <a href="/oauth2/authorization/google" class="btn-social btn-social-google">
-        <span data-i18n="loginWithGoogle">Continuar com Google</span>
-      </a>
+    <div class="login-actions" style="margin-top:20px">
+      <button class="btn btn-secondary btn-lg" id="back-btn" type="button" data-i18n="backToLogin">Voltar ao Login</button>
+      <button class="btn btn-primary btn-lg" id="register-btn" type="button" data-i18n="createAccount">Criar Conta</button>
     </div>
 
   </div>

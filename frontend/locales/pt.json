@@ -161,6 +161,8 @@
   "errorTransfer": "Erro ao realizar transferência.",
   "accountCreatedLoginSuccess": "Conta criada e login realizado com sucesso!",
   "accountCreatedLoginFail": "Conta criada, mas falha ao fazer login automático. Redirecionando para login.",
+  "verifyEmailToast": "Confirme seu e-mail para ter acesso completo ao aplicativo. Verifique sua caixa de entrada.",
+  "emailVerificationRequired": "Confirme seu e-mail para usar esta funcionalidade.",
   "errorSavingUser": "Erro ao salvar usuário.",
   "errorDeletingInstitution": "Erro ao excluir instituição financeira.",
   "institutionUpdatedSuccess": "Instituição Financeira atualizada com sucesso!",

@@ -184,6 +184,7 @@ export class SidebarManager {
             url: '/api/auth/me',
             type: 'GET',
             async: false,
+            success: function (user) { globalThis.__currentUser = user },
             error: function (xhr) {
                 if (xhr.status === 401) globalThis.location.href = '/pages/Login.html'
             }

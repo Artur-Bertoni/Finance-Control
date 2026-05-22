@@ -161,6 +161,8 @@
   "errorTransfer": "Error making transfer.",
   "accountCreatedLoginSuccess": "Account created and logged in successfully!",
   "accountCreatedLoginFail": "Account created, but automatic login failed. Redirecting to login.",
+  "verifyEmailToast": "Please confirm your email to get full access to the app. Check your inbox.",
+  "emailVerificationRequired": "Please confirm your email to use this feature.",
   "errorSavingUser": "Error saving user.",
   "errorDeletingInstitution": "Error deleting financial institution.",
   "institutionUpdatedSuccess": "Financial Institution updated successfully!",
