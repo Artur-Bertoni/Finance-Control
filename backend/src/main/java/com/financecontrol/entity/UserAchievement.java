@@ -25,8 +25,8 @@ public class UserAchievement {
     private LocalDateTime earnedAt;
 
     public UserAchievement(Long userId, AchievementType type) {
-        this.userId          = userId;
+        this.userId = userId;
         this.achievementType = type;
-        this.earnedAt        = LocalDateTime.now();
+        this.earnedAt = LocalDateTime.now();
     }
 }

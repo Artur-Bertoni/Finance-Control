@@ -7,6 +7,8 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +18,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.financecontrol.service.ChangeHistoryService.*;
+import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
 public class FinancialInstitutionService {
 
     private final FinancialInstitutionRepository financialInstitutionRepository;
-    private final ChangeHistoryService changeHistoryService;
+    private final HistoryService historyService;
 
+    @Cacheable(value = "financialInstitutions", key = "#userId")
     public List<FinancialInstitutionResponse> findAllByUser(Long userId) {
-        return financialInstitutionRepository.findByUserIdOrderByIdDesc(userId).stream()
-                .map(FinancialInstitutionResponse::from).toList();
+        return financialInstitutionRepository.findByUserIdOrderByIdDesc(userId).stream().map(FinancialInstitutionResponse::from).toList();
     }
 
     public FinancialInstitutionResponse findById(@NonNull Long id) {
@@ -35,15 +37,21 @@ public class FinancialInstitutionService {
     }
 
     @Transactional
-    public FinancialInstitutionResponse create(Long userId, FinancialInstitutionRequest req) {
+    @CacheEvict(value = "financialInstitutions", key = "#userId")
+    public FinancialInstitutionResponse create(Long userId,
+                                               FinancialInstitutionRequest req) {
         FinancialInstitution fi = new FinancialInstitution(null, userId, req.name(), req.address(), req.contact(), req.iconKey(), LocalDateTime.now());
         FinancialInstitutionResponse result = FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
-        changeHistoryService.recordCreation(ENTITY_INSTITUTION, result.id(), userId);
+
+        historyService.recordCreation(ENTITY_INSTITUTION, result.id(), userId);
+
         return result;
     }
 
     @Transactional
-    public FinancialInstitutionResponse update(@NonNull Long id, FinancialInstitutionRequest req) {
+    @CacheEvict(value = "financialInstitutions", allEntries = true)
+    public FinancialInstitutionResponse update(@NonNull Long id,
+                                               FinancialInstitutionRequest req) {
         FinancialInstitution fi = getOrThrow(id);
 
         Map<String, String[]> diff = new LinkedHashMap<>();
@@ -62,11 +70,13 @@ public class FinancialInstitutionService {
         fi.setIconKey(req.iconKey());
 
         FinancialInstitutionResponse result = FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
-        changeHistoryService.recordChanges(ENTITY_INSTITUTION, id, fi.getUserId(), diff);
+        historyService.recordChanges(ENTITY_INSTITUTION, id, fi.getUserId(), diff);
+
         return result;
     }
 
     @Transactional
+    @CacheEvict(value = "financialInstitutions", allEntries = true)
     public void delete(@NonNull Long id) {
         getOrThrow(id);
         financialInstitutionRepository.deleteById(id);

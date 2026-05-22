@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transaction-locales")
 @RequiredArgsConstructor
+@RequestMapping("/api/transaction-locales")
 public class TransactionLocaleController extends BaseController {
 
     private final TransactionLocaleService transactionLocaleService;
@@ -23,7 +23,8 @@ public class TransactionLocaleController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionLocaleResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<TransactionLocaleResponse> findById(@PathVariable @NonNull Long id,
+                                                              HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(transactionLocaleService.findById(id));
     }
@@ -43,7 +44,8 @@ public class TransactionLocaleController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
+                                       HttpSession session) {
         requireUserId(session);
         transactionLocaleService.delete(id);
         return ResponseEntity.noContent().build();

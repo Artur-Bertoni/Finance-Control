@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -22,6 +22,12 @@
     <p class="login-welcome" data-i18n="welcome">Bem-vindo(a) de volta!</p>
     <p class="login-sub" data-i18n="loginSubtext">Faça login para acessar sua conta</p>
 
+    <!-- Alerta: email não verificado -->
+    <div class="login-alert" id="email-not-verified-alert" style="display:none">
+      <span data-i18n="emailNotVerifiedAlert">Seu e-mail ainda não foi verificado. Verifique sua caixa de entrada.</span>
+      <button class="btn-link" id="resend-verification-btn" data-i18n="resendVerificationEmail">Reenviar e-mail de verificação</button>
+    </div>
+
     <div class="login-form">
       <div class="field">
         <label for="email-input" data-i18n="emailOrUsername">E-mail ou nome de usuário</label>
@@ -41,6 +47,19 @@
       <button class="btn btn-secondary btn-lg" id="register-btn" type="button" data-i18n="register">Cadastrar</button>
       <button class="btn btn-primary btn-lg" id="login-btn" type="button" data-i18n="login">Entrar</button>
     </div>
+
+    <!-- Divisor "ou" -->
+    <div class="login-divider">
+      <span data-i18n="orDivider">ou</span>
+    </div>
+
+    <!-- Botões de login social -->
+    <div class="login-social">
+      <a href="/oauth2/authorization/google" class="btn-social btn-social-google">
+        <span data-i18n="loginWithGoogle">Continuar com Google</span>
+      </a>
+    </div>
+
   </div>
 </div>
 </body>

@@ -11,25 +11,25 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
-@Component
 @Slf4j
+@Component
 public class EmailScheduler {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
-    private final ZoneId schedulerZone;
+    private final ZoneId zoneId;
 
     public EmailScheduler(UserRepository userRepository,
                           EmailService emailService,
                           @Value("${app.scheduler.timezone:America/Sao_Paulo}") String timezone) {
         this.userRepository = userRepository;
-        this.emailService   = emailService;
-        this.schedulerZone  = ZoneId.of(timezone);
+        this.emailService = emailService;
+        this.zoneId = ZoneId.of(timezone);
     }
 
     @Scheduled(cron = "0 0 8 * * *", zone = "${app.scheduler.timezone:America/Sao_Paulo}")
     public void sendWeeklyReminders() {
-        int today = LocalDate.now(schedulerZone).getDayOfWeek().getValue();
+        int today = LocalDate.now(zoneId).getDayOfWeek().getValue();
         List<User> users = userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDay(today);
 
         if (users.isEmpty()) return;

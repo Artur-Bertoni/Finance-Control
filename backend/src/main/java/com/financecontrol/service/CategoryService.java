@@ -11,6 +11,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +24,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.financecontrol.service.ChangeHistoryService.*;
+import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategoryRepository      categoryRepository;
+    private final CategoryRepository categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
-    private final ChangeHistoryService    changeHistoryService;
+    private final HistoryService historyService;
 
     private static final String CATEGORY_NOT_FOUND = "error.notFound.category";
 
@@ -38,9 +40,9 @@ public class CategoryService {
     private EntityManager entityManager;
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "categories", key = "#userId")
     public List<CategoryResponse> findAllByUser(Long userId) {
-        return categoryRepository.findByUserIdWithAliases(userId).stream()
-                .map(CategoryResponse::from).toList();
+        return categoryRepository.findByUserIdWithAliases(userId).stream().map(CategoryResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
@@ -49,8 +51,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse create(Long userId, CategoryRequest req) {
+    @CacheEvict(value = "categories", key = "#userId")
+    public CategoryResponse create(Long userId,
+                                   CategoryRequest req) {
         Category c = new Category();
+
         c.setUserId(userId);
         c.setName(req.name());
         c.setDescription(req.description());
@@ -65,18 +70,21 @@ public class CategoryService {
         aliasNames.forEach(a -> c.getAliases().add(new CategoryAlias(c, a)));
 
         CategoryResponse result = CategoryResponse.from(categoryRepository.save(c));
-        changeHistoryService.recordCreation(ENTITY_CATEGORY, result.id(), userId);
+        historyService.recordCreation(ENTITY_CATEGORY, result.id(), userId);
         return result;
     }
 
     @Transactional
-    public CategoryResponse update(@NonNull Long id, CategoryRequest req) {
+    @CacheEvict(value = "categories", allEntries = true)
+    public CategoryResponse update(@NonNull Long id,
+                                   CategoryRequest req) {
         Category c = getOrThrow(id);
 
         String oldAliases = c.getAliases().stream()
                 .map(CategoryAlias::getAliasName).sorted().collect(Collectors.joining(", "));
 
         Map<String, String[]> diff = new LinkedHashMap<>();
+
         if (differs(c.getName(), req.name()))
             diff.put("name", diff(c.getName(), req.name()));
         if (differs(c.getDescription(), req.description()))
@@ -89,7 +97,7 @@ public class CategoryService {
         c.setIconKey(req.iconKey());
 
         c.getAliases().clear();
-        entityManager.flush(); // garante que os DELETEs são executados antes dos INSERTs para evitar violação de chave única
+        entityManager.flush();
 
         if (req.aliases() != null && !req.aliases().isEmpty()) {
             req.aliases().stream()
@@ -103,40 +111,42 @@ public class CategoryService {
         if (differs(oldAliases, newAliases))
             diff.put("aliases", diff(oldAliases, newAliases));
 
-        changeHistoryService.recordChanges(ENTITY_CATEGORY, id, c.getUserId(), diff);
+        historyService.recordChanges(ENTITY_CATEGORY, id, c.getUserId(), diff);
         return result;
     }
 
     @Transactional(readOnly = true)
-    public Optional<Category> findByAlias(Long userId, String aliasName) {
-        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName)
-                .map(CategoryAlias::getCategory);
+    public Optional<Category> findByAlias(Long userId,
+                                          String aliasName) {
+        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName).map(CategoryAlias::getCategory);
     }
 
     @Transactional
-    public void learnAlias(Long userId, String aliasName, @NonNull Long categoryId) {
+    public void learnAlias(Long userId,
+                           String aliasName,
+                           @NonNull Long categoryId) {
         if (aliasName == null || aliasName.isBlank()) return;
 
-        categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName)
-                .ifPresentOrElse(
-                    existing -> {
-                        if (!existing.getCategory().getId().equals(categoryId)) {
-                            categoryAliasRepository.delete(existing);
-                            Category target = categoryRepository.findById(categoryId)
-                                    .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-                            categoryAliasRepository.save(new CategoryAlias(target, aliasName));
-                        }
-                    },
-                    () -> {
-                        Category target = categoryRepository.findById(categoryId)
-                                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-                        categoryAliasRepository.save(new CategoryAlias(target, aliasName));
-                    }
-                );
+        categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName).ifPresentOrElse(
+            existing -> {
+                if (!existing.getCategory().getId().equals(categoryId)) {
+                    categoryAliasRepository.delete(existing);
+                    Category target = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+                    categoryAliasRepository.save(new CategoryAlias(target, aliasName));
+                }
+            },
+            () -> {
+                Category target = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+                categoryAliasRepository.save(new CategoryAlias(target, aliasName));
+            }
+        );
     }
 
     @Transactional
-    public Category findOrCreateByInternalName(Long userId, String internalName) {
+    public Category findOrCreateByInternalName(Long userId,
+                                               String internalName) {
         return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, internalName)
                 .map(CategoryAlias::getCategory)
                 .orElseGet(() -> {
@@ -151,13 +161,13 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public void delete(@NonNull Long id) {
         getOrThrow(id);
         categoryRepository.deleteById(id);
     }
 
     private Category getOrThrow(@NonNull Long id) {
-        return categoryRepository.findByIdWithAliases(id)
-                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        return categoryRepository.findByIdWithAliases(id).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
     }
 }

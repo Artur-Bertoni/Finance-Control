@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@RequestMapping("/api/notifications")
 public class AppNotificationController extends BaseController {
 
     private final AppNotificationService notificationService;
@@ -30,7 +30,8 @@ public class AppNotificationController extends BaseController {
     }
 
     @PutMapping("/{id}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<Void> markAsRead(@PathVariable @NonNull Long id,
+                                           HttpSession session) {
         notificationService.markAsRead(requireUserId(session), id);
         return ResponseEntity.noContent().build();
     }
@@ -42,9 +43,8 @@ public class AppNotificationController extends BaseController {
     }
 
     @PostMapping("/history")
-    public ResponseEntity<AppNotificationResponse> saveHistory(
-            @RequestBody FinnyHistoryRequest req, HttpSession session) {
-        return ResponseEntity.ok(notificationService.saveUserAction(
-                requireUserId(session), req.message(), req.severity(), req.link()));
+    public ResponseEntity<AppNotificationResponse> saveHistory(@RequestBody FinnyHistoryRequest req,
+                                                               HttpSession session) {
+        return ResponseEntity.ok(notificationService.saveUserAction(requireUserId(session), req.message(), req.severity(), req.link()));
     }
 }

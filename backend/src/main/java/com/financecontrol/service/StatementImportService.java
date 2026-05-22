@@ -44,10 +44,11 @@ public class StatementImportService {
     );
 
     private final TransactionService transactionService;
-    private final CategoryService    categoryService;
+    private final CategoryService categoryService;
 
     @Transactional(readOnly = true)
-    public List<ParsedTransactionResponse> previewStatement(Long userId, MultipartFile file) {
+    public List<ParsedTransactionResponse> previewStatement(Long userId,
+                                                            MultipartFile file) {
         List<String> blocks = buildBlocks(extractLines(file));
         List<ParsedTransactionResponse> rows = new ArrayList<>();
         Set<String> seen = new HashSet<>();
@@ -61,7 +62,9 @@ public class StatementImportService {
 
     @Transactional
     @SuppressWarnings("null")
-    public ImportResult confirmImport(Long userId, Long accountId, List<ImportRowRequest> rows) {
+    public ImportResult confirmImport(Long userId,
+                                      Long accountId,
+                                      List<ImportRowRequest> rows) {
         int imported = 0;
         LocalDate minDate = null;
         LocalDate maxDate = null;
@@ -85,7 +88,9 @@ public class StatementImportService {
         return new ImportResult(imported, startDate, endDate);
     }
 
-    private ParsedTransactionResponse parseBlock(String block, Long userId, Set<String> seen) {
+    private ParsedTransactionResponse parseBlock(String block,
+                                                 Long userId,
+                                                 Set<String> seen) {
         Matcher m = TX_PATTERN.matcher(block);
         if (!seen.add(block) || !m.matches()) return null;
 

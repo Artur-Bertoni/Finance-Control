@@ -1,13 +1,13 @@
 package com.financecontrol.dto.response;
 
-import com.financecontrol.entity.FinancialGoal;
+import com.financecontrol.entity.Goal;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record FinancialGoalResponse(
+public record GoalResponse(
         Long id,
         String name,
         String description,
@@ -28,10 +28,10 @@ public record FinancialGoalResponse(
         Double progressPercent,
         LocalDateTime createdAt
 ) {
-    public static FinancialGoalResponse from(FinancialGoal g, double currentAmount) {
+    public static GoalResponse from(Goal g, double currentAmount) {
         double pct = g.getTargetAmount() != null && g.getTargetAmount() > 0
                 ? (currentAmount / g.getTargetAmount()) * 100.0 : 0.0;
-        return new FinancialGoalResponse(
+        return new GoalResponse(
                 g.getId(),
                 g.getName(),
                 g.getDescription(),

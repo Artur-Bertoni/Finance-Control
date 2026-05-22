@@ -19,16 +19,17 @@ import java.util.Objects;
 public class TransferService {
 
     private final TransactionService transactionService;
-    private final AccountRepository  accountRepository;
+    private final AccountRepository accountRepository;
 
     @Transactional
-    public void create(Long userId, TransferRequest req) {
+    public void create(Long userId,
+                       TransferRequest req) {
         if (Objects.equals(req.originAccountId(), req.destinationAccountId()))
             throw new BusinessException("error.transfer.sameAccount");
 
-        Account origin = accountRepository.findById(req.originAccountId())
-                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        Account origin = accountRepository.findById(req.originAccountId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
         double balance = origin.getBalance() != null ? origin.getBalance() : 0.0;
+
         if (balance < req.value())
             throw new BusinessException("error.transfer.insufficientBalance");
 
@@ -42,6 +43,7 @@ public class TransferService {
 
         Long originId = originTx.id();
         Long destinationId = destinationTx.id();
+        
         if (originId != null && destinationId != null) {
             transactionService.patchTransferPartner(originId, destinationId);
             transactionService.patchTransferPartner(destinationId, originId);

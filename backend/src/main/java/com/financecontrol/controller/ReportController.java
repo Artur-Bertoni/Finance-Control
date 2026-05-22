@@ -11,18 +11,17 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/reports")
 @RequiredArgsConstructor
+@RequestMapping("/api/reports")
 public class ReportController extends BaseController {
 
     private final ReportService reportService;
 
     @GetMapping("/dashboard")
-    public ResponseEntity<DashboardResponse> getDashboard(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Long accountId,
-            HttpSession session) {
+    public ResponseEntity<DashboardResponse> getDashboard(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate, 
+                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, 
+                                                          @RequestParam(required = false) Long accountId, 
+                                                          HttpSession session) {
         return ResponseEntity.ok(reportService.getDashboard(requireUserId(session), startDate, endDate, accountId));
     }
 }

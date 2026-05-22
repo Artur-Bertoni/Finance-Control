@@ -467,5 +467,26 @@
   "histEmpty": "No change history",
   "histNoHistory": "No changes recorded",
   "histLoading": "Loading history...",
-  "histError": "Error loading history"
+  "histError": "Error loading history",
+
+  "linkedAccounts": "Linked Accounts",
+  "googleAccount": "Google Account",
+  "linked": "Linked",
+  "notLinked": "Not linked",
+  "linkWithGoogle": "Link with Google",
+  "unlinkGoogle": "Unlink",
+  "googleLinkedSuccess": "Google account linked successfully!",
+  "googleUnlinkedSuccess": "Google account unlinked successfully!",
+  "errorLinkingGoogle": "Error linking Google account. Please try again.",
+  "googleLinkError": "Could not link Google account. It may already be in use by another user.",
+  "errorUnlinkingGoogle": "Error unlinking Google account. Please try again.",
+
+  "loginWithGoogle": "Continue with Google",
+  "loginWithFacebook": "Continue with Facebook",
+  "loginWithApple": "Continue with Apple",
+  "orDivider": "or",
+  "emailNotVerifiedAlert": "Your email has not been verified yet. Please check your inbox.",
+  "resendVerificationEmail": "Resend verification email",
+  "verificationEmailSent": "Verification email resent! Please check your inbox.",
+  "errorResendVerification": "Error resending the email. Please try again."
 }

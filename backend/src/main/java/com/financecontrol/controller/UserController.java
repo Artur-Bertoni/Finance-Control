@@ -11,8 +11,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserController extends BaseController {
 
     private final UserService userService;
@@ -27,9 +27,7 @@ public class UserController extends BaseController {
                                                @RequestBody UserRequest req,
                                                HttpSession session) {
         requireUserId(session);
-        UserResponse updated = userService.update(id, req);
-        session.setAttribute("userId", updated.id());
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(userService.update(id, req));
     }
 
     @PutMapping("/{id}/password")
@@ -42,10 +40,10 @@ public class UserController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
+                                       HttpSession session) {
         requireUserId(session);
         userService.delete(id);
-        session.invalidate();
         return ResponseEntity.noContent().build();
     }
 }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
 @RequiredArgsConstructor
+@RequestMapping("/api/categories")
 public class CategoryController extends BaseController {
 
     private final CategoryService categoryService;
@@ -23,18 +23,20 @@ public class CategoryController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<CategoryResponse> findById(@PathVariable @NonNull Long id,
+                                                     HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<CategoryResponse> create(@RequestBody CategoryRequest req, HttpSession session) {
+    public ResponseEntity<CategoryResponse> create(@RequestBody CategoryRequest req,
+                                                   HttpSession session) {
         return ResponseEntity.ok(categoryService.create(requireUserId(session), req));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> update(@PathVariable @NonNull Long id,
+    public ResponseEntity<CategoryResponse> update(@PathVariable @NonNull Long id, 
                                                    @RequestBody CategoryRequest req,
                                                    HttpSession session) {
         requireUserId(session);
@@ -42,7 +44,8 @@ public class CategoryController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
+                                       HttpSession session) {
         requireUserId(session);
         categoryService.delete(id);
         return ResponseEntity.noContent().build();

@@ -2,6 +2,7 @@ import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { doRequest, formatDate, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
+import { setupRequiredFieldValidation } from './utils/FieldValidation.js'
 
 let selectedFile  = null
 let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
@@ -13,6 +14,7 @@ export function init() {
     Account.addAccounts('account-input')
     loadCategories()
     loadLocales()
+    setupRequiredFieldValidation(['account-input'])
 
     const dropZone = document.getElementById('file-drop-zone')
     const fileInput = document.getElementById('file-input')
@@ -23,6 +25,7 @@ export function init() {
     fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
             selectedFile = fileInput.files[0]
+            dropZone.classList.remove('field-error')
             setFileSelected(dropZone, dropText, selectedFile.name)
         }
     })
@@ -38,6 +41,7 @@ export function init() {
         const files = e.dataTransfer.files
         if (files.length > 0 && files[0].type === 'application/pdf') {
             selectedFile = files[0]
+            dropZone.classList.remove('field-error')
             setFileSelected(dropZone, dropText, selectedFile.name)
         }
     })
@@ -142,12 +146,19 @@ function showUploadSection() {
 
 function handleAnalyze() {
     const accountId = document.getElementById('account-input').value
+    const dropZone  = document.getElementById('file-drop-zone')
+    const missingFields = []
+
     if (!accountId) {
-        showToast(I18n.t('fillRequiredFields', { fields: I18n.t('transactionAccount') }), 'warning')
-        return
+        document.getElementById('account-input').classList.add('field-error')
+        missingFields.push(I18n.t('transactionAccount'))
     }
     if (!selectedFile) {
-        showToast(I18n.t('noFileSelected'), 'warning')
+        dropZone.classList.add('field-error')
+        missingFields.push(I18n.t('importFile'))
+    }
+    if (missingFields.length) {
+        showToast(I18n.t('fillRequiredFields', { fields: missingFields.join(', ') }), 'warning')
         return
     }
 

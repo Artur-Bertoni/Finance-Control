@@ -12,12 +12,16 @@ public record UserResponse(
     boolean goalEmailNotificationEnabled,
     String language,
     boolean admin,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    boolean googleLinked,
+    boolean hasPassword
 ) {
     public static UserResponse from(User u) {
         return new UserResponse(u.getId(), u.getUsername(), u.getEmail(),
                 u.isEmailNotificationEnabled(), u.getEmailNotificationDay(),
                 u.isGoalEmailNotificationEnabled(),
-                u.getLanguage(), u.isAdmin(), u.getCreatedAt());
+                u.getLanguage(), u.isAdmin(), u.getCreatedAt(),
+                "google".equals(u.getProvider()),
+                u.getPassword() != null && !u.getPassword().isBlank());
     }
 }

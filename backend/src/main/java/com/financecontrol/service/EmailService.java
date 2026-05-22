@@ -1,6 +1,6 @@
 package com.financecontrol.service;
 
-import com.financecontrol.entity.FinancialGoal;
+import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.User;
 import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.enums.GoalStatus;
@@ -24,26 +24,50 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
 
-@Service
 @Slf4j
+@Service
 public class EmailService {
 
     private static final String TEMPLATE_WEEKLY = "templates/weekly-reminder.html";
-    private static final String TEMPLATE_GOAL   = "templates/goal-notification.html";
+    private static final String TEMPLATE_GOAL = "templates/goal-notification.html";
+    private static final String TEMPLATE_VERIFICATION = "templates/email-verification.html";
 
     private final JavaMailSender mailSender;
-    private final MessageSource  messageSource;
-    private final String         baseUrl;
-    private final String         mailFrom;
+    private final MessageSource messageSource;
+    private final String baseUrl;
+    private final String mailFrom;
 
     public EmailService(JavaMailSender mailSender,
                         MessageSource messageSource,
                         @Value("${app.base-url}") String baseUrl,
                         @Value("${app.mail.from}") String mailFrom) {
-        this.mailSender    = mailSender;
+        this.mailSender = mailSender;
         this.messageSource = messageSource;
-        this.baseUrl       = Objects.requireNonNull(baseUrl,  "app.base-url must be configured");
-        this.mailFrom      = Objects.requireNonNull(mailFrom, "app.mail.from must be configured");
+        this.baseUrl = Objects.requireNonNull(baseUrl,  "app.base-url must be configured");
+        this.mailFrom = Objects.requireNonNull(mailFrom, "app.mail.from must be configured");
+    }
+
+    @Async("emailTaskExecutor")
+    public void sendVerificationEmail(User user,
+                                      String token) {
+        try {
+            Locale locale = resolveLocale(user.getLanguage());
+            String subject = msg("email.verify.subject", null, locale);
+            String link = baseUrl + "/api/auth/verify-email?token=" + token;
+
+            String html = loadTemplate(TEMPLATE_VERIFICATION)
+                    .replace("{{emailGreeting}}",  msg("email.verify.greeting",  new Object[]{user.getUsername()}, locale))
+                    .replace("{{emailBody}}",       msg("email.verify.body",       null, locale))
+                    .replace("{{emailCtaLabel}}",   msg("email.verify.cta",        null, locale))
+                    .replace("{{emailFooterNote}}", msg("email.verify.footerNote", null, locale))
+                    .replace("{{verifyUrl}}",       link)
+                    .replace("{{baseUrl}}",         baseUrl);
+
+            sendMimeMessage(user.getEmail(), subject, html);
+            log.info("Email de verificação enviado para {}", user.getEmail());
+        } catch (Exception e) {
+            log.error("Falha ao enviar email de verificação para {}: {}", user.getEmail(), e.getMessage());
+        }
     }
 
     @Async("emailTaskExecutor")
@@ -60,8 +84,10 @@ public class EmailService {
         doSendWeekly(user);
     }
 
-    public void sendTestGoalEmail(User user, GoalNotificationType type) throws MessagingException, IOException {
-        FinancialGoal sample = buildSampleGoal();
+    public void sendTestGoalEmail(User user,
+                                  GoalNotificationType type) throws MessagingException, IOException {
+        Goal sample = buildSampleGoal();
+        
         double current = switch (type) {
             case MILESTONE_50     -> sample.getTargetAmount() * 0.50;
             case MILESTONE_75     -> sample.getTargetAmount() * 0.75;
@@ -76,31 +102,33 @@ public class EmailService {
     private void doSendWeekly(User user) throws MessagingException, IOException {
         Locale locale = resolveLocale(user.getLanguage());
 
-        String subject  = msg("email.weekly.subject",         null,                              locale);
-        String subtitle = msg("email.weekly.subtitle",        null,                              locale);
-        String greeting = msg("email.weekly.greeting",        new Object[]{user.getUsername()},  locale);
-        String question = msg("email.weekly.question",        null,                              locale);
-        String body     = msg("email.weekly.body",            null,                              locale);
-        String cta      = msg("email.weekly.cta",             null,                              locale);
-        String footer   = msg("email.weekly.footerPrefix",    null,                              locale);
-        String profile  = msg("email.weekly.profileLinkText", null,                              locale);
+        String subject  = msg("email.weekly.subject", null, locale);
+        String subtitle = msg("email.weekly.subtitle", null, locale);
+        String greeting = msg("email.weekly.greeting", new Object[]{user.getUsername()},  locale);
+        String question = msg("email.weekly.question", null, locale);
+        String body     = msg("email.weekly.body", null, locale);
+        String cta      = msg("email.weekly.cta", null, locale);
+        String footer   = msg("email.weekly.footerPrefix", null, locale);
+        String profile  = msg("email.weekly.profileLinkText", null, locale);
 
         String html = loadTemplate(TEMPLATE_WEEKLY)
-                .replace("{{emailSubtitle}}",        subtitle)
-                .replace("{{emailGreeting}}",        greeting)
-                .replace("{{emailQuestion}}",        question)
-                .replace("{{emailBody}}",            body)
-                .replace("{{emailCtaLabel}}",        cta)
-                .replace("{{emailFooterPrefix}}",    footer)
+                .replace("{{emailSubtitle}}", subtitle)
+                .replace("{{emailGreeting}}", greeting)
+                .replace("{{emailQuestion}}", question)
+                .replace("{{emailBody}}", body)
+                .replace("{{emailCtaLabel}}", cta)
+                .replace("{{emailFooterPrefix}}", footer)
                 .replace("{{emailProfileLinkText}}", profile)
-                .replace("{{baseUrl}}",              baseUrl);
+                .replace("{{baseUrl}}", baseUrl);
 
         sendMimeMessage(user.getEmail(), subject, html);
     }
 
     @Async("emailTaskExecutor")
-    public void sendGoalNotification(User user, FinancialGoal goal,
-                                     GoalNotificationType type, double current) {
+    public void sendGoalNotification(User user, 
+                                     Goal goal,
+                                     GoalNotificationType type,
+                                     double current) {
         try {
             doSendGoal(user, goal, type, current);
             log.info("Notificação de meta enviada para {} (tipo={})", user.getEmail(), type);
@@ -109,8 +137,10 @@ public class EmailService {
         }
     }
 
-    private void doSendGoal(User user, FinancialGoal goal,
-                            GoalNotificationType type, double current)
+    private void doSendGoal(User user,
+                            Goal goal,
+                            GoalNotificationType type,
+                            double current)
             throws MessagingException, IOException {
         Locale locale  = resolveLocale(user.getLanguage());
         String typeKey = goalTypeKey(type);
@@ -127,7 +157,8 @@ public class EmailService {
         String targetLbl   = msg("email.goal.target",                null,                             locale);
 
         double pct = goal.getTargetAmount() != null && goal.getTargetAmount() > 0
-                ? (current / goal.getTargetAmount()) * 100.0 : 0.0;
+                ? (current / goal.getTargetAmount()) * 100.0 
+                : 0.0;
 
         String html = loadTemplate(TEMPLATE_GOAL)
                 .replace("{{emailSubtitle}}",        subtitle)
@@ -147,8 +178,8 @@ public class EmailService {
         sendMimeMessage(user.getEmail(), subject, html);
     }
 
-    private FinancialGoal buildSampleGoal() {
-        FinancialGoal g = new FinancialGoal();
+    private Goal buildSampleGoal() {
+        Goal g = new Goal();
         g.setName("Meta Exemplo");
         g.setType(GoalType.SAVINGS);
         g.setStatus(GoalStatus.ACTIVE);
@@ -161,7 +192,9 @@ public class EmailService {
 
     private static final String GOAL_MILESTONE_BODY_KEY = "email.goal.milestone.body";
 
-    private String buildGoalBody(FinancialGoal goal, GoalNotificationType type, Locale locale) {
+    private String buildGoalBody(Goal goal,
+                                 GoalNotificationType type,
+                                 Locale locale) {
         return switch (type) {
             case MILESTONE_50     -> msg(GOAL_MILESTONE_BODY_KEY, new Object[]{"50"},              locale);
             case MILESTONE_75     -> msg(GOAL_MILESTONE_BODY_KEY, new Object[]{"75"},              locale);
@@ -172,9 +205,12 @@ public class EmailService {
         };
     }
 
-    private String buildProgressBar(double pct, GoalNotificationType type, GoalType goalType) {
+    private String buildProgressBar(double pct,
+                                    GoalNotificationType type,
+                                    GoalType goalType) {
         String color   = progressBarColor(pct, type, goalType);
         double display = Math.min(pct, 100.0);
+
         return String.format(
                 "<div style='background:#E5E7EB;border-radius:8px;height:12px;overflow:hidden;margin:16px 0;'>" +
                 "<div style='background:%s;height:12px;width:%.1f%%;border-radius:8px;'></div></div>" +
@@ -182,8 +218,11 @@ public class EmailService {
                 color, display, Math.min(pct, 999.9));
     }
 
-    private String progressBarColor(double pct, GoalNotificationType type, GoalType goalType) {
+    private String progressBarColor(double pct,
+                                    GoalNotificationType type,
+                                    GoalType goalType) {
         if (type == GoalNotificationType.EXCEEDED) return "#EF4444";
+
         if (goalType == GoalType.EXPENSE_LIMIT) {
             if (pct >= 90) return "#EF4444";
             if (pct >= 75) return "#F97316";
@@ -205,19 +244,19 @@ public class EmailService {
     }
 
     @SuppressWarnings("null")
-    private void sendMimeMessage(String to, String subject, String html)
-            throws MessagingException {
-        log.info("[EMAIL] Preparando envio → de={} para={} assunto='{}'", mailFrom, to, subject);
+    private void sendMimeMessage(String to,
+                                 String subject,
+                                 String html) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
         helper.setFrom(mailFrom);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(html, true);
         helper.addInline("emailLogo", new ClassPathResource("templates/logo.png"), "image/png");
-        long start = System.currentTimeMillis();
+
         mailSender.send(message);
-        log.info("[EMAIL] SMTP aceitou a mensagem → para={} ({}ms)", to, System.currentTimeMillis() - start);
     }
 
     @SuppressWarnings("null")
@@ -228,7 +267,9 @@ public class EmailService {
 
     @NonNull
     private Locale resolveLocale(String language) {
-        if (language == null) return Objects.requireNonNull(Locale.forLanguageTag("pt"));
+        if (language == null) 
+            return Objects.requireNonNull(Locale.forLanguageTag("pt"));
+
         return Objects.requireNonNull(switch (language) {
             case "en" -> Locale.ENGLISH;
             case "es" -> Locale.forLanguageTag("es");

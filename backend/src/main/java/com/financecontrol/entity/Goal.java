@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "financial_goal")
 @Getter @Setter @NoArgsConstructor
-public class FinancialGoal {
+public class Goal {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

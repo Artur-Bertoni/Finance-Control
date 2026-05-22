@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/achievements")
 @RequiredArgsConstructor
+@RequestMapping("/api/achievements")
 public class AchievementController extends BaseController {
 
     private final AchievementService achievementService;

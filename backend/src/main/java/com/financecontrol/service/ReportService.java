@@ -20,7 +20,10 @@ public class ReportService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
 
-    public DashboardResponse getDashboard(Long userId, LocalDate startDate, LocalDate endDate, Long accountId) {
+    public DashboardResponse getDashboard(Long userId,
+                                          LocalDate startDate,
+                                          LocalDate endDate,
+                                          Long accountId) {
         LocalDate today = LocalDate.now();
 
         List<Object[]> monthlyRows = transactionRepository.findMonthlyTotals(userId, startDate, endDate, accountId);
@@ -39,8 +42,11 @@ public class ReportService {
         return new DashboardResponse(monthlyData, categoryExpenses, categoryIncomes, balanceEvolution);
     }
 
-    private List<DashboardResponse.MonthlyDataPoint> buildMonthlyData(List<Object[]> rows, LocalDate startDate, LocalDate endDate) {
+    private List<DashboardResponse.MonthlyDataPoint> buildMonthlyData(List<Object[]> rows,
+                                                                      LocalDate startDate,
+                                                                      LocalDate endDate) {
         Map<String, double[]> map = new LinkedHashMap<>();
+
         for (Object[] row : rows) {
             String key = monthKey(row);
             double[] arr = map.computeIfAbsent(key, k -> new double[2]);
@@ -51,6 +57,7 @@ public class ReportService {
         List<DashboardResponse.MonthlyDataPoint> result = new ArrayList<>();
         LocalDate cursor = startDate.withDayOfMonth(1);
         LocalDate end = endDate.withDayOfMonth(1);
+
         while (!cursor.isAfter(end)) {
             String key = cursor.format(MONTH_FMT);
             double[] arr = map.getOrDefault(key, new double[2]);
@@ -63,23 +70,25 @@ public class ReportService {
     private void buildCategoryData(List<Object[]> rows,
                                     List<DashboardResponse.CategoryDataPoint> expenses,
                                     List<DashboardResponse.CategoryDataPoint> incomes) {
-        Map<Long, String>   names   = new LinkedHashMap<>();
-        Map<Long, String>   icons   = new LinkedHashMap<>();
-        Map<Long, double[]> map     = new LinkedHashMap<>();
+        Map<Long, String> names = new LinkedHashMap<>();
+        Map<Long, String> icons = new LinkedHashMap<>();
+        Map<Long, double[]> map = new LinkedHashMap<>();
+
         for (Object[] row : rows) {
-            // linha: [catId, name, iconKey, type, sum]
             Long catId = (Long) row[0];
             names.put(catId, (String) row[1]);
             icons.put(catId, (String) row[2]);
             double[] arr = map.computeIfAbsent(catId, k -> new double[2]);
+
             if (extractType(row[3]) == TransactionType.CREDIT) arr[0] += ((Number) row[4]).doubleValue();
+            
             else arr[1] += ((Number) row[4]).doubleValue();
         }
 
         for (Long catId : map.keySet()) {
-            double[] arr  = map.get(catId);
-            String name   = names.get(catId);
-            String icon   = icons.get(catId);
+            double[] arr = map.get(catId);
+            String name = names.get(catId);
+            String icon = icons.get(catId);
             if (arr[0] > 0) incomes.add(new DashboardResponse.CategoryDataPoint(catId, name, icon, arr[0]));
             if (arr[1] > 0) expenses.add(new DashboardResponse.CategoryDataPoint(catId, name, icon, arr[1]));
         }

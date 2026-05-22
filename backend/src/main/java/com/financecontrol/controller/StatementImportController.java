@@ -14,25 +14,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/statements")
 @RequiredArgsConstructor
+@RequestMapping("/api/statements")
 public class StatementImportController extends BaseController {
 
     private final StatementImportService statementImportService;
 
     @PostMapping(value = "/preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<ParsedTransactionResponse>> preview(
-            @RequestParam MultipartFile file,
-            HttpSession session) {
-        return ResponseEntity.ok(
-                statementImportService.previewStatement(requireUserId(session), file));
+    public ResponseEntity<List<ParsedTransactionResponse>> preview(@RequestParam MultipartFile file,
+                                                                   HttpSession session) {
+        return ResponseEntity.ok(statementImportService.previewStatement(requireUserId(session), file));
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<ImportResult> confirm(
-            @RequestBody StatementConfirmRequest req,
-            HttpSession session) {
-        return ResponseEntity.ok(
-                statementImportService.confirmImport(requireUserId(session), req.accountId(), req.rows()));
+    public ResponseEntity<ImportResult> confirm(@RequestBody StatementConfirmRequest req,
+                                                HttpSession session) {
+        return ResponseEntity.ok(statementImportService.confirmImport(requireUserId(session), req.accountId(), req.rows()));
     }
 }

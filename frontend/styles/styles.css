@@ -1135,44 +1135,40 @@ textarea.field-error {
 
 /* ===== LOGIN PAGE ===== */
 .login-page {
-  position: relative;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: linear-gradient(145deg, #1A2B1B 0%, #2E6B32 55%, #4CAF50 100%);
-  padding: 20px;
+  padding: 32px 20px;
+  gap: 20px;
 }
 
 .login-card {
   background-color: var(--surface);
   border-radius: var(--radius-xl);
-  padding: 44px 40px;
+  padding: 36px 40px;
   width: 100%;
   max-width: 420px;
   box-shadow: var(--shadow-lg);
 }
 
 .login-logo {
-  gap: 10px;
-  margin-bottom: 28px;
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 8px;
 }
 
 .login-logo img {
-  width: 150px;
-  height: 150px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
 }
 
 .login-logo-text {
-  font-size: 50px;
+  font-size: 32px;
   font-weight: 800;
   color: #F0F0F0;
   letter-spacing: -0.5px;
@@ -1202,6 +1198,109 @@ textarea.field-error {
 }
 
 .login-actions .btn { flex: 1; }
+
+.login-alert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(220, 38, 38, .08);
+  border: 1px solid rgba(220, 38, 38, .25);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--danger);
+  margin-bottom: 14px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+}
+.btn-link:hover { opacity: .8; }
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.login-social {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+  cursor: pointer;
+}
+.btn-social:hover {
+  background: var(--surface-alt);
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.btn-social svg { flex-shrink: 0; }
+
+/* ===== SOCIAL LINK ROW (profile page) ===== */
+.social-link-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.social-link-provider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+.social-link-status {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+.social-link-status.status-linked {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+.social-link-status.status-unlinked {
+  background: var(--border);
+  color: var(--text-secondary);
+}
 
 /* ===== TOAST ===== */
 .toast-container {
@@ -1441,6 +1540,7 @@ body.user-guest .toast-container {
 }
 .file-drop-zone.has-file { border-style: solid; border-color: var(--primary-400); }
 .file-drop-zone.has-file .file-drop-text { color: var(--primary); font-weight: 500; }
+.file-drop-zone.field-error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,.15); }
 
 .info-hint-btn {
   position: relative;

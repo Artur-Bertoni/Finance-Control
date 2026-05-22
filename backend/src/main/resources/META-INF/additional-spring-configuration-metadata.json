@@ -14,6 +14,16 @@
       "name": "app.scheduler.timezone",
       "type": "java.lang.String",
       "description": "Timezone used by scheduled tasks (e.g. goal notification cron)."
+    },
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "HMAC secret used to sign JWT tokens. Generate with: openssl rand -base64 64."
+    },
+    {
+      "name": "app.jwt.expiration-days",
+      "type": "java.lang.Integer",
+      "description": "JWT token validity in days. Defaults to 7."
     }
   ]
 }

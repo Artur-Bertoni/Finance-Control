@@ -21,4 +21,12 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "email_verified")
+    private boolean emailVerified;
+
+    private String provider;
+
+    @Column(name = "provider_id")
+    private String providerId;
 }

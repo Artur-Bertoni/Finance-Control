@@ -384,7 +384,11 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
 
     const fieldsHtml = fields.map(f => {
         const inputHtml = renderInput(f)
-        return '<div class="field"><label>' + f.label + '</label>' + inputHtml + '</div>'
+        const labelText = f.label.replace(/\s*\*$/, '')
+        const marker = f.required
+            ? '<span class="required-mark"> *</span>'
+            : '<span class="optional-label"> ' + I18n.t('optionalLabel') + '</span>'
+        return '<div class="field"><label>' + labelText + marker + '</label>' + inputHtml + '</div>'
     }).join('')
 
     overlay.innerHTML = `
@@ -424,12 +428,21 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
     overlay.querySelector('#qa-cancel').addEventListener('click', () => overlay.remove())
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
 
+    fields.filter(f => f.required).forEach(f => {
+        const el = overlay.querySelector('#qaf-' + f.id)
+        if (el) el.addEventListener('input', () => el.classList.remove('field-error'))
+        if (el) el.addEventListener('change', () => el.classList.remove('field-error'))
+    })
+
     overlay.querySelector('#qa-save').addEventListener('click', () => {
         const values = {}
         fields.forEach(f => { values[f.id] = overlay.querySelector('#qaf-' + f.id)?.value ?? '' })
 
+        fields.forEach(f => overlay.querySelector('#qaf-' + f.id)?.classList.remove('field-error'))
+
         const missing = fields.filter(f => f.required && !values[f.id])
         if (missing.length) {
+            missing.forEach(f => overlay.querySelector('#qaf-' + f.id)?.classList.add('field-error'))
             showToast(I18n.t('fillRequiredFields', { fields: missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ') }), 'warning')
             return
         }

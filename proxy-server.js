@@ -17,7 +17,7 @@ const MIME = {
 }
 
 createServer((req, res) => {
-  if (req.url.startsWith('/api/')) {
+  if (req.url.startsWith('/api/') || req.url.startsWith('/oauth2/') || req.url.startsWith('/login/oauth2/')) {
     const opts = { hostname: API_HOST, port: API_PORT, path: req.url, method: req.method, headers: req.headers }
     const proxy = request(opts, r => { res.writeHead(r.statusCode, r.headers); r.pipe(res) })
     proxy.on('error', () => { res.writeHead(502); res.end('Backend offline') })

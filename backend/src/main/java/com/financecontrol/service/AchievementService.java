@@ -16,11 +16,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AchievementService {
 
-    private final UserAchievementRepository achievementRepository;
-    private final AccountRepository         accountRepository;
-    private final CategoryRepository        categoryRepository;
-    private final FinancialGoalRepository   goalRepository;
-    private final TransactionRepository     transactionRepository;
+    private final AchievementRepository achievementRepository;
+    private final AccountRepository accountRepository;
+    private final CategoryRepository categoryRepository;
+    private final GoalRepository goalRepository;
+    private final TransactionRepository transactionRepository;
 
     private record Meta(String tier, String iconKey) {}
 

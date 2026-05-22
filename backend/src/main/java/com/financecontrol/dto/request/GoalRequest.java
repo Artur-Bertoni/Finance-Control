@@ -4,7 +4,7 @@ import com.financecontrol.enums.GoalType;
 import java.time.LocalDate;
 import java.util.List;
 
-public record FinancialGoalRequest(
+public record GoalRequest(
         String name,
         String description,
         GoalType type,

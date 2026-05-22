@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/financial-institutions")
 @RequiredArgsConstructor
+@RequestMapping("/api/financial-institutions")
 public class FinancialInstitutionController extends BaseController {
 
     private final FinancialInstitutionService financialInstitutionService;
@@ -23,7 +23,8 @@ public class FinancialInstitutionController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable @NonNull Long id,
+                                                                 HttpSession session) {
         requireUserId(session);
         return ResponseEntity.ok(financialInstitutionService.findById(id));
     }
@@ -43,9 +44,11 @@ public class FinancialInstitutionController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, HttpSession session) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
+                                       HttpSession session) {
         requireUserId(session);
         financialInstitutionService.delete(id);
+        
         return ResponseEntity.noContent().build();
     }
 }

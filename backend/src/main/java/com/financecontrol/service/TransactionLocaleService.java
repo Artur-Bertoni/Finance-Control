@@ -7,6 +7,8 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.TransactionLocaleRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ public class TransactionLocaleService {
 
     private final TransactionLocaleRepository transactionLocaleRepository;
 
+    @Cacheable(value = "transactionLocales", key = "#userId")
     public List<TransactionLocaleResponse> findAllByUser(Long userId) {
         return transactionLocaleRepository.findByUserIdOrderByIdDesc(userId).stream()
                 .map(TransactionLocaleResponse::from).toList();
@@ -28,13 +31,16 @@ public class TransactionLocaleService {
     }
 
     @Transactional
+    @CacheEvict(value = "transactionLocales", key = "#userId")
     public TransactionLocaleResponse create(Long userId, TransactionLocaleRequest req) {
         TransactionLocale tl = new TransactionLocale(null, userId, req.name(), req.address(), req.iconKey());
         return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }
 
     @Transactional
-    public TransactionLocaleResponse update(@NonNull Long id, TransactionLocaleRequest req) {
+    @CacheEvict(value = "transactionLocales", allEntries = true)
+    public TransactionLocaleResponse update(@NonNull Long id,
+                                            TransactionLocaleRequest req) {
         TransactionLocale tl = getOrThrow(id);
 
         tl.setName(req.name());
@@ -45,6 +51,7 @@ public class TransactionLocaleService {
     }
 
     @Transactional
+    @CacheEvict(value = "transactionLocales", allEntries = true)
     public void delete(@NonNull Long id) {
         getOrThrow(id);
         transactionLocaleRepository.deleteById(id);

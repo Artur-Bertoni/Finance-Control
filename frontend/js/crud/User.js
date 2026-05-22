@@ -1,8 +1,9 @@
 import { clearDirtyGuard, navigate, setBreadcrumb, setupDirtyGuard, showToast } from '../../utils/FrontendFunctions.js'
 import { PasswordInput } from '../components/PasswordInput.js'
 import { SidebarManager } from '../components/SidebarManager.js'
-import { ThemeManager } from './ThemeManager.js'
+import { ThemeManager } from '../ThemeManager.js'
 import { Icons } from '../icons/IconLibrary.js'
+
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
 
@@ -178,6 +179,7 @@ function loadUserData() {
 
             setupEditPasswordMode(user.id)
             setupNotificationSection(user)
+            setupSocialLinkSection(user)
 
             const logoutBtn = document.createElement('button')
             logoutBtn.className = 'btn btn-ghost btn-sm'
@@ -238,6 +240,55 @@ function setupNotificationSection(user) {
         updateNotificationLabel(goalLabel, goalCheckbox.checked)
     })
     goalCheckbox.addEventListener('change', () => updateNotificationLabel(goalLabel, goalCheckbox.checked))
+}
+
+function setupSocialLinkSection(user) {
+    const section = document.getElementById('social-link-section')
+    section.style.display = ''
+    document.querySelector('.social-link-provider').insertAdjacentHTML('afterbegin', Icons.google(18))
+
+    const btn    = document.getElementById('google-link-btn')
+    const status = document.getElementById('google-link-status')
+
+    if (user.googleLinked) {
+        status.dataset.i18n = 'linked'
+        status.textContent  = I18n.t('linked')
+        status.classList.add('status-linked')
+        btn.dataset.i18n = 'unlinkGoogle'
+        btn.textContent  = I18n.t('unlinkGoogle')
+        btn.addEventListener('click', () => {
+            $.ajax({
+                url: '/api/auth/link/google', type: 'DELETE', async: false,
+                success: () => {
+                    showToast(I18n.t('googleUnlinkedSuccess'), 'success')
+                    globalThis.location.reload()
+                },
+                error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorUnlinkingGoogle'), 'error')
+            })
+        })
+    } else {
+        status.dataset.i18n = 'notLinked'
+        status.textContent  = I18n.t('notLinked')
+        status.classList.add('status-unlinked')
+        btn.dataset.i18n = 'linkWithGoogle'
+        btn.textContent  = I18n.t('linkWithGoogle')
+        btn.addEventListener('click', () => {
+            $.ajax({
+                url: '/api/auth/link/google', type: 'POST', async: false,
+                success: data => { globalThis.location.href = data.redirectUrl },
+                error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorLinkingGoogle'), 'error')
+            })
+        })
+    }
+
+    const params = new URLSearchParams(globalThis.location.search)
+    if (params.get('linked') === 'true') {
+        showToast(I18n.t('googleLinkedSuccess'), 'success')
+        history.replaceState({}, '', globalThis.location.pathname)
+    } else if (params.get('link_error') === 'true') {
+        showToast(I18n.t('googleLinkError'), 'error')
+        history.replaceState({}, '', globalThis.location.pathname)
+    }
 }
 
 function updateNotificationLabel(label, checked) {

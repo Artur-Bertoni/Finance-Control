@@ -467,5 +467,26 @@
   "histEmpty": "Sem histórico de alterações",
   "histNoHistory": "Nenhuma alteração registrada",
   "histLoading": "Carregando histórico...",
-  "histError": "Erro ao carregar histórico"
+  "histError": "Erro ao carregar histórico",
+
+  "linkedAccounts": "Contas Vinculadas",
+  "googleAccount": "Conta Google",
+  "linked": "Vinculada",
+  "notLinked": "Não vinculada",
+  "linkWithGoogle": "Vincular com Google",
+  "unlinkGoogle": "Desvincular",
+  "googleLinkedSuccess": "Conta Google vinculada com sucesso!",
+  "googleUnlinkedSuccess": "Conta Google desvinculada com sucesso!",
+  "errorLinkingGoogle": "Erro ao vincular conta Google. Tente novamente.",
+  "googleLinkError": "Não foi possível vincular a conta Google. Ela pode já estar em uso por outro usuário.",
+  "errorUnlinkingGoogle": "Erro ao desvincular conta Google. Tente novamente.",
+
+  "loginWithGoogle": "Continuar com Google",
+  "loginWithFacebook": "Continuar com Facebook",
+  "loginWithApple": "Continuar com Apple",
+  "orDivider": "ou",
+  "emailNotVerifiedAlert": "Seu e-mail ainda não foi verificado. Verifique sua caixa de entrada.",
+  "resendVerificationEmail": "Reenviar e-mail de verificação",
+  "verificationEmailSent": "E-mail de verificação reenviado! Verifique sua caixa de entrada.",
+  "errorResendVerification": "Erro ao reenviar o e-mail. Tente novamente."
 }

@@ -16,9 +16,11 @@ public class I18nConfig {
     @Bean
     MessageSource messageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+
         ms.setBasename("classpath:messages");
         ms.setDefaultEncoding("UTF-8");
         ms.setFallbackToSystemLocale(false);
+
         return ms;
     }
 
@@ -26,12 +28,14 @@ public class I18nConfig {
     @SuppressWarnings("null")
     LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
+
         resolver.setDefaultLocale(Locale.forLanguageTag("pt"));
         resolver.setSupportedLocales(List.of(
             Locale.forLanguageTag("pt"),
             Locale.forLanguageTag("en"),
             Locale.forLanguageTag("es")
         ));
+        
         return resolver;
     }
 }

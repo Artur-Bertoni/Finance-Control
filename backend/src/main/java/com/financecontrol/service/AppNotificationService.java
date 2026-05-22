@@ -2,14 +2,14 @@ package com.financecontrol.service;
 
 import com.financecontrol.dto.response.AppNotificationResponse;
 import com.financecontrol.entity.AppNotification;
-import com.financecontrol.entity.FinancialGoal;
+import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.GoalNotificationLog;
 import com.financecontrol.enums.AppNotificationType;
 import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import com.financecontrol.repository.AppNotificationRepository;
-import com.financecontrol.repository.FinancialGoalRepository;
+import com.financecontrol.repository.GoalRepository;
 import com.financecontrol.repository.GoalNotificationLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,27 +21,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AppNotificationService {
 
-    private final AppNotificationRepository notificationRepository;
-    private final FinancialGoalRepository   goalRepository;
-    private final GoalNotificationLogRepository logRepository;
-    private final FinancialGoalService      goalService;
+    private final AppNotificationRepository appNotificationRepository;
+    private final GoalRepository goalRepository;
+    private final GoalNotificationLogRepository goalNotificationLogRepository;
+    private final GoalService goalService;
 
     @Transactional
-    public List<AppNotificationResponse> checkGoalImpact(Long userId, Long transactionId) {
-        List<FinancialGoal> activeGoals = goalRepository.findByUserIdAndStatus(userId, GoalStatus.ACTIVE);
+    public List<AppNotificationResponse> checkGoalImpact(Long userId,
+                                                         Long transactionId) {
+        List<Goal> activeGoals = goalRepository.findByUserIdAndStatus(userId, GoalStatus.ACTIVE);
         List<AppNotificationResponse> result = new ArrayList<>();
 
-        for (FinancialGoal goal : activeGoals) {
+        for (Goal goal : activeGoals) {
             double target = goal.getTargetAmount() != null ? goal.getTargetAmount() : 0.0;
             if (target <= 0) continue;
 
             double current = goalService.calculateCurrentAmount(goal);
-            double pct     = (current / target) * 100.0;
+            double pct = (current / target) * 100.0;
             boolean isExpense = goal.getType() == GoalType.EXPENSE_LIMIT;
 
             if (isExpense && pct >= 100.0 && Boolean.TRUE.equals(goal.getNotifyOnExceed())) {
@@ -71,40 +72,48 @@ public class AppNotificationService {
 
     @Transactional
     @SuppressWarnings("null")
-    public AppNotificationResponse createGoalNotification(Long userId, Long goalId, String goalName,
-                                                          AppNotificationType type, Long transactionId) {
+    public AppNotificationResponse createGoalNotification(Long userId, 
+                                                          Long goalId,
+                                                          String goalName,
+                                                          AppNotificationType type,
+                                                          Long transactionId) {
         AppNotification n = buildNotification(userId, type, goalId, goalName, transactionId);
-        return AppNotificationResponse.from(notificationRepository.save(n));
+        return AppNotificationResponse.from(appNotificationRepository.save(n));
     }
 
     public List<AppNotificationResponse> findAll(Long userId) {
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId)
+        return appNotificationRepository.findByUserIdOrderByCreatedAtDesc(userId)
                 .stream().map(AppNotificationResponse::from).toList();
     }
 
     public long getUnreadCount(Long userId) {
-        return notificationRepository.countByUserIdAndReadFalse(userId);
+        return appNotificationRepository.countByUserIdAndReadFalse(userId);
     }
 
     @Transactional
     @SuppressWarnings("null")
-    public void markAsRead(Long userId, Long id) {
-        notificationRepository.findById(id).ifPresent(n -> {
+    public void markAsRead(Long userId,
+                           Long id) {
+        appNotificationRepository.findById(id).ifPresent(n -> {
             if (n.getUserId().equals(userId)) {
                 n.setRead(true);
-                notificationRepository.save(n);
+                appNotificationRepository.save(n);
             }
         });
     }
 
     @Transactional
     public void markAllAsRead(Long userId) {
-        notificationRepository.markAllAsReadByUserId(userId);
+        appNotificationRepository.markAllAsReadByUserId(userId);
     }
 
     @Transactional
-    public AppNotificationResponse saveUserAction(Long userId, String message, String severity, String link) {
+    public AppNotificationResponse saveUserAction(Long userId,
+                                                  String message,
+                                                  String severity,
+                                                  String link) {
         AppNotification n = new AppNotification();
+        
         n.setUserId(userId);
         n.setType(AppNotificationType.USER_ACTION);
         n.setMessage(message);
@@ -112,33 +121,39 @@ public class AppNotificationService {
         n.setLink(link);
         n.setRead(true);
         n.setCreatedAt(LocalDateTime.now());
-        return AppNotificationResponse.from(notificationRepository.save(n));
+
+        return AppNotificationResponse.from(appNotificationRepository.save(n));
     }
 
     @SuppressWarnings("null")
-    private Optional<AppNotificationResponse> tryCreate(Long userId, FinancialGoal goal,
+    private Optional<AppNotificationResponse> tryCreate(Long userId,
+                                                        Goal goal,
             Long transactionId, GoalNotificationType logType, AppNotificationType appType) {
 
-        if (logRepository.existsByGoalIdAndNotificationType(goal.getId(), logType)) {
+        if (goalNotificationLogRepository.existsByGoalIdAndNotificationType(goal.getId(), logType)) {
             return Optional.empty();
         }
 
-        AppNotification saved = notificationRepository.save(
+        AppNotification saved = appNotificationRepository.save(
                 buildNotification(userId, appType, goal.getId(), goal.getName(), transactionId));
 
         GoalNotificationLog entry = new GoalNotificationLog();
         entry.setGoalId(goal.getId());
         entry.setNotificationType(logType);
         entry.setSentAt(LocalDateTime.now());
-        logRepository.save(entry);
+        goalNotificationLogRepository.save(entry);
 
         log.info("Notificação in-app {} criada para meta '{}' (user={})", appType, goal.getName(), userId);
         return Optional.of(AppNotificationResponse.from(saved));
     }
 
-    private AppNotification buildNotification(Long userId, AppNotificationType type,
-                                              Long goalId, String goalName, Long transactionId) {
+    private AppNotification buildNotification(Long userId,
+                                              AppNotificationType type,
+                                              Long goalId,
+                                              String goalName,
+                                              Long transactionId) {
         AppNotification n = new AppNotification();
+
         n.setUserId(userId);
         n.setType(type);
         n.setGoalId(goalId);
@@ -147,6 +162,7 @@ public class AppNotificationService {
         n.setLink("/pages/GoalDashboard.html?highlight=" + goalId);
         n.setRead(false);
         n.setCreatedAt(LocalDateTime.now());
+
         return n;
     }
 }

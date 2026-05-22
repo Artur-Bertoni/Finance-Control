@@ -4,6 +4,7 @@ import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 
+
 export function init() {
     let user = null
 
@@ -21,9 +22,11 @@ export function init() {
 
     document.getElementById('detail-username').textContent = user.username
     document.getElementById('detail-email').textContent    = user.email
+    document.querySelector('label[for="detail-google-status"]').insertAdjacentHTML('afterbegin', Icons.google(16))
 
     renderNotificationFields(user)
-    I18n.onChange(() => renderNotificationFields(user))
+    renderGoogleStatus(user)
+    I18n.onChange(() => { renderNotificationFields(user); renderGoogleStatus(user) })
 
     if (user.admin) {
         document.getElementById('admin-section-header').style.display = ''
@@ -110,6 +113,14 @@ function renderNotificationFields(user) {
     }
     document.getElementById('detail-language').textContent =
         I18n.t(LANG_KEYS[user.language] ?? 'notInformed')
+}
+
+function renderGoogleStatus(user) {
+    const el = document.getElementById('detail-google-status')
+    if (!el) return
+    const linked = !!user.googleLinked
+    el.textContent = I18n.t(linked ? 'linked' : 'notLinked')
+    el.className   = `tx-badge ${linked ? 'enabled' : 'disabled'}`
 }
 
 if (!globalThis.__appRouter) init()
