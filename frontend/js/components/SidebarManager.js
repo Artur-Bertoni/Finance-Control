@@ -339,10 +339,9 @@ export class SidebarManager {
             let achievements = null
             $.ajax({ url: '/api/achievements', type: 'GET', async: false, success: data => { achievements = data } })
             if (!achievements) return
-            const TOAST_KEY   = 'achievementsLastChecked'
-            const lastChecked = Number.parseInt(localStorage.getItem(TOAST_KEY) ?? '0')
-            const now         = Date.now()
-            const newOnes     = achievements.filter(a => a.earned && a.earnedAt && new Date(a.earnedAt).getTime() > lastChecked)
+            const TOAST_KEY = 'achievementsShownToast'
+            const seen      = new Set(JSON.parse(localStorage.getItem(TOAST_KEY) ?? '[]'))
+            const newOnes   = achievements.filter(a => a.earned && !seen.has(a.type))
             for (const a of newOnes) {
                 const title = I18n.t(`achievement_${a.type}_title`)
                 showToast(`🏆 ${I18n.t('achievementUnlocked')}: ${title}`, 'success', {
@@ -350,7 +349,8 @@ export class SidebarManager {
                     url:   `/pages/lists/AchievementList.html?highlight=${a.type}`
                 })
             }
-            localStorage.setItem(TOAST_KEY, String(now))
+            const allEarned = achievements.filter(a => a.earned).map(a => a.type)
+            localStorage.setItem(TOAST_KEY, JSON.stringify(allEarned))
         } catch {}
     }
 }

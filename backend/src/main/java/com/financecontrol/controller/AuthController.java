@@ -64,7 +64,7 @@ public class AuthController extends BaseController {
     @PostMapping("/link/google")
     public ResponseEntity<Map<String, String>> linkGoogle() {
         requireUserId();
-        return ResponseEntity.ok(Map.of("redirectUrl", "/oauth2/authorization/google"));
+        return ResponseEntity.ok(Map.of("redirectUrl", "/oauth2/authorization/google?link=true"));
     }
 
     @DeleteMapping("/link/google")

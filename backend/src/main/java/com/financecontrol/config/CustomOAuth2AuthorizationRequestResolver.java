@@ -34,6 +34,8 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
                                                  OAuth2AuthorizationRequest authorizationRequest) {
         if (authorizationRequest == null) return null;
 
+        if (!"true".equals(request.getParameter("link"))) return authorizationRequest;
+
         Long userId = extractUserIdFromJwt(request);
         if (userId == null) return authorizationRequest;
 
