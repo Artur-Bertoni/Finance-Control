@@ -109,7 +109,7 @@ export function init() {
 
     document.getElementById('locale-add-btn').addEventListener('click', () => {
         showQuickAdd({
-            title:  I18n.t('newLocation'),
+            title:  I18n.t('newLocale'),
             apiUrl: '/api/transaction-locales',
             fields: [
                 { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },

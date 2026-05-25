@@ -36,7 +36,7 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
-    list.appendChild(createAddCard(I18n.t('newLocation'), '/pages/crud/TransactionLocale.html'))
+    list.appendChild(createAddCard(I18n.t('newLocale'), '/pages/crud/TransactionLocale.html'))
 
     const q = searchQuery.trim().toLowerCase()
     const locales = q ? allLocales.filter(l => l.name.toLowerCase().includes(q)) : allLocales

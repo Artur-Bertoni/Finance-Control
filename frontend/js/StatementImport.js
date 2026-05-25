@@ -348,11 +348,11 @@ function buildLocaleCell(index) {
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
     addBtn.className = 'btn-add-inline'
-    addBtn.title = I18n.t('newLocation')
+    addBtn.title = I18n.t('newLocale')
     addBtn.innerHTML = Icons.add()
     addBtn.addEventListener('click', () => {
         showQuickAdd({
-            title:  I18n.t('newLocation'),
+            title:  I18n.t('newLocale'),
             apiUrl: '/api/transaction-locales',
             fields: [
                 { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },
