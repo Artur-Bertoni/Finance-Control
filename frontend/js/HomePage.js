@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, formatDate, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, formatDate, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
@@ -13,6 +13,7 @@ let allTransactions = []
 let currentPage = 1
 let currentTotalNum = 0
 let currentFilteredTotal = 0
+let filterToggle = null
 
 export function init() {
     allTransactions = []
@@ -23,6 +24,7 @@ export function init() {
     Category.addCategories('category-input')
     Account.addAccounts('account-input')
     configureFilters()
+    filterToggle = initFilterToggle(isFilterActive)
     populateTransactionsList()
 
     I18n.onChange(() => { renderPage(); renderTotals() })
@@ -91,10 +93,7 @@ function configureFilters() {
     syncClearBtn()
 }
 
-function syncClearBtn() {
-    const btn = document.getElementById('clear-filters-btn')
-    const wrapper = btn?.closest('.filter-clear-field') ?? btn
-    if (!wrapper) return
+function isFilterActive() {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
     const d = new Date(); d.setDate(1)
     const defaultStart = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
@@ -102,7 +101,15 @@ function syncClearBtn() {
     const end   = document.getElementById('end-date-input')?.value    ?? ''
     const cat   = document.getElementById('category-input')?.value    ?? ''
     const acc   = document.getElementById('account-input')?.value     ?? ''
-    wrapper.style.display = (start === defaultStart && end === today && !cat && !acc) ? 'none' : 'flex'
+    return !(start === defaultStart && end === today && !cat && !acc)
+}
+
+function syncClearBtn() {
+    const btn = document.getElementById('clear-filters-btn')
+    const wrapper = btn?.closest('.filter-clear-field') ?? btn
+    if (!wrapper) return
+    wrapper.style.display = isFilterActive() ? 'flex' : 'none'
+    filterToggle?.syncActive()
 }
 
 function refresh() {

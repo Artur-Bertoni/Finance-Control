@@ -26,26 +26,34 @@
 
     <main class="page-content">
       <!-- Filter bar -->
-      <div class="filter-bar">
-        <div class="field">
-          <label for="period-input" data-i18n="dashboardPeriod">Período</label>
-          <select id="period-input">
-            <option value="1m" selected data-i18n="period1m">Este mês</option>
-            <option value="3m" data-i18n="period3m">Últimos 3 meses</option>
-            <option value="6m" data-i18n="period6m">Últimos 6 meses</option>
-            <option value="12m" data-i18n="period12m">Últimos 12 meses</option>
-            <option value="ytd" data-i18n="periodYtd">Este ano</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="account-input" data-i18n="accounts">Conta</label>
-          <select id="account-input">
-            <option value="" data-i18n="allAccounts">Todas as contas</option>
-          </select>
-        </div>
-        <button id="clear-filters-btn" class="btn btn-ghost btn-icon" type="button" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros" style="display:none;align-self:flex-end">
-          <i class="ph ph-broom"></i>
+      <div class="filter-section" id="filter-section">
+        <button class="filter-toggle-btn" id="filter-toggle-btn" type="button" aria-expanded="false">
+          <i class="ph ph-funnel"></i>
+          <span data-i18n="filter">Filtro</span>
+          <span class="filter-toggle-active-dot"></span>
+          <i class="ph ph-caret-down filter-toggle-caret"></i>
         </button>
+        <div class="filter-bar">
+          <div class="field">
+            <label for="period-input" data-i18n="dashboardPeriod">Período</label>
+            <select id="period-input">
+              <option value="1m" selected data-i18n="period1m">Este mês</option>
+              <option value="3m" data-i18n="period3m">Últimos 3 meses</option>
+              <option value="6m" data-i18n="period6m">Últimos 6 meses</option>
+              <option value="12m" data-i18n="period12m">Últimos 12 meses</option>
+              <option value="ytd" data-i18n="periodYtd">Este ano</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="account-input" data-i18n="accounts">Conta</label>
+            <select id="account-input">
+              <option value="" data-i18n="allAccounts">Todas as contas</option>
+            </select>
+          </div>
+          <button id="clear-filters-btn" class="btn btn-ghost btn-icon" type="button" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros" style="display:none;align-self:flex-end">
+            <i class="ph ph-broom"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Stat cards -->

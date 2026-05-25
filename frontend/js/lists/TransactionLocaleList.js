@@ -1,4 +1,4 @@
-import { doRequest, navigate, setupSearch, showPendingToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
@@ -6,13 +6,18 @@ import { I18n } from '../i18n.js'
 
 let allLocales = []
 let searchQuery = ''
+let filterToggle = null
 
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
+    filterToggle = initFilterToggle(() => !!searchQuery)
     loadData()
-    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
+    setupSearch(
+        q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
+        () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
+    )
     I18n.onChange(renderList)
 }
 
@@ -31,6 +36,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
+    list.appendChild(createAddCard(I18n.t('newLocation'), '/pages/crud/TransactionLocale.html'))
+
     const q = searchQuery.trim().toLowerCase()
     const locales = q ? allLocales.filter(l => l.name.toLowerCase().includes(q)) : allLocales
 
@@ -38,16 +45,7 @@ function renderList() {
         const empty = document.createElement('div')
         empty.className = 'empty-state'
         empty.style.gridColumn = '1 / -1'
-        if (allLocales.length === 0) {
-            empty.innerHTML = `${Icons.locations()}<p>${I18n.t('noLocalesEmpty')}</p>`
-            const btn = document.createElement('button')
-            btn.className = 'btn btn-primary btn-sm'
-            btn.textContent = I18n.t('newLocation')
-            btn.addEventListener('click', () => navigate('/pages/crud/TransactionLocale.html'))
-            empty.appendChild(btn)
-        } else {
-            empty.innerHTML = `${Icons.locations()}<p>${I18n.t('noLocalesRegistered')}</p>`
-        }
+        empty.innerHTML = `${Icons.locations()}<p>${I18n.t(allLocales.length === 0 ? 'noLocalesEmpty' : 'noLocalesRegistered')}</p>`
         list.appendChild(empty)
         return
     }

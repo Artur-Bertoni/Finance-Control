@@ -25,19 +25,27 @@
     </header>
 
     <main class="page-content">
-      <div class="dashboard-search-bar">
-        <div class="field">
-          <label for="search-input" data-i18n="searchByName">Buscar por nome</label>
-          <input type="text" id="search-input" autocomplete="off" data-i18n-placeholder="searchByNamePlaceholder" placeholder="Digite o nome...">
-        </div>
-        <div class="field">
-          <label for="fi-filter" data-i18n="financialInstitution">Instituição Financeira</label>
-          <select id="fi-filter">
-            <option value="" data-i18n="allInstitutions">Todas as instituições</option>
-          </select>
-        </div>
-        <div class="filter-clear-field" style="display:none">
-          <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-search-btn" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros"><i class="ph ph-broom"></i></button>
+      <div class="filter-section" id="filter-section">
+        <button class="filter-toggle-btn" id="filter-toggle-btn" type="button" aria-expanded="false">
+          <i class="ph ph-funnel"></i>
+          <span data-i18n="filter">Filtro</span>
+          <span class="filter-toggle-active-dot"></span>
+          <i class="ph ph-caret-down filter-toggle-caret"></i>
+        </button>
+        <div class="dashboard-search-bar">
+          <div class="field">
+            <label for="search-input" data-i18n="searchByName">Buscar por nome</label>
+            <input type="text" id="search-input" autocomplete="off" data-i18n-placeholder="searchByNamePlaceholder" placeholder="Digite o nome...">
+          </div>
+          <div class="field">
+            <label for="fi-filter" data-i18n="financialInstitution">Instituição Financeira</label>
+            <select id="fi-filter">
+              <option value="" data-i18n="allInstitutions">Todas as instituições</option>
+            </select>
+          </div>
+          <div class="filter-clear-field" style="display:none">
+            <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-search-btn" data-i18n-title="clearFilters" title="Limpar filtros" aria-label="Limpar filtros"><i class="ph ph-broom"></i></button>
+          </div>
         </div>
       </div>
       <div class="dashboard-items-scroll">

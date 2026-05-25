@@ -3,7 +3,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { I18n } from '../i18n.js'
 
 export function init() {
-    document.body.classList.add('page-dashboard')
+    document.body.classList.add('page-achievements')
     SidebarManager.initialize()
     showPendingToast()
     loadAchievements()

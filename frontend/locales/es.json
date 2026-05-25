@@ -211,6 +211,8 @@
   "unsavedChangesWarning": "Tiene cambios sin guardar. ¿Está seguro de que desea salir? Se perderán.",
   "stay": "Quedarse",
   "leaveAnyway": "Salir de todas formas",
+  "filter": "Filtro",
+  "filterClickHint": "(Haz clic para expandir)",
   "clearFilters": "Limpiar filtros",
   "clearSelection": "Limpiar selección",
   "filterOptions": "Filtrar...",

@@ -211,6 +211,8 @@
   "unsavedChangesWarning": "You have unsaved changes. Are you sure you want to leave? They will be lost.",
   "stay": "Stay",
   "leaveAnyway": "Leave Anyway",
+  "filter": "Filter",
+  "filterClickHint": "(Click to Expand)",
   "clearFilters": "Clear filters",
   "clearSelection": "Clear selection",
   "filterOptions": "Filter...",

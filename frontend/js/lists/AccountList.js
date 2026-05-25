@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, setupSearch, showPendingToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
 import { Account } from '../class/AccountClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { CustomSelect } from '../components/CustomSelect.js'
@@ -9,12 +9,18 @@ let allAccounts = []
 let allFinancialInstitutions = []
 let searchQuery = ''
 let selectedFinancialInstitutionId = ''
+let filterToggle = null
+
+function isFilterActive() {
+    return !!(searchQuery || selectedFinancialInstitutionId)
+}
 
 function syncClearBtn() {
     const btn = document.getElementById('clear-search-btn')
     const wrapper = btn?.closest('.filter-clear-field') ?? btn
     if (!wrapper) return
-    wrapper.style.display = (searchQuery || selectedFinancialInstitutionId) ? 'flex' : 'none'
+    wrapper.style.display = isFilterActive() ? 'flex' : 'none'
+    filterToggle?.syncActive()
 }
 
 export function init() {
@@ -22,6 +28,7 @@ export function init() {
     SidebarManager.initialize()
     CustomSelect.autoInit()
     showPendingToast()
+    filterToggle = initFilterToggle(isFilterActive)
     loadData()
     setupSearch(
         q => { searchQuery = q; renderList() },
@@ -85,31 +92,18 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
+    list.appendChild(createAddCard(I18n.t('newAccount'), '/pages/crud/Account.html'))
+
     const q = searchQuery.trim().toLowerCase()
     let accounts = allAccounts
-
-    if (q) {
-        accounts = accounts.filter(a => a.name.toLowerCase().includes(q))
-    }
-
-    if (selectedFinancialInstitutionId) {
-        accounts = accounts.filter(a => a.financialInstitutionId === Number.parseInt(selectedFinancialInstitutionId))
-    }
+    if (q) accounts = accounts.filter(a => a.name.toLowerCase().includes(q))
+    if (selectedFinancialInstitutionId) accounts = accounts.filter(a => a.financialInstitutionId === Number.parseInt(selectedFinancialInstitutionId))
 
     if (accounts.length === 0) {
         const empty = document.createElement('div')
         empty.className = 'empty-state'
         empty.style.gridColumn = '1 / -1'
-        if (allAccounts.length === 0) {
-            empty.innerHTML = `${Icons.accounts()}<p>${I18n.t('noAccountsEmpty')}</p>`
-            const btn = document.createElement('button')
-            btn.className = 'btn btn-primary btn-sm'
-            btn.textContent = I18n.t('newAccount')
-            btn.addEventListener('click', () => navigate('/pages/crud/Account.html'))
-            empty.appendChild(btn)
-        } else {
-            empty.innerHTML = `${Icons.accounts()}<p>${I18n.t('noAccountsRegistered')}</p>`
-        }
+        empty.innerHTML = `${Icons.accounts()}<p>${I18n.t(allAccounts.length === 0 ? 'noAccountsEmpty' : 'noAccountsRegistered')}</p>`
         list.appendChild(empty)
         return
     }

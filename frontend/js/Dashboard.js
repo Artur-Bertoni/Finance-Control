@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, showPendingToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatCurrency, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
@@ -15,6 +15,7 @@ const DONUT_COLORS = [
 
 let chartInstances = {}
 let _themeObserver = null
+let filterToggle = null
 
 function easeInOutSine(t) { return -(Math.cos(Math.PI * t) - 1) / 2 }
 
@@ -83,12 +84,17 @@ function restoreFilters() {
     } catch { /* ignore */ }
 }
 
+function isFilterActive() {
+    const period  = document.getElementById('period-input')?.value  ?? '1m'
+    const account = document.getElementById('account-input')?.value ?? ''
+    return !(period === '1m' && account === '')
+}
+
 function syncClearBtn() {
     const btn = document.getElementById('clear-filters-btn')
     if (!btn) return
-    const period  = document.getElementById('period-input')?.value  ?? '1m'
-    const account = document.getElementById('account-input')?.value ?? ''
-    btn.style.display = (period === '1m' && account === '') ? 'none' : ''
+    btn.style.display = isFilterActive() ? '' : 'none'
+    filterToggle?.syncActive()
 }
 
 function clearFilters() {
@@ -122,6 +128,7 @@ export async function init() {
     I18n.onChange(() => loadAndRender())
 
     restoreFilters()
+    filterToggle = initFilterToggle(isFilterActive)
     syncClearBtn()
 
     _themeObserver?.disconnect()

@@ -1,4 +1,4 @@
-import { doRequest, formatDate, navigate, setupSearch, showPendingToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
@@ -7,18 +7,25 @@ let allGoals     = []
 let searchQuery  = ''
 let statusFilter = ''
 let showArchived = false
+let filterToggle = null
+
+function isFilterActive() {
+    return !!(searchQuery || statusFilter || showArchived)
+}
 
 function syncClearBtn() {
     const btn = document.getElementById('clear-search-btn')
     const wrapper = btn?.closest('.filter-clear-field') ?? btn
     if (!wrapper) return
-    wrapper.style.display = (searchQuery || statusFilter || showArchived) ? 'flex' : 'none'
+    wrapper.style.display = isFilterActive() ? 'flex' : 'none'
+    filterToggle?.syncActive()
 }
 
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
+    filterToggle = initFilterToggle(isFilterActive)
     loadData()
     setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() }, syncClearBtn)
 
@@ -73,6 +80,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
+    list.appendChild(createAddCard(I18n.t('newGoal'), '/pages/crud/Goal.html'))
+
     const q = searchQuery.trim().toLowerCase()
     let goals = allGoals
     if (!showArchived) goals = goals.filter(g => g.status !== 'archived')
@@ -83,16 +92,7 @@ function renderList() {
         const empty = document.createElement('div')
         empty.className = 'empty-state'
         empty.style.gridColumn = '1 / -1'
-        if (allGoals.length === 0) {
-            empty.innerHTML = `${Icons.goals()}<p>${I18n.t('noGoalsEmpty')}</p>`
-            const btn = document.createElement('button')
-            btn.className = 'btn btn-primary btn-sm'
-            btn.textContent = I18n.t('newGoal')
-            btn.addEventListener('click', () => navigate('/pages/crud/Goal.html'))
-            empty.appendChild(btn)
-        } else {
-            empty.innerHTML = `${Icons.goals()}<p>${I18n.t('noGoalsRegistered')}</p>`
-        }
+        empty.innerHTML = `${Icons.goals()}<p>${I18n.t(allGoals.length === 0 ? 'noGoalsEmpty' : 'noGoalsRegistered')}</p>`
         list.appendChild(empty)
         return
     }

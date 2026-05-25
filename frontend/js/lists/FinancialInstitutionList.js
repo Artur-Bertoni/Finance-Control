@@ -1,4 +1,4 @@
-import { doRequest, navigate, setupSearch, showPendingToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
 import { FinancialInstitution } from '../class/FinancialInstitutionClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
@@ -6,13 +6,18 @@ import { I18n } from '../i18n.js'
 
 let allInstitutions = []
 let searchQuery = ''
+let filterToggle = null
 
 export function init() {
     document.body.classList.add('page-dashboard')
     SidebarManager.initialize()
     showPendingToast()
+    filterToggle = initFilterToggle(() => !!searchQuery)
     loadData()
-    setupSearch(q => { searchQuery = q; renderList() }, () => { searchQuery = ''; renderList() })
+    setupSearch(
+        q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
+        () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
+    )
     I18n.onChange(renderList)
 }
 
@@ -31,6 +36,8 @@ function renderList() {
     if (!list) return
     list.innerHTML = ''
 
+    list.appendChild(createAddCard(I18n.t('newInstitution'), '/pages/crud/FinancialInstitution.html'))
+
     const q = searchQuery.trim().toLowerCase()
     const institutions = q ? allInstitutions.filter(fi => fi.name.toLowerCase().includes(q)) : allInstitutions
 
@@ -38,16 +45,7 @@ function renderList() {
         const empty = document.createElement('div')
         empty.className = 'empty-state'
         empty.style.gridColumn = '1 / -1'
-        if (allInstitutions.length === 0) {
-            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsEmpty')}</p>`
-            const btn = document.createElement('button')
-            btn.className = 'btn btn-primary btn-sm'
-            btn.textContent = I18n.t('newInstitution')
-            btn.addEventListener('click', () => navigate('/pages/crud/FinancialInstitution.html'))
-            empty.appendChild(btn)
-        } else {
-            empty.innerHTML = `${Icons.institutions()}<p>${I18n.t('noInstitutionsRegistered')}</p>`
-        }
+        empty.innerHTML = `${Icons.institutions()}<p>${I18n.t(allInstitutions.length === 0 ? 'noInstitutionsEmpty' : 'noInstitutionsRegistered')}</p>`
         list.appendChild(empty)
         return
     }

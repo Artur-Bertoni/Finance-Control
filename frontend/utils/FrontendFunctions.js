@@ -326,6 +326,46 @@ function _renderBreadcrumb() {
     })
 }
 
+export function createAddCard(label, url) {
+    const card = document.createElement('div')
+    card.className = 'item-card item-card--add'
+    card.innerHTML = `<div class="item-card--add-inner"><i class="ph ph-plus-circle"></i><span>${label}</span></div>`
+    card.addEventListener('click', () => navigate(url))
+    return card
+}
+
+export function initFilterToggle(isActiveNow) {
+    const section = document.querySelector('#view .filter-section') ?? document.querySelector('.filter-section')
+    if (!section) return
+
+    const btn = section.querySelector('.filter-toggle-btn')
+
+    const hintSpan = document.createElement('span')
+    hintSpan.className = 'filter-toggle-hint'
+    hintSpan.textContent = I18n.t('filterClickHint')
+    const caret = btn?.querySelector('.filter-toggle-caret')
+    if (caret) caret.before(hintSpan)
+
+    const setOpen = (open) => {
+        section.classList.toggle('open', open)
+        btn?.setAttribute('aria-expanded', String(open))
+    }
+
+    const syncActive = () => {
+        section.classList.toggle('filter-active', isActiveNow())
+    }
+
+    btn?.addEventListener('click', () => {
+        const willOpen = !section.classList.contains('open')
+        setOpen(willOpen)
+    })
+
+    syncActive()
+    setOpen(isActiveNow())
+
+    return { syncActive }
+}
+
 export function setupSearch(onInput, onClear, syncFn) {
     const input    = document.querySelector('#view #search-input')    ?? document.getElementById('search-input')
     const clearBtn = document.querySelector('#view #clear-search-btn') ?? document.getElementById('clear-search-btn')
