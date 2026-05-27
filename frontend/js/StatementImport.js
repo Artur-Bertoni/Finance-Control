@@ -1,6 +1,6 @@
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
-import { doRequest, formatDate, navigate, showConfirmAsync, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, setBreadcrumb, showConfirmAsync, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { setupRequiredFieldValidation } from './utils/FieldValidation.js'
 import { Icons } from './icons/IconLibrary.js'
@@ -22,6 +22,10 @@ export function init() {
     loadCategories()
     loadLocales()
     setupRequiredFieldValidation(['account-input'])
+
+    document.getElementById('review-tbody').addEventListener('mousedown', () => {
+        document.querySelectorAll('#review-tbody .cs-auto-filled').forEach(el => el.classList.remove('cs-auto-filled'))
+    })
 
     const dropZone = document.getElementById('file-drop-zone')
     const fileInput = document.getElementById('file-input')
@@ -56,7 +60,6 @@ export function init() {
     document.getElementById('account-add-btn').addEventListener('click', () => {
         const fiOptions = (doRequest('/api/financial-institutions', 'GET') ?? [])
             .map(fi => ({ value: fi.id, label: fi.name }))
-
         showQuickAdd({
             title:  I18n.t('newAccount'),
             apiUrl: '/api/accounts',
@@ -134,13 +137,16 @@ export function init() {
 
 function loadCategories() {
     const data = doRequest('/api/categories', 'GET')
-    allCategories = (data ?? []).map(c => ({ id: c.id, name: c.name }))
+    allCategories = (data ?? [])
+        .map(c => ({ id: c.id, name: c.name, iconKey: c.iconKey ?? null }))
 }
 
 function loadLocales() {
     const data = doRequest('/api/transaction-locales', 'GET')
-    allLocales = (data ?? []).map(l => ({ id: l.id, name: l.name }))
+    allLocales = (data ?? [])
+        .map(l => ({ id: l.id, name: l.name, iconKey: l.iconKey ?? null }))
 }
+
 
 function setFileSelected(dropZone, dropText, name) {
     dropZone.classList.add('has-file')
@@ -187,6 +193,7 @@ function handleAnalyze() {
             }
             buildReviewTable(rows)
             saveReviewState()
+            activateReviewMode()
             document.getElementById('upload-section').style.display = 'none'
             document.getElementById('review-section').style.display = ''
             document.body.classList.add('review-mode')
@@ -261,7 +268,7 @@ function buildReviewTable(rows) {
 
         const tdLocale = document.createElement('td')
         tdLocale.style.padding = '6px'
-        tdLocale.appendChild(buildLocaleCell(index))
+        tdLocale.appendChild(buildLocaleCell(row, index))
 
         tr.appendChild(tdCheck)
         tr.appendChild(tdDate)
@@ -305,6 +312,7 @@ function buildCategoryCell(row, index) {
         const opt = document.createElement('option')
         opt.value = cat.id
         opt.textContent = cat.name
+        if (cat.iconKey) opt.dataset.iconKey = cat.iconKey
         if (row.suggestedCategoryId && String(row.suggestedCategoryId) === String(cat.id)) {
             opt.selected = true
         }
@@ -312,6 +320,7 @@ function buildCategoryCell(row, index) {
     })
 
     select.addEventListener('change', async () => {
+        select.parentElement?.classList.remove('cs-auto-filled')
         const categoryId = select.value
         if (categoryId) select.classList.remove('field-error')
         if (categoryId) {
@@ -328,7 +337,10 @@ function buildCategoryCell(row, index) {
                 if (confirmed) {
                     siblings.forEach(otherTr => {
                         const otherSel = otherTr.querySelector('.row-category-select')
-                        if (otherSel) otherSel.value = categoryId
+                        if (otherSel) {
+                            otherSel.value = categoryId
+                            otherSel.parentElement?.classList.add('cs-auto-filled')
+                        }
                     })
                 }
             }
@@ -351,15 +363,16 @@ function buildCategoryCell(row, index) {
             ],
             buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: cat => {
-                allCategories.push({ id: cat.id, name: cat.name })
+                allCategories.push({ id: cat.id, name: cat.name, iconKey: cat.iconKey ?? null })
                 document.querySelectorAll('.row-category-select').forEach(sel => {
                     const opt = document.createElement('option')
                     opt.value = cat.id
                     opt.textContent = cat.name
+                    if (cat.iconKey) opt.dataset.iconKey = cat.iconKey
                     sel.appendChild(opt)
                 })
                 select.value = cat.id
-                saveReviewState()
+                select.dispatchEvent(new Event('change', { bubbles: true }))
             }
         })
     })
@@ -369,7 +382,7 @@ function buildCategoryCell(row, index) {
     return wrapper
 }
 
-function buildLocaleCell(index) {
+function buildLocaleCell(row, index) {
     const wrapper = document.createElement('div')
     wrapper.style.cssText = 'display:flex;gap:6px;align-items:center'
 
@@ -388,10 +401,37 @@ function buildLocaleCell(index) {
         const opt = document.createElement('option')
         opt.value = loc.id
         opt.textContent = loc.name
+        if (loc.iconKey) opt.dataset.iconKey = loc.iconKey
         select.appendChild(opt)
     })
 
-    select.addEventListener('change', saveReviewState)
+    select.addEventListener('change', async () => {
+        select.parentElement?.classList.remove('cs-auto-filled')
+        const localeId = select.value
+        if (localeId) {
+            const siblings = [...document.querySelectorAll('#review-tbody tr')].filter(otherTr => {
+                const otherIndex = Number(otherTr.dataset.index)
+                return otherIndex !== index && parsedRows[otherIndex]?.description === row.description
+            })
+            if (siblings.length > 0) {
+                const confirmed = await showConfirmAsync(I18n.t('propagateLocaleConfirm'), null, {
+                    cancelLabel:  I18n.t('no'),
+                    confirmLabel: I18n.t('yes'),
+                    confirmClass: 'btn-primary'
+                })
+                if (confirmed) {
+                    siblings.forEach(otherTr => {
+                        const otherSel = otherTr.querySelector('.row-locale-select')
+                        if (otherSel) {
+                            otherSel.value = localeId
+                            otherSel.parentElement?.classList.add('cs-auto-filled')
+                        }
+                    })
+                }
+            }
+        }
+        saveReviewState()
+    })
 
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
@@ -408,15 +448,16 @@ function buildLocaleCell(index) {
             ],
             buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: loc => {
-                allLocales.push({ id: loc.id, name: loc.name })
+                allLocales.push({ id: loc.id, name: loc.name, iconKey: loc.iconKey ?? null })
                 document.querySelectorAll('.row-locale-select').forEach(sel => {
                     const opt = document.createElement('option')
                     opt.value = loc.id
                     opt.textContent = loc.name
+                    if (loc.iconKey) opt.dataset.iconKey = loc.iconKey
                     sel.appendChild(opt)
                 })
                 select.value = loc.id
-                saveReviewState()
+                select.dispatchEvent(new Event('change', { bubbles: true }))
             }
         })
     })
@@ -583,6 +624,21 @@ function restoreSelections(selections) {
     syncSelectAll()
 }
 
+function activateReviewMode() {
+    setBreadcrumb([
+        { i18nKey: 'statementImport', url: '/pages/StatementImport.html' },
+        { i18nKey: 'importReview' }
+    ])
+    globalThis.__customBackHandler = () => {
+        clearReviewState()
+        document.body.classList.remove('review-mode')
+        document.getElementById('upload-section').style.display = ''
+        document.getElementById('review-section').style.display = 'none'
+        setBreadcrumb([])
+        globalThis.__customBackHandler = null
+    }
+}
+
 function restoreReviewState() {
     const saved = sessionStorage.getItem(REVIEW_STATE_KEY)
     if (!saved) return
@@ -597,6 +653,7 @@ function restoreReviewState() {
         document.getElementById('upload-section').style.display = 'none'
         document.getElementById('review-section').style.display = ''
         document.body.classList.add('review-mode')
+        activateReviewMode()
         SidebarManager.initTranslations()
     } catch {
         clearReviewState()

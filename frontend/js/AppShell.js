@@ -46,13 +46,22 @@ if (globalThis.__currentUser && !globalThis.__currentUser.emailVerified) {
 MascotManager.initFloating()
 FinnySvg.autoInit()
 
-document.getElementById('back-btn')?.addEventListener('click', () => history.back())
+document.getElementById('back-btn')?.addEventListener('click', () => {
+    if (globalThis.__customBackHandler) {
+        globalThis.__customBackHandler()
+        return
+    }
+    const crumbs = globalThis.__currentBreadcrumbs
+    if (crumbs && crumbs.length >= 2) {
+        const parent = crumbs[crumbs.length - 2]
+        if (parent.url) { navigate(parent.url); return }
+    }
+    navigate('/pages/HomePage.html')
+})
 
-function updateBackButton(path) {
+function updateBackButton() {
     const btn = document.getElementById('back-btn')
-    if (!btn) return
-    const isHome = path === '/pages/HomePage.html' || path === '/'
-    btn.style.display = isHome ? 'none' : ''
+    if (btn) btn.style.display = 'none'
 }
 
 async function confirmLeave(fromPopstate) {
@@ -124,7 +133,8 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
         else                 history.pushState({ url: full }, '', full)
     }
     currentSpaUrl = full
-    updateBackButton(path)
+    globalThis.__customBackHandler = null
+    updateBackButton()
 
     SidebarManager.onNavigate()
     MascotManager.refreshBadge()

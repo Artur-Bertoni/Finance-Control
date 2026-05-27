@@ -242,7 +242,10 @@ let _breadcrumbCrumbs = []
 
 export function setBreadcrumb(crumbs) {
     _breadcrumbCrumbs = crumbs
+    globalThis.__currentBreadcrumbs = crumbs
     _renderBreadcrumb()
+    const btn = document.getElementById('back-btn')
+    if (btn) btn.style.display = crumbs.length >= 2 ? '' : 'none'
 }
 
 export function rerenderBreadcrumb() {
@@ -360,10 +363,10 @@ export function addOptionToSelect(selectIds, value, label) {
 }
 
 export function populateSelect(elementId, apiUrl, iconKeyField = null) {
-    const items = doRequest(apiUrl, 'GET') ?? []
-    const list  = document.getElementById(elementId)
+    const raw  = doRequest(apiUrl, 'GET') ?? []
+    const list = document.getElementById(elementId)
     if (!list) return
-    for (const item of items) {
+    for (const item of raw) {
         const opt = document.createElement('option')
         opt.value     = item.id
         opt.innerText = item.name
