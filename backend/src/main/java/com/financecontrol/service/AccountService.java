@@ -4,6 +4,7 @@ import com.financecontrol.dto.request.AccountRequest;
 import com.financecontrol.dto.response.AccountResponse;
 import com.financecontrol.entity.Account;
 import com.financecontrol.entity.FinancialInstitution;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.AccountRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
@@ -33,7 +34,7 @@ public class AccountService {
     @Transactional(readOnly = true)
     @Cacheable(value = "accounts", key = "#userId")
     public List<AccountResponse> findAllByUser(Long userId) {
-        return accountRepository.findByUserIdOrderByIdDesc(userId).stream().map(AccountResponse::from).toList();
+        return accountRepository.findByUserIdOrderByNameAsc(userId).stream().map(AccountResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +42,7 @@ public class AccountService {
         return AccountResponse.from(getOrThrow(id));
     }
 
-    public Double totalValue(Long userId, 
+    public Double totalValue(Long userId,
                              Long accountId) {
         return accountRepository.sumBalance(userId, accountId);
     }
@@ -49,7 +50,11 @@ public class AccountService {
     @Transactional
     @CacheEvict(value = "accounts", key = "#userId")
     public AccountResponse create(Long userId,
-                                  AccountRequest req) {
+                                  AccountRequest req,
+                                  boolean force) {
+        if (!force && accountRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
+            throw new BusinessException("error.duplicate.name");
+
         FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(), LocalDateTime.now());
 

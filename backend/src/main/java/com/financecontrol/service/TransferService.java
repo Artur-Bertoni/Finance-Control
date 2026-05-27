@@ -35,11 +35,11 @@ public class TransferService {
 
         TransactionResponse originTx = transactionService.create(userId, new TransactionRequest(
                 req.originAccountId(), req.categoryId(), req.transactionLocaleId(),
-                req.value(), req.date(), TransactionType.DEBIT, null, req.obs(), null));
+                req.value(), req.date(), TransactionType.DEBIT, null, req.obs(), null), true);
 
         TransactionResponse destinationTx = transactionService.create(userId, new TransactionRequest(
                 req.destinationAccountId(), req.categoryId(), req.transactionLocaleId(),
-                req.value(), req.date(), TransactionType.CREDIT, null, req.obs(), null));
+                req.value(), req.date(), TransactionType.CREDIT, null, req.obs(), null), true);
 
         Long originId = originTx.id();
         Long destinationId = destinationTx.id();

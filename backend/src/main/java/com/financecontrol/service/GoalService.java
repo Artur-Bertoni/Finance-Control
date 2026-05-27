@@ -8,6 +8,7 @@ import com.financecontrol.entity.TransactionLocale;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import com.financecontrol.enums.TransactionType;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.CategoryRepository;
 import com.financecontrol.repository.GoalRepository;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.financecontrol.service.HistoryService.*;
@@ -59,7 +61,11 @@ public class GoalService {
 
     @Transactional
     public GoalResponse create(Long userId,
-                                        GoalRequest req) {
+                               GoalRequest req,
+                               boolean force) {
+        if (!force && isDuplicateGoal(userId, req))
+            throw new BusinessException("error.duplicate.goal");
+
         Goal goal = buildEntity(userId, req);
 
         goal.setCreatedAt(LocalDateTime.now());
@@ -67,6 +73,29 @@ public class GoalService {
         historyService.recordCreation(ENTITY_GOAL, goal.getId(), userId);
 
         return GoalResponse.from(goal, 0.0);
+    }
+
+    private boolean isDuplicateGoal(Long userId, GoalRequest req) {
+        List<Goal> candidates = goalRepository.findPotentialDuplicates(
+                userId, req.name(), req.type(), req.targetAmount(), req.startDate(), req.endDate());
+        if (candidates.isEmpty()) return false;
+
+        List<Long> reqCatIds = req.categoryIds() != null ? req.categoryIds().stream().sorted().toList() : List.of();
+        List<Long> reqLocIds = req.localeIds()   != null ? req.localeIds().stream().sorted().toList()   : List.of();
+
+        return candidates.stream().anyMatch(g -> {
+            List<Long> gCatIds = g.getCategories().stream().map(Category::getId).sorted().toList();
+            List<Long> gLocIds = g.getLocales().stream().map(TransactionLocale::getId).sorted().toList();
+            return Objects.equals(g.getDescription(),      req.description())
+                && Objects.equals(g.getNotifyAt50(),       req.notifyAt50()       != null ? req.notifyAt50()       : true)
+                && Objects.equals(g.getNotifyAt75(),       req.notifyAt75()       != null ? req.notifyAt75()       : true)
+                && Objects.equals(g.getNotifyAt90(),       req.notifyAt90()       != null ? req.notifyAt90()       : true)
+                && Objects.equals(g.getNotifyOnComplete(), req.notifyOnComplete() != null ? req.notifyOnComplete() : true)
+                && Objects.equals(g.getNotifyOnDeadline(), req.notifyOnDeadline() != null ? req.notifyOnDeadline() : true)
+                && Objects.equals(g.getNotifyOnExceed(),   req.notifyOnExceed()   != null ? req.notifyOnExceed()   : true)
+                && gCatIds.equals(reqCatIds)
+                && gLocIds.equals(reqLocIds);
+        });
     }
 
     @Transactional

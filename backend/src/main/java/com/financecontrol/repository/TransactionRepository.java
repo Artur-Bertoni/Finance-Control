@@ -85,6 +85,24 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                             @Param("categoryIds") List<Long> categoryIds,
                                             @Param("localeIds") List<Long> localeIds);
 
+    @Query("SELECT COUNT(t) > 0 FROM Transaction t WHERE t.userId = :userId " +
+           "AND t.account.id = :accountId " +
+           "AND ((:categoryId IS NULL AND t.category IS NULL) OR (t.category IS NOT NULL AND t.category.id = :categoryId)) " +
+           "AND ((:localeId IS NULL AND t.transactionLocale IS NULL) OR (t.transactionLocale IS NOT NULL AND t.transactionLocale.id = :localeId)) " +
+           "AND t.value = :value AND t.date = :date AND t.type = :type " +
+           "AND ((:installments IS NULL AND t.installmentsNumber IS NULL) OR t.installmentsNumber = :installments) " +
+           "AND ((:obs IS NULL AND t.obs IS NULL) OR t.obs = :obs) " +
+           "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    boolean existsDuplicate(@Param("userId") Long userId,
+                            @Param("accountId") Long accountId,
+                            @Param("categoryId") Long categoryId,
+                            @Param("localeId") Long localeId,
+                            @Param("value") Double value,
+                            @Param("date") LocalDate date,
+                            @Param("type") TransactionType type,
+                            @Param("installments") Integer installments,
+                            @Param("obs") String obs);
+
     long countByUserId(Long userId);
 
     @Query("SELECT COUNT(DISTINCT t.date) FROM Transaction t WHERE t.userId = :userId AND t.date >= :since")

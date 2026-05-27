@@ -1,4 +1,4 @@
-import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showToast } from '../../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
@@ -51,7 +51,7 @@ export function init() {
         navigate(localeId ? `/pages/views/TransactionLocaleView.html?id=${localeId}` : '/pages/lists/TransactionLocaleList.html')
     )
 
-    document.getElementById('save-btn').addEventListener('click', function () {
+    document.getElementById('save-btn').addEventListener('click', async function () {
         const fieldLabels = { 'name-input': I18n.t('localeName') }
         const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
 
@@ -66,23 +66,45 @@ export function init() {
             iconKey: IconPicker.getValue() || null
         }
 
+        const url    = localeId ? `/api/transaction-locales/${localeId}` : '/api/transaction-locales'
+        const method = localeId ? 'PUT' : 'POST'
+
+        let result = null
         $.ajax({
-            url:         localeId ? `/api/transaction-locales/${localeId}` : '/api/transaction-locales',
-            type:        localeId ? 'PUT' : 'POST',
-            async:       false,
-            contentType: 'application/json',
-            data:        JSON.stringify(body),
-            success:     function (data) {
-                clearDirtyGuard()
-                const id = localeId ?? data?.id
-                if (localeId) {
-                    navigate(`/pages/views/TransactionLocaleView.html?id=${id}`)
-                } else {
-                    navigateWithToast('/pages/lists/TransactionLocaleList.html', I18n.t('localeCreatedSuccess'), 'success', id ? `/pages/views/TransactionLocaleView.html?id=${id}` : null)
-                }
-            },
-            error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error') }
+            url, type: method, async: false, contentType: 'application/json',
+            data: JSON.stringify(body),
+            success: data => { result = { ok: true, data } },
+            error:   xhr  => { result = { ok: false, xhr } }
         })
+
+        if (!result.ok) {
+            if (!localeId && result.xhr.responseJSON?.errorCode === 'error.duplicate.name') {
+                const proceed = await showConfirmAsync(
+                    I18n.t('duplicateItemConfirm', { name: body.name }),
+                    null,
+                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                )
+                if (!proceed) return
+                $.ajax({
+                    url: url + '?force=true', type: method, async: false, contentType: 'application/json',
+                    data: JSON.stringify(body),
+                    success: data => { result = { ok: true, data } },
+                    error:   xhr  => { result = { ok: false, xhr } }
+                })
+            }
+            if (!result.ok) {
+                showToast(result.xhr.responseJSON?.message ?? I18n.t('errorSavingLocale'), 'error')
+                return
+            }
+        }
+
+        clearDirtyGuard()
+        const id = localeId ?? result.data?.id
+        if (localeId) {
+            navigate(`/pages/views/TransactionLocaleView.html?id=${id}`)
+        } else {
+            navigateWithToast('/pages/lists/TransactionLocaleList.html', I18n.t('localeCreatedSuccess'), 'success', id ? `/pages/views/TransactionLocaleView.html?id=${id}` : null)
+        }
     })
 
     setupDirtyGuard()

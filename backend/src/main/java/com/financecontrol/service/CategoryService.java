@@ -4,6 +4,7 @@ import com.financecontrol.dto.request.CategoryRequest;
 import com.financecontrol.dto.response.CategoryResponse;
 import com.financecontrol.entity.Category;
 import com.financecontrol.entity.CategoryAlias;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.CategoryAliasRepository;
 import com.financecontrol.repository.CategoryRepository;
@@ -52,7 +53,11 @@ public class CategoryService {
     @Transactional
     @CacheEvict(value = "categories", key = "#userId")
     public CategoryResponse create(Long userId,
-                                   CategoryRequest req) {
+                                   CategoryRequest req,
+                                   boolean force) {
+        if (!force && categoryRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
+            throw new BusinessException("error.duplicate.name");
+
         Category c = new Category();
 
         c.setUserId(userId);

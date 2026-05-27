@@ -37,9 +37,10 @@ public class AccountController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponse> create(@RequestBody AccountRequest req, 
+    public ResponseEntity<AccountResponse> create(@RequestBody AccountRequest req,
+                                                  @RequestParam(defaultValue = "false") boolean force,
                                                   HttpSession session) {
-        return ResponseEntity.ok(accountService.create(requireUserId(session), req));
+        return ResponseEntity.ok(accountService.create(requireUserId(session), req, force));
     }
 
     @PutMapping("/{id}")

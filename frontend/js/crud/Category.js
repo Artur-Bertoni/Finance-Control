@@ -1,4 +1,4 @@
-import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { Category } from '../class/CategoryClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
@@ -79,7 +79,7 @@ export function init() {
         navigate(categoryId ? `/pages/views/CategoryView.html?id=${categoryId}` : '/pages/lists/CategoryList.html')
     )
 
-    document.getElementById('save-btn').addEventListener('click', function () {
+    document.getElementById('save-btn').addEventListener('click', async function () {
         const fieldLabels = { 'name-input': I18n.t('categoryName') }
         const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
 
@@ -92,37 +92,60 @@ export function init() {
         const aliasesChanged = categoryId && originalAliases !== null &&
             JSON.stringify(currentAliases) !== JSON.stringify(originalAliases)
 
-        function doSave() {
-            const body = {
-                name:        nameInput.value,
-                description: document.getElementById('description-input').value || null,
-                iconKey:     IconPicker.getValue(),
-                aliases:     currentAliases.length > 0 ? currentAliases : [nameInput.value]
-            }
-
-            $.ajax({
-                url:         categoryId ? `/api/categories/${categoryId}` : '/api/categories',
-                type:        categoryId ? 'PUT' : 'POST',
-                async:       false,
-                contentType: 'application/json',
-                data:        JSON.stringify(body),
-                success:     function (data) {
-                    clearDirtyGuard()
-                    const id = categoryId ?? data?.id
-                    if (categoryId) {
-                        navigate(`/pages/views/CategoryView.html?id=${id}`)
-                    } else {
-                        navigateWithToast('/pages/lists/CategoryList.html', I18n.t('categoryCreatedSuccess'), 'success', id ? `/pages/views/CategoryView.html?id=${id}` : null)
-                    }
-                },
-                error:       function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error') }
-            })
+        if (aliasesChanged) {
+            const proceed = await showConfirmAsync(
+                I18n.t('aliasChangeWarning'),
+                I18n.t('confirmAction'),
+                { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('confirm'), confirmClass: 'btn-danger' }
+            )
+            if (!proceed) return
         }
 
-        if (aliasesChanged) {
-            showConfirm(I18n.t('aliasChangeWarning'), doSave, I18n.t('confirmAction'))
+        const body = {
+            name:        nameInput.value,
+            description: document.getElementById('description-input').value || null,
+            iconKey:     IconPicker.getValue(),
+            aliases:     currentAliases.length > 0 ? currentAliases : [nameInput.value]
+        }
+
+        const url  = categoryId ? `/api/categories/${categoryId}` : '/api/categories'
+        const method = categoryId ? 'PUT' : 'POST'
+
+        let result = null
+        $.ajax({
+            url, type: method, async: false, contentType: 'application/json',
+            data: JSON.stringify(body),
+            success: data => { result = { ok: true, data } },
+            error:   xhr  => { result = { ok: false, xhr } }
+        })
+
+        if (!result.ok) {
+            if (!categoryId && result.xhr.responseJSON?.errorCode === 'error.duplicate.name') {
+                const proceed = await showConfirmAsync(
+                    I18n.t('duplicateItemConfirm', { name: body.name }),
+                    null,
+                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                )
+                if (!proceed) return
+                $.ajax({
+                    url: url + '?force=true', type: method, async: false, contentType: 'application/json',
+                    data: JSON.stringify(body),
+                    success: data => { result = { ok: true, data } },
+                    error:   xhr  => { result = { ok: false, xhr } }
+                })
+            }
+            if (!result.ok) {
+                showToast(result.xhr.responseJSON?.message ?? I18n.t('errorSavingCategory'), 'error')
+                return
+            }
+        }
+
+        clearDirtyGuard()
+        const id = categoryId ?? result.data?.id
+        if (categoryId) {
+            navigate(`/pages/views/CategoryView.html?id=${id}`)
         } else {
-            doSave()
+            navigateWithToast('/pages/lists/CategoryList.html', I18n.t('categoryCreatedSuccess'), 'success', id ? `/pages/views/CategoryView.html?id=${id}` : null)
         }
     })
 

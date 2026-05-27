@@ -3,6 +3,7 @@ package com.financecontrol.service;
 import com.financecontrol.dto.request.FinancialInstitutionRequest;
 import com.financecontrol.dto.response.FinancialInstitutionResponse;
 import com.financecontrol.entity.FinancialInstitution;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class FinancialInstitutionService {
 
     @Cacheable(value = "financialInstitutions", key = "#userId")
     public List<FinancialInstitutionResponse> findAllByUser(Long userId) {
-        return financialInstitutionRepository.findByUserIdOrderByIdDesc(userId).stream().map(FinancialInstitutionResponse::from).toList();
+        return financialInstitutionRepository.findByUserIdOrderByNameAsc(userId).stream().map(FinancialInstitutionResponse::from).toList();
     }
 
     public FinancialInstitutionResponse findById(@NonNull Long id) {
@@ -39,7 +40,11 @@ public class FinancialInstitutionService {
     @Transactional
     @CacheEvict(value = "financialInstitutions", key = "#userId")
     public FinancialInstitutionResponse create(Long userId,
-                                               FinancialInstitutionRequest req) {
+                                               FinancialInstitutionRequest req,
+                                               boolean force) {
+        if (!force && financialInstitutionRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
+            throw new BusinessException("error.duplicate.name");
+
         FinancialInstitution fi = new FinancialInstitution(null, userId, req.name(), req.address(), req.contact(), req.iconKey(), LocalDateTime.now());
         FinancialInstitutionResponse result = FinancialInstitutionResponse.from(financialInstitutionRepository.save(fi));
 

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.financecontrol.service.HistoryService.*;
@@ -91,7 +92,7 @@ public class UserService {
         if (evt.isExpired())
             throw new BusinessException("error.auth.expiredVerificationToken");
 
-        User user = userRepository.findById(evt.getUserId())
+        User user = userRepository.findById(Objects.requireNonNull(evt.getUserId()))
                 .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
 
         user.setEmailVerified(true);

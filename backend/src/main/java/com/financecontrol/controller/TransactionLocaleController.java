@@ -31,8 +31,9 @@ public class TransactionLocaleController extends BaseController {
 
     @PostMapping
     public ResponseEntity<TransactionLocaleResponse> create(@RequestBody TransactionLocaleRequest req,
+                                                            @RequestParam(defaultValue = "false") boolean force,
                                                             HttpSession session) {
-        return ResponseEntity.ok(transactionLocaleService.create(requireUserId(session), req));
+        return ResponseEntity.ok(transactionLocaleService.create(requireUserId(session), req, force));
     }
 
     @PutMapping("/{id}")

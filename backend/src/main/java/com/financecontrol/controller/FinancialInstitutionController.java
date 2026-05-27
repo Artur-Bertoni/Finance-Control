@@ -31,8 +31,9 @@ public class FinancialInstitutionController extends BaseController {
 
     @PostMapping
     public ResponseEntity<FinancialInstitutionResponse> create(@RequestBody FinancialInstitutionRequest req,
+                                                               @RequestParam(defaultValue = "false") boolean force,
                                                                HttpSession session) {
-        return ResponseEntity.ok(financialInstitutionService.create(requireUserId(session), req));
+        return ResponseEntity.ok(financialInstitutionService.create(requireUserId(session), req, force));
     }
 
     @PutMapping("/{id}")

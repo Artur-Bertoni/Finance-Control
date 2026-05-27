@@ -1,6 +1,6 @@
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
-import { showToast } from '../../utils/FrontendFunctions.js'
+import { showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { CATEGORY_ICONS } from '../components/IconPicker.js'
 
 /**
@@ -108,6 +108,13 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
 
         function renderGrid(icons) {
             grid.innerHTML = ''
+            if (!icons.length) {
+                const empty = document.createElement('span')
+                empty.className = 'qa-icon-empty'
+                empty.textContent = I18n.t('noResults')
+                grid.appendChild(empty)
+                return
+            }
             for (const ic of icons) {
                 const btn = document.createElement('button')
                 btn.type = 'button'
@@ -158,7 +165,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
         if (el) el.addEventListener('change', () => el.classList.remove('field-error'))
     })
 
-    overlay.querySelector('#qa-save').addEventListener('click', () => {
+    overlay.querySelector('#qa-save').addEventListener('click', async () => {
         const values = {}
         fields.forEach(f => { values[f.id] = overlay.querySelector('#qaf-' + f.id)?.value ?? '' })
 
@@ -171,20 +178,37 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             return
         }
 
+        let result = null
         $.ajax({
-            url:         apiUrl,
-            type:        'POST',
-            async:       false,
-            contentType: 'application/json',
-            data:        JSON.stringify(buildBody(values)),
-            success: function (item) {
-                overlay.remove()
-                onSuccess(item)
-                showToast(I18n.t('createdSuccess'), 'success')
-            },
-            error: function (xhr) {
-                showToast(xhr.responseJSON?.message ?? I18n.t('errorCreating'), 'error')
-            }
+            url: apiUrl, type: 'POST', async: false, contentType: 'application/json',
+            data: JSON.stringify(buildBody(values)),
+            success: item => { result = { ok: true, item } },
+            error:   xhr  => { result = { ok: false, xhr } }
         })
+
+        if (!result.ok) {
+            if (result.xhr.responseJSON?.errorCode === 'error.duplicate.name') {
+                const proceed = await showConfirmAsync(
+                    I18n.t('duplicateItemConfirm', { name: values.name }),
+                    null,
+                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                )
+                if (!proceed) return
+                $.ajax({
+                    url: apiUrl + '?force=true', type: 'POST', async: false, contentType: 'application/json',
+                    data: JSON.stringify(buildBody(values)),
+                    success: item => { result = { ok: true, item } },
+                    error:   xhr  => { result = { ok: false, xhr } }
+                })
+            }
+            if (!result.ok) {
+                showToast(result.xhr.responseJSON?.message ?? I18n.t('errorCreating'), 'error')
+                return
+            }
+        }
+
+        overlay.remove()
+        onSuccess(result.item)
+        showToast(I18n.t('createdSuccess'), 'success')
     })
 }

@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface TransactionLocaleRepository extends JpaRepository<TransactionLocale, Long> {
-    List<TransactionLocale> findByUserIdOrderByIdDesc(Long userId);
+    List<TransactionLocale> findByUserIdOrderByNameAsc(Long userId);
+
+    boolean existsByUserIdAndNameIgnoreCase(Long userId, String name);
 }

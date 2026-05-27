@@ -31,8 +31,9 @@ public class FinancialGoalController extends BaseController {
 
     @PostMapping
     public ResponseEntity<GoalResponse> create(@RequestBody GoalRequest req,
-                                                        HttpSession session) {
-        return ResponseEntity.ok(goalService.create(requireUserId(session), req));
+                                               @RequestParam(defaultValue = "false") boolean force,
+                                               HttpSession session) {
+        return ResponseEntity.ok(goalService.create(requireUserId(session), req, force));
     }
 
     @PutMapping("/{id}")

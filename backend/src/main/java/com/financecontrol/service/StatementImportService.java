@@ -77,7 +77,7 @@ public class StatementImportService {
             LocalDate date = LocalDate.parse(row.date());
             transactionService.create(userId, new TransactionRequest(
                 accountId, row.categoryId(), row.localeId(), row.amount(), date, row.type(), 0, null, null
-            ));
+            ), true);
             imported++;
             if (minDate == null || date.isBefore(minDate)) minDate = date;
             if (maxDate == null || date.isAfter(maxDate))  maxDate = date;

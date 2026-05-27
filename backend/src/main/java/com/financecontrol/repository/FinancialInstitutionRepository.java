@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface FinancialInstitutionRepository extends JpaRepository<FinancialInstitution, Long> {
-    List<FinancialInstitution> findByUserIdOrderByIdDesc(Long userId);
+    List<FinancialInstitution> findByUserIdOrderByNameAsc(Long userId);
+
+    boolean existsByUserIdAndNameIgnoreCase(Long userId, String name);
 }

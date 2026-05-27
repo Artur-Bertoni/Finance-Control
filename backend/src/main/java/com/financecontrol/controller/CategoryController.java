@@ -31,8 +31,9 @@ public class CategoryController extends BaseController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> create(@RequestBody CategoryRequest req,
+                                                   @RequestParam(defaultValue = "false") boolean force,
                                                    HttpSession session) {
-        return ResponseEntity.ok(categoryService.create(requireUserId(session), req));
+        return ResponseEntity.ok(categoryService.create(requireUserId(session), req, force));
     }
 
     @PutMapping("/{id}")

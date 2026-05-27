@@ -3,6 +3,7 @@ package com.financecontrol.service;
 import com.financecontrol.dto.request.TransactionLocaleRequest;
 import com.financecontrol.dto.response.TransactionLocaleResponse;
 import com.financecontrol.entity.TransactionLocale;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.TransactionLocaleRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class TransactionLocaleService {
 
     @Cacheable(value = "transactionLocales", key = "#userId")
     public List<TransactionLocaleResponse> findAllByUser(Long userId) {
-        return transactionLocaleRepository.findByUserIdOrderByIdDesc(userId).stream()
+        return transactionLocaleRepository.findByUserIdOrderByNameAsc(userId).stream()
                 .map(TransactionLocaleResponse::from).toList();
     }
 
@@ -32,7 +33,10 @@ public class TransactionLocaleService {
 
     @Transactional
     @CacheEvict(value = "transactionLocales", key = "#userId")
-    public TransactionLocaleResponse create(Long userId, TransactionLocaleRequest req) {
+    public TransactionLocaleResponse create(Long userId, TransactionLocaleRequest req, boolean force) {
+        if (!force && transactionLocaleRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
+            throw new BusinessException("error.duplicate.name");
+
         TransactionLocale tl = new TransactionLocale(null, userId, req.name(), req.address(), req.iconKey());
         return TransactionLocaleResponse.from(transactionLocaleRepository.save(tl));
     }

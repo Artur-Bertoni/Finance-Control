@@ -41,9 +41,10 @@ public class TransactionController extends BaseController {
 
     @PostMapping
     public ResponseEntity<TransactionCreateResponse> create(@RequestBody TransactionRequest req,
+                                                            @RequestParam(defaultValue = "false") boolean force,
                                                             HttpSession session) {
         Long userId = requireUserId(session);
-        TransactionResponse tx = transactionService.create(userId, req);
+        TransactionResponse tx = transactionService.create(userId, req, force);
         List<AppNotificationResponse> notifications = notificationService.checkGoalImpact(userId, tx.id());
 
         return ResponseEntity.ok(new TransactionCreateResponse(tx, notifications));

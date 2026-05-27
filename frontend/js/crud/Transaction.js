@@ -1,4 +1,4 @@
-import { addDeleteIcon, addOptionToSelect, clearDirtyGuard, doRequest, navigate, navigateWithToast, selectOptionByText, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
+import { addDeleteIcon, addOptionToSelect, clearDirtyGuard, doRequest, navigate, navigateWithToast, selectOptionByText, setBreadcrumb, setupDirtyGuard, showConfirmAsync, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
 import { Account } from '../class/AccountClass.js'
 import { Category } from '../class/CategoryClass.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
@@ -30,7 +30,7 @@ export function init() {
         navigate(transactionId ? `/pages/views/TransactionView.html?id=${transactionId}` : '/pages/HomePage.html')
     )
 
-    document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId))
+    document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId, false))
 
     setupQuickAddButtons()
     setupDirtyGuard()
@@ -87,7 +87,7 @@ function loadEditMode(transactionId) {
     })
 }
 
-function handleSave(transactionId) {
+async function handleSave(transactionId, force = false) {
     const fieldLabels = {
         'account-input':  I18n.t('transactionAccount'),
         'category-input': I18n.t('categories'),
@@ -119,27 +119,40 @@ function handleSave(transactionId) {
         transferPartnerId:   Number(document.getElementById('transfer-partner-id').value) || null
     }
 
+    const url    = transactionId ? `/api/transactions/${transactionId}` : `/api/transactions${force ? '?force=true' : ''}`
+    const method = transactionId ? 'PUT' : 'POST'
+
+    let result = null
     $.ajax({
-        url:         transactionId ? `/api/transactions/${transactionId}` : '/api/transactions',
-        type:        transactionId ? 'PUT' : 'POST',
-        async:       false,
-        contentType: 'application/json',
-        data:        JSON.stringify(body),
-        success: (data) => {
-            clearDirtyGuard()
-            const notifications = (!transactionId && data?.notifications?.length) ? data.notifications : []
-            if (notifications.length > 0) {
-                sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
-            }
-            const id = transactionId ?? data?.transaction?.id ?? data?.id
-            if (transactionId) {
-                navigate(`/pages/views/TransactionView.html?id=${id}`)
-            } else {
-                navigateWithToast('/pages/HomePage.html', I18n.t('transactionCreatedSuccess'), 'success', id ? `/pages/views/TransactionView.html?id=${id}` : null)
-            }
-        },
-        error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error')
+        url, type: method, async: false, contentType: 'application/json',
+        data: JSON.stringify(body),
+        success: data => { result = { ok: true, data } },
+        error:   xhr  => { result = { ok: false, xhr } }
     })
+
+    if (!result.ok) {
+        if (!transactionId && result.xhr.responseJSON?.errorCode === 'error.duplicate.transaction') {
+            const proceed = await showConfirmAsync(
+                I18n.t('duplicateTransactionConfirm'),
+                null,
+                { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+            )
+            if (proceed) handleSave(transactionId, true)
+            return
+        }
+        showToast(result.xhr.responseJSON?.message ?? I18n.t('errorSavingTransaction'), 'error')
+        return
+    }
+
+    clearDirtyGuard()
+    const notifications = (!transactionId && result.data?.notifications?.length) ? result.data.notifications : []
+    if (notifications.length > 0) sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
+    const id = transactionId ?? result.data?.transaction?.id ?? result.data?.id
+    if (transactionId) {
+        navigate(`/pages/views/TransactionView.html?id=${id}`)
+    } else {
+        navigateWithToast('/pages/HomePage.html', I18n.t('transactionCreatedSuccess'), 'success', id ? `/pages/views/TransactionView.html?id=${id}` : null)
+    }
 }
 
 function setupQuickAddButtons() {

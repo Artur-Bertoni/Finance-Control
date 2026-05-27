@@ -3055,11 +3055,12 @@ body.page-charts .stat-card-value { font-size: 18px; }
 .icon-picker-item:hover { background: var(--primary-50); border-color: var(--primary-100); color: var(--primary); }
 
 .icon-picker-empty {
-  display: block;
+  grid-column: 1 / -1;
   padding: 12px;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
+  font-style: italic;
 }
 
 /* ===== QUICK-ADD INLINE ICON PICKER ===== */
@@ -3157,6 +3158,20 @@ body.page-charts .stat-card-value { font-size: 18px; }
   transition: background var(--t), border-color var(--t), color var(--t);
 }
 .qa-icon-item:hover { background: var(--primary-50); border-color: var(--primary-100); color: var(--primary); }
+
+.qa-icon-empty {
+  grid-column: 1 / -1;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.cs-auto-filled .cs-trigger {
+  border-color: var(--primary);
+  background: var(--primary-50);
+}
 
 /* ===== ACHIEVEMENTS ===== */
 .achievements-grid {

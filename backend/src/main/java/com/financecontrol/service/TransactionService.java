@@ -4,6 +4,7 @@ import com.financecontrol.dto.request.TransactionRequest;
 import com.financecontrol.dto.response.TransactionResponse;
 import com.financecontrol.entity.*;
 import com.financecontrol.enums.TransactionType;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +57,14 @@ public class TransactionService {
     @Transactional
     @SuppressWarnings("null")
     @CacheEvict(value = "transactions", key = "#userId")
-    public TransactionResponse create(Long userId, 
-                                      TransactionRequest req) {
+    public TransactionResponse create(Long userId,
+                                      TransactionRequest req,
+                                      boolean force) {
+        if (!force && transactionRepository.existsDuplicate(
+                userId, req.accountId(), req.categoryId(), req.transactionLocaleId(),
+                req.value(), req.date(), req.type(), req.installmentsNumber(), req.obs()))
+            throw new BusinessException("error.duplicate.transaction");
+
         applyBalanceDelta(req.accountId(), req.type(), req.value());
 
         TransactionResponse result = TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));

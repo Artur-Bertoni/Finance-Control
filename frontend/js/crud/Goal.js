@@ -1,6 +1,6 @@
 import {
     addDeleteIcon, clearDirtyGuard, doRequest, navigate, navigateWithToast,
-    setBreadcrumb, setupDirtyGuard, showConfirm, showToast
+    setBreadcrumb, setupDirtyGuard, showConfirm, showConfirmAsync, showToast
 } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
@@ -139,7 +139,7 @@ function loadGoal(goalId) {
     document.getElementById('header-actions')?.prepend(archiveBtn)
 }
 
-function handleSave(goalId) {
+async function handleSave(goalId, force = false) {
     const fieldLabels = {
         'name-input':       I18n.t('goalName'),
         'type-select':      I18n.t('goalType'),
@@ -169,23 +169,42 @@ function handleSave(goalId) {
         notifyOnExceed:   getCheck('notify-exceed'),
     }
 
+    const url    = goalId ? `/api/goals/${goalId}` : `/api/goals${force ? '?force=true' : ''}`
+    const method = goalId ? 'PUT' : 'POST'
+
+    let result = null
     $.ajax({
-        url:         goalId ? `/api/goals/${goalId}` : '/api/goals',
-        type:        goalId ? 'PUT' : 'POST',
-        async:       false,
-        contentType: 'application/json',
-        data:        JSON.stringify(body),
-        success: (data) => {
-            clearDirtyGuard()
-            const id = goalId ?? data?.id
-            if (goalId) {
-                navigate(`/pages/views/GoalView.html?id=${id}`)
-            } else {
-                navigateWithToast('/pages/lists/GoalList.html', I18n.t('goalCreatedSuccess'), 'success', id ? `/pages/views/GoalView.html?id=${id}` : null)
-            }
-        },
-        error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingGoal'), 'error')
+        url, type: method, async: false, contentType: 'application/json',
+        data: JSON.stringify(body),
+        success: data => { result = { ok: true, data } },
+        error:   xhr  => { result = { ok: false, xhr } }
     })
+
+    if (!result.ok) {
+        if (!goalId && result.xhr.responseJSON?.errorCode === 'error.duplicate.goal') {
+            await confirmAndRetryGoalSave(goalId)
+            return
+        }
+        showToast(result.xhr.responseJSON?.message ?? I18n.t('errorSavingGoal'), 'error')
+        return
+    }
+
+    clearDirtyGuard()
+    const id = goalId ?? result.data?.id
+    if (goalId) {
+        navigate(`/pages/views/GoalView.html?id=${id}`)
+    } else {
+        navigateWithToast('/pages/lists/GoalList.html', I18n.t('goalCreatedSuccess'), 'success', id ? `/pages/views/GoalView.html?id=${id}` : null)
+    }
+}
+
+async function confirmAndRetryGoalSave(goalId) {
+    const proceed = await showConfirmAsync(
+        I18n.t('duplicateGoalConfirm'),
+        null,
+        { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+    )
+    if (proceed) handleSave(goalId, true)
 }
 
 function renderMultiCheckList(containerId, items, selectedIds) {

@@ -21,7 +21,7 @@ public abstract class BaseController {
     }
 
     @NonNull
-    protected Long requireUserId(@SuppressWarnings("unused") HttpSession session) {
+    protected Long requireUserId(HttpSession session) {
         return requireUserId();
     }
 }

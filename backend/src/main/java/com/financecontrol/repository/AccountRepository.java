@@ -11,7 +11,9 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    List<Account> findByUserIdOrderByIdDesc(Long userId);
+    List<Account> findByUserIdOrderByNameAsc(Long userId);
+
+    boolean existsByUserIdAndNameIgnoreCase(Long userId, String name);
 
     long countByUserId(Long userId);
 
