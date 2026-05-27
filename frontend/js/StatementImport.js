@@ -10,6 +10,8 @@ let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
 let allCategories = []   // [{id, name}] loaded once
 let allLocales    = []   // [{id, name}] loaded once
 
+const REVIEW_STATE_KEY = '__statementReview'
+
 export function init() {
     SidebarManager.initialize()
     Account.addAccounts('account-input')
@@ -86,16 +88,24 @@ export function init() {
     })
 
     document.getElementById('cancel-btn').addEventListener('click', () => {
+        clearReviewState()
         document.body.classList.remove('review-mode')
         navigate('/pages/HomePage.html')
     })
     document.getElementById('analyze-btn').addEventListener('click', handleAnalyze)
-    document.getElementById('review-back-btn').addEventListener('click', showUploadSection)
+    document.getElementById('review-cancel-btn').addEventListener('click', () => {
+        clearReviewState()
+        document.body.classList.remove('review-mode')
+        navigate('/pages/HomePage.html')
+    })
     document.getElementById('confirm-btn').addEventListener('click', handleConfirm)
     document.getElementById('select-all-check').addEventListener('change', function () {
         document.querySelectorAll('.row-check').forEach(cb => { cb.checked = this.checked })
         this.indeterminate = false
+        saveReviewState()
     })
+
+    restoreReviewState()
 
     I18n.onChange(() => {
         if (!parsedRows.length) return
@@ -134,12 +144,6 @@ function setFileSelected(dropZone, dropText, name) {
     dropText.textContent = I18n.t('fileSelected', { name })
 }
 
-function showUploadSection() {
-    document.body.classList.remove('review-mode')
-    document.getElementById('upload-section').style.display = ''
-    document.getElementById('review-section').style.display = 'none'
-    document.getElementById('import-result').style.display  = 'none'
-}
 
 function handleAnalyze() {
     const accountId = document.getElementById('account-input').value
@@ -179,6 +183,7 @@ function handleAnalyze() {
                 return
             }
             buildReviewTable(rows)
+            saveReviewState()
             document.getElementById('upload-section').style.display = 'none'
             document.getElementById('review-section').style.display = ''
             document.body.classList.add('review-mode')
@@ -222,7 +227,7 @@ function buildReviewTable(rows) {
         check.type = 'checkbox'
         check.checked = true
         check.className = 'row-check'
-        check.addEventListener('change', syncSelectAll)
+        check.addEventListener('change', () => { syncSelectAll(); saveReviewState() })
         checkLabel.appendChild(check)
         tdCheck.appendChild(checkLabel)
 
@@ -291,6 +296,21 @@ function buildCategoryCell(row, index) {
         select.appendChild(opt)
     })
 
+    select.addEventListener('change', () => {
+        const categoryId = select.value
+        if (categoryId) {
+            document.querySelectorAll('#review-tbody tr').forEach(otherTr => {
+                const otherIndex = Number(otherTr.dataset.index)
+                if (otherIndex === index) return
+                if (parsedRows[otherIndex]?.description === row.description) {
+                    const otherSel = otherTr.querySelector('.row-category-select')
+                    if (otherSel) otherSel.value = categoryId
+                }
+            })
+        }
+        saveReviewState()
+    })
+
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
     addBtn.className = 'btn-add-inline'
@@ -314,6 +334,7 @@ function buildCategoryCell(row, index) {
                     sel.appendChild(opt)
                 })
                 select.value = cat.id
+                saveReviewState()
             }
         })
     })
@@ -345,6 +366,8 @@ function buildLocaleCell(index) {
         select.appendChild(opt)
     })
 
+    select.addEventListener('change', saveReviewState)
+
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
     addBtn.className = 'btn-add-inline'
@@ -368,6 +391,7 @@ function buildLocaleCell(index) {
                     sel.appendChild(opt)
                 })
                 select.value = loc.id
+                saveReviewState()
             }
         })
     })
@@ -421,6 +445,7 @@ function handleConfirm() {
         contentType: 'application/json',
         data:        JSON.stringify({ accountId: Number(accountId), rows }),
         success: result => {
+            clearReviewState()
             document.body.classList.remove('review-mode')
             document.getElementById('review-section').style.display = 'none'
             const resultCard = document.getElementById('import-result')
@@ -453,6 +478,59 @@ function handleConfirm() {
             overlay.remove()
         }
     })
+}
+
+function saveReviewState() {
+    const selections = []
+    document.querySelectorAll('#review-tbody tr').forEach(tr => {
+        const index  = Number(tr.dataset.index)
+        const catSel = tr.querySelector('.row-category-select')
+        const locSel = tr.querySelector('.row-locale-select')
+        const check  = tr.querySelector('.row-check')
+        selections.push({ index, categoryId: catSel?.value ?? '', localeId: locSel?.value ?? '', checked: check?.checked ?? true })
+    })
+    sessionStorage.setItem(REVIEW_STATE_KEY, JSON.stringify({
+        accountId: document.getElementById('account-input').value,
+        parsedRows,
+        selections
+    }))
+}
+
+function clearReviewState() {
+    sessionStorage.removeItem(REVIEW_STATE_KEY)
+}
+
+function restoreSelections(selections) {
+    selections.forEach(({ index, categoryId, localeId, checked }) => {
+        const tr = document.querySelector(`#review-tbody tr[data-index="${index}"]`)
+        if (!tr) return
+        const catSel = tr.querySelector('.row-category-select')
+        const locSel = tr.querySelector('.row-locale-select')
+        const check  = tr.querySelector('.row-check')
+        if (catSel) catSel.value = categoryId
+        if (locSel) locSel.value = localeId
+        if (check)  check.checked = checked
+    })
+    syncSelectAll()
+}
+
+function restoreReviewState() {
+    const saved = sessionStorage.getItem(REVIEW_STATE_KEY)
+    if (!saved) return
+    try {
+        const state = JSON.parse(saved)
+        parsedRows = state.parsedRows ?? []
+        if (!parsedRows.length) { clearReviewState(); return }
+        document.getElementById('account-input').value = state.accountId ?? ''
+        buildReviewTable(parsedRows)
+        restoreSelections(state.selections ?? [])
+        document.getElementById('upload-section').style.display = 'none'
+        document.getElementById('review-section').style.display = ''
+        document.body.classList.add('review-mode')
+        SidebarManager.initTranslations()
+    } catch {
+        clearReviewState()
+    }
 }
 
 function showOverlay() {
