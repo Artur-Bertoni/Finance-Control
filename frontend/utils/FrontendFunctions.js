@@ -20,7 +20,8 @@ export function formatDate(isoDateStr) {
 
 export function formatDateTime(isoStr) {
     if (!isoStr) return ''
-    const dt  = new Date(isoStr)
+    const hasZone = isoStr.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(isoStr)
+    const dt  = new Date(hasZone ? isoStr : isoStr + 'Z')
     const pad = n => String(n).padStart(2, '0')
     const day = pad(dt.getDate()), mo = pad(dt.getMonth() + 1), y = dt.getFullYear()
     const time = `${pad(dt.getHours())}:${pad(dt.getMinutes())}`
