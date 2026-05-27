@@ -40,7 +40,7 @@ public class TransactionService {
     @Lazy private final AccountService accountService;
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "transactions", key = "#userId")
+    @Cacheable(value = "transactions", key = "{ #userId, #startDate, #endDate, #categoryId, #accountId }")
     public List<TransactionResponse> findAllByUser(Long userId,
                                                    LocalDate startDate,
                                                    LocalDate endDate,
@@ -56,7 +56,7 @@ public class TransactionService {
 
     @Transactional
     @SuppressWarnings("null")
-    @CacheEvict(value = "transactions", key = "#userId")
+    @CacheEvict(value = "transactions", allEntries = true)
     public TransactionResponse create(Long userId,
                                       TransactionRequest req,
                                       boolean force) {
@@ -74,7 +74,7 @@ public class TransactionService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactions", key = "#userId")
+    @CacheEvict(value = "transactions", allEntries = true)
     public TransactionResponse update(@NonNull Long id,
                                       Long userId,
                                       TransactionRequest req) {
