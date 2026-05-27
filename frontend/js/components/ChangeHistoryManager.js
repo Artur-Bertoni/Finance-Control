@@ -53,13 +53,16 @@ const FIELD_I18N = {
     status:                     'histFieldStatus',
     categories:                 'histFieldCategories',
     locales:                    'histFieldLocales',
-    notifyAt50:                 'histFieldNotifyAt50',
-    notifyAt75:                 'histFieldNotifyAt75',
-    notifyAt90:                 'histFieldNotifyAt90',
     notifyOnComplete:           'histFieldNotifyOnComplete',
     notifyOnDeadline:           'histFieldNotifyOnDeadline',
     notifyOnExceed:             'histFieldNotifyOnExceed',
     address:                    'histFieldAddress',
+}
+
+function getFieldLabel(fieldName) {
+    const pct = fieldName.match(/^notifyAt(\d+)$/)
+    if (pct) return I18n.t('histFieldNotifyAtPercent', { percent: Number(pct[1]) })
+    return I18n.t(FIELD_I18N[fieldName] ?? fieldName)
 }
 
 function formatValue(fieldName, raw) {
@@ -149,7 +152,7 @@ export const ChangeHistoryManager = {
                         <ul class="history-changes">`
 
                     group.changes.forEach(ch => {
-                        const label  = I18n.t(FIELD_I18N[ch.fieldName] || ch.fieldName)
+                        const label  = getFieldLabel(ch.fieldName)
                         const oldVal = formatValue(ch.fieldName, ch.oldValue)
                         const newVal = formatValue(ch.fieldName, ch.newValue)
                         html += `
@@ -167,7 +170,7 @@ export const ChangeHistoryManager = {
         }
 
         // Creation line from entity's own createdAt (fallback for entities without a CREATED log entry)
-        const hasCreationLog = groups && groups.some(g => g.creation)
+        const hasCreationLog = groups?.some(g => g.creation)
         if (!hasCreationLog && createdAt) {
             html += `
             <div class="history-group history-group--creation">

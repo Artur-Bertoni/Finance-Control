@@ -5,9 +5,9 @@ import { MascotManager } from './components/MascotManager.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 
 const TYPE_META = {
-    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone50' },
-    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone75' },
-    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone90' },
+    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 50 } },
+    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 75 } },
+    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 90 } },
     GOAL_COMPLETED:        { icon: '🎯', i18nKey: 'notifGoalCompleted'   },
     GOAL_EXCEEDED:         { icon: '⚠️', i18nKey: 'notifGoalExceeded'   },
     GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline'   },
@@ -103,7 +103,7 @@ function _loadMessages() {
 
 function _buildBackendCard(n) {
     const meta    = TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications' }
-    const label   = I18n.t(meta.i18nKey)
+    const label   = I18n.t(meta.i18nKey, meta.i18nParams)
     const dateStr = new Date(n.createdAt).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
 
     const card = document.createElement('div')

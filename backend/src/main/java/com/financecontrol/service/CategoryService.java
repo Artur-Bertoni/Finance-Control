@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.financecontrol.service.HistoryService.*;
@@ -116,9 +115,10 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Category> findByAlias(Long userId,
-                                          String aliasName) {
-        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName).map(CategoryAlias::getCategory);
+    public List<Category> findByAlias(Long userId,
+                                      String aliasName) {
+        return categoryAliasRepository.findAllByCategoryUserIdAndAliasName(userId, aliasName)
+                .stream().map(CategoryAlias::getCategory).toList();
     }
 
     @Transactional
@@ -127,21 +127,16 @@ public class CategoryService {
                            @NonNull Long categoryId) {
         if (aliasName == null || aliasName.isBlank()) return;
 
-        categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, aliasName).ifPresentOrElse(
-            existing -> {
-                if (!existing.getCategory().getId().equals(categoryId)) {
-                    categoryAliasRepository.delete(existing);
-                    Category target = categoryRepository.findById(categoryId)
-                            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-                    categoryAliasRepository.save(new CategoryAlias(target, aliasName));
-                }
-            },
-            () -> {
-                Category target = categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-                categoryAliasRepository.save(new CategoryAlias(target, aliasName));
-            }
-        );
+        boolean alreadyMapped = categoryAliasRepository
+                .findAllByCategoryUserIdAndAliasName(userId, aliasName)
+                .stream()
+                .anyMatch(a -> a.getCategory().getId().equals(categoryId));
+
+        if (!alreadyMapped) {
+            Category target = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+            categoryAliasRepository.save(new CategoryAlias(target, aliasName));
+        }
     }
 
     @Transactional

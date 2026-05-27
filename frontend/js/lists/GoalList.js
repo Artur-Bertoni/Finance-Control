@@ -2,6 +2,7 @@ import { doRequest, formatDate, navigate, setupSearch, showPendingToast, initFil
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
+import { createEmptyState } from '../components/EmptyState.js'
 
 let allGoals     = []
 let searchQuery  = ''
@@ -89,11 +90,7 @@ function renderList() {
     if (statusFilter)  goals = goals.filter(g => g.status === statusFilter)
 
     if (goals.length === 0) {
-        const empty = document.createElement('div')
-        empty.className = 'empty-state'
-        empty.style.gridColumn = '1 / -1'
-        empty.innerHTML = `${Icons.goals()}<p>${I18n.t(allGoals.length === 0 ? 'noGoalsEmpty' : 'noGoalsRegistered')}</p>`
-        list.appendChild(empty)
+        list.appendChild(createEmptyState(Icons.goals(), I18n.t(allGoals.length === 0 ? 'noGoalsEmpty' : 'noGoalsRegistered')))
         return
     }
 

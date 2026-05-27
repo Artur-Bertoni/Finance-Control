@@ -155,20 +155,19 @@ function setupQuickAddButtons() {
                 { id: 'fiId',    label: `${I18n.t('financialInstitution')} *`, type: 'select', required: true, options: fiOptions,
                   placeholder: I18n.t('selectInstitution'),
                   addBtn: {
-                    title: I18n.t('newFinancialInstitution'), apiUrl: '/api/financial-institutions',
+                    title: I18n.t('newFinancialInstitution'), btnTitle: I18n.t('quickAdd', { item: I18n.t('financialInstitution') }), apiUrl: '/api/financial-institutions',
                     fields: [
                         { id: 'name',    label: `${I18n.t('institutionName')} *`, type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
-                        { id: 'address', label: I18n.t('institutionAddress'), type: 'text', placeholder: I18n.t('institutionAddressPlaceholder') },
-                        { id: 'contact', label: I18n.t('institutionContact'),  type: 'text', placeholder: I18n.t('institutionContactPlaceholder') }
+                        { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
                     ],
-                    buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
+                    buildBody: v => ({ name: v.name, iconKey: v.iconKey || null })
                   }
                 },
-                { id: 'balance', label: I18n.t('currentBalance'), type: 'number', placeholder: '0.00', step: '0.01' }
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
             buildBody: v => ({
                 name: v.name, financialInstitutionId: Number(v.fiId),
-                balance: v.balance === '' ? 0 : Number(v.balance), contact: null, description: null
+                balance: 0, contact: null, description: null, iconKey: v.iconKey || null
             }),
             onSuccess: item => addOptionToSelect('account-input', item.id, item.name)
         })
@@ -179,10 +178,10 @@ function setupQuickAddButtons() {
             title:  I18n.t('newCategory'),
             apiUrl: '/api/categories',
             fields: [
-                { id: 'name',        label: `${I18n.t('categoryName')} *`, type: 'text', required: true, placeholder: I18n.t('categoryNamePlaceholder') },
-                { id: 'description', label: I18n.t('categoryDescription'),  type: 'textarea', placeholder: I18n.t('categoryDescriptionPlaceholder') }
+                { id: 'name',    label: `${I18n.t('categoryName')} *`, type: 'text', required: true, placeholder: I18n.t('categoryNamePlaceholder') },
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
-            buildBody: v => ({ name: v.name, description: v.description || null }),
+            buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: item => addOptionToSelect('category-input', item.id, item.name)
         })
     })
@@ -193,9 +192,9 @@ function setupQuickAddButtons() {
             apiUrl: '/api/transaction-locales',
             fields: [
                 { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },
-                { id: 'address', label: I18n.t('localeAddress'),      type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
-            buildBody: v => ({ name: v.name, address: v.address || null }),
+            buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: item => addOptionToSelect('transaction-locale-input', item.id, item.name)
         })
     })

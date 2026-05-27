@@ -73,13 +73,13 @@
 
           <!-- Categories multi-select -->
           <div class="field" style="grid-column: 1 / -1">
-            <label data-i18n="goalCategories">Categorias (opcional)</label>
+            <label data-i18n="goalCategories">Categorias<span class="optional-label" data-i18n="optionalLabel">(opcional)</span></label>
             <div id="categories-multi" class="multi-check-list"></div>
           </div>
 
           <!-- Locales multi-select -->
           <div class="field" style="grid-column: 1 / -1">
-            <label data-i18n="goalLocales">Locais (opcional)</label>
+            <label data-i18n="goalLocales">Locais<span class="optional-label" data-i18n="optionalLabel">(opcional)</span></label>
             <div id="locales-multi" class="multi-check-list"></div>
           </div>
 
@@ -89,15 +89,15 @@
             <div class="checkbox-group">
               <label class="checkbox-label">
                 <input type="checkbox" id="notify-50" checked>
-                <span data-i18n="goalNotifyAt50">Ao atingir 50% do valor</span>
+                <span data-i18n="goalNotifyAtPercent" data-i18n-params='{"percent":50}'>Ao atingir 50% do valor</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" id="notify-75" checked>
-                <span data-i18n="goalNotifyAt75">Ao atingir 75% do valor</span>
+                <span data-i18n="goalNotifyAtPercent" data-i18n-params='{"percent":75}'>Ao atingir 75% do valor</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" id="notify-90" checked>
-                <span data-i18n="goalNotifyAt90">Ao atingir 90% do valor</span>
+                <span data-i18n="goalNotifyAtPercent" data-i18n-params='{"percent":90}'>Ao atingir 90% do valor</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" id="notify-complete" checked>

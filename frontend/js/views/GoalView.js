@@ -125,9 +125,9 @@ function renderNotifications(goal) {
     const container = document.getElementById('detail-notifications')
     if (!container) return
     const items = [
-        { key: 'goalNotifyAt50',       enabled: goal.notifyAt50 },
-        { key: 'goalNotifyAt75',       enabled: goal.notifyAt75 },
-        { key: 'goalNotifyAt90',       enabled: goal.notifyAt90 },
+        { key: 'goalNotifyAtPercent',  params: { percent: 50 }, enabled: goal.notifyAt50 },
+        { key: 'goalNotifyAtPercent',  params: { percent: 75 }, enabled: goal.notifyAt75 },
+        { key: 'goalNotifyAtPercent',  params: { percent: 90 }, enabled: goal.notifyAt90 },
         { key: 'goalNotifyOnComplete', enabled: goal.notifyOnComplete },
         { key: 'goalNotifyOnDeadline', enabled: goal.notifyOnDeadline },
         ...(goal.type === 'expense_limit'
@@ -135,10 +135,10 @@ function renderNotifications(goal) {
             : [])
     ]
     container.innerHTML = ''
-    items.forEach(({ key, enabled }) => {
+    items.forEach(({ key, params, enabled }) => {
         const badge = document.createElement('span')
         badge.className   = `tx-badge ${enabled ? 'enabled' : 'disabled'}`
-        badge.textContent = I18n.t(key)
+        badge.textContent = I18n.t(key, params)
         container.appendChild(badge)
     })
 }

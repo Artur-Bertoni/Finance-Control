@@ -117,7 +117,12 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     ;[...document.body.classList].filter(c => c.startsWith('page-')).forEach(c => document.body.classList.remove(c))
     newClasses.forEach(c => document.body.classList.add(c))
 
-    if (!_fromPopstate) history.pushState({ url: full }, '', full)
+    if (!_fromPopstate) {
+        const prev = new URL(currentSpaUrl, location.href)
+        const leavingEditPage = prev.pathname.startsWith('/pages/crud/') && prev.searchParams.has('id')
+        if (leavingEditPage) history.replaceState({ url: full }, '', full)
+        else                 history.pushState({ url: full }, '', full)
+    }
     currentSpaUrl = full
     updateBackButton(path)
 

@@ -28,11 +28,10 @@ export function init() {
             title:  I18n.t('newFinancialInstitution'),
             apiUrl: '/api/financial-institutions',
             fields: [
-                { id: 'name',    label: `${I18n.t('institutionName')} *`,    type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
-                { id: 'address', label: I18n.t('institutionAddress'), type: 'text', placeholder: I18n.t('institutionAddressPlaceholder') },
-                { id: 'contact', label: I18n.t('institutionContact'),  type: 'text', placeholder: I18n.t('institutionContactPlaceholder') }
+                { id: 'name',    label: `${I18n.t('institutionName')} *`, type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
-            buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null }),
+            buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: item => {
                 const sel = document.getElementById('financial-institution-input')
                 const opt = document.createElement('option')

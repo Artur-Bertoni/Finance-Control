@@ -3,6 +3,7 @@ import { FinancialInstitution } from '../class/FinancialInstitutionClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
+import { createEmptyState } from '../components/EmptyState.js'
 
 let allInstitutions = []
 let searchQuery = ''
@@ -42,11 +43,7 @@ function renderList() {
     const institutions = q ? allInstitutions.filter(fi => fi.name.toLowerCase().includes(q)) : allInstitutions
 
     if (institutions.length === 0) {
-        const empty = document.createElement('div')
-        empty.className = 'empty-state'
-        empty.style.gridColumn = '1 / -1'
-        empty.innerHTML = `${Icons.institutions()}<p>${I18n.t(allInstitutions.length === 0 ? 'noInstitutionsEmpty' : 'noInstitutionsRegistered')}</p>`
-        list.appendChild(empty)
+        list.appendChild(createEmptyState(Icons.institutions(), I18n.t(allInstitutions.length === 0 ? 'noInstitutionsEmpty' : 'noInstitutionsRegistered')))
         return
     }
 

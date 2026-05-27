@@ -3,6 +3,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
 import { I18n } from '../i18n.js'
+import { createEmptyState } from '../components/EmptyState.js'
 
 let allLocales = []
 let searchQuery = ''
@@ -42,11 +43,7 @@ function renderList() {
     const locales = q ? allLocales.filter(l => l.name.toLowerCase().includes(q)) : allLocales
 
     if (locales.length === 0) {
-        const empty = document.createElement('div')
-        empty.className = 'empty-state'
-        empty.style.gridColumn = '1 / -1'
-        empty.innerHTML = `${Icons.locations()}<p>${I18n.t(allLocales.length === 0 ? 'noLocalesEmpty' : 'noLocalesRegistered')}</p>`
-        list.appendChild(empty)
+        list.appendChild(createEmptyState(Icons.locations(), I18n.t(allLocales.length === 0 ? 'noLocalesEmpty' : 'noLocalesRegistered')))
         return
     }
 

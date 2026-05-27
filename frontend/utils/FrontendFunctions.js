@@ -1,6 +1,7 @@
-import { Icons } from '../js/icons/IconLibrary.js'
 import { I18n } from '../js/i18n.js'
 import { FinnySvg } from '../js/utils/FinnySvg.js'
+export { showConfirm, showConfirmAsync } from '../js/modals/ConfirmModal.js'
+export { showQuickAdd } from '../js/modals/QuickAddModal.js'
 
 const FINNY_FACE_SVG = FinnySvg.faceSvg('toast-finny')
 
@@ -77,9 +78,9 @@ export function showPendingToast() {
 }
 
 const NOTIF_TYPE_META = {
-    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone50', toastType: 'info'    },
-    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone75', toastType: 'info'    },
-    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone90', toastType: 'warning' },
+    GOAL_MILESTONE_50:     { icon: '📊', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 50 }, toastType: 'info'    },
+    GOAL_MILESTONE_75:     { icon: '📈', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 75 }, toastType: 'info'    },
+    GOAL_MILESTONE_90:     { icon: '🔥', i18nKey: 'notifGoalMilestone', i18nParams: { percent: 90 }, toastType: 'warning' },
     GOAL_COMPLETED:        { icon: '🎯', i18nKey: 'notifGoalCompleted',   toastType: 'success' },
     GOAL_EXCEEDED:         { icon: '⚠️', i18nKey: 'notifGoalExceeded',   toastType: 'warning' },
     GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline',   toastType: 'warning' },
@@ -92,7 +93,7 @@ export function showPendingNotifications() {
     const notifications = JSON.parse(raw)
     notifications.forEach((n, i) => {
         const meta  = NOTIF_TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications', toastType: 'info' }
-        const label = I18n.t(meta.i18nKey)
+        const label = I18n.t(meta.i18nKey, meta.i18nParams)
         const msg   = `${meta.icon} ${label}: ${n.goalName ?? ''}`
         setTimeout(() => showToast(msg, meta.toastType, { label: I18n.t('viewGoal'), url: n.link }, { saveToHistory: false }), 700 + i * 600)
     })
@@ -210,29 +211,6 @@ function dismissToast(toast) {
     setTimeout(() => toast.remove(), 260)
 }
 
-export function showConfirmAsync(message, title = null) {
-    return new Promise(resolve => {
-        const overlay = document.createElement('div')
-        overlay.className = 'modal-overlay'
-        overlay.innerHTML = `
-            <div class="modal-card">
-                <p class="modal-title">${title ?? I18n.t('confirmAction')}</p>
-                <p class="modal-message">${message}</p>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('stay')}</button>
-                    <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('leaveAnyway')}</button>
-                </div>
-            </div>
-        `
-        document.body.appendChild(overlay)
-        const cancel  = () => { overlay.remove(); resolve(false) }
-        const confirm = () => { overlay.remove(); resolve(true) }
-        overlay.querySelector('#modal-cancel-btn').addEventListener('click', cancel)
-        overlay.querySelector('#modal-confirm-btn').addEventListener('click', confirm)
-        overlay.addEventListener('click', e => { if (e.target === overlay) cancel() })
-    })
-}
-
 export function setupDirtyGuard() {
     let dirty = false
     globalThis.__dirtyGuard = () => dirty
@@ -244,29 +222,6 @@ export function setupDirtyGuard() {
 
 export function clearDirtyGuard() {
     globalThis.__dirtyGuard = null
-}
-
-export function showConfirm(message, onConfirm, title = null) {
-    const overlay = document.createElement('div')
-    overlay.className = 'modal-overlay'
-    overlay.innerHTML = `
-        <div class="modal-card">
-            <p class="modal-title">${title ?? I18n.t('confirmAction')}</p>
-            <p class="modal-message">${message}</p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('cancel')}</button>
-                <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('confirm')}</button>
-            </div>
-        </div>
-    `
-    document.body.appendChild(overlay)
-
-    overlay.querySelector('#modal-cancel-btn').addEventListener('click', () => overlay.remove())
-    overlay.querySelector('#modal-confirm-btn').addEventListener('click', () => {
-        overlay.remove()
-        onConfirm()
-    })
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove() })
 }
 
 export function addDeleteIcon() {
@@ -417,106 +372,3 @@ export function populateSelect(elementId, apiUrl, iconKeyField = null) {
     }
 }
 
-export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
-    const overlay = document.createElement('div')
-    overlay.className = 'modal-overlay'
-
-    const renderInput = (f) => {
-        if (f.type === 'textarea')
-            return `<textarea id="qaf-${f.id}" placeholder="${f.placeholder ?? ''}"></textarea>`
-        if (f.type === 'select') {
-            const opts = (f.options ?? []).map(o => `<option value="${o.value}">${o.label}</option>`).join('')
-            const sel  = `<select id="qaf-${f.id}"><option value=""> ${f.placeholder ?? I18n.t('selectAccount')} </option>${opts}</select>`
-            if (!f.addBtn) return sel
-            return (
-                '<div class="select-with-add">' + sel +
-                '<button type="button" class="btn-add-inline" id="qaf-' + f.id + '-add-btn" title="' + (f.addBtn.title ?? '') + '">' + Icons.add() + '</button>' +
-                '</div>'
-            )
-        }
-        const stepAttr = f.step ? ' step="' + f.step + '"' : ''
-        return '<input id="qaf-' + f.id + '" type="' + (f.type ?? 'text') + '" placeholder="' + (f.placeholder ?? '') + '"' + stepAttr + '>'
-    }
-
-    const fieldsHtml = fields.map(f => {
-        const inputHtml = renderInput(f)
-        const labelText = f.label.replace(/\s*\*$/, '')
-        const marker = f.required
-            ? '<span class="required-mark"> *</span>'
-            : '<span class="optional-label"> ' + I18n.t('optionalLabel') + '</span>'
-        return '<div class="field"><label>' + labelText + marker + '</label>' + inputHtml + '</div>'
-    }).join('')
-
-    overlay.innerHTML = `
-        <div class="modal-card quick-add-card">
-            <p class="modal-title">${title}</p>
-            <div class="quick-add-fields">${fieldsHtml}</div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" id="qa-cancel">${I18n.t('cancel')}</button>
-                <button class="btn btn-primary"   id="qa-save">${I18n.t('save')}</button>
-            </div>
-        </div>
-    `
-    document.body.appendChild(overlay)
-
-    fields.filter(f => f.type === 'select' && f.addBtn).forEach(f => {
-        const addBtn = overlay.querySelector('#qaf-' + f.id + '-add-btn')
-        if (!addBtn) return
-        addBtn.addEventListener('click', () => {
-            showQuickAdd({
-                title:     f.addBtn.title  ?? '',
-                apiUrl:    f.addBtn.apiUrl,
-                fields:    f.addBtn.fields,
-                buildBody: f.addBtn.buildBody,
-                onSuccess: item => {
-                    const sel = overlay.querySelector('#qaf-' + f.id)
-                    const opt = document.createElement('option')
-                    opt.value = item.id
-                    opt.text  = item.name
-                    sel.appendChild(opt)
-                    sel.value = item.id
-                    if (f.addBtn.onSuccess) f.addBtn.onSuccess(item)
-                }
-            })
-        })
-    })
-
-    overlay.querySelector('#qa-cancel').addEventListener('click', () => overlay.remove())
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
-
-    fields.filter(f => f.required).forEach(f => {
-        const el = overlay.querySelector('#qaf-' + f.id)
-        if (el) el.addEventListener('input', () => el.classList.remove('field-error'))
-        if (el) el.addEventListener('change', () => el.classList.remove('field-error'))
-    })
-
-    overlay.querySelector('#qa-save').addEventListener('click', () => {
-        const values = {}
-        fields.forEach(f => { values[f.id] = overlay.querySelector('#qaf-' + f.id)?.value ?? '' })
-
-        fields.forEach(f => overlay.querySelector('#qaf-' + f.id)?.classList.remove('field-error'))
-
-        const missing = fields.filter(f => f.required && !values[f.id])
-        if (missing.length) {
-            missing.forEach(f => overlay.querySelector('#qaf-' + f.id)?.classList.add('field-error'))
-            showToast(I18n.t('fillRequiredFields', { fields: missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ') }), 'warning')
-            return
-        }
-
-        $.ajax({
-            url:         apiUrl,
-            type:        'POST',
-            async:       false,
-            contentType: 'application/json',
-            data:        JSON.stringify(buildBody(values)),
-            success: function (item) {
-                overlay.remove()
-                onSuccess(item)
-                showToast(I18n.t('createdSuccess'), 'success')
-            },
-            error: function (xhr) {
-                showToast(xhr.responseJSON?.message ?? I18n.t('errorCreating'), 'error')
-            }
-        })
-    })
-}

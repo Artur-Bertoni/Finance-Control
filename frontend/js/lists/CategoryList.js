@@ -3,6 +3,7 @@ import { Category } from '../class/CategoryClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
+import { createEmptyState } from '../components/EmptyState.js'
 
 let allCategories = []
 let searchQuery = ''
@@ -42,11 +43,7 @@ function renderList() {
     const categories = q ? allCategories.filter(c => c.name.toLowerCase().includes(q)) : allCategories
 
     if (categories.length === 0) {
-        const empty = document.createElement('div')
-        empty.className = 'empty-state'
-        empty.style.gridColumn = '1 / -1'
-        empty.innerHTML = `${Icons.categories()}<p>${I18n.t(allCategories.length === 0 ? 'noCategoriesEmpty' : 'noCategoriesRegistered')}</p>`
-        list.appendChild(empty)
+        list.appendChild(createEmptyState(Icons.categories(), I18n.t(allCategories.length === 0 ? 'noCategoriesEmpty' : 'noCategoriesRegistered')))
         return
     }
 

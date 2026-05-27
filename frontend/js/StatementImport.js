@@ -1,14 +1,18 @@
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
-import { doRequest, formatDate, navigate, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, formatDate, navigate, showConfirmAsync, showQuickAdd, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { setupRequiredFieldValidation } from './utils/FieldValidation.js'
 import { Icons } from './icons/IconLibrary.js'
+import { showOverlay } from './modals/LoadingOverlay.js'
+import { openConflictModal } from './modals/ConflictResolutionModal.js'
 
 let selectedFile  = null
 let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
 let allCategories = []   // [{id, name}] loaded once
 let allLocales    = []   // [{id, name}] loaded once
+// descriptions confirmed through the conflict modal
+let confirmedConflicts = new Set()
 
 const REVIEW_STATE_KEY = '__statementReview'
 
@@ -61,20 +65,19 @@ export function init() {
                 { id: 'fiId', label: `${I18n.t('financialInstitution')} *`, type: 'select', required: true, options: fiOptions,
                   placeholder: I18n.t('selectInstitution'),
                   addBtn: {
-                    title: I18n.t('newFinancialInstitution'), apiUrl: '/api/financial-institutions',
+                    title: I18n.t('newFinancialInstitution'), btnTitle: I18n.t('quickAdd', { item: I18n.t('financialInstitution') }), apiUrl: '/api/financial-institutions',
                     fields: [
                         { id: 'name',    label: `${I18n.t('institutionName')} *`, type: 'text', required: true, placeholder: I18n.t('institutionNamePlaceholder') },
-                        { id: 'address', label: I18n.t('institutionAddress'), type: 'text', placeholder: I18n.t('institutionAddressPlaceholder') },
-                        { id: 'contact', label: I18n.t('institutionContact'),  type: 'text', placeholder: I18n.t('institutionContactPlaceholder') }
+                        { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
                     ],
-                    buildBody: v => ({ name: v.name, address: v.address || null, contact: v.contact || null })
+                    buildBody: v => ({ name: v.name, iconKey: v.iconKey || null })
                   }
                 },
-                { id: 'balance', label: I18n.t('currentBalance'), type: 'number', placeholder: '0.00', step: '0.01' }
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
             buildBody: v => ({
                 name: v.name, financialInstitutionId: Number(v.fiId),
-                balance: v.balance === '' ? 0 : Number(v.balance), contact: null, description: null
+                balance: 0, contact: null, description: null, iconKey: v.iconKey || null
             }),
             onSuccess: account => {
                 const sel = document.getElementById('account-input')
@@ -275,10 +278,22 @@ function buildCategoryCell(row, index) {
     const wrapper = document.createElement('div')
     wrapper.style.cssText = 'display:flex;gap:6px;align-items:center'
 
+    if (row.hasMultipleSuggestions) {
+        const icon = document.createElement('span')
+        icon.className = 'conflict-icon'
+        icon.title = I18n.t('conflictPendingRows')
+        icon.textContent = '⚠'
+        icon.style.cssText = 'color:var(--color-warning,#f59e0b);font-size:14px;flex-shrink:0;cursor:help'
+        wrapper.appendChild(icon)
+    }
+
     const select = document.createElement('select')
     select.className = 'row-category-select'
     select.dataset.index = index
     select.style.flex = '1'
+    if (row.hasMultipleSuggestions) {
+        select.style.borderColor = 'var(--color-warning,#f59e0b)'
+    }
 
     const blankOpt = document.createElement('option')
     blankOpt.value = ''
@@ -296,17 +311,27 @@ function buildCategoryCell(row, index) {
         select.appendChild(opt)
     })
 
-    select.addEventListener('change', () => {
+    select.addEventListener('change', async () => {
         const categoryId = select.value
+        if (categoryId) select.classList.remove('field-error')
         if (categoryId) {
-            document.querySelectorAll('#review-tbody tr').forEach(otherTr => {
+            const siblings = [...document.querySelectorAll('#review-tbody tr')].filter(otherTr => {
                 const otherIndex = Number(otherTr.dataset.index)
-                if (otherIndex === index) return
-                if (parsedRows[otherIndex]?.description === row.description) {
-                    const otherSel = otherTr.querySelector('.row-category-select')
-                    if (otherSel) otherSel.value = categoryId
-                }
+                return otherIndex !== index && parsedRows[otherIndex]?.description === row.description
             })
+            if (siblings.length > 0) {
+                const confirmed = await showConfirmAsync(I18n.t('propagateCategoryConfirm'), null, {
+                    cancelLabel:  I18n.t('no'),
+                    confirmLabel: I18n.t('yes'),
+                    confirmClass: 'btn-primary'
+                })
+                if (confirmed) {
+                    siblings.forEach(otherTr => {
+                        const otherSel = otherTr.querySelector('.row-category-select')
+                        if (otherSel) otherSel.value = categoryId
+                    })
+                }
+            }
         }
         saveReviewState()
     })
@@ -314,17 +339,17 @@ function buildCategoryCell(row, index) {
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
     addBtn.className = 'btn-add-inline'
-    addBtn.title = I18n.t('newCategory')
+    addBtn.title = I18n.t('quickAdd', { item: I18n.t('category') })
     addBtn.innerHTML = Icons.add()
     addBtn.addEventListener('click', () => {
         showQuickAdd({
             title:  I18n.t('newCategory'),
             apiUrl: '/api/categories',
             fields: [
-                { id: 'name',        label: `${I18n.t('categoryName')} *`, type: 'text', required: true, placeholder: I18n.t('categoryNamePlaceholder') },
-                { id: 'description', label: I18n.t('categoryDescription'),  type: 'textarea', placeholder: I18n.t('categoryDescriptionPlaceholder') }
+                { id: 'name',    label: `${I18n.t('categoryName')} *`, type: 'text', required: true, placeholder: I18n.t('categoryNamePlaceholder') },
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
-            buildBody: v => ({ name: v.name, description: v.description || null }),
+            buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: cat => {
                 allCategories.push({ id: cat.id, name: cat.name })
                 document.querySelectorAll('.row-category-select').forEach(sel => {
@@ -371,7 +396,7 @@ function buildLocaleCell(index) {
     const addBtn = document.createElement('button')
     addBtn.type = 'button'
     addBtn.className = 'btn-add-inline'
-    addBtn.title = I18n.t('newLocale')
+    addBtn.title = I18n.t('quickAdd', { item: I18n.t('location') })
     addBtn.innerHTML = Icons.add()
     addBtn.addEventListener('click', () => {
         showQuickAdd({
@@ -379,9 +404,9 @@ function buildLocaleCell(index) {
             apiUrl: '/api/transaction-locales',
             fields: [
                 { id: 'name',    label: `${I18n.t('localeName')} *`, type: 'text', required: true, placeholder: I18n.t('localeNamePlaceholder') },
-                { id: 'address', label: I18n.t('localeAddress'),      type: 'text', placeholder: I18n.t('localeAddressPlaceholder') }
+                { id: 'iconKey', label: I18n.t('categoryIcon'), type: 'icon-picker' }
             ],
-            buildBody: v => ({ name: v.name, address: v.address || null }),
+            buildBody: v => ({ name: v.name, iconKey: v.iconKey || null }),
             onSuccess: loc => {
                 allLocales.push({ id: loc.id, name: loc.name })
                 document.querySelectorAll('.row-locale-select').forEach(sel => {
@@ -401,15 +426,13 @@ function buildLocaleCell(index) {
     return wrapper
 }
 
-function handleConfirm() {
-    const accountId = document.getElementById('account-input').value
+function collectRows() {
     const rows = []
     let missingCategory = false
-
     document.querySelectorAll('#review-tbody tr').forEach(tr => {
-        const index     = Number(tr.dataset.index)
-        const checked   = tr.querySelector('.row-check').checked
-        const catSelect = tr.querySelector('.row-category-select')
+        const index      = Number(tr.dataset.index)
+        const checked    = tr.querySelector('.row-check').checked
+        const catSelect  = tr.querySelector('.row-category-select')
         const categoryId = catSelect?.value && catSelect.value !== '__new__' ? Number(catSelect.value) : null
 
         if (checked && !categoryId) { missingCategory = true; return }
@@ -429,12 +452,10 @@ function handleConfirm() {
             skip:        !checked
         })
     })
+    return { rows, missingCategory }
+}
 
-    if (missingCategory) {
-        showToast(I18n.t('missingCategoryForRows'), 'warning')
-        return
-    }
-
+function submitImport(accountId, rows) {
     const confirmBtn = document.getElementById('confirm-btn')
     confirmBtn.disabled = true
     const overlay = showOverlay()
@@ -480,6 +501,50 @@ function handleConfirm() {
     })
 }
 
+function handleConfirm() {
+    const accountId = document.getElementById('account-input').value
+    const { rows, missingCategory } = collectRows()
+
+    if (missingCategory) {
+        showToast(I18n.t('missingCategoryForRows'), 'warning')
+        document.querySelectorAll('#review-tbody tr').forEach(tr => {
+            const checked    = tr.querySelector('.row-check')?.checked
+            const catSelect  = tr.querySelector('.row-category-select')
+            const categoryId = catSelect?.value && catSelect.value !== '__new__' ? catSelect.value : null
+            catSelect?.classList.toggle('field-error', !!(checked && !categoryId))
+        })
+        return
+    }
+
+    // Collect each checked row with multiple suggestions that hasn't been confirmed yet
+    const pendingConflicts = []
+    document.querySelectorAll('#review-tbody tr').forEach(tr => {
+        const index   = Number(tr.dataset.index)
+        const checked = tr.querySelector('.row-check').checked
+        const row     = parsedRows[index]
+        if (!checked || !row?.hasMultipleSuggestions) return
+        if (confirmedConflicts.has(index)) return
+        const currentCategoryId = tr.querySelector('.row-category-select')?.value || null
+        pendingConflicts.push({ ...row, rowIndex: index, currentCategoryId })
+    })
+
+    if (pendingConflicts.length > 0) {
+        openConflictModal(pendingConflicts, allCategories, selections => {
+            selections.forEach((categoryId, rowIndex) => {
+                confirmedConflicts.add(rowIndex)
+                const tr = document.querySelector(`#review-tbody tr[data-index="${rowIndex}"]`)
+                const catSel = tr?.querySelector('.row-category-select')
+                if (catSel) catSel.value = categoryId
+            })
+            saveReviewState()
+            submitImport(accountId, collectRows().rows)
+        })
+        return
+    }
+
+    submitImport(accountId, rows)
+}
+
 function saveReviewState() {
     const selections = []
     document.querySelectorAll('#review-tbody tr').forEach(tr => {
@@ -492,12 +557,16 @@ function saveReviewState() {
     sessionStorage.setItem(REVIEW_STATE_KEY, JSON.stringify({
         accountId: document.getElementById('account-input').value,
         parsedRows,
-        selections
+        selections,
+        confirmedConflicts: [...confirmedConflicts]
     }))
+    SidebarManager.refreshImportBadge()
 }
 
 function clearReviewState() {
     sessionStorage.removeItem(REVIEW_STATE_KEY)
+    confirmedConflicts.clear()
+    SidebarManager.refreshImportBadge()
 }
 
 function restoreSelections(selections) {
@@ -521,6 +590,7 @@ function restoreReviewState() {
         const state = JSON.parse(saved)
         parsedRows = state.parsedRows ?? []
         if (!parsedRows.length) { clearReviewState(); return }
+        confirmedConflicts = new Set(state.confirmedConflicts ?? [])
         document.getElementById('account-input').value = state.accountId ?? ''
         buildReviewTable(parsedRows)
         restoreSelections(state.selections ?? [])
@@ -532,15 +602,6 @@ function restoreReviewState() {
         clearReviewState()
     }
 }
-
-function showOverlay() {
-    const overlay = document.createElement('div')
-    overlay.className = 'loading-overlay'
-    overlay.innerHTML = '<div class="loading-spinner"></div>'
-    document.body.appendChild(overlay)
-    return overlay
-}
-
 
 function formatCurrency(value) {
     return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

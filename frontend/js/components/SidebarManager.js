@@ -35,6 +35,7 @@ export class SidebarManager {
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
         SidebarManager.refreshNotificationBadge()
+        SidebarManager.refreshImportBadge()
         SidebarManager.setupKeyboardShortcuts()
     }
 
@@ -51,12 +52,14 @@ export class SidebarManager {
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
         SidebarManager.refreshNotificationBadge()
+        SidebarManager.refreshImportBadge()
     }
 
     static initTranslations() {
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key  = el.dataset.i18n
-            const text = I18n.t(key)
+            const key    = el.dataset.i18n
+            const params = el.dataset.i18nParams ? JSON.parse(el.dataset.i18nParams) : undefined
+            const text   = I18n.t(key, params)
             if (el.tagName === 'A') {
                 const icon = el.querySelector('svg, i.ph')
                 el.innerHTML = icon ? icon.outerHTML : ''
@@ -82,7 +85,10 @@ export class SidebarManager {
         })
 
         document.querySelectorAll('[data-i18n-title]').forEach(el => {
-            const text = I18n.t(el.dataset.i18nTitle)
+            const titleKey   = el.dataset.i18nTitle
+            const titleParam = el.dataset.i18nTitleParam
+            const params     = titleParam ? { item: I18n.t(titleParam) } : undefined
+            const text       = I18n.t(titleKey, params)
             if (el.classList.contains('info-hint-btn')) {
                 el.dataset.tooltip = text
             } else {
@@ -189,6 +195,12 @@ export class SidebarManager {
                 if (xhr.status === 401) globalThis.location.href = '/pages/Login.html'
             }
         })
+    }
+
+    static refreshImportBadge() {
+        const hasReview = !!sessionStorage.getItem('__statementReview')
+        const link = document.querySelector('.sidebar-link[href*="StatementImport.html"]')
+        if (link) link.classList.toggle('has-import-progress', hasReview)
     }
 
     static refreshNotificationBadge() {

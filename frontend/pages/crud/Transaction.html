@@ -33,7 +33,7 @@
               <select id="account-input" required>
                 <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
               </select>
-              <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="account" title="Adição Rápida de Conta" data-icon="add"></button>
             </div>
           </div>
 
@@ -43,12 +43,12 @@
               <select id="category-input" required>
                 <option disabled selected value="" data-i18n="selectCategory">Selecione a categoria</option>
               </select>
-              <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="newCategory" title="Nova categoria" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="category-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="category" title="Adição Rápida de Categoria" data-icon="add"></button>
             </div>
           </div>
 
           <div class="field">
-            <span class="field-label" style="font-size:12.5px;font-weight:600;color:var(--text-secondary)" data-i18n="transactionType">Tipo de Transação *</span>
+            <span class="field-label" style="font-size:12.5px;font-weight:600;color:var(--text-secondary)"><span data-i18n="transactionType">Tipo de Transação</span><span class="required-mark"> *</span></span>
             <div class="radio-group">
               <label class="radio-option" id="debit-option">
                 <input type="radio" name="typeRadio" id="debit-radio" value="debit">
@@ -81,9 +81,9 @@
             <label for="transaction-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transação</label>
             <div class="select-with-add">
               <select id="transaction-locale-input">
-                <option disabled selected value="" data-i18n="selectLocale">Selecione o local (opcional)</option>
+                <option disabled selected value="" data-i18n="selectLocale">Selecione o local...</option>
               </select>
-              <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="newLocale" title="Novo local" data-icon="add"></button>
+              <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="location" title="Adição Rápida de Local" data-icon="add"></button>
             </div>
           </div>
 

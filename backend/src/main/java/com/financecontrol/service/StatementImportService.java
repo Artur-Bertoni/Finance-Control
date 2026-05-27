@@ -2,6 +2,7 @@ package com.financecontrol.service;
 
 import com.financecontrol.dto.request.ImportRowRequest;
 import com.financecontrol.dto.request.TransactionRequest;
+import com.financecontrol.dto.response.CategorySuggestionDto;
 import com.financecontrol.dto.response.ImportResult;
 import com.financecontrol.dto.response.ParsedTransactionResponse;
 import com.financecontrol.entity.Category;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,15 +100,22 @@ public class StatementImportService {
         double value          = parseAmount(m.group(4));
         TransactionType type  = sign == '+' ? TransactionType.CREDIT : TransactionType.DEBIT;
 
-        Optional<Category> suggestion = categoryService.findByAlias(userId, description);
+        List<Category> suggestions = categoryService.findByAlias(userId, description);
+        Category first = suggestions.isEmpty() ? null : suggestions.get(0);
+
+        List<CategorySuggestionDto> allSuggestions = suggestions.stream()
+                .map(c -> new CategorySuggestionDto(c.getId(), c.getName()))
+                .toList();
 
         return new ParsedTransactionResponse(
             date.format(DateTimeFormatter.ISO_LOCAL_DATE),
             description,
             value,
             type,
-            suggestion.map(Category::getId).orElse(null),
-            suggestion.map(Category::getName).orElse(null)
+            first != null ? first.getId() : null,
+            first != null ? first.getName() : null,
+            suggestions.size() > 1,
+            allSuggestions
         );
     }
 

@@ -39,12 +39,12 @@
                 <select id="account-input" required>
                   <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
                 </select>
-                <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="newAccount" title="Nova conta" data-icon="add"></button>
+                <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="account" title="Adição Rápida de Conta" data-icon="add"></button>
               </div>
             </div>
 
             <div class="field">
-              <label for="file-input" data-i18n="importFile">Arquivo PDF do extrato *</label>
+              <label for="file-input" data-i18n="importFile">Arquivo PDF do extrato</label>
               <div class="file-drop-zone" id="file-drop-zone">
                 <span data-icon="upload"></span>
                 <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo PDF aqui, ou clique para selecionar</span>
@@ -70,7 +70,7 @@
           <div class="review-table-wrapper">
             <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:700px" id="review-table">
               <thead>
-                <tr style="border-bottom:1px solid var(--border);text-align:left">
+                <tr style="border-bottom:1px solid var(--border)">
                   <th style="padding:8px 6px;white-space:nowrap;text-align:center">
                     <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
                       <span data-i18n="shouldImport" style="font-size:12px;font-weight:600">Deve Importar</span>
@@ -83,8 +83,8 @@
                   <th style="padding:8px 6px" data-i18n="transactionDescription">Descrição</th>
                   <th style="padding:8px 6px;white-space:nowrap" data-i18n="transactionValue">Valor</th>
                   <th style="padding:8px 6px" data-i18n="transactionType">Tipo</th>
-                  <th style="padding:8px 6px;min-width:220px" data-i18n="transactionCategory">Categoria *</th>
-                  <th style="padding:8px 6px;min-width:180px" data-i18n="transactionLocale">Local</th>
+                  <th style="padding:8px 6px;min-width:220px"><span data-i18n="transactionCategory">Categoria</span><span class="required-mark"> *</span></th>
+                  <th style="padding:8px 6px;min-width:180px"><span data-i18n="transactionLocale">Local</span><span class="optional-label"> (opcional)</span></th>
                 </tr>
               </thead>
               <tbody id="review-tbody"></tbody>
