@@ -2,13 +2,13 @@ import { I18n } from '../i18n.js'
 import { formatDate, formatCurrency } from '../../utils/FrontendFunctions.js'
 
 /**
- * Opens a modal to resolve category conflicts, one row at a time.
- * Each row gets its own conflict card — even rows with the same description
- * can be resolved to different categories.
+ * Abre um modal para resolver conflitos de categoria, uma linha por vez.
+ * Cada linha tem seu próprio card — linhas com a mesma descrição podem ser
+ * resolvidas para categorias diferentes.
  *
- * @param {object[]} conflicts     - rows with hasMultipleSuggestions=true, each with a rowIndex field
- * @param {object[]} allCategories - [{id, name}] full category list
- * @param {function} onConfirm     - called with Map<rowIndex, categoryId> when confirmed
+ * @param {object[]} conflicts     - linhas com hasMultipleSuggestions=true, cada uma com rowIndex
+ * @param {object[]} allCategories - [{id, name}] lista completa de categorias
+ * @param {function} onConfirm     - chamado com Map<rowIndex, categoryId> ao confirmar
  */
 export function openConflictModal(conflicts, allCategories, onConfirm) {
     const selections = new Map()
@@ -21,7 +21,6 @@ export function openConflictModal(conflicts, allCategories, onConfirm) {
     card.className = 'modal-card'
     card.style.cssText = 'display:flex;flex-direction:column;width:min(92vw,580px);max-height:82vh;padding:0;overflow:hidden'
 
-    // ── Header ────────────────────────────────────────────────────────────────
     const header = document.createElement('div')
     header.style.cssText = 'padding:20px 24px 14px;flex-shrink:0;border-bottom:1px solid var(--border)'
 
@@ -37,13 +36,11 @@ export function openConflictModal(conflicts, allCategories, onConfirm) {
     header.appendChild(titleEl)
     header.appendChild(infoEl)
 
-    // ── Scrollable body ───────────────────────────────────────────────────────
     const body = document.createElement('div')
     body.style.cssText = 'flex:1;overflow-y:auto;padding:16px 24px;display:flex;flex-direction:column;gap:12px'
 
     conflicts.forEach(row => body.appendChild(_buildItem(row, allCategories, selections)))
 
-    // ── Footer ────────────────────────────────────────────────────────────────
     const footer = document.createElement('div')
     footer.style.cssText = 'padding:14px 24px 20px;flex-shrink:0;border-top:1px solid var(--border)'
 
@@ -71,7 +68,6 @@ export function openConflictModal(conflicts, allCategories, onConfirm) {
     document.body.appendChild(overlay)
 }
 
-// ── Custom radio label visual state ──────────────────────────────────────────
 
 function _setLblActive(lbl, active) {
     lbl.style.background = active ? 'var(--primary-bg,rgba(46,125,50,.12))' : 'transparent'
@@ -86,7 +82,6 @@ function _setLblActive(lbl, active) {
     if (dot) dot.style.transform = active ? 'scale(1)' : 'scale(0)'
 }
 
-// ── Per-row conflict card ─────────────────────────────────────────────────────
 
 function _buildItem(row, allCategories, selections) {
     const { rowIndex } = row
@@ -95,12 +90,10 @@ function _buildItem(row, allCategories, selections) {
     const item = document.createElement('div')
     item.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:14px'
 
-    // Description
     const descEl = document.createElement('div')
     descEl.style.cssText = 'font-size:13px;font-weight:600;color:var(--text);word-break:break-word;margin-bottom:4px'
     descEl.textContent = row.description
 
-    // Date / amount / type meta
     const metaEl = document.createElement('div')
     metaEl.style.cssText = 'font-size:12px;color:var(--text-muted);margin-bottom:10px'
     const isCredit = (row.type ?? '').toLowerCase() === 'credit'
@@ -110,7 +103,6 @@ function _buildItem(row, allCategories, selections) {
         `${isCredit ? '+' : '-'} ${formatCurrency(row.amount)}</span>` +
         ` &nbsp;·&nbsp; ${I18n.t((row.type ?? '').toLowerCase())}`
 
-    // Auto/manual selection hint
     const hint = document.createElement('div')
     hint.style.cssText = 'font-size:12px;color:var(--color-warning,#f59e0b);margin-bottom:10px'
     const hasManualSelection = row.currentCategoryId && String(row.currentCategoryId) !== String(row.suggestedCategoryId ?? '')
@@ -121,7 +113,6 @@ function _buildItem(row, allCategories, selections) {
         hint.textContent = I18n.t('autoSelectedCategory', { name: row.suggestedCategoryName ?? '' })
     }
 
-    // Pill buttons for conflict categories
     const pillsRow = document.createElement('div')
     pillsRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px'
 
@@ -133,7 +124,6 @@ function _buildItem(row, allCategories, selections) {
             pill.style.color       = on ? 'var(--primary,#2e7d32)'                   : 'var(--text)'
             pill.style.fontWeight  = on ? '600' : '400'
         })
-        // Reset "other category" list items visually
         item.querySelectorAll('.cf-other-lbl').forEach(l => _setLblActive(l, false))
         item.querySelectorAll(`[name="cf-other-${rowIndex}"]`).forEach(r => { r.checked = false })
         selections.set(rowIndex, String(activeId))
@@ -155,8 +145,6 @@ function _buildItem(row, allCategories, selections) {
     if (effectiveIsConflict) {
         setPill(effectiveId)
     }
-    // If effectiveId is an "other" category, pills stay visually unselected;
-    // selections is already initialised with effectiveId and _buildOtherSection will mark it there.
 
     item.appendChild(descEl)
     item.appendChild(metaEl)
@@ -171,7 +159,6 @@ function _buildItem(row, allCategories, selections) {
     return item
 }
 
-// ── Other-category radio label builder ───────────────────────────────────────
 
 function _buildOtherLabel(cat, rowIndex, isActive, listEl, pillsRow, selections) {
     const lbl = document.createElement('label')
@@ -233,13 +220,11 @@ function _buildOtherLabel(cat, rowIndex, isActive, listEl, pillsRow, selections)
     return lbl
 }
 
-// ── Collapsible "other categories" section ────────────────────────────────────
 
 function _buildOtherSection(rowIndex, otherCats, pillsRow, item, selections) {
     const wrapper = document.createElement('div')
     wrapper.style.marginTop = '12px'
 
-    // Toggle button
     const caret = document.createElement('i')
     caret.className = 'ph ph-caret-right'
     caret.style.cssText = 'font-size:11px;transition:transform .15s;color:var(--text-muted)'
@@ -250,7 +235,6 @@ function _buildOtherSection(rowIndex, otherCats, pillsRow, item, selections) {
     toggle.appendChild(caret)
     toggle.appendChild(document.createTextNode(' ' + I18n.t('otherCategory')))
 
-    // Collapsible content
     const content = document.createElement('div')
     content.style.cssText = 'display:none;margin-top:8px'
 
@@ -261,7 +245,6 @@ function _buildOtherSection(rowIndex, otherCats, pillsRow, item, selections) {
         caret.style.transform   = open ? 'rotate(90deg)' : ''
     })
 
-    // Search input
     const searchInput = document.createElement('input')
     searchInput.type = 'text'
     searchInput.placeholder = I18n.t('searchPlaceholder')
@@ -275,7 +258,6 @@ function _buildOtherSection(rowIndex, otherCats, pillsRow, item, selections) {
     searchInput.addEventListener('focus',  () => { searchInput.style.borderColor = 'var(--primary,#2e7d32)' })
     searchInput.addEventListener('blur',   () => { searchInput.style.borderColor = 'var(--border)' })
 
-    // Radio list container
     const listEl = document.createElement('div')
     listEl.style.cssText = [
         'max-height:164px', 'overflow-y:auto', 'display:flex', 'flex-direction:column',
@@ -293,7 +275,7 @@ function _buildOtherSection(rowIndex, otherCats, pillsRow, item, selections) {
         if (visible.length === 0) {
             const empty = document.createElement('span')
             empty.style.cssText = 'font-size:12px;color:var(--text-muted);padding:8px;display:block;text-align:center'
-            empty.textContent = I18n.t('noResults')
+            empty.textContent = I18n.t('commonNoResults')
             listEl.appendChild(empty)
             return
         }

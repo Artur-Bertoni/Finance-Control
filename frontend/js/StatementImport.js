@@ -11,7 +11,6 @@ let selectedFile  = null
 let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
 let allCategories = []   // [{id, name}] loaded once
 let allLocales    = []   // [{id, name}] loaded once
-// descriptions confirmed through the conflict modal
 let confirmedConflicts = new Set()
 
 const REVIEW_STATE_KEY = '__statementReview'
@@ -168,7 +167,7 @@ function handleAnalyze() {
         missingFields.push(I18n.t('importFile'))
     }
     if (missingFields.length) {
-        showToast(I18n.t('fillRequiredFields', { fields: missingFields.join(', ') }), 'warning')
+        showToast(I18n.t('commonFillRequired', { fields: missingFields.join(', ') }), 'warning')
         return
     }
 
@@ -330,8 +329,8 @@ function buildCategoryCell(row, index) {
             })
             if (siblings.length > 0) {
                 const confirmed = await showConfirmAsync(I18n.t('propagateCategoryConfirm'), null, {
-                    cancelLabel:  I18n.t('no'),
-                    confirmLabel: I18n.t('yes'),
+                    cancelLabel:  I18n.t('commonNo'),
+                    confirmLabel: I18n.t('commonYes'),
                     confirmClass: 'btn-primary'
                 })
                 if (confirmed) {
@@ -415,8 +414,8 @@ function buildLocaleCell(row, index) {
             })
             if (siblings.length > 0) {
                 const confirmed = await showConfirmAsync(I18n.t('propagateLocaleConfirm'), null, {
-                    cancelLabel:  I18n.t('no'),
-                    confirmLabel: I18n.t('yes'),
+                    cancelLabel:  I18n.t('commonNo'),
+                    confirmLabel: I18n.t('commonYes'),
                     confirmClass: 'btn-primary'
                 })
                 if (confirmed) {
@@ -557,7 +556,6 @@ function handleConfirm() {
         return
     }
 
-    // Collect each checked row with multiple suggestions that hasn't been confirmed yet
     const pendingConflicts = []
     document.querySelectorAll('#review-tbody tr').forEach(tr => {
         const index   = Number(tr.dataset.index)

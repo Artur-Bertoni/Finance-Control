@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Feedbacks (Admin) | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../js/admin/FeedbackAdmin.js" type="module"></script>
+</head>
+<body>
+<header class="topbar">
+  <span class="page-title" data-i18n="adminFeedbacksTitle">Gerenciar Feedbacks</span>
+  <div id="header-actions"></div>
+</header>
+<main class="page-content">
+
+  <!-- Cards de estatísticas -->
+  <div class="stat-cards" id="feedback-stats-row">
+    <div class="stat-card">
+      <div class="stat-card-label">
+        <i class="ph ph-chat-text" style="margin-right:5px;opacity:.7"></i>
+        <span data-i18n="adminFeedbacksTotal">Total</span>
+      </div>
+      <div class="stat-card-value" id="stat-total">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">
+        <i class="ph ph-star" style="margin-right:5px;opacity:.7"></i>
+        <span data-i18n="adminFeedbacksAvgNps">NPS Médio</span>
+      </div>
+      <div class="stat-card-value" id="stat-avg-nps">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">
+        <i class="ph ph-lightbulb" style="margin-right:5px;opacity:.7"></i>
+        <span data-i18n="adminFeedbacksSuggestions">Sugestões</span>
+      </div>
+      <div class="stat-card-value" id="stat-suggestions">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">
+        <i class="ph ph-bug" style="margin-right:5px;opacity:.7"></i>
+        <span data-i18n="adminFeedbacksBugs">Bugs</span>
+      </div>
+      <div class="stat-card-value" id="stat-bugs">—</div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-section" id="filter-section">
+    <button class="filter-toggle-btn" id="filter-toggle-btn" type="button" aria-expanded="false">
+      <i class="ph ph-funnel"></i>
+      <span data-i18n="commonFilter">Filtro</span>
+      <span class="filter-toggle-active-dot"></span>
+      <i class="ph ph-caret-down filter-toggle-caret"></i>
+    </button>
+    <div class="dashboard-search-bar">
+      <div class="field">
+        <label for="type-filter" data-i18n="feedbackTypeLabel">Tipo de Feedback</label>
+        <select id="type-filter">
+          <option value="" data-i18n="allFeedbackTypes">Todos os tipos</option>
+          <option value="SUGGESTION" data-i18n="feedbackTypeSuggestion">Sugestão</option>
+          <option value="BUG" data-i18n="feedbackTypeBug">Bug / Problema</option>
+          <option value="GENERAL" data-i18n="feedbackTypeGeneral">Geral</option>
+        </select>
+      </div>
+      <div class="filter-clear-field" style="display:none">
+        <button class="btn btn-ghost btn-sm filter-clear-btn" id="clear-filter-btn" data-i18n-title="commonClearFilters" title="Limpar filtros" aria-label="Limpar filtros"><i class="ph ph-broom"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de feedbacks -->
+  <div class="dashboard-items-scroll">
+    <div id="feedbacks-list" class="feedback-admin-list"></div>
+    <div id="feedbacks-pagination" class="pagination-row" hidden></div>
+  </div>
+
+</main>
+</body>
+</html>

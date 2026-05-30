@@ -1,7 +1,7 @@
 /**
- * Creates the standard empty-state element used in list pages.
- * @param {string} iconHtml  - HTML string for the icon (e.g. Icons.categories())
- * @param {string} message   - Translated message string
+ * Cria o elemento de estado vazio padrão usado nas páginas de lista.
+ * @param {string} iconHtml  - HTML do ícone (ex: Icons.categories())
+ * @param {string} message   - Texto da mensagem traduzido
  * @returns {HTMLElement}
  */
 export function createEmptyState(iconHtml, message) {

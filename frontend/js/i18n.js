@@ -17,7 +17,6 @@ export class I18n {
             const response = await fetch(`/locales/${lang}.json`)
             this._translations[lang] = await response.json()
         } catch {
-            // language file missing — key fallback handles missing translations
         }
     }
 

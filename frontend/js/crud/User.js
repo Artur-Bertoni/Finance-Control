@@ -45,7 +45,7 @@ function handleSave() {
             fieldLabels
         )
         if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -94,7 +94,7 @@ function handleSave() {
         }
         const emptyFields = validateRequiredFields(['username-input', 'email-input'], fieldLabels)
         if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -333,8 +333,8 @@ function showPasswordChangeModal(userId, hasPassword) {
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" id="modal-pw-cancel">${I18n.t('cancel')}</button>
-                <button class="btn btn-primary"   id="modal-pw-save">${I18n.t('save')}</button>
+                <button class="btn btn-secondary" id="modal-pw-cancel">${I18n.t('commonCancel')}</button>
+                <button class="btn btn-primary"   id="modal-pw-save">${I18n.t('commonSave')}</button>
             </div>
         </div>
     `
@@ -359,7 +359,7 @@ function showPasswordChangeModal(userId, hasPassword) {
         ].filter(Boolean)
 
         if (missing.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: missing.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: missing.join(', ') }), 'warning')
             return
         }
 

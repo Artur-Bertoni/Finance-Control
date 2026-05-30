@@ -4,12 +4,12 @@ import { showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { CATEGORY_ICONS } from '../components/IconPicker.js'
 
 /**
- * Opens a modal for quickly creating an entity via API.
+ * Abre um modal para criação rápida de uma entidade via API.
  *
  * @param {object} opts
  * @param {string}   opts.title
  * @param {object[]} opts.fields     - [{id, label, type, required, placeholder, step, options, addBtn}]
- *                                     type 'icon-picker' renders an inline icon selector
+ *                                     type 'icon-picker' renderiza um seletor de ícone embutido
  * @param {string}   opts.apiUrl
  * @param {function} opts.buildBody  - (values) => requestBody
  * @param {function} opts.onSuccess  - (createdItem) => void
@@ -55,7 +55,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
         const labelText = f.label.replace(/\s*\*$/, '')
         const marker = f.required
             ? '<span class="required-mark"> *</span>'
-            : '<span class="optional-label"> ' + I18n.t('optionalLabel') + '</span>'
+            : '<span class="optional-label"> ' + I18n.t('commonOptional') + '</span>'
         return '<div class="field"><label>' + labelText + marker + '</label>' + inputHtml + '</div>'
     }).join('')
 
@@ -64,14 +64,13 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             <p class="modal-title">${title}</p>
             <div class="quick-add-fields">${fieldsHtml}</div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" id="qa-cancel">${I18n.t('cancel')}</button>
-                <button class="btn btn-primary"   id="qa-save">${I18n.t('save')}</button>
+                <button class="btn btn-secondary" id="qa-cancel">${I18n.t('commonCancel')}</button>
+                <button class="btn btn-primary"   id="qa-save">${I18n.t('commonSave')}</button>
             </div>
         </div>
     `
     document.body.appendChild(overlay)
 
-    // Initialize nested quick-add buttons for select fields
     fields.filter(f => f.type === 'select' && f.addBtn).forEach(f => {
         const addBtn = overlay.querySelector('#qaf-' + f.id + '-add-btn')
         if (!addBtn) return
@@ -94,7 +93,6 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
         })
     })
 
-    // Initialize icon picker fields
     fields.filter(f => f.type === 'icon-picker').forEach(f => {
         const wrapper  = overlay.querySelector(`#qaf-${f.id}-wrapper`)
         const trigger  = overlay.querySelector(`#qaf-${f.id}-trigger`)
@@ -111,7 +109,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
             if (!icons.length) {
                 const empty = document.createElement('span')
                 empty.className = 'qa-icon-empty'
-                empty.textContent = I18n.t('noResults')
+                empty.textContent = I18n.t('commonNoResults')
                 grid.appendChild(empty)
                 return
             }
@@ -174,7 +172,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
         const missing = fields.filter(f => f.required && !values[f.id])
         if (missing.length) {
             missing.forEach(f => overlay.querySelector('#qaf-' + f.id)?.classList.add('field-error'))
-            showToast(I18n.t('fillRequiredFields', { fields: missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: missing.map(f => f.label.replace(/\s*\*$/, '')).join(', ') }), 'warning')
             return
         }
 
@@ -191,7 +189,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
                 const proceed = await showConfirmAsync(
                     I18n.t('duplicateItemConfirm', { name: values.name }),
                     null,
-                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                    { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
                 )
                 if (!proceed) return
                 $.ajax({

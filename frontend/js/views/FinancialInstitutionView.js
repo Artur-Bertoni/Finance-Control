@@ -33,14 +33,14 @@ export function init() {
     if (fi.address) {
         addressEl.textContent = fi.address
     } else {
-        addressEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        addressEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     const contactEl = document.getElementById('detail-contact')
     if (fi.contact) {
         contactEl.textContent = fi.contact
     } else {
-        contactEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        contactEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     document.getElementById('edit-btn').addEventListener('click', () =>

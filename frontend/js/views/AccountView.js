@@ -30,20 +30,20 @@ export function init() {
     }
 
     document.getElementById('detail-institution').textContent =
-        acc.financialInstitution || I18n.t('notInformed')
+        acc.financialInstitution || I18n.t('commonNotInformed')
 
     const contactEl = document.getElementById('detail-contact')
     if (acc.contact) {
         contactEl.textContent = acc.contact
     } else {
-        contactEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        contactEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     const descEl = document.getElementById('detail-description')
     if (acc.description) {
         descEl.textContent = acc.description
     } else {
-        descEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        descEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     const balEl = document.getElementById('detail-balance')

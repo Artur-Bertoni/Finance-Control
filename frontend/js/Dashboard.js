@@ -39,12 +39,10 @@ function createRevealPlugin(id, buildPath) {
     }
 }
 
-// Left-to-right rectangle reveal (bar chart & line chart)
 const REVEAL_LR = createRevealPlugin('revealLR', (ctx, { left, right, top, bottom }, p) => {
     ctx.rect(left, top - 10, (right - left) * p, bottom - top + 20)
 })
 
-// Clockwise arc reveal from 12 o'clock (donut charts)
 const REVEAL_ARC = createRevealPlugin('revealArc', (ctx, { left, right, top, bottom }, p) => {
     const cx = (left + right) / 2
     const cy = (top + bottom) / 2

@@ -30,6 +30,8 @@ const routes = {
     '/pages/views/TransactionLocaleView.html':        () => import('./views/TransactionLocaleView.js'),
     '/pages/views/TransactionView.html':              () => import('./views/TransactionView.js'),
     '/pages/views/UserView.html':                     () => import('./views/UserView.js'),
+    '/pages/Feedback.html':                           () => import('./Feedback.js'),
+    '/pages/admin/FeedbackAdmin.html':                () => import('./admin/FeedbackAdmin.js'),
 }
 
 let currentSpaUrl = location.pathname + location.search
@@ -67,8 +69,8 @@ function updateBackButton() {
 async function confirmLeave(fromPopstate) {
     if (!globalThis.__dirtyGuard?.()) return true
     const confirmed = await showConfirmAsync(
-        I18n.t('unsavedChangesWarning'),
-        I18n.t('unsavedChangesTitle')
+        I18n.t('commonUnsavedWarning'),
+        I18n.t('commonUnsavedTitle')
     )
     if (!confirmed && fromPopstate) history.pushState({ url: currentSpaUrl }, '', currentSpaUrl)
     return confirmed
@@ -95,7 +97,6 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
 
     document.title = doc.title
 
-    // Reset breadcrumb — clear both DOM and module state so stale crumbs don't re-render on language change
     setBreadcrumb([])
     const breadcrumbNav = document.getElementById('breadcrumb')
     const appTitleEl    = document.getElementById('page-title-text')

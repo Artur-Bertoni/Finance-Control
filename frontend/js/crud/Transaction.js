@@ -102,7 +102,7 @@ async function handleSave(transactionId, force = false) {
     )
 
     if (emptyFields.length > 0) {
-        showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+        showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
         return
     }
 
@@ -135,7 +135,7 @@ async function handleSave(transactionId, force = false) {
             const proceed = await showConfirmAsync(
                 I18n.t('duplicateTransactionConfirm'),
                 null,
-                { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
             )
             if (proceed) handleSave(transactionId, true)
             return

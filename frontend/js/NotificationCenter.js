@@ -115,7 +115,7 @@ function _buildBackendCard(n) {
             <p class="mascot-notif-date">${dateStr}</p>
         </div>
         <div class="mascot-notif-actions">
-            ${n.link ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('view')}</button>` : ''}
+            ${n.link ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('commonView')}</button>` : ''}
             ${n.read ? '' : `<button class="btn btn-ghost btn-sm notif-read-btn">${I18n.t('markAsRead')}</button>`}
         </div>
     `
@@ -144,7 +144,7 @@ function _buildLocalCard(n) {
             <p class="mascot-notif-title">${escapeHtml(n.message)}</p>
             <p class="mascot-notif-date">${dateStr}</p>
         </div>
-        ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('view')}</button></div>` : ''}
+        ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('commonView')}</button></div>` : ''}
     `
     card.querySelector('.local-view-btn')?.addEventListener('click', () => navigate(n.link))
     return card

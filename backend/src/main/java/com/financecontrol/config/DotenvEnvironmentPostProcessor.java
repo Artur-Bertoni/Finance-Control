@@ -29,7 +29,6 @@ public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor,
             return;
         }
 
-        // addLast = lowest priority; OS env vars and system properties always win
         environment.getPropertySources().addLast(new PropertiesPropertySource(".env", props));
     }
 

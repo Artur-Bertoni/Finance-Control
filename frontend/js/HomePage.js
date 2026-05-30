@@ -143,7 +143,6 @@ function loadTransactions(data) {
     try {
         for (const el of data) transactions.push(Transaction.processTransaction(el))
     } catch {
-        // silent fail — caller receives empty array
     }
     return transactions
 }
@@ -192,7 +191,7 @@ function renderPagination() {
     for (let i = 1; i <= totalPages; i++) {
         const opt = document.createElement('option')
         opt.value = i
-        opt.textContent = I18n.t('pageOf', { page: i, total: totalPages })
+        opt.textContent = I18n.t('commonPageOf', { page: i, total: totalPages })
         opt.selected = i === currentPage
         select.appendChild(opt)
     }
@@ -211,7 +210,7 @@ function renderPagination() {
     const rangeEnd   = Math.min(currentPage * PAGE_SIZE, allTransactions.length)
     const info = document.createElement('span')
     info.className = 'pagination-info'
-    info.textContent = I18n.t('paginationInfo', { start: rangeStart, end: rangeEnd, total: allTransactions.length })
+    info.textContent = I18n.t('commonPaginationInfo', { start: rangeStart, end: rangeEnd, total: allTransactions.length })
     pag.appendChild(info)
 
     document.querySelector('.transactions-card .card-header').appendChild(pag)

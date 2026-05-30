@@ -98,7 +98,7 @@ function handleSave(accountId) {
     )
 
     if (emptyFields.length > 0) {
-        showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+        showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
         return
     }
 

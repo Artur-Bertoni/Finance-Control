@@ -54,7 +54,6 @@ export function init() {
             })
         }
     } else {
-        // On create: sync first alias with the name field until the user edits aliases manually
         aliases = ['']
         renderAliases()
 
@@ -84,7 +83,7 @@ export function init() {
         const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
 
         if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -96,7 +95,7 @@ export function init() {
             const proceed = await showConfirmAsync(
                 I18n.t('aliasChangeWarning'),
                 I18n.t('confirmAction'),
-                { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('confirm'), confirmClass: 'btn-danger' }
+                { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('commonConfirm'), confirmClass: 'btn-danger' }
             )
             if (!proceed) return
         }
@@ -124,7 +123,7 @@ export function init() {
                 const proceed = await showConfirmAsync(
                     I18n.t('duplicateItemConfirm', { name: body.name }),
                     null,
-                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                    { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
                 )
                 if (!proceed) return
                 $.ajax({
@@ -185,7 +184,7 @@ function renderAliases() {
         removeBtn.className = 'btn btn-ghost btn-sm'
         removeBtn.style.cssText = 'padding:4px 8px;color:var(--text-muted);flex-shrink:0'
         removeBtn.textContent = '×'
-        removeBtn.title = I18n.t('remove')
+        removeBtn.title = I18n.t('commonRemove')
         removeBtn.addEventListener('click', () => {
             aliases.splice(index, 1)
             aliasManuallyEdited = true

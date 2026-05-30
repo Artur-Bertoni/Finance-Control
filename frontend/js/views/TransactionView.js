@@ -52,14 +52,14 @@ export function init() {
     if (tx.transactionLocale) {
         localeEl.textContent = tx.transactionLocale
     } else {
-        localeEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        localeEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     const obsEl = document.getElementById('detail-obs')
     if (tx.obs) {
         obsEl.textContent = tx.obs
     } else {
-        obsEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        obsEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     document.getElementById('edit-btn').addEventListener('click', () =>

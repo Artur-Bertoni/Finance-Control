@@ -3995,3 +3995,195 @@ body.page-charts .stat-card-value { font-size: 18px; }
 .view-tab-content {
   padding-top: 20px;
 }
+
+/* ── Feedback ──────────────────────────────────────────────────────────────── */
+
+.form-page-container {
+  margin: 0 auto;
+  padding: 0 0 32px;
+}
+
+.form-page-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.feedback-type-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.feedback-type-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.feedback-type-option input[type="radio"] { display: none; }
+
+.feedback-type-option:has(input:checked) {
+  border-color: var(--primary-500);
+  background: var(--primary-50, rgba(46,125,50,0.06));
+  color: var(--primary-600, #1b5e20);
+}
+
+.feedback-type-option:hover { border-color: var(--primary-400, #4caf50); }
+
+.feedback-nps-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.feedback-nps-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.feedback-nps-btn {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-nps-btn:hover { border-color: var(--primary-400, #4caf50); }
+
+.feedback-nps-btn--selected {
+  border-color: var(--primary-500);
+  background: var(--primary-500);
+  color: #fff;
+}
+
+.feedback-nps-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Feedback Admin ───────────────────────────────────────────────────────── */
+
+.feedback-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.feedback-admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.feedback-admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.feedback-admin-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feedback-admin-meta strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.feedback-admin-email {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.feedback-admin-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.feedback-admin-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.feedback-admin-message {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.feedback-nps-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--primary-50, rgba(46,125,50,0.1));
+  color: var(--primary-600, #1b5e20);
+  border: 1px solid var(--primary-200, rgba(46,125,50,0.25));
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.badge--info    { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.badge--danger  { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+.badge--neutral { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); }
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}

@@ -65,7 +65,7 @@ document.getElementById('register-btn').addEventListener('click', () => {
     ].filter(Boolean)
 
     if (missing.length > 0) {
-        showToast(I18n.t('fillRequiredFields', { fields: missing.join(', ') }), 'warning')
+        showToast(I18n.t('commonFillRequired', { fields: missing.join(', ') }), 'warning')
         return
     }
 

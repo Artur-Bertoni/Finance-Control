@@ -9,7 +9,6 @@ const BOOLEAN_FIELDS = new Set([
     'notifyOnComplete', 'notifyOnDeadline', 'notifyOnExceed'
 ])
 
-// Maps enum/raw values stored in the log to existing i18n keys
 const ENUM_I18N = {
     debit:         'debit',
     credit:        'credit',
@@ -169,7 +168,6 @@ export const ChangeHistoryManager = {
             })
         }
 
-        // Creation line from entity's own createdAt (fallback for entities without a CREATED log entry)
         const hasCreationLog = groups?.some(g => g.creation)
         if (!hasCreationLog && createdAt) {
             html += `

@@ -32,7 +32,7 @@ export function init() {
     if (loc.address) {
         addressEl.textContent = loc.address
     } else {
-        addressEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        addressEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     document.getElementById('edit-btn').addEventListener('click', () =>

@@ -33,7 +33,7 @@ export function init() {
     if (cat.description) {
         descEl.textContent = cat.description
     } else {
-        descEl.innerHTML = `<span class="detail-empty">${I18n.t('notInformed')}</span>`
+        descEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
     if (cat.aliases.length > 0) {

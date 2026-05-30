@@ -18,6 +18,7 @@ export class SidebarManager {
         SidebarManager._initialized = true
         await I18n.initialize()
         SidebarManager.checkAuth()
+        SidebarManager.applyAdminVisibility()
         SidebarManager.renderIcons()
         SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
@@ -101,7 +102,7 @@ export class SidebarManager {
         })
 
         document.querySelectorAll('.detail-empty').forEach(el => {
-            el.textContent = I18n.t('notInformed')
+            el.textContent = I18n.t('commonNotInformed')
         })
 
         CustomSelect.syncAll()
@@ -118,7 +119,7 @@ export class SidebarManager {
             } else if ('optionalLabel' in label.dataset) {
                 const mark = document.createElement('span')
                 mark.className = 'optional-label'
-                mark.textContent = ' ' + I18n.t('optionalLabel')
+                mark.textContent = ' ' + I18n.t('commonOptional')
                 label.appendChild(mark)
             }
         })
@@ -197,6 +198,11 @@ export class SidebarManager {
         })
     }
 
+    static applyAdminVisibility() {
+        const link = document.getElementById('admin-feedbacks-link')
+        if (link) link.hidden = !globalThis.__currentUser?.admin
+    }
+
     static refreshImportBadge() {
         const hasReview = !!sessionStorage.getItem('__statementReview')
         const link = document.querySelector('.sidebar-link[href*="StatementImport.html"]')
@@ -230,8 +236,10 @@ export class SidebarManager {
             'TransactionLocaleList.html': 'locations',
             'StatementImport.html': 'statementImport',
             'AchievementList.html': 'achievements',
-            'FinnyCenter.html': 'finny',
-            'UserView.html': 'profile'
+            'FinnyCenter.html':    'finny',
+            'Feedback.html':      'feedback',
+            'FeedbackAdmin.html': 'adminPanel',
+            'UserView.html':      'profile'
         }
 
         document.querySelectorAll('.sidebar-nav .sidebar-link, .sidebar-footer .sidebar-link').forEach(link => {
@@ -304,7 +312,7 @@ export class SidebarManager {
             const newlyDone = goals.filter(g => g.status === 'completed' && !seen.has(g.id))
             for (const g of newlyDone) {
                 showToast(`🎯 ${I18n.t('goalCompletedToast')}: ${g.name}`, 'success', {
-                    label: I18n.t('view'),
+                    label: I18n.t('commonView'),
                     url:   `/pages/lists/GoalList.html?highlight=${g.id}`
                 })
             }
@@ -357,7 +365,7 @@ export class SidebarManager {
             for (const a of newOnes) {
                 const title = I18n.t(`achievement_${a.type}_title`)
                 showToast(`🏆 ${I18n.t('achievementUnlocked')}: ${title}`, 'success', {
-                    label: I18n.t('view'),
+                    label: I18n.t('commonView'),
                     url:   `/pages/lists/AchievementList.html?highlight=${a.type}`
                 })
             }

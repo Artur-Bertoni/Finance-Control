@@ -148,7 +148,7 @@ async function handleSave(goalId, force = false) {
     }
     const empty = validateRequiredFields(REQUIRED, fieldLabels)
     if (empty.length) {
-        showToast(I18n.t('fillRequiredFields', { fields: empty.join(', ') }), 'warning')
+        showToast(I18n.t('commonFillRequired', { fields: empty.join(', ') }), 'warning')
         return
     }
 
@@ -202,7 +202,7 @@ async function confirmAndRetryGoalSave(goalId) {
     const proceed = await showConfirmAsync(
         I18n.t('duplicateGoalConfirm'),
         null,
-        { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+        { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
     )
     if (proceed) handleSave(goalId, true)
 }
@@ -212,7 +212,7 @@ function renderMultiCheckList(containerId, items, selectedIds) {
     if (!container) return
     container.innerHTML = ''
     if (!items.length) {
-        container.innerHTML = `<span class="text-muted" style="font-size:13px">${I18n.t('noResults')}</span>`
+        container.innerHTML = `<span class="text-muted" style="font-size:13px">${I18n.t('commonNoResults')}</span>`
         return
     }
     for (const item of items) {
@@ -245,7 +245,6 @@ function setCheck(id, value) {
 }
 
 function getInputValue(id) {
-    // flatpickr stores ISO value in the original hidden input
     return document.getElementById(id)?._flatpickr?.selectedDates?.[0]
         ? document.getElementById(id)._flatpickr.formatDate(
               document.getElementById(id)._flatpickr.selectedDates[0], 'Y-m-d')

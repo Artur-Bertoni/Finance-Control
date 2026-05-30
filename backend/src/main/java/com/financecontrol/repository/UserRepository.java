@@ -14,4 +14,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailAndIdNot(String email, Long id);
     List<User> findByEmailNotificationEnabledTrueAndEmailNotificationDay(int day);
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
+    List<User> findAllByAdminTrue();
 }

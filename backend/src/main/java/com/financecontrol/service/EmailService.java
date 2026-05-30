@@ -2,6 +2,7 @@ package com.financecontrol.service;
 
 import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.User;
+import com.financecontrol.entity.UserFeedback;
 import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
@@ -28,9 +29,10 @@ import java.util.Objects;
 @Service
 public class EmailService {
 
-    private static final String TEMPLATE_WEEKLY = "templates/weekly-reminder.html";
-    private static final String TEMPLATE_GOAL = "templates/goal-notification.html";
+    private static final String TEMPLATE_WEEKLY       = "templates/weekly-reminder.html";
+    private static final String TEMPLATE_GOAL         = "templates/goal-notification.html";
     private static final String TEMPLATE_VERIFICATION = "templates/email-verification.html";
+    private static final String TEMPLATE_FEEDBACK     = "templates/feedback-notification.html";
 
     private final JavaMailSender mailSender;
     private final MessageSource messageSource;
@@ -176,6 +178,31 @@ public class EmailService {
                 .replace("{{baseUrl}}",              baseUrl);
 
         sendMimeMessage(user.getEmail(), subject, html);
+    }
+
+    @Async("emailTaskExecutor")
+    public void sendFeedbackNotification(User admin, User sender, UserFeedback feedback) {
+        try {
+            String typeLabel = switch (feedback.getType()) {
+                case SUGGESTION -> "Sugestão";
+                case BUG        -> "Bug / Problema";
+                case GENERAL    -> "Geral";
+            };
+            String npsText = feedback.getNpsScore() != null ? String.valueOf(feedback.getNpsScore()) + " / 10" : "—";
+
+            String html = loadTemplate(TEMPLATE_FEEDBACK)
+                    .replace("{{senderName}}",    sender.getUsername())
+                    .replace("{{senderEmail}}",   sender.getEmail())
+                    .replace("{{feedbackType}}",  typeLabel)
+                    .replace("{{npsScore}}",      npsText)
+                    .replace("{{feedbackMessage}}", feedback.getMessage())
+                    .replace("{{baseUrl}}",       baseUrl);
+
+            sendMimeMessage(admin.getEmail(), "Finance Control — Novo feedback recebido 📬", html);
+            log.info("Notificação de feedback enviada para admin {}", admin.getEmail());
+        } catch (Exception e) {
+            log.error("Falha ao enviar notificação de feedback: {}", e.getMessage());
+        }
     }
 
     private Goal buildSampleGoal() {

@@ -160,7 +160,7 @@ function _renderResults() {
             html += `<button class="search-result-item" data-href="${type.viewPath}?id=${item.id}">${item.name ?? item.alias ?? ''}</button>`
         }
         if (hits.length > 3) {
-            html += `<span class="search-more">+${hits.length - 3} ${I18n.t('moreResults')}</span>`
+            html += `<span class="search-more">+${hits.length - 3} ${I18n.t('commonMoreResults')}</span>`
         }
         html += `</div>`
     }

@@ -137,7 +137,7 @@ export class IconPicker {
         if (!grid) return
         grid.innerHTML = ''
         if (!icons.length) {
-            grid.innerHTML = `<span class="icon-picker-empty">${I18n.t('noResults')}</span>`
+            grid.innerHTML = `<span class="icon-picker-empty">${I18n.t('commonNoResults')}</span>`
             return
         }
         for (const ic of icons) {

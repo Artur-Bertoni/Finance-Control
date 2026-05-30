@@ -50,7 +50,6 @@ const TYPE_META = {
     GOAL_DEADLINE_WARNING: { icon: '⏰', i18nKey: 'notifGoalDeadline'   },
 }
 
-// ── Tip-building helpers ────────────────────────────────────────────────────
 
 function buildSavingsTip(totalIncome, net, lang) {
     if (totalIncome <= 0 || net <= 0) return null
@@ -186,7 +185,6 @@ function buildPersonalizedTips(data, lang, goals = []) {
     return tips.filter(Boolean)
 }
 
-// ── Utilities ───────────────────────────────────────────────────────────────
 
 function toDateStr(d) {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
@@ -206,7 +204,6 @@ function fetchGoals() {
     try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] }
 }
 
-// ── MascotManager ───────────────────────────────────────────────────────────
 
 export class MascotManager {
     static _tips           = []
@@ -290,12 +287,10 @@ export class MascotManager {
         const storedNext = Number(localStorage.getItem(this._STORAGE_NEXT) ?? 0)
 
         if (storedTip && storedNext > Date.now()) {
-            // Timer ainda correndo — restaura estado sem mostrar toast
             this._currentTip  = storedTip
             this._nextTipTime = storedNext
             this._pushTimer   = setTimeout(rotateTip, storedNext - Date.now())
         } else {
-            // Primeira vez ou timer expirado — escolhe dica nova
             this._currentTip  = pickRandom()
             this._nextTipTime = Date.now() + this._TIP_PUSH_MS
             localStorage.setItem(this._STORAGE_TIP,  this._currentTip)
@@ -427,7 +422,7 @@ export class MascotManager {
                 <p class="mascot-notif-date">${dateStr}</p>
             </div>
             <div class="mascot-notif-actions">
-                ${n.link  ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('view')}</button>` : ''}
+                ${n.link  ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('commonView')}</button>` : ''}
                 ${n.read  ? '' : `<button class="btn btn-ghost btn-sm notif-read-btn">${I18n.t('markAsRead')}</button>`}
             </div>
         `
@@ -457,7 +452,7 @@ export class MascotManager {
                 <p class="mascot-notif-title">${escapeHtml(n.message)}</p>
                 <p class="mascot-notif-date">${dateStr}</p>
             </div>
-            ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('view')}</button></div>` : ''}
+            ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('commonView')}</button></div>` : ''}
         `
         card.querySelector('.local-view-btn')?.addEventListener('click', () => navigate(n.link))
         return card

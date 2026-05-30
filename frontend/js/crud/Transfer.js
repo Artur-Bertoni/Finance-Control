@@ -55,7 +55,7 @@ export function init() {
         )
 
         if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -132,7 +132,7 @@ function updateMaxValue() {
         success: function (total) {
             const valueInput       = document.getElementById('value-input')
             valueInput.max         = total
-            valueInput.placeholder = I18n.t('maxValue', { max: formatCurrency(Number(total)) })
+            valueInput.placeholder = I18n.t('commonMaxValue', { max: formatCurrency(Number(total)) })
         },
         error: function () {}
     })

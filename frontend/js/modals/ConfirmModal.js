@@ -1,7 +1,7 @@
 import { I18n } from '../i18n.js'
 
 /**
- * Opens a confirmation dialog with cancel/confirm buttons.
+ * Exibe um diálogo de confirmação com botões cancelar/confirmar.
  * @param {string} message
  * @param {() => void} onConfirm
  * @param {string|null} title
@@ -14,8 +14,8 @@ export function showConfirm(message, onConfirm, title = null) {
             <p class="modal-title">${title ?? I18n.t('confirmAction')}</p>
             <p class="modal-message">${message}</p>
             <div class="modal-actions">
-                <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('cancel')}</button>
-                <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('confirm')}</button>
+                <button class="btn btn-secondary" id="modal-cancel-btn">${I18n.t('commonCancel')}</button>
+                <button class="btn btn-danger"    id="modal-confirm-btn">${I18n.t('commonConfirm')}</button>
             </div>
         </div>
     `
@@ -30,16 +30,16 @@ export function showConfirm(message, onConfirm, title = null) {
 }
 
 /**
- * Opens a confirmation dialog and returns a Promise<boolean>.
- * Resolves true if confirmed, false if cancelled.
+ * Exibe um diálogo de confirmação e retorna uma Promise<boolean>.
+ * Resolve com true se confirmado, false se cancelado.
  * @param {string} message
  * @param {string|null} title
  * @param {{ cancelLabel?: string, confirmLabel?: string, confirmClass?: string }} opts
  * @returns {Promise<boolean>}
  */
 export function showConfirmAsync(message, title = null, opts = {}) {
-    const cancelLabel  = opts.cancelLabel  ?? I18n.t('stay')
-    const confirmLabel = opts.confirmLabel ?? I18n.t('leaveAnyway')
+    const cancelLabel  = opts.cancelLabel  ?? I18n.t('commonStay')
+    const confirmLabel = opts.confirmLabel ?? I18n.t('commonLeaveAnyway')
     const confirmClass = opts.confirmClass ?? 'btn-danger'
     return new Promise(resolve => {
         const overlay = document.createElement('div')

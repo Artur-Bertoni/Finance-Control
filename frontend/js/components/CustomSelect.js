@@ -104,7 +104,7 @@ export class CustomSelect {
         const searchInput = document.createElement('input')
         searchInput.type = 'text'
         searchInput.className = 'cs-search'
-        searchInput.placeholder = I18n.t('filterOptions')
+        searchInput.placeholder = I18n.t('commonFilterOptions')
         searchInput.autocomplete = 'off'
         searchWrapper.appendChild(searchInput)
         this.dropdown.appendChild(searchWrapper)
@@ -117,7 +117,7 @@ export class CustomSelect {
         if (sel.value !== '') {
             const clearItem = document.createElement('div')
             clearItem.className = 'cs-option cs-clear'
-            clearItem.textContent = I18n.t('clearSelection')
+            clearItem.textContent = I18n.t('commonClearSelection')
             clearItem.tabIndex = -1
             const doClear = () => {
                 sel.selectedIndex = 0
@@ -191,7 +191,7 @@ export class CustomSelect {
 
         const noResults = document.createElement('div')
         noResults.className = 'cs-no-results'
-        noResults.textContent = I18n.t('noResults')
+        noResults.textContent = I18n.t('commonNoResults')
         noResults.style.display = 'none'
         optsList.appendChild(noResults)
 

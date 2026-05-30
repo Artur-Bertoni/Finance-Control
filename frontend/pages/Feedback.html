@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Feedback | Finance Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/Feedback.js" type="module"></script>
+</head>
+<body>
+<header class="topbar">
+  <span class="page-title" data-i18n="feedbackTitle">Enviar Feedback</span>
+  <div id="header-actions"></div>
+</header>
+<main class="page-content">
+
+  <div class="form-page-container" style="max-width:640px;">
+    <p class="form-page-subtitle" data-i18n="feedbackSubtitle">Sua opinião nos ajuda a melhorar continuamente o Finance Control.</p>
+
+    <div class="card" style="padding:28px;">
+
+      <!-- Tipo -->
+      <div class="field">
+        <label data-i18n="feedbackTypeLabel">Tipo de Feedback</label>
+        <div class="feedback-type-group" id="feedback-type-group">
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="SUGGESTION">
+            <span data-i18n="feedbackTypeSuggestion">Sugestão</span>
+          </label>
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="BUG">
+            <span data-i18n="feedbackTypeBug">Bug / Problema</span>
+          </label>
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="GENERAL">
+            <span data-i18n="feedbackTypeGeneral">Geral</span>
+          </label>
+        </div>
+        <span class="field-error" id="type-error" hidden></span>
+      </div>
+
+      <!-- NPS -->
+      <div class="field" style="margin-top:20px;">
+        <label data-i18n="feedbackNpsLabel">De 0 a 10, o quanto você recomendaria o Finance Control para um amigo?</label>
+        <div class="feedback-nps-row" id="nps-row">
+          <div class="feedback-nps-buttons" id="nps-buttons">
+            <!-- 0-10 buttons rendered by JS -->
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="nps-skip-btn" data-i18n="feedbackNpsSkip">Prefiro não responder</button>
+        </div>
+        <div class="feedback-nps-labels">
+          <span class="feedback-nps-label-low" data-i18n="feedbackNpsLow">0 — Definitivamente não</span>
+          <span class="feedback-nps-label-high" data-i18n="feedbackNpsHigh">10 — Com certeza!</span>
+        </div>
+      </div>
+
+      <!-- Mensagem -->
+      <div class="field" style="margin-top:20px;">
+        <label for="feedback-message" data-i18n="feedbackMessageLabel">Sua mensagem</label>
+        <textarea id="feedback-message" rows="5"
+                  data-i18n-placeholder="feedbackMessagePlaceholder"
+                  placeholder="Descreva sua sugestão, problema ou comentário..."
+                  style="resize:vertical;"></textarea>
+        <span class="field-error" id="message-error" hidden></span>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-actions" style="margin-top:24px;">
+        <button type="button" class="btn btn-primary" id="feedback-submit-btn" data-i18n="feedbackSubmit">
+          Enviar Feedback
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

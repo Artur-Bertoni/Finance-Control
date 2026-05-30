@@ -57,7 +57,7 @@ export function init() {
         const emptyFields = validateRequiredFields(['name-input'], fieldLabels)
 
         if (emptyFields.length > 0) {
-            showToast(I18n.t('fillRequiredFields', { fields: emptyFields.join(', ') }), 'warning')
+            showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
             return
         }
 
@@ -84,7 +84,7 @@ export function init() {
                 const proceed = await showConfirmAsync(
                     I18n.t('duplicateItemConfirm', { name: body.name }),
                     null,
-                    { cancelLabel: I18n.t('cancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
+                    { cancelLabel: I18n.t('commonCancel'), confirmLabel: I18n.t('createAnyway'), confirmClass: 'btn-primary' }
                 )
                 if (!proceed) return
                 $.ajax({
