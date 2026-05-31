@@ -9,4 +9,9 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# JVM ajustada para containers pequenos:
+#  - MaxRAMPercentage: usa a memória real do container (evita OOM/swap = lentidão)
+#  - SerialGC + TieredStopAtLevel=1: menor overhead e startup mais rápido em 1 vCPU
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

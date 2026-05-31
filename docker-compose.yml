@@ -9,6 +9,10 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
       - db:/var/lib/mysql
+    # Publica o MySQL apenas no loopback do host (NÃO na internet).
+    # Permite acessar o banco de produção por túnel SSH; veja scripts/db-tunnel.ps1.
+    ports:
+      - "127.0.0.1:3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s

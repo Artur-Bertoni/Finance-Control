@@ -10,4 +10,10 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# JVM ajustada para a instância pequena do Railway:
+#  - MaxRAMPercentage: usa a RAM real do container (evita OOM/swap = lentidão)
+#  - SerialGC + TieredStopAtLevel=1: menor overhead e cold start mais rápido em 1 vCPU
+# O Spring escuta na porta definida por $PORT (injetada pelo Railway).
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -XX:TieredStopAtLevel=1"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
