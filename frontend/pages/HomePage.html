@@ -93,5 +93,26 @@
     </main>
   </div>
 </div>
+
+<!-- Template do item de transação (o JS apenas clona e preenche) -->
+<template id="tpl-transaction-item">
+  <div class="transaction-item">
+    <div class="tx-indicator"></div>
+    <div class="tx-info">
+      <div class="tx-category">
+        <i class="tx-cat-icon ph" hidden></i>
+        <span class="tx-cat-name"></span>
+      </div>
+      <div class="tx-meta">
+        <span class="tx-account"></span>
+        <span class="tx-locale" hidden></span>
+        <span class="tx-date"></span>
+        <span class="tx-installments" hidden></span>
+      </div>
+    </div>
+    <span class="tx-badge"></span>
+    <div class="tx-value"></div>
+  </div>
+</template>
 </body>
 </html>

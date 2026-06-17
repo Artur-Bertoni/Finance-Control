@@ -8,7 +8,7 @@ const routes = {
     '/pages/Dashboard.html':                          () => import('./Dashboard.js'),
     '/pages/HomePage.html':                           () => import('./HomePage.js'),
     '/pages/StatementImport.html':                    () => import('./StatementImport.js'),
-    '/pages/FinnyCenter.html':                        () => import('./NotificationCenter.js'),
+    '/pages/FinnyCenter.html':                        () => import('./FinnyCenter.js'),
     '/pages/crud/Account.html':                       () => import('./crud/Account.js'),
     '/pages/crud/Category.html':                      () => import('./crud/Category.js'),
     '/pages/crud/FinancialInstitution.html':          () => import('./crud/FinancialInstitution.js'),
@@ -138,7 +138,6 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     updateBackButton()
 
     SidebarManager.onNavigate()
-    MascotManager.refreshBadge()
 
     const loader = routes[path]
     if (loader) {

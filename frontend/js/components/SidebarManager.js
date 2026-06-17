@@ -163,11 +163,7 @@ export class SidebarManager {
                     instance.element.dispatchEvent(new Event('change', { bubbles: true }))
                 }
             })
-            fp.calendarContainer.addEventListener('wheel', e => {
-                if (document.activeElement?.tagName === 'SELECT') return
-                e.preventDefault()
-                fp.changeMonth(e.deltaY > 0 ? 1 : -1)
-            }, { passive: false })
+            SidebarManager._attachWheelMonthNav(fp)
             const orig = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')
             let syncing = false
             Object.defineProperty(input, 'value', {
@@ -181,6 +177,19 @@ export class SidebarManager {
                 configurable: true
             })
         })
+    }
+
+    /**
+     * Wheel sobre o calendário troca o mês — exceto quando o ponteiro está sobre o seletor
+     * de mês. Esse seletor vira um CustomSelect (`.cs-wrapper`, com dropdown e campo de busca
+     * próprios), então sobre ele deixamos o scroll agir no dropdown, sem mexer no mês ao fundo.
+     */
+    static _attachWheelMonthNav(fp) {
+        fp.calendarContainer.addEventListener('wheel', e => {
+            if (e.target.closest('.cs-wrapper, select')) return
+            e.preventDefault()
+            fp.changeMonth(e.deltaY > 0 ? 1 : -1)
+        }, { passive: false })
     }
 
     static checkAuth() {

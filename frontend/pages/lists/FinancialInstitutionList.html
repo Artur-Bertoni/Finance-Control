@@ -43,5 +43,22 @@
     </main>
   </div>
 </div>
+
+<!-- Template do card de instituição (o JS apenas clona e preenche) -->
+<template id="tpl-fi-card">
+  <div class="item-card">
+    <div class="item-card-header">
+      <span class="item-card-name-group">
+        <span class="fi-icon" style="font-size:18px;color:var(--primary);flex-shrink:0" hidden></span>
+        <span class="item-card-name"></span>
+      </span>
+      <span class="item-card-badge"></span>
+    </div>
+    <div class="item-card-meta">
+      <div class="item-card-row fi-address" hidden></div>
+      <div class="item-card-row fi-contact" hidden></div>
+    </div>
+  </div>
+</template>
 </body>
 </html>

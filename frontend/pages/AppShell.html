@@ -77,10 +77,8 @@
 </div>
 
 <!-- Mascote Finny — botão flutuante -->
-<!-- Finny — botão flutuante com badge de não lidas -->
 <button id="mascot-fab" class="mascot-fab" type="button" aria-label="Finny" title="Finny — dicas e notificações">
   <span data-finny-svg=""></span>
-  <span id="mascot-fab-badge" class="mascot-fab-badge" hidden></span>
 </button>
 
 <!-- Painel do Finny — duas abas: Dicas | Mensagens -->
@@ -100,10 +98,7 @@
   <!-- Abas -->
   <div class="mascot-panel-tabs">
     <button id="mascot-tab-tips" class="mascot-tab-btn mascot-tab-btn--active" type="button" data-i18n="mascotTabTips">Dicas</button>
-    <button id="mascot-tab-messages" class="mascot-tab-btn" type="button">
-      <span data-i18n="mascotTabMessages">Mensagens</span>
-      <span id="mascot-tab-badge" class="mascot-tab-badge" hidden></span>
-    </button>
+    <button id="mascot-tab-messages" class="mascot-tab-btn" type="button" data-i18n="mascotTabMessages">Mensagens</button>
   </div>
 
   <!-- Conteúdo: Dicas -->
@@ -112,20 +107,94 @@
       <span data-finny-svg="mascot-body-svg"></span>
       <p id="mascot-tip-text" class="mascot-tip-text"></p>
     </div>
-    <div class="mascot-panel-footer">
+    <div id="mascot-tip-feedback" class="finny-feedback-bar" hidden>
+      <button class="finny-fb-btn" data-fb="HELPFUL" type="button" data-i18n-title="finnyFeedbackHelpful" title="Útil">👍</button>
+      <button class="finny-fb-btn" data-fb="NOT_HELPFUL" type="button" data-i18n-title="finnyFeedbackNotHelpful" title="Não foi útil">👎</button>
+      <button class="finny-fb-btn" data-fb="DISMISSED" type="button" data-i18n-title="finnyFeedbackDismiss" title="Dispensar">✕</button>
+    </div>
+    <div class="mascot-panel-footer mascot-panel-footer--nav">
+      <button id="mascot-tip-prev" class="btn btn-ghost btn-sm finny-nav-btn" type="button" aria-label="‹">‹</button>
+      <span id="mascot-tip-counter" class="mascot-dashboard-counter"></span>
+      <button id="mascot-tip-next" class="btn btn-ghost btn-sm finny-nav-btn" type="button" aria-label="›">›</button>
       <span id="mascot-tip-countdown" class="mascot-tip-countdown"></span>
     </div>
   </div>
 
-  <!-- Conteúdo: Mensagens -->
+  <!-- Conteúdo: Mensagens (somente leitura) -->
   <div id="mascot-content-messages" class="mascot-panel-tab-content" hidden>
     <div id="mascot-notifications-list" class="mascot-notif-list"></div>
-    <div id="mascot-notif-footer" class="mascot-notif-footer" hidden>
-      <button id="mascot-mark-all-read" class="btn btn-ghost btn-sm" type="button" data-i18n="markAllRead">Marcar todas como lidas</button>
-    </div>
   </div>
 
 </div>
+
+<!-- Templates do FAB do Finny (o JS apenas clona e preenche) -->
+<template id="tpl-mascot-notif-card">
+  <div class="mascot-notif-card">
+    <span class="mascot-notif-icon"></span>
+    <div class="mascot-notif-body">
+      <p class="mascot-notif-title"><span class="mn-label"></span><strong class="mn-name"></strong></p>
+      <p class="mascot-notif-date"></p>
+    </div>
+    <div class="mascot-notif-actions">
+      <button class="btn btn-ghost btn-sm notif-view-btn"></button>
+    </div>
+  </div>
+</template>
+<template id="tpl-mascot-local-card">
+  <div class="mascot-notif-card mascot-notif-card--local">
+    <span class="mascot-notif-local-bar"></span>
+    <div class="mascot-notif-body">
+      <p class="mascot-notif-title"></p>
+      <p class="mascot-notif-date"></p>
+    </div>
+    <div class="mascot-notif-actions">
+      <button class="btn btn-ghost btn-sm local-view-btn"></button>
+    </div>
+  </div>
+</template>
+<template id="tpl-mascot-empty">
+  <div class="mascot-notif-empty"></div>
+</template>
+
+<!-- Templates do histórico de alterações (ChangeHistoryManager, usado nas telas de detalhe) -->
+<template id="tpl-hist-timeline"><div class="history-timeline"></div></template>
+<template id="tpl-hist-empty"><p class="history-empty"></p></template>
+<template id="tpl-hist-creation">
+  <div class="history-group history-group--creation">
+    <div class="history-group-header">
+      <span class="history-group-marker history-group-marker--creation"></span>
+      <span class="history-group-label history-group-label--creation"></span>
+    </div>
+  </div>
+</template>
+<template id="tpl-hist-change-group">
+  <div class="history-group">
+    <div class="history-group-header">
+      <span class="history-group-marker"></span>
+      <span class="history-group-label"></span>
+    </div>
+    <ul class="history-changes"></ul>
+  </div>
+</template>
+<template id="tpl-hist-change-item">
+  <li class="history-change-item">
+    <span class="history-field-name"></span>
+    <span class="history-value-old"></span>
+    <span class="history-arrow">→</span>
+    <span class="history-value-new"></span>
+  </li>
+</template>
+<template id="tpl-hist-password">
+  <div class="history-group">
+    <div class="history-group-header">
+      <span class="history-group-marker"></span>
+      <span class="history-group-label"></span>
+    </div>
+    <ul class="history-changes">
+      <li class="history-change-item"><span class="history-field-name"></span></li>
+    </ul>
+  </div>
+</template>
 
 </body>
 </html>

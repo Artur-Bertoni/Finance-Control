@@ -79,36 +79,35 @@ function _renderList(items) {
     const list = document.getElementById('feedbacks-list')
     if (!list) return
 
+    list.innerHTML = ''
     if (!items.length) {
-        list.innerHTML = `<div class="empty-state"><p>${I18n.t('noSearchResults', { query: '' })}</p></div>`
+        const empty = document.getElementById('tpl-feedback-empty').content.firstElementChild.cloneNode(true)
+        empty.querySelector('p').textContent = I18n.t('noSearchResults', { query: '' })
+        list.appendChild(empty)
         return
     }
 
-    list.innerHTML = items.map(f => {
-        const typeLabel = _typeLabel(f.type)
-        const typeCls   = _typeCls(f.type)
-        const npsText   = f.npsScore == null
-            ? ''
-            : `<span class="feedback-nps-badge">${f.npsScore}<span style="font-weight:400;opacity:.6">/10</span></span>`
-        const date      = formatDateTime(f.createdAt)
-        const msgSafe   = _escapeHtml(f.message)
+    for (const f of items) list.appendChild(_buildFeedbackCard(f))
+}
 
-        return `
-        <div class="feedback-admin-card">
-          <div class="feedback-admin-card-header">
-            <div class="feedback-admin-meta">
-              <strong>${_escapeHtml(f.userName)}</strong>
-              <span class="feedback-admin-email">${_escapeHtml(f.userEmail)}</span>
-              <span class="feedback-admin-date">${date}</span>
-            </div>
-            <div class="feedback-admin-badges">
-              <span class="badge badge--${typeCls}">${typeLabel}</span>
-              ${npsText}
-            </div>
-          </div>
-          <p class="feedback-admin-message">${msgSafe}</p>
-        </div>`
-    }).join('')
+function _buildFeedbackCard(f) {
+    const card = document.getElementById('tpl-feedback-card').content.firstElementChild.cloneNode(true)
+    card.querySelector('.fb-user').textContent  = f.userName
+    card.querySelector('.fb-email').textContent = f.userEmail
+    card.querySelector('.fb-date').textContent  = formatDateTime(f.createdAt)
+
+    const typeBadge = card.querySelector('.fb-type')
+    typeBadge.classList.add(`badge--${_typeCls(f.type)}`)
+    typeBadge.textContent = _typeLabel(f.type)
+
+    if (f.npsScore != null) {
+        const nps = card.querySelector('.fb-nps')
+        nps.querySelector('.fb-nps-score').textContent = f.npsScore
+        nps.hidden = false
+    }
+
+    card.querySelector('.fb-message').textContent = f.message
+    return card
 }
 
 function _renderPagination(data) {
@@ -116,20 +115,19 @@ function _renderPagination(data) {
     if (!container) return
 
     const total = data.totalPages ?? 1
+    container.innerHTML = ''
     container.hidden = total <= 1
-
     if (total <= 1) return
 
-    const prev = _page > 0
-    const next = _page < total - 1
+    container.appendChild(document.getElementById('tpl-feedback-pagination').content.cloneNode(true))
+    const prevBtn = container.querySelector('.pg-prev')
+    const nextBtn = container.querySelector('.pg-next')
 
-    container.innerHTML = `
-      <button class="btn btn-ghost btn-sm" id="pg-prev" ${prev ? '' : 'disabled'}>‹</button>
-      <span>${I18n.t('commonPageOf', { page: _page + 1, total })}</span>
-      <button class="btn btn-ghost btn-sm" id="pg-next" ${next ? '' : 'disabled'}>›</button>`
-
-    document.getElementById('pg-prev')?.addEventListener('click', () => { _page--; _load() })
-    document.getElementById('pg-next')?.addEventListener('click', () => { _page++; _load() })
+    prevBtn.disabled = _page === 0
+    prevBtn.addEventListener('click', () => { _page--; _load() })
+    nextBtn.disabled = _page >= total - 1
+    nextBtn.addEventListener('click', () => { _page++; _load() })
+    container.querySelector('.pg-label').textContent = I18n.t('commonPageOf', { page: _page + 1, total })
 }
 
 function _typeLabel(type) {
@@ -138,8 +136,4 @@ function _typeLabel(type) {
 
 function _typeCls(type) {
     return { SUGGESTION: 'info', BUG: 'danger', GENERAL: 'neutral' }[type] ?? 'neutral'
-}
-
-function _escapeHtml(str) {
-    return (str ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
 }

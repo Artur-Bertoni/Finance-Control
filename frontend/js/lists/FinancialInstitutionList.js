@@ -47,24 +47,33 @@ function renderList() {
         return
     }
 
-    for (const fi of institutions) {
-        const card = document.createElement('div')
-        card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/views/FinancialInstitutionView.html?id=${fi.id}`))
-        const iconHtml = fi.iconKey
-            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${fi.iconKey}"></i></span>`
-            : ''
-        card.innerHTML = `
-            <div class="item-card-header">
-                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${fi.name}</span></span>
-                <span class="item-card-badge"></span>
-            </div>
-            <div class="item-card-meta">
-                ${fi.address ? `<div class="item-card-row">${Icons.locations()}${fi.address}</div>` : ''}
-                ${fi.contact ? `<div class="item-card-row">${Icons.phone()}${fi.contact}</div>` : ''}
-            </div>`
-        list.appendChild(card)
+    for (const fi of institutions) list.appendChild(_buildFiCard(fi))
+}
+
+function _buildFiCard(fi) {
+    const card = document.getElementById('tpl-fi-card').content.firstElementChild.cloneNode(true)
+    card.addEventListener('click', () => navigate(`/pages/views/FinancialInstitutionView.html?id=${fi.id}`))
+
+    if (fi.iconKey) {
+        const iconEl = card.querySelector('.fi-icon')
+        iconEl.innerHTML = `<i class="ph ${fi.iconKey}"></i>`
+        iconEl.hidden = false
     }
+    card.querySelector('.item-card-name').textContent = fi.name
+
+    if (fi.address) {
+        const row = card.querySelector('.fi-address')
+        row.innerHTML = Icons.locations()
+        row.appendChild(document.createTextNode(fi.address))
+        row.hidden = false
+    }
+    if (fi.contact) {
+        const row = card.querySelector('.fi-contact')
+        row.innerHTML = Icons.phone()
+        row.appendChild(document.createTextNode(fi.contact))
+        row.hidden = false
+    }
+    return card
 }
 
 if (!globalThis.__appRouter) init()

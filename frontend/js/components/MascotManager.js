@@ -1,7 +1,7 @@
 import { doRequest, navigate, showToast } from '../../utils/FrontendFunctions.js'
-import { SidebarManager } from './SidebarManager.js'
 import { I18n } from '../i18n.js'
 
+// Dicas estáticas (genéricas). Usadas só como "recheio" do popup quando não há dica nova do agente.
 const STATIC_TIPS = {
     pt: [
         'A regra 50/30/20 é simples: 50% para necessidades, 30% para desejos e 20% para poupança. Que tal tentar este mês?',
@@ -51,170 +51,57 @@ const TYPE_META = {
 }
 
 
-function buildSavingsTip(totalIncome, net, lang) {
-    if (totalIncome <= 0 || net <= 0) return null
-    const pct = Math.round((net / totalIncome) * 100)
-    if (pct < 10) return ({
-        pt: `Você está economizando apenas ${pct}% da sua renda. Tente aumentar gradualmente para pelo menos 20%!`,
-        en: `You're saving only ${pct}% of your income. Try to gradually increase to at least 20%!`,
-        es: `Estás ahorrando solo el ${pct}% de tus ingresos. ¡Intenta aumentar gradualmente al menos al 20%!`,
-    }[lang] ?? '')
-    if (pct < 20) return ({
-        pt: `Você está economizando ${pct}% da sua renda. Bom progresso! Tente chegar a 20% para maior segurança.`,
-        en: `You're saving ${pct}% of your income. Good progress! Try to reach 20% for greater security.`,
-        es: `Estás ahorrando el ${pct}% de tus ingresos. ¡Buen progreso! Intenta llegar al 20% para mayor seguridad.`,
-    }[lang] ?? '')
-    return ({
-        pt: `Ótimo trabalho! Você está economizando ${pct}% da sua renda no período. Continue assim!`,
-        en: `Great job! You're saving ${pct}% of your income this period. Keep it up!`,
-        es: `¡Excelente trabajo! Estás ahorrando ${pct}% de tus ingresos en este período. ¡Sigue así!`,
-    }[lang] ?? '')
+// ── Dicas do agente (backend) ──────────────────────────────────────────────────
+// O backend devolve dicas como dados (ruleKey + params + status); o texto é renderizado
+// aqui, no idioma atual. Ciclo: NEW (a popar) → SHOWN (no modal) → feedback (sai do modal).
+
+function renderTipText(tip) {
+    return I18n.t('finnyTip_' + tip.ruleKey, tip.params ?? {})
 }
 
-function buildBalanceTip(balances, lang) {
-    if (!balances || balances.length < 2) return null
-    const last = balances[balances.length - 1]?.balance ?? 0
-    const prev = balances[balances.length - 2]?.balance ?? 0
-    if (prev <= 0 || last >= prev) return null
-    const dropPct = Math.round(((prev - last) / prev) * 100)
-    if (dropPct < 5) return null
-    return ({
-        pt: `Seu patrimônio caiu ${dropPct}% no último período. Que tal revisar seus gastos?`,
-        en: `Your net worth dropped ${dropPct}% in the last period. How about reviewing your expenses?`,
-        es: `Tu patrimonio cayó un ${dropPct}% en el último período. ¿Qué tal revisar tus gastos?`,
-    }[lang] ?? '')
+function fetchAgentTips() {
+    try { return doRequest('/api/finny/tips', 'GET') ?? [] } catch { return [] }
 }
 
-function buildSingleGoalTip(type, pct, name, lang) {
-    if (type === 'EXPENSE_LIMIT') {
-        if (pct >= 90) return ({
-            pt: `Atenção! Você atingiu ${Math.round(pct)}% do limite de gastos em "${name}". Cuidado com novos gastos!`,
-            en: `Watch out! You've used ${Math.round(pct)}% of your spending limit for "${name}". Be careful with new expenses!`,
-            es: `¡Atención! Has utilizado el ${Math.round(pct)}% de tu límite de gastos en "${name}". ¡Cuidado con nuevos gastos!`,
-        }[lang] ?? '')
-        if (pct >= 70) return ({
-            pt: `Você está em ${Math.round(pct)}% do limite de gastos em "${name}". Fique atento!`,
-            en: `You're at ${Math.round(pct)}% of your spending limit for "${name}". Keep an eye on it!`,
-            es: `Estás al ${Math.round(pct)}% de tu límite de gastos en "${name}". ¡Presta atención!`,
-        }[lang] ?? '')
-    } else {
-        if (pct >= 75) return ({
-            pt: `Você está quase lá! ${Math.round(pct)}% da meta "${name}" conquistada. Continue!`,
-            en: `Almost there! You've reached ${Math.round(pct)}% of your "${name}" goal. Keep going!`,
-            es: `¡Casi llegas! Has alcanzado el ${Math.round(pct)}% de tu meta "${name}". ¡Sigue así!`,
-        }[lang] ?? '')
-        if (pct >= 50) return ({
-            pt: `Metade do caminho! Você atingiu ${Math.round(pct)}% da meta "${name}".`,
-            en: `Halfway there! You've reached ${Math.round(pct)}% of your "${name}" goal.`,
-            es: `¡A mitad de camino! Has alcanzado el ${Math.round(pct)}% de tu meta "${name}".`,
-        }[lang] ?? '')
-    }
-    return null
+/** Dicas SHOWN (já mostradas em popup, aguardando feedback) viram itens do modal. */
+function shownToItems(tips) {
+    return (tips ?? [])
+        .filter(t => t.status === 'SHOWN')
+        .map(t => ({ id: t.id, text: renderTipText(t), severity: t.severity ?? 'info', feedbackable: true }))
 }
 
-function buildDeadlineTip(endDate, name, today, lang) {
-    const daysLeft = Math.ceil((new Date(endDate) - today) / (1000 * 60 * 60 * 24))
-    if (daysLeft <= 0 || daysLeft > 7) return null
-    return ({
-        pt: `Sua meta "${name}" vence em ${daysLeft} dia${daysLeft === 1 ? '' : 's'}. Não desista!`,
-        en: `Your goal "${name}" expires in ${daysLeft} day${daysLeft === 1 ? '' : 's'}. Don't give up!`,
-        es: `Tu meta "${name}" vence en ${daysLeft} día${daysLeft === 1 ? '' : 's'}. ¡No te rindas!`,
-    }[lang] ?? '')
+function randomStatic(lang) {
+    const pool = STATIC_TIPS[lang] ?? STATIC_TIPS.pt
+    return pool.length ? pool[Math.floor(Math.random() * pool.length)] : ''
 }
 
-function buildGoalTips(goals, lang) {
-    const tips  = []
-    const today = new Date()
-    let count   = 0
-    for (const goal of goals) {
-        if (goal.status !== 'ACTIVE' || count >= 3) continue
-        const pct  = goal.progressPercent ?? 0
-        const name = goal.name ?? ''
-        const tip  = buildSingleGoalTip(goal.type, pct, name, lang)
-        if (tip) { tips.push(tip); count++ }
-        if (goal.endDate && count < 3) {
-            const deadline = buildDeadlineTip(goal.endDate, name, today, lang)
-            if (deadline) { tips.push(deadline); count++ }
-        }
-    }
-    return tips
+/** Clona o primeiro elemento de um <template> do HTML (definido no AppShell). */
+function _clone(id) {
+    return document.getElementById(id).content.firstElementChild.cloneNode(true)
 }
 
-function buildPersonalizedTips(data, lang, goals = []) {
-    if (!data) return []
-
-    const totalIncome   = data.monthlyData?.reduce((s, m) => s + (m.income   ?? 0), 0) ?? 0
-    const totalExpenses = data.monthlyData?.reduce((s, m) => s + (m.expenses ?? 0), 0) ?? 0
-    const net           = totalIncome - totalExpenses
-    const tips          = []
-
-    if (totalIncome === 0 && totalExpenses === 0) {
-        tips.push({
-            pt: 'Registre suas receitas e despesas para receber dicas personalizadas ao seu perfil financeiro!',
-            en: 'Log your income and expenses to get tips tailored to your financial profile!',
-            es: '¡Registra tus ingresos y gastos para recibir consejos personalizados a tu perfil financiero!',
-        }[lang] ?? '')
-    }
-
-    if (totalIncome > 0 && totalExpenses > totalIncome) {
-        const pct = Math.round((totalExpenses / totalIncome - 1) * 100)
-        tips.push({
-            pt: `Atenção! Seus gastos estão ${pct}% acima da sua renda no período. Que tal revisar onde dá para economizar?`,
-            en: `Watch out! Your expenses are ${pct}% above your income this period. How about reviewing where you can cut back?`,
-            es: `¡Atención! Tus gastos son ${pct}% superiores a tus ingresos en este período. ¿Qué tal revisar dónde puedes ahorrar?`,
-        }[lang] ?? '')
-    }
-
-    const savingsTip = buildSavingsTip(totalIncome, net, lang)
-    if (savingsTip) tips.push(savingsTip)
-
-    const topCategory = data.categoryExpenses?.[0]
-    if (topCategory?.categoryName) {
-        tips.push({
-            pt: `Sua maior categoria de gastos é "${topCategory.categoryName}". Vale analisar se há como reduzir!`,
-            en: `Your biggest spending category is "${topCategory.categoryName}". Worth analyzing if there's room to cut back!`,
-            es: `Tu mayor categoría de gastos es "${topCategory.categoryName}". ¡Vale la pena analizar si hay forma de reducirlos!`,
-        }[lang] ?? '')
-    }
-
-    const balanceTip = buildBalanceTip(data.balanceEvolution, lang)
-    if (balanceTip) tips.push(balanceTip)
-
-    tips.push(...buildGoalTips(goals, lang))
-
-    return tips.filter(Boolean)
-}
-
-
-function toDateStr(d) {
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
-}
-
-function currentMonthRange() {
-    const today = new Date()
-    const first = new Date(today.getFullYear(), today.getMonth(), 1)
-    return { startDate: toDateStr(first), endDate: toDateStr(today) }
-}
-
-function escapeHtml(str) {
-    return String(str ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
-}
-
-function fetchGoals() {
-    try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] }
+function _notifDate(iso) {
+    return new Date(iso).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
 }
 
 
 export class MascotManager {
-    static _tips           = []
+    static _items          = []        // itens do painel flutuante (dicas SHOWN aguardando feedback)
+    static _index          = 0
+    static _dashItems      = []        // itens do widget do dashboard
+    static _dashIndex      = 0
+    static _agentTipsRaw   = null      // cache das dicas cruas do agente (NEW + SHOWN)
+    static _agentCacheTime = 0
+    static _AGENT_TTL      = 5 * 60 * 1000
+    static _poppedIds      = new Set() // ids já mostrados em popup nesta sessão (evita repetir)
+    static _lastPopText    = ''        // último texto popado (evita estática repetida em sequência)
     static _currentTip     = ''
     static _nextTipTime    = 0
     static _countdownTimer = null
-    static _dashTips       = []
-    static _dashIndex      = 0
     static _activeTab      = 'tips'
     static _pushTimer      = null
     static _TIP_PUSH_MS    = 30 * 60 * 1000
+    static _FIRST_POP_MS   = 5000
     static _STORAGE_TIP    = 'fc_finny_tip'
     static _STORAGE_NEXT   = 'fc_finny_next'
 
@@ -246,6 +133,9 @@ export class MascotManager {
             this._stopCountdownTimer()
         })
 
+        document.getElementById('mascot-tip-prev')?.addEventListener('click', () => this._stepFloating(-1))
+        document.getElementById('mascot-tip-next')?.addEventListener('click', () => this._stepFloating(1))
+
         this._setupTabs()
 
         I18n.onChange(() => {
@@ -259,47 +149,65 @@ export class MascotManager {
             }
         })
 
-        this.refreshBadge()
         this._startPushSchedule()
     }
 
+    // ── Popup periódico: pop da próxima dica NEW (marcando-a como SHOWN) ─────────
+
     static _startPushSchedule() {
         if (this._pushTimer) return
-
-        const pickRandom = () => {
-            const lang = I18n.getLanguage()
-            const pool = [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt), ...this._tips]
-            return pool.length ? pool[Math.floor(Math.random() * pool.length)] : ''
-        }
-
-        const rotateTip = () => {
-            this._currentTip  = pickRandom()
-            this._nextTipTime = Date.now() + this._TIP_PUSH_MS
-            localStorage.setItem(this._STORAGE_TIP,  this._currentTip)
-            localStorage.setItem(this._STORAGE_NEXT, String(this._nextTipTime))
-            if (this._currentTip) showToast(`💡 ${this._currentTip}`, 'info', null, { saveToHistory: false })
-            const panel = document.getElementById('mascot-panel')
-            if (panel && !panel.hidden && this._activeTab === 'tips') this._renderFloatingTip()
-            this._pushTimer = setTimeout(rotateTip, this._TIP_PUSH_MS)
-        }
-
-        const storedTip  = localStorage.getItem(this._STORAGE_TIP)
         const storedNext = Number(localStorage.getItem(this._STORAGE_NEXT) ?? 0)
-
-        if (storedTip && storedNext > Date.now()) {
-            this._currentTip  = storedTip
+        if (storedNext > Date.now()) {
             this._nextTipTime = storedNext
-            this._pushTimer   = setTimeout(rotateTip, storedNext - Date.now())
+            this._currentTip  = localStorage.getItem(this._STORAGE_TIP) ?? ''
+            this._pushTimer   = setTimeout(() => this._popNextTip(), storedNext - Date.now())
         } else {
-            this._currentTip  = pickRandom()
-            this._nextTipTime = Date.now() + this._TIP_PUSH_MS
-            localStorage.setItem(this._STORAGE_TIP,  this._currentTip)
-            localStorage.setItem(this._STORAGE_NEXT, String(this._nextTipTime))
-            setTimeout(() => {
-                if (this._currentTip) showToast(`💡 ${this._currentTip}`, 'info', null, { saveToHistory: false })
-            }, 5000)
-            this._pushTimer = setTimeout(rotateTip, this._TIP_PUSH_MS)
+            this._pushTimer = setTimeout(() => this._popNextTip(), this._FIRST_POP_MS)
         }
+    }
+
+    static _popNextTip() {
+        const raw  = this._getAgentTipsRaw()
+        const next = (raw ?? []).find(t => t.status === 'NEW' && !this._poppedIds.has(t.id))
+
+        let text
+        if (next) {
+            this._poppedIds.add(next.id)
+            text = renderTipText(next)
+            try { doRequest(`/api/finny/tips/${next.id}/shown`, 'POST') } catch { /* silencioso */ }
+            next.status = 'SHOWN' // passa a aparecer no modal
+        } else {
+            text = this._pickStatic()
+        }
+        this._lastPopText = text
+
+        this._currentTip  = text
+        this._nextTipTime = Date.now() + this._TIP_PUSH_MS
+        localStorage.setItem(this._STORAGE_TIP,  this._currentTip)
+        localStorage.setItem(this._STORAGE_NEXT, String(this._nextTipTime))
+
+        if (text) showToast(`💡 ${text}`, 'info', null, { saveToHistory: false })
+
+        const panel = document.getElementById('mascot-panel')
+        if (panel && !panel.hidden && this._activeTab === 'tips') {
+            this._items = this._buildActiveItems()
+            this._renderFloatingTip()
+        }
+
+        this._pushTimer = setTimeout(() => this._popNextTip(), this._TIP_PUSH_MS)
+    }
+
+    /** Escolhe uma dica estática evitando repetir a anterior. */
+    static _pickStatic() {
+        const pool = STATIC_TIPS[I18n.getLanguage()] ?? STATIC_TIPS.pt
+        if (!pool.length) return ''
+        if (pool.length === 1) return pool[0]
+        let text = ''
+        for (let i = 0; i < 5; i++) {
+            text = pool[Math.floor(Math.random() * pool.length)]
+            if (text !== this._lastPopText) break
+        }
+        return text
     }
 
     static _setupTabs() {
@@ -322,7 +230,7 @@ export class MascotManager {
         msgBtn?.classList.toggle('mascot-tab-btn--active', tab === 'messages')
 
         if (tab === 'tips') {
-            if (!this._tips.length) this._loadFloatingTips()
+            this._loadFloatingTips()
             this._renderFloatingTip()
             this._startCountdownTimer()
         } else {
@@ -331,23 +239,75 @@ export class MascotManager {
         }
     }
 
-    static _loadFloatingTips() {
-        const lang       = I18n.getLanguage()
-        const staticTips = [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
-        try {
-            const { startDate, endDate } = currentMonthRange()
-            const data  = doRequest(`/api/reports/dashboard?startDate=${startDate}&endDate=${endDate}`, 'GET')
-            const goals = fetchGoals()
-            const personalized = buildPersonalizedTips(data, lang, goals)
-            this._tips = [...personalized, ...staticTips]
-        } catch {
-            this._tips = staticTips
+    // ── Cache / itens ───────────────────────────────────────────────────────────
+
+    static _getAgentTipsRaw(force = false) {
+        const now = Date.now()
+        if (!force && this._agentTipsRaw && (now - this._agentCacheTime) < this._AGENT_TTL) {
+            return this._agentTipsRaw
         }
+        this._agentTipsRaw = fetchAgentTips()
+        this._agentCacheTime = now
+        return this._agentTipsRaw
+    }
+
+    static _buildActiveItems() {
+        return shownToItems(this._getAgentTipsRaw())
+    }
+
+    static _loadFloatingTips() {
+        this._items = this._buildActiveItems()
+        if (this._index >= this._items.length) this._index = 0
     }
 
     static _renderFloatingTip() {
-        const tipEl = document.getElementById('mascot-tip-text')
-        if (tipEl) tipEl.textContent = this._currentTip || ''
+        const tipEl     = document.getElementById('mascot-tip-text')
+        const counterEl = document.getElementById('mascot-tip-counter')
+        const barEl     = document.getElementById('mascot-tip-feedback')
+        if (!tipEl) return
+
+        const items = this._items ?? []
+
+        if (!items.length) {
+            tipEl.textContent = I18n.t('finnyNoActiveTips')
+            if (counterEl) counterEl.textContent = ''
+            this._wireFeedback(barEl, null)
+            return
+        }
+
+        if (this._index >= items.length) this._index = 0
+        const item = items[this._index]
+        tipEl.textContent = item.text
+        if (counterEl) counterEl.textContent = `${this._index + 1} / ${items.length}`
+
+        this._wireFeedback(barEl, item, () => {
+            this._items = this._buildActiveItems()
+            if (this._index >= this._items.length) this._index = Math.max(0, this._items.length - 1)
+            this._renderFloatingTip()
+        })
+    }
+
+    static _stepFloating(dir) {
+        if (!this._items?.length) return
+        this._index = (this._index + dir + this._items.length) % this._items.length
+        this._renderFloatingTip()
+    }
+
+    /** Liga/desliga a barra de feedback (👍 👎 ✕) para o item atual. */
+    static _wireFeedback(barEl, item, onDone) {
+        if (!barEl) return
+        if (!item || !item.feedbackable || item.id == null) { barEl.hidden = true; return }
+        barEl.hidden = false
+        for (const btn of barEl.querySelectorAll('.finny-fb-btn')) {
+            btn.onclick = () => { this._submitFeedback(item.id, btn.dataset.fb); onDone?.() }
+        }
+    }
+
+    static _submitFeedback(id, feedback) {
+        try { doRequest(`/api/finny/tips/${id}/feedback`, 'POST', { feedback }) } catch { /* silencioso */ }
+        // Remove do cache local para a dica sair do modal (passa a viver só no histórico).
+        if (Array.isArray(this._agentTipsRaw)) this._agentTipsRaw = this._agentTipsRaw.filter(t => t.id !== id)
+        showToast(I18n.t('finnyFeedbackThanks'), 'success', null, { saveToHistory: false })
     }
 
     static _formatCountdown(ms) {
@@ -377,149 +337,110 @@ export class MascotManager {
         if (this._countdownTimer) { clearInterval(this._countdownTimer); this._countdownTimer = null }
     }
 
-    static _loadNotifications(listId = 'mascot-notifications-list', footerId = 'mascot-notif-footer', markAllId = 'mascot-mark-all-read') {
-        const list   = document.getElementById(listId)
-        const footer = document.getElementById(footerId)
+    // ── Aba Mensagens (somente leitura: sem "marcar como lida" nem contagem) ─────
+
+    static _loadNotifications(listId = 'mascot-notifications-list') {
+        const list = document.getElementById(listId)
         if (!list) return
 
-        list.innerHTML = `<div class="mascot-notif-empty mascot-notif-loading">…</div>`
-
-        const allNotifs = doRequest('/api/notifications', 'GET') ?? []
-
+        const allNotifs = (doRequest('/api/notifications', 'GET') ?? []).slice(0, 10)
         list.innerHTML = ''
 
         if (allNotifs.length === 0) {
-            list.innerHTML = `<div class="mascot-notif-empty">${I18n.t('mascotNoMessages')}</div>`
-            if (footer) footer.hidden = true
+            const empty = _clone('tpl-mascot-empty')
+            empty.textContent = I18n.t('mascotNoMessages')
+            list.appendChild(empty)
             return
         }
-
-        if (footer) footer.hidden = false
 
         for (const item of allNotifs) {
             list.appendChild(item.type === 'USER_ACTION' ? this._buildLocalCard(item) : this._buildNotifCard(item))
         }
-
-        const markAllBtn = document.getElementById(markAllId)
-        if (markAllBtn) markAllBtn.onclick = () => {
-            doRequest('/api/notifications/read-all', 'PUT')
-            this._loadNotifications(listId, footerId, markAllId)
-            this.refreshBadge()
-        }
     }
 
     static _buildNotifCard(n) {
-        const meta    = TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications' }
-        const label   = I18n.t(meta.i18nKey, meta.i18nParams)
-        const dateStr = new Date(n.createdAt).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
+        const meta = TYPE_META[n.type] ?? { icon: '🔔', i18nKey: 'notifications' }
+        const card = _clone('tpl-mascot-notif-card')
 
-        const card = document.createElement('div')
-        card.className = `mascot-notif-card${n.read ? ' mascot-notif-card--read' : ''}`
-        card.innerHTML = `
-            <span class="mascot-notif-icon">${meta.icon}</span>
-            <div class="mascot-notif-body">
-                <p class="mascot-notif-title">${label}: <strong>${escapeHtml(n.goalName ?? '')}</strong></p>
-                <p class="mascot-notif-date">${dateStr}</p>
-            </div>
-            <div class="mascot-notif-actions">
-                ${n.link  ? `<button class="btn btn-ghost btn-sm notif-view-btn">${I18n.t('commonView')}</button>` : ''}
-                ${n.read  ? '' : `<button class="btn btn-ghost btn-sm notif-read-btn">${I18n.t('markAsRead')}</button>`}
-            </div>
-        `
+        card.querySelector('.mascot-notif-icon').textContent = meta.icon
+        card.querySelector('.mn-label').textContent = I18n.t(meta.i18nKey, meta.i18nParams) + ': '
+        card.querySelector('.mn-name').textContent = n.goalName ?? ''
+        card.querySelector('.mascot-notif-date').textContent = _notifDate(n.createdAt)
 
-        card.querySelector('.notif-view-btn')?.addEventListener('click', () => {
-            this._markRead(n.id, card)
-            navigate(n.link)
-        })
-        card.querySelector('.notif-read-btn')?.addEventListener('click', () => {
-            this._markRead(n.id, card)
-        })
+        const viewBtn = card.querySelector('.notif-view-btn')
+        if (n.link) { viewBtn.textContent = I18n.t('commonView'); viewBtn.addEventListener('click', () => navigate(n.link)) }
+        else card.querySelector('.mascot-notif-actions').remove()
 
         return card
     }
 
     static _buildLocalCard(n) {
         const TYPE_COLOR = { success: '#22c55e', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' }
-        const color   = TYPE_COLOR[n.severity] ?? TYPE_COLOR.info
-        const dateStr = new Date(n.createdAt).toLocaleString(I18n.getLanguage(), { dateStyle: 'short', timeStyle: 'short' })
+        const card = _clone('tpl-mascot-local-card')
+        card.style.setProperty('--local-card-color', TYPE_COLOR[n.severity] ?? TYPE_COLOR.info)
+        card.querySelector('.mascot-notif-title').textContent = n.message
+        card.querySelector('.mascot-notif-date').textContent = _notifDate(n.createdAt)
 
-        const card = document.createElement('div')
-        card.className = 'mascot-notif-card mascot-notif-card--read mascot-notif-card--local'
-        card.style.setProperty('--local-card-color', color)
-        card.innerHTML = `
-            <span class="mascot-notif-local-bar"></span>
-            <div class="mascot-notif-body">
-                <p class="mascot-notif-title">${escapeHtml(n.message)}</p>
-                <p class="mascot-notif-date">${dateStr}</p>
-            </div>
-            ${n.link ? `<div class="mascot-notif-actions"><button class="btn btn-ghost btn-sm local-view-btn">${I18n.t('commonView')}</button></div>` : ''}
-        `
-        card.querySelector('.local-view-btn')?.addEventListener('click', () => navigate(n.link))
+        const viewBtn = card.querySelector('.local-view-btn')
+        if (n.link) { viewBtn.textContent = I18n.t('commonView'); viewBtn.addEventListener('click', () => navigate(n.link)) }
+        else card.querySelector('.mascot-notif-actions').remove()
+
         return card
     }
 
-    static _markRead(id, card) {
-        doRequest(`/api/notifications/${id}/read`, 'PUT')
-        card.classList.add('mascot-notif-card--read')
-        card.querySelector('.notif-read-btn')?.remove()
-        this.refreshBadge()
-        SidebarManager.refreshNotificationBadge()
-    }
+    // ── Widget do dashboard ─────────────────────────────────────────────────────
 
-    static refreshBadge() {
-        try {
-            const raw    = doRequest('/api/notifications/unread-count', 'GET')
-            const count  = Math.max(0, Number(raw) || 0)
-            const label  = count > 99 ? '99+' : String(count)
-
-            const fabBadge = document.getElementById('mascot-fab-badge')
-            const tabBadge = document.getElementById('mascot-tab-badge')
-
-            if (fabBadge) { fabBadge.textContent = label; fabBadge.hidden = count === 0 }
-            if (tabBadge) { tabBadge.textContent = label; tabBadge.hidden = false }
-        } catch { /* silencioso — usuário pode não estar autenticado */ }
-    }
-
-    static refreshFloatingTips(data, goals = []) {
-        const lang = I18n.getLanguage()
-        const personalized = buildPersonalizedTips(data, lang, goals)
-        this._tips = [...personalized, ...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
+    /** Re-renderiza o painel flutuante (chamado quando o dashboard recarrega). */
+    static refreshFloatingTips() {
         const panel = document.getElementById('mascot-panel')
-        if (panel && !panel.hidden && this._activeTab === 'tips') this._renderFloatingTip()
+        if (panel && !panel.hidden && this._activeTab === 'tips') {
+            this._items = this._buildActiveItems()
+            this._renderFloatingTip()
+        }
     }
 
-    static _getStaticTips(lang) {
-        return [...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
-    }
-
-    static _buildPersonalized(data, lang, goals = []) {
-        return buildPersonalizedTips(data, lang, goals)
-    }
-
-    static renderDashboardWidget(data, goals = []) {
-        const lang = I18n.getLanguage()
-        const personalized = buildPersonalizedTips(data, lang, goals)
-        this._dashTips  = [...personalized, ...(STATIC_TIPS[lang] ?? STATIC_TIPS.pt)]
+    static renderDashboardWidget() {
+        this._dashItems = this._buildDashItems()
         this._dashIndex = 0
         this._renderDashboardTip()
 
         const prevBtn = document.getElementById('dashboard-mascot-prev')
         const nextBtn = document.getElementById('dashboard-mascot-next')
         if (prevBtn) prevBtn.onclick = () => {
-            this._dashIndex = (this._dashIndex - 1 + this._dashTips.length) % this._dashTips.length
+            if (!this._dashItems.length) return
+            this._dashIndex = (this._dashIndex - 1 + this._dashItems.length) % this._dashItems.length
             this._renderDashboardTip()
         }
         if (nextBtn) nextBtn.onclick = () => {
-            this._dashIndex = (this._dashIndex + 1) % this._dashTips.length
+            if (!this._dashItems.length) return
+            this._dashIndex = (this._dashIndex + 1) % this._dashItems.length
             this._renderDashboardTip()
         }
+    }
+
+    /** Widget mostra dicas SHOWN; se não houver nenhuma, cai numa dica estática (sem feedback). */
+    static _buildDashItems() {
+        const active = this._buildActiveItems()
+        if (active.length) return active
+        const text = randomStatic(I18n.getLanguage())
+        return text ? [{ id: null, text, severity: 'info', feedbackable: false }] : []
     }
 
     static _renderDashboardTip() {
         const tipEl     = document.getElementById('dashboard-mascot-tip')
         const counterEl = document.getElementById('dashboard-mascot-counter')
-        if (!tipEl || !this._dashTips.length) return
-        tipEl.textContent = this._dashTips[this._dashIndex]
-        if (counterEl) counterEl.textContent = `${this._dashIndex + 1} / ${this._dashTips.length}`
+        const barEl     = document.getElementById('dashboard-mascot-feedback')
+        if (!tipEl || !this._dashItems.length) return
+
+        if (this._dashIndex >= this._dashItems.length) this._dashIndex = 0
+        const item = this._dashItems[this._dashIndex]
+        tipEl.textContent = item.text
+        if (counterEl) counterEl.textContent = `${this._dashIndex + 1} / ${this._dashItems.length}`
+
+        this._wireFeedback(barEl, item, () => {
+            this._dashItems = this._buildDashItems()
+            if (this._dashIndex >= this._dashItems.length) this._dashIndex = Math.max(0, this._dashItems.length - 1)
+            this._renderDashboardTip()
+        })
     }
 }

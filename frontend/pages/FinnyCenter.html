@@ -12,7 +12,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
-  <script src="../js/NotificationCenter.js" type="module"></script>
+  <script src="../js/FinnyCenter.js" type="module"></script>
 </head>
 <body>
 <header class="topbar">
@@ -33,29 +33,131 @@
   <!-- Abas -->
   <div class="finny-page-tabs">
     <button id="nc-tab-tips" class="finny-page-tab finny-page-tab--active" type="button" data-i18n="mascotTabTips">Dicas</button>
-    <button id="nc-tab-messages" class="finny-page-tab" type="button">
-      <span data-i18n="mascotTabMessages">Mensagens</span>
-      <span id="nc-tab-badge" class="mascot-tab-badge" hidden></span>
-    </button>
+    <button id="nc-tab-history" class="finny-page-tab" type="button" data-i18n="finnyTabHistory">Histórico</button>
+    <button id="nc-tab-messages" class="finny-page-tab" type="button" data-i18n="mascotTabMessages">Mensagens</button>
   </div>
 
-  <!-- Conteúdo: Dicas -->
+  <!-- Conteúdo: Dicas (ativas, aguardando feedback) -->
   <div id="nc-content-tips" class="finny-page-tab-content">
-    <div class="finny-page-tip-body">
-      <p id="nc-tip-text" class="finny-page-tip-text"></p>
+    <div id="nc-tips-list" class="finny-history-list"></div>
+  </div>
+
+  <!-- Conteúdo: Histórico de dicas + progresso -->
+  <div id="nc-content-history" class="finny-page-tab-content" hidden>
+    <div class="finny-stats">
+      <h3 class="finny-stats-title" data-i18n="finnyStatsTitle">Seu progresso com o Finny</h3>
+      <div id="nc-stats-grid" class="finny-stats-grid"></div>
     </div>
-    <div class="finny-page-tip-nav">
-      <span id="nc-tip-countdown" class="mascot-tip-countdown"></span>
+    <div class="card transactions-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-title" data-i18n="finnyHistoryTitle">Histórico de dicas</span>
+        </div>
+        <div id="nc-history-pagination" class="pagination" hidden></div>
+      </div>
+      <div id="nc-history-list" class="transactions-list finny-history-list"></div>
     </div>
   </div>
 
-  <!-- Conteúdo: Mensagens -->
+  <!-- Conteúdo: Mensagens (somente leitura, com filtro de data/hora + paginação) -->
   <div id="nc-content-messages" class="finny-page-tab-content" hidden>
-    <div class="finny-page-msg-toolbar">
-      <button id="nc-mark-all-read" class="btn btn-ghost btn-sm" type="button" data-i18n="markAllRead">Marcar todas como lidas</button>
+    <div class="filter-section" id="nc-filter-section">
+      <button class="filter-toggle-btn" id="nc-filter-toggle-btn" type="button" aria-expanded="false">
+        <i class="ph ph-funnel"></i>
+        <span data-i18n="commonFilter">Filtro</span>
+        <span class="filter-toggle-active-dot"></span>
+        <i class="ph ph-caret-down filter-toggle-caret"></i>
+      </button>
+      <div class="dashboard-search-bar">
+        <div class="field">
+          <label for="nc-date-start" data-i18n="finnyFilterFrom">De</label>
+          <input type="text" id="nc-date-start" autocomplete="off" readonly>
+        </div>
+        <div class="field">
+          <label for="nc-date-end" data-i18n="finnyFilterTo">Até</label>
+          <input type="text" id="nc-date-end" autocomplete="off" readonly>
+        </div>
+        <div class="filter-clear-field" style="display:none">
+          <button class="btn btn-ghost btn-sm filter-clear-btn" id="nc-clear-filter-btn" data-i18n-title="commonClearFilters" title="Limpar filtros" aria-label="Limpar filtros"><i class="ph ph-broom"></i></button>
+        </div>
+      </div>
     </div>
-    <div id="nc-notifications-list" class="finny-page-notif-list"></div>
+    <div class="card transactions-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-title" data-i18n="mascotTabMessages">Notificações</span>
+        </div>
+        <div id="nc-notifications-pagination" class="pagination" hidden></div>
+      </div>
+      <div id="nc-notifications-list" class="transactions-list finny-page-notif-list"></div>
+    </div>
   </div>
+
+  <!-- Templates (markup dos itens; o JS apenas clona e preenche) -->
+  <template id="tpl-finny-tip-card">
+    <div class="finny-history-card">
+      <span class="finny-history-bar"></span>
+      <div class="finny-history-body">
+        <p class="finny-history-text"></p>
+        <div class="finny-history-meta">
+          <span class="finny-history-chip"></span>
+          <span class="finny-history-date"></span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-finny-feedback-bar">
+    <div class="finny-feedback-bar finny-feedback-bar--inline">
+      <button class="finny-fb-btn" type="button" data-fb="HELPFUL">👍</button>
+      <button class="finny-fb-btn" type="button" data-fb="NOT_HELPFUL">👎</button>
+      <button class="finny-fb-btn" type="button" data-fb="DISMISSED">✕</button>
+    </div>
+  </template>
+
+  <template id="tpl-finny-stat-card">
+    <div class="finny-stat-card">
+      <div class="finny-stat-value"></div>
+      <div class="finny-stat-label"></div>
+    </div>
+  </template>
+
+  <template id="tpl-finny-notif-card">
+    <div class="mascot-notif-card finny-page-notif-card">
+      <span class="mascot-notif-icon"></span>
+      <div class="mascot-notif-body">
+        <p class="mascot-notif-title"><span class="nc-notif-label"></span><strong class="nc-notif-name"></strong></p>
+        <p class="mascot-notif-date"></p>
+      </div>
+      <div class="mascot-notif-actions">
+        <button class="btn btn-ghost btn-sm notif-view-btn"></button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-finny-local-card">
+    <div class="mascot-notif-card finny-page-notif-card mascot-notif-card--local">
+      <span class="mascot-notif-local-bar"></span>
+      <div class="mascot-notif-body">
+        <p class="mascot-notif-title"></p>
+        <p class="mascot-notif-date"></p>
+      </div>
+      <div class="mascot-notif-actions">
+        <button class="btn btn-ghost btn-sm local-view-btn"></button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-finny-empty">
+    <div class="mascot-notif-empty"></div>
+  </template>
+
+  <template id="tpl-pagination">
+    <button class="pagination-btn pg-prev" type="button">‹</button>
+    <select class="pagination-select"></select>
+    <button class="pagination-btn pg-next" type="button">›</button>
+    <span class="pagination-info"></span>
+  </template>
 
 </main>
 </body>

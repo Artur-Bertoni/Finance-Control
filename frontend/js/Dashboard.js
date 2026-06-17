@@ -408,7 +408,11 @@ function showOthersLegendTip(nativeEvent, details) {
     const tip = document.createElement('div')
     tip.id = '__others-tip'
     tip.className = 'others-legend-tip'
-    tip.innerHTML = details.map(d => `<div>• ${d.name}: $ ${formatCurrency(d.total)}</div>`).join('')
+    for (const d of details) {
+        const row = document.createElement('div')
+        row.textContent = `• ${d.name}: $ ${formatCurrency(d.total)}`
+        tip.appendChild(row)
+    }
     document.body.appendChild(tip)
 
     const x = nativeEvent.clientX + 14

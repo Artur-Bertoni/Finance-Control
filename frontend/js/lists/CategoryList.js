@@ -47,29 +47,32 @@ function renderList() {
         return
     }
 
-    for (const cat of categories) {
-        const card = document.createElement('div')
-        card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/views/CategoryView.html?id=${cat.id}`))
-        const description = cat.description
-            ? `</br><div class="item-card-meta"><div class="item-card-row">${cat.description}</div></div>`
-            : ''
-        const aliasText = cat.aliases.length > 0 ? cat.aliases.join(', ') : ''
-        const aliasMeta = aliasText
-            ? `<div class="item-card-meta"><span class="item-card-row">${aliasText}</span></div>`
-            : ''
-        const iconHtml = cat.iconKey
-            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${cat.iconKey}"></i></span>`
-            : ''
-        card.innerHTML = `
-            <div class="item-card-header">
-                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${cat.name}</span></span>
-                <span class="item-card-badge"></span>
-            </div>
-            ${aliasMeta}
-            ${description}`
-        list.appendChild(card)
+    for (const cat of categories) list.appendChild(_buildCategoryCard(cat))
+}
+
+function _buildCategoryCard(cat) {
+    const card = document.getElementById('tpl-category-card').content.firstElementChild.cloneNode(true)
+    card.addEventListener('click', () => navigate(`/pages/views/CategoryView.html?id=${cat.id}`))
+
+    if (cat.iconKey) {
+        const iconEl = card.querySelector('.cat-icon')
+        iconEl.innerHTML = `<i class="ph ${cat.iconKey}"></i>`
+        iconEl.hidden = false
     }
+    card.querySelector('.item-card-name').textContent = cat.name
+
+    const aliasText = cat.aliases.length > 0 ? cat.aliases.join(', ') : ''
+    if (aliasText) {
+        const a = card.querySelector('.cat-aliases')
+        a.querySelector('.item-card-row').textContent = aliasText
+        a.hidden = false
+    }
+    if (cat.description) {
+        const d = card.querySelector('.cat-desc')
+        d.querySelector('.item-card-row').textContent = cat.description
+        d.hidden = false
+    }
+    return card
 }
 
 if (!globalThis.__appRouter) init()

@@ -43,5 +43,20 @@
     </main>
   </div>
 </div>
+
+<!-- Template do card de categoria (o JS apenas clona e preenche) -->
+<template id="tpl-category-card">
+  <div class="item-card">
+    <div class="item-card-header">
+      <span class="item-card-name-group">
+        <span class="cat-icon" style="font-size:18px;color:var(--primary);flex-shrink:0" hidden></span>
+        <span class="item-card-name"></span>
+      </span>
+      <span class="item-card-badge"></span>
+    </div>
+    <div class="item-card-meta cat-aliases" hidden><span class="item-card-row"></span></div>
+    <div class="item-card-meta cat-desc" hidden><div class="item-card-row"></div></div>
+  </div>
+</template>
 </body>
 </html>

@@ -58,5 +58,29 @@
     </main>
   </div>
 </div>
+
+<!-- Template do card de meta (o JS apenas clona e preenche) -->
+<template id="tpl-goal-card">
+  <div class="item-card goal-card">
+    <div class="item-card-header">
+      <span class="item-card-name"></span>
+      <span class="goal-status-badge"></span>
+    </div>
+    <div class="goal-type-label"></div>
+    <div class="goal-tags" hidden></div>
+    <div class="goal-progress-section">
+      <div class="goal-progress-bar-bg">
+        <div class="goal-progress-bar-fill"></div>
+      </div>
+      <div class="goal-progress-amounts">
+        <span class="goal-amount-current"></span>
+        <span class="goal-amount-target"></span>
+      </div>
+    </div>
+    <div class="item-card-meta">
+      <span class="item-card-row goal-period"></span>
+    </div>
+  </div>
+</template>
 </body>
 </html>

@@ -105,37 +105,39 @@ function renderList() {
         return
     }
 
-    for (const acc of accounts) {
-        const card = document.createElement('div')
-        card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/views/AccountView.html?id=${acc.id}`))
+    for (const acc of accounts) list.appendChild(_buildAccountCard(acc))
+}
 
-        let balClass = 'zero'
-        if (acc.balance > 0) balClass = 'positive'
-        else if (acc.balance < 0) balClass = 'negative'
+function _buildAccountCard(acc) {
+    const card = document.getElementById('tpl-account-card').content.firstElementChild.cloneNode(true)
+    card.addEventListener('click', () => navigate(`/pages/views/AccountView.html?id=${acc.id}`))
 
-        const iconHtml = acc.iconKey
-            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${acc.iconKey}"></i></span>`
-            : ''
-
-        card.innerHTML = `
-            <div class="item-card-header">
-                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${acc.name}</span></span>
-                <span class="item-card-badge"></span>
-            </div>
-            <div class="item-card-meta">
-                <div class="item-card-row">
-                    ${Icons.institutions()}
-                    ${acc.financialInstitution || I18n.t('noInstitutionSelected')}
-                </div>
-                ${acc.contact ? `<div class="item-card-row">${Icons.phone()}${acc.contact}</div>` : ''}
-            </div>
-            <div class="item-balance ${balClass}">
-                ${acc.balance >= 0 ? '+ ' : '- '} $ ${formatCurrency(Math.abs(acc.balance))}
-            </div>`
-
-        list.appendChild(card)
+    if (acc.iconKey) {
+        const iconEl = card.querySelector('.ac-icon')
+        iconEl.innerHTML = `<i class="ph ${acc.iconKey}"></i>`
+        iconEl.hidden = false
     }
+    card.querySelector('.item-card-name').textContent = acc.name
+
+    const inst = card.querySelector('.ac-institution')
+    inst.innerHTML = Icons.institutions()
+    inst.appendChild(document.createTextNode(' ' + (acc.financialInstitution || I18n.t('noInstitutionSelected'))))
+
+    if (acc.contact) {
+        const contact = card.querySelector('.ac-contact')
+        contact.innerHTML = Icons.phone()
+        contact.appendChild(document.createTextNode(acc.contact))
+        contact.hidden = false
+    }
+
+    let balClass = 'zero'
+    if (acc.balance > 0) balClass = 'positive'
+    else if (acc.balance < 0) balClass = 'negative'
+    const bal = card.querySelector('.item-balance')
+    bal.classList.add(balClass)
+    bal.textContent = `${acc.balance >= 0 ? '+ ' : '- '} $ ${formatCurrency(Math.abs(acc.balance))}`
+
+    return card
 }
 
 if (!globalThis.__appRouter) init()

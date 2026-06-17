@@ -26,44 +26,14 @@ function renderGrid(achievements) {
         const items = achievements.filter(a => a.tier === tier)
         if (!items.length) continue
 
-        const section = document.createElement('div')
-        section.className = 'achievement-section'
-
-        const heading = document.createElement('h2')
-        heading.className = `achievement-tier-heading tier-${tier}`
+        const section = document.getElementById('tpl-achievement-section').content.firstElementChild.cloneNode(true)
+        const heading = section.querySelector('.achievement-tier-heading')
+        heading.classList.add(`tier-${tier}`)
         heading.textContent = I18n.t(`tier_${tier}`)
-        section.appendChild(heading)
 
-        const row = document.createElement('div')
-        row.className = 'achievement-row'
+        const row = section.querySelector('.achievement-row')
+        for (const a of items) row.appendChild(_buildAchievementCard(a))
 
-        for (const a of items) {
-            const card = document.createElement('div')
-            card.className = `achievement-card ${a.earned ? 'earned' : 'locked'} tier-${a.tier}`
-            card.dataset.type = a.type
-            card.title = a.earned
-                ? I18n.t('achievementEarnedOn', { date: new Date(a.earnedAt).toLocaleDateString(localeStr()) })
-                : I18n.t('achievementLocked')
-
-            const iconWrap = document.createElement('div')
-            iconWrap.className = 'achievement-icon'
-            iconWrap.innerHTML = `<i class="ph ${a.iconKey}"></i>`
-
-            const title = document.createElement('div')
-            title.className = 'achievement-title'
-            title.textContent = I18n.t(`achievement_${a.type}_title`)
-
-            const desc = document.createElement('div')
-            desc.className = 'achievement-desc'
-            desc.textContent = I18n.t(`achievement_${a.type}_desc`)
-
-            card.appendChild(iconWrap)
-            card.appendChild(title)
-            card.appendChild(desc)
-            row.appendChild(card)
-        }
-
-        section.appendChild(row)
         grid.appendChild(section)
     }
 
@@ -76,6 +46,20 @@ function renderGrid(achievements) {
             card.addEventListener('animationend', () => card.classList.remove('card-highlighted'), { once: true })
         }
     }
+}
+
+function _buildAchievementCard(a) {
+    const card = document.getElementById('tpl-achievement-card').content.firstElementChild.cloneNode(true)
+    card.classList.add(a.earned ? 'earned' : 'locked', `tier-${a.tier}`)
+    card.dataset.type = a.type
+    card.title = a.earned
+        ? I18n.t('achievementEarnedOn', { date: new Date(a.earnedAt).toLocaleDateString(localeStr()) })
+        : I18n.t('achievementLocked')
+
+    card.querySelector('.achievement-icon').innerHTML = `<i class="ph ${a.iconKey}"></i>`
+    card.querySelector('.achievement-title').textContent = I18n.t(`achievement_${a.type}_title`)
+    card.querySelector('.achievement-desc').textContent  = I18n.t(`achievement_${a.type}_desc`)
+    return card
 }
 
 function localeStr() {

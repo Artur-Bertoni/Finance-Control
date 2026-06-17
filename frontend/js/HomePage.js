@@ -220,88 +220,41 @@ function createTransactionItem(tx) {
     const isInstallment = tx.type === 'debit' && tx.installmentsNumber > 0
     const typeClass     = isInstallment ? 'installment' : tx.type
 
-    const item = document.createElement('div')
-    item.className = `transaction-item ${typeClass}`
+    const item = document.getElementById('tpl-transaction-item').content.firstElementChild.cloneNode(true)
+    item.classList.add(typeClass)
     item.addEventListener('click', () => navigate(`/pages/views/TransactionView.html?id=${tx.id}`))
 
-    const indicator = document.createElement('div')
-    indicator.className = `tx-indicator ${typeClass}`
+    item.querySelector('.tx-indicator').classList.add(typeClass)
 
-    const info  = createTransactionInfo(tx)
-    const badge = createTransactionBadge(tx, isInstallment, typeClass)
-    const value = createTransactionValue(tx, typeClass)
+    if (tx.categoryIconKey) {
+        const icon = item.querySelector('.tx-cat-icon')
+        icon.classList.add(tx.categoryIconKey)
+        icon.hidden = false
+    }
+    item.querySelector('.tx-cat-name').textContent = tx.category
 
-    item.appendChild(indicator)
-    item.appendChild(info)
-    item.appendChild(badge)
-    item.appendChild(value)
+    item.querySelector('.tx-account').textContent = tx.account
+    if (tx.transactionLocale) {
+        const loc = item.querySelector('.tx-locale')
+        loc.textContent = tx.transactionLocale
+        loc.hidden = false
+    }
+    item.querySelector('.tx-date').textContent = formatDate(tx.date)
+    if (tx.installmentsNumber > 0) {
+        const inst = item.querySelector('.tx-installments')
+        inst.textContent = `${tx.installmentsNumber}x`
+        inst.hidden = false
+    }
+
+    const badge = item.querySelector('.tx-badge')
+    badge.classList.add(typeClass)
+    badge.textContent = isInstallment ? I18n.t('installment') : (tx.type === 'debit' ? I18n.t('debit') : I18n.t('credit'))
+
+    const value = item.querySelector('.tx-value')
+    value.classList.add(typeClass)
+    value.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
 
     return item
-}
-
-function createTransactionInfo(tx) {
-    const info = document.createElement('div')
-    info.className = 'tx-info'
-
-    const cat = document.createElement('div')
-    cat.className = 'tx-category'
-    if (tx.categoryIconKey) {
-        const icon = document.createElement('i')
-        icon.className = `ph ${tx.categoryIconKey}`
-        cat.appendChild(icon)
-    }
-    const catName = document.createElement('span')
-    catName.textContent = tx.category
-    cat.appendChild(catName)
-
-    info.appendChild(cat)
-    info.appendChild(createTransactionMeta(tx))
-    return info
-}
-
-function createTransactionMeta(tx) {
-    const meta = document.createElement('div')
-    meta.className = 'tx-meta'
-
-    const accSpan = document.createElement('span')
-    accSpan.textContent = tx.account
-    meta.appendChild(accSpan)
-
-    if (tx.transactionLocale) {
-        const locSpan = document.createElement('span')
-        locSpan.textContent = tx.transactionLocale
-        meta.appendChild(locSpan)
-    }
-
-    meta.appendChild(createDateSpan(tx.date))
-
-    if (tx.installmentsNumber > 0) {
-        const instSpan = document.createElement('span')
-        instSpan.textContent = `${tx.installmentsNumber}x`
-        meta.appendChild(instSpan)
-    }
-
-    return meta
-}
-
-function createDateSpan(date) {
-    const dateSpan = document.createElement('span')
-    dateSpan.textContent = formatDate(date)
-    return dateSpan
-}
-
-function createTransactionBadge(tx, isInstallment, typeClass) {
-    const badge = document.createElement('span')
-    badge.className = `tx-badge ${typeClass}`
-    badge.textContent = isInstallment ? I18n.t('installment') : (tx.type === 'debit' ? I18n.t('debit') : I18n.t('credit'))
-    return badge
-}
-
-function createTransactionValue(tx, typeClass) {
-    const value = document.createElement('div')
-    value.className = `tx-value ${typeClass}`
-    value.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
-    return value
 }
 
 function calculateTransactionValue(tx) {

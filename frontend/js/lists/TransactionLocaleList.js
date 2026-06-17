@@ -47,24 +47,28 @@ function renderList() {
         return
     }
 
-    for (const loc of locales) {
-        const card = document.createElement('div')
-        card.className = 'item-card'
-        card.addEventListener('click', () => navigate(`/pages/views/TransactionLocaleView.html?id=${loc.id}`))
-        const iconHtml = loc.iconKey
-            ? `<span style="font-size:18px;color:var(--primary);flex-shrink:0"><i class="ph ${loc.iconKey}"></i></span>`
-            : ''
-        const addressHtml = loc.address
-            ? '<div class="item-card-meta"><div class="item-card-row">' + Icons.locations() + loc.address + '</div></div>'
-            : ''
-        card.innerHTML = `
-            <div class="item-card-header">
-                <span class="item-card-name-group">${iconHtml}<span class="item-card-name">${loc.name}</span></span>
-                <span class="item-card-badge"></span>
-            </div>
-            ${addressHtml}`
-        list.appendChild(card)
+    for (const loc of locales) list.appendChild(_buildLocaleCard(loc))
+}
+
+function _buildLocaleCard(loc) {
+    const card = document.getElementById('tpl-locale-card').content.firstElementChild.cloneNode(true)
+    card.addEventListener('click', () => navigate(`/pages/views/TransactionLocaleView.html?id=${loc.id}`))
+
+    if (loc.iconKey) {
+        const iconEl = card.querySelector('.loc-icon')
+        iconEl.innerHTML = `<i class="ph ${loc.iconKey}"></i>`
+        iconEl.hidden = false
     }
+    card.querySelector('.item-card-name').textContent = loc.name
+
+    if (loc.address) {
+        const meta = card.querySelector('.loc-address')
+        const row  = meta.querySelector('.item-card-row')
+        row.innerHTML = Icons.locations()
+        row.appendChild(document.createTextNode(loc.address))
+        meta.hidden = false
+    }
+    return card
 }
 
 if (!globalThis.__appRouter) init()

@@ -110,47 +110,41 @@ function renderList() {
 }
 
 function buildGoalCard(g) {
-    const card = document.createElement('div')
-    card.className = 'item-card goal-card'
+    const card = document.getElementById('tpl-goal-card').content.firstElementChild.cloneNode(true)
     card.dataset.goalId = g.id
     card.addEventListener('click', () => navigate(`/pages/views/GoalView.html?id=${g.id}`))
 
-    const pct        = Math.min(g.progressPercent ?? 0, 100)
-    const exceeded   = g.type === 'expense_limit' && (g.progressPercent ?? 0) > 100
-    const barColor   = goalBarColor(g)
-    const statusKey  = statusI18nKey(g.status)
-    const typeLabel  = typeI18nLabel(g.type)
+    const pct      = Math.min(g.progressPercent ?? 0, 100)
+    const exceeded = g.type === 'expense_limit' && (g.progressPercent ?? 0) > 100
 
-    const catTags = (g.categories ?? []).map(c =>
-        `<span class="goal-tag">${c.name}</span>`).join('')
-    const locTags = (g.locales ?? []).map(l =>
-        `<span class="goal-tag">${l.name}</span>`).join('')
-    const tags = catTags || locTags
-        ? `<div class="goal-tags">${catTags}${locTags}</div>`
-        : ''
+    card.querySelector('.item-card-name').textContent = g.name
 
-    const formattedCurrent = formatAmount(g.currentAmount ?? 0)
-    const formattedTarget  = formatAmount(g.targetAmount  ?? 0)
+    const badge = card.querySelector('.goal-status-badge')
+    badge.classList.add(`goal-status-${g.status}`)
+    badge.textContent = I18n.t(statusI18nKey(g.status))
 
-    card.innerHTML = `
-        <div class="item-card-header">
-            <span class="item-card-name">${escapeHtml(g.name)}</span>
-            <span class="goal-status-badge goal-status-${g.status}">${I18n.t(statusKey)}</span>
-        </div>
-        <div class="goal-type-label">${typeLabel}</div>
-        ${tags}
-        <div class="goal-progress-section">
-            <div class="goal-progress-bar-bg">
-                <div class="goal-progress-bar-fill" style="width:${pct}%;background:${barColor};"></div>
-            </div>
-            <div class="goal-progress-amounts">
-                <span class="goal-amount-current ${exceeded ? 'goal-exceeded' : ''}">${formattedCurrent}</span>
-                <span class="goal-amount-target">${formattedTarget}</span>
-            </div>
-        </div>
-        <div class="item-card-meta">
-            <span class="item-card-row goal-period">${formatDate(g.startDate)} → ${formatDate(g.endDate)}</span>
-        </div>`
+    card.querySelector('.goal-type-label').textContent = typeI18nLabel(g.type)
+
+    const tagsWrap = card.querySelector('.goal-tags')
+    const tags = [...(g.categories ?? []), ...(g.locales ?? [])]
+    for (const t of tags) {
+        const span = document.createElement('span')
+        span.className = 'goal-tag'
+        span.textContent = t.name
+        tagsWrap.appendChild(span)
+    }
+    if (tags.length) tagsWrap.hidden = false
+
+    const fill = card.querySelector('.goal-progress-bar-fill')
+    fill.style.width = `${pct}%`
+    fill.style.background = goalBarColor(g)
+
+    const cur = card.querySelector('.goal-amount-current')
+    cur.textContent = formatAmount(g.currentAmount ?? 0)
+    if (exceeded) cur.classList.add('goal-exceeded')
+    card.querySelector('.goal-amount-target').textContent = formatAmount(g.targetAmount ?? 0)
+
+    card.querySelector('.goal-period').textContent = `${formatDate(g.startDate)} → ${formatDate(g.endDate)}`
 
     return card
 }
@@ -189,11 +183,6 @@ function typeI18nLabel(type) {
 
 function formatAmount(value) {
     return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
-}
-
-
-function escapeHtml(str) {
-    return String(str ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
 }
 
 if (!globalThis.__appRouter) init()

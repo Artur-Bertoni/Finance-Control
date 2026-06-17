@@ -80,6 +80,34 @@
     <div id="feedbacks-pagination" class="pagination-row" hidden></div>
   </div>
 
+  <!-- Templates (o JS apenas clona e preenche) -->
+  <template id="tpl-feedback-card">
+    <div class="feedback-admin-card">
+      <div class="feedback-admin-card-header">
+        <div class="feedback-admin-meta">
+          <strong class="fb-user"></strong>
+          <span class="feedback-admin-email fb-email"></span>
+          <span class="feedback-admin-date fb-date"></span>
+        </div>
+        <div class="feedback-admin-badges">
+          <span class="badge fb-type"></span>
+          <span class="feedback-nps-badge fb-nps" hidden><span class="fb-nps-score"></span><span style="font-weight:400;opacity:.6">/10</span></span>
+        </div>
+      </div>
+      <p class="feedback-admin-message fb-message"></p>
+    </div>
+  </template>
+
+  <template id="tpl-feedback-empty">
+    <div class="empty-state"><p></p></div>
+  </template>
+
+  <template id="tpl-feedback-pagination">
+    <button class="btn btn-ghost btn-sm pg-prev" type="button">‹</button>
+    <span class="pg-label"></span>
+    <button class="btn btn-ghost btn-sm pg-next" type="button">›</button>
+  </template>
+
 </main>
 </body>
 </html>
