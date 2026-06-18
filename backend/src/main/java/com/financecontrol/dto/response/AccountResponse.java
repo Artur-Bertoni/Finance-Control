@@ -1,6 +1,7 @@
 package com.financecontrol.dto.response;
 
 import com.financecontrol.entity.Account;
+import com.financecontrol.enums.AccountType;
 import java.time.LocalDateTime;
 
 public record AccountResponse(
@@ -11,6 +12,9 @@ public record AccountResponse(
     String description,
     Double balance,
     String iconKey,
+    AccountType type,
+    Integer closingDay,
+    Integer dueDay,
     LocalDateTime createdAt
 ) {
     public static AccountResponse from(Account a) {
@@ -18,6 +22,9 @@ public record AccountResponse(
                 a.getId(),
                 FinancialInstitutionResponse.from(a.getFinancialInstitution()),
                 a.getName(), a.getContact(), a.getDescription(), a.getBalance(),
-                a.getIconKey(), a.getCreatedAt());
+                a.getIconKey(),
+                a.getType() != null ? a.getType() : AccountType.CHECKING,
+                a.getClosingDay(), a.getDueDay(),
+                a.getCreatedAt());
     }
 }

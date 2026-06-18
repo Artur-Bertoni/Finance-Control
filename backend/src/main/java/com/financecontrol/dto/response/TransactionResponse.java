@@ -16,9 +16,17 @@ public record TransactionResponse(
     Integer installmentsNumber,
     String obs,
     Long transferPartnerId,
+    Long installmentGroupId,
+    Integer installmentIndex,
+    Boolean applied,
+    Double installmentTotalValue,
     LocalDateTime createdAt
 ) {
     public static TransactionResponse from(Transaction t) {
+        return from(t, null);
+    }
+
+    public static TransactionResponse from(Transaction t, Double installmentTotalValue) {
         return new TransactionResponse(
                 t.getId(),
                 AccountResponse.from(t.getAccount()),
@@ -30,6 +38,10 @@ public record TransactionResponse(
                 t.getInstallmentsNumber(),
                 t.getObs(),
                 t.getTransferPartnerId(),
+                t.getInstallmentGroupId(),
+                t.getInstallmentIndex(),
+                t.getApplied(),
+                installmentTotalValue,
                 t.getCreatedAt());
     }
 }

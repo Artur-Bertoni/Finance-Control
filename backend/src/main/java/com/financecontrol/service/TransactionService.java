@@ -51,7 +51,13 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public TransactionResponse findById(@NonNull Long id) {
-        return TransactionResponse.from(getOrThrow(id));
+        Transaction t = getOrThrow(id);
+        if (isInstallmentGroup(t.getInstallmentGroupId())) {
+            double total = transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(t.getInstallmentGroupId())
+                    .stream().mapToDouble(Transaction::getValue).sum();
+            return TransactionResponse.from(t, Math.round(total * 100) / 100.0);
+        }
+        return TransactionResponse.from(t);
     }
 
     @Transactional
@@ -60,6 +66,11 @@ public class TransactionService {
     public TransactionResponse create(Long userId,
                                       TransactionRequest req,
                                       boolean force) {
+        int installments = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
+        if (installments >= 2) {
+            return createInstallments(userId, req, installments);
+        }
+
         if (!force && transactionRepository.existsDuplicate(
                 userId, req.accountId(), req.categoryId(), req.transactionLocaleId(),
                 req.value(), req.date(), req.type(), req.installmentsNumber(), req.obs()))
@@ -71,6 +82,129 @@ public class TransactionService {
         historyService.recordCreation(ENTITY_TRANSACTION, result.id(), userId);
 
         return result;
+    }
+
+    /** Gera N parcelas (1 por mês) a partir do valor total, ligadas por grupo; parcelas futuras nascem não aplicadas no saldo. */
+    @SuppressWarnings("null")
+    private TransactionResponse createInstallments(Long userId,
+                                                   TransactionRequest req,
+                                                   int n) {
+        TransactionDeps deps = loadDeps(req);
+        LocalDate today = LocalDate.now();
+
+        long totalCents = Math.round((req.value() != null ? req.value() : 0.0) * 100);
+        long base       = totalCents / n;
+        long remainder  = totalCents - base * n;
+
+        Long groupId      = null;
+        Transaction first = null;
+
+        for (int k = 0; k < n; k++) {
+            long cents          = base + (k < remainder ? 1 : 0);
+            double parcelaValue = cents / 100.0;
+            LocalDate date      = req.date() != null ? req.date().plusMonths(k) : null;
+            boolean applied     = date == null || !date.isAfter(today);
+
+            Transaction t = new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
+                    parcelaValue, date, req.type(), n, req.obs(),
+                    0L, LocalDateTime.now(), groupId, k + 1, applied);
+            t = transactionRepository.save(t);
+
+            if (k == 0) {
+                groupId = t.getId();
+                t.setInstallmentGroupId(groupId);
+                first = transactionRepository.save(t);
+            }
+
+            if (applied) {
+                applyBalanceDelta(req.accountId(), req.type(), parcelaValue);
+            }
+        }
+
+        TransactionResponse result = TransactionResponse.from(first);
+        historyService.recordCreation(ENTITY_TRANSACTION, result.id(), userId);
+
+        return result;
+    }
+
+    /** Edita uma compra parcelada em cascata: re-divide o total em N parcelas mantendo a parcela pai; se N menor que 2, colapsa em transação avulsa. */
+    @SuppressWarnings("null")
+    private TransactionResponse updateInstallmentGroup(Transaction anyMember,
+                                                       Long userId,
+                                                       TransactionRequest req) {
+        Long groupId = anyMember.getInstallmentGroupId();
+        List<Transaction> group = transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(groupId);
+
+        Transaction parent = group.stream()
+                .filter(t -> groupId.equals(t.getId()))
+                .findFirst().orElse(group.get(0));
+
+        TransactionDeps deps = loadDeps(req);
+        LocalDate today = LocalDate.now();
+
+        for (Transaction p : group) {
+            Long accId = p.getAccount() != null ? p.getAccount().getId() : null;
+            if (accId != null && isApplied(p)) {
+                accountService.patchBalance(accId, revertDelta(p));
+            }
+            if (!p.getId().equals(parent.getId())) {
+                transactionRepository.deleteById(p.getId());
+            }
+        }
+
+        int n = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
+
+        if (n < 2) {
+            boolean applied = req.date() == null || !req.date().isAfter(today);
+            applyUpdateWithDeps(parent, userId, req, deps);
+            parent.setInstallmentGroupId(null);
+            parent.setInstallmentIndex(null);
+            parent.setApplied(applied);
+            if (applied) applyBalanceDelta(req.accountId(), req.type(), req.value());
+
+            Transaction saved = transactionRepository.save(parent);
+            historyService.recordChanges(ENTITY_TRANSACTION, parent.getId(), userId,
+                    Map.of("installmentsNumber", diff(String.valueOf(group.size()), "0")));
+            return TransactionResponse.from(saved);
+        }
+
+        long totalCents = Math.round((req.value() != null ? req.value() : 0.0) * 100);
+        long base       = totalCents / n;
+        long remainder  = totalCents - base * n;
+
+        Transaction savedParent = parent;
+        for (int k = 0; k < n; k++) {
+            long cents          = base + (k < remainder ? 1 : 0);
+            double parcelaValue = cents / 100.0;
+            LocalDate date      = req.date() != null ? req.date().plusMonths(k) : null;
+            boolean applied     = date == null || !date.isAfter(today);
+
+            Transaction t = (k == 0) ? parent
+                    : new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
+                            parcelaValue, date, req.type(), n, req.obs(),
+                            0L, LocalDateTime.now(), parent.getId(), k + 1, applied);
+            t.setUserId(userId);
+            t.setAccount(deps.account());
+            t.setCategory(deps.category());
+            t.setTransactionLocale(deps.locale());
+            t.setType(req.type());
+            t.setObs(req.obs());
+            t.setTransferPartnerId(0L);
+            t.setInstallmentGroupId(parent.getId());
+            t.setValue(parcelaValue);
+            t.setDate(date);
+            t.setInstallmentsNumber(n);
+            t.setInstallmentIndex(k + 1);
+            t.setApplied(applied);
+
+            Transaction saved = transactionRepository.save(t);
+            if (k == 0) savedParent = saved;
+            if (applied) applyBalanceDelta(req.accountId(), req.type(), parcelaValue);
+        }
+
+        historyService.recordChanges(ENTITY_TRANSACTION, parent.getId(), userId,
+                Map.of("installmentsNumber", diff(String.valueOf(group.size()), String.valueOf(n))));
+        return TransactionResponse.from(savedParent);
     }
 
     @Transactional
@@ -109,14 +243,26 @@ public class TransactionService {
                                           TransactionRequest req) {
         Transaction existing = getOrThrow(id);
 
+        if (isInstallmentGroup(existing.getInstallmentGroupId())) {
+            return updateInstallmentGroup(existing, userId, req);
+        }
+
         TransactionType oldType = existing.getType();
         double revert = TYPE_CREDIT == oldType ? -existing.getValue() : existing.getValue();
         Long accountId = existing.getAccount().getId();
 
-        if (accountId != null) {
+        boolean wasApplied = isApplied(existing);
+        boolean nowApplied = isInstallmentGroup(existing.getInstallmentGroupId())
+                ? (req.date() == null || !req.date().isAfter(LocalDate.now()))
+                : true;
+
+        if (accountId != null && wasApplied) {
             accountService.patchBalance(accountId, revert);
         }
-        applyBalanceDelta(req.accountId(), req.type(), req.value());
+        if (nowApplied) {
+            applyBalanceDelta(req.accountId(), req.type(), req.value());
+        }
+        existing.setApplied(nowApplied);
 
         Long partnerId = existing.getTransferPartnerId();
         if (isTransferPartner(partnerId)) {
@@ -149,10 +295,22 @@ public class TransactionService {
     @SuppressWarnings("null")
     private void deleteOne(@NonNull Long id) {
         Transaction t = getOrThrow(id);
-        double revert = TYPE_CREDIT == t.getType() ? -t.getValue() : t.getValue();
+
+        Long groupId = t.getInstallmentGroupId();
+        if (isInstallmentGroup(groupId)) {
+            for (Transaction p : transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(groupId)) {
+                Long pAccountId = p.getAccount().getId();
+                if (pAccountId != null && isApplied(p)) {
+                    accountService.patchBalance(pAccountId, revertDelta(p));
+                }
+                transactionRepository.deleteById(p.getId());
+            }
+            return;
+        }
+
         Long accountId = t.getAccount().getId();
-        if (accountId != null) {
-            accountService.patchBalance(accountId, revert);
+        if (accountId != null && isApplied(t)) {
+            accountService.patchBalance(accountId, revertDelta(t));
         }
 
         Long partnerId = t.getTransferPartnerId();
@@ -172,6 +330,18 @@ public class TransactionService {
 
     private boolean isTransferPartner(Long partnerId) {
         return partnerId != null && !partnerId.equals(0L);
+    }
+
+    private boolean isInstallmentGroup(Long groupId) {
+        return groupId != null && !groupId.equals(0L);
+    }
+
+    private boolean isApplied(Transaction t) {
+        return !Boolean.FALSE.equals(t.getApplied());
+    }
+
+    private double revertDelta(Transaction t) {
+        return TYPE_CREDIT == t.getType() ? -t.getValue() : t.getValue();
     }
 
     private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
@@ -198,7 +368,7 @@ public class TransactionService {
 
         return new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                 req.value(), req.date(), req.type(), installmentsNumber, req.obs(),
-                transferPartnerId, LocalDateTime.now());
+                transferPartnerId, LocalDateTime.now(), null, null, true);
     }
 
     private void applyUpdateWithDeps(Transaction transaction,

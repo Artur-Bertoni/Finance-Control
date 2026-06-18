@@ -1,7 +1,7 @@
 ﻿import { formatDate } from '../../utils/FrontendFunctions.js'
 
 export class Transaction {
-    constructor({ id, account, category, categoryIconKey, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId }) {
+    constructor({ id, account, category, categoryIconKey, transactionLocale, value, date, type, installmentsNumber, obs, transferPartnerId, installmentGroupId, installmentIndex, applied, installmentTotalValue }) {
         this.id = id
         this.account = account
         this.category = category
@@ -13,6 +13,10 @@ export class Transaction {
         this.installmentsNumber = installmentsNumber
         this.obs = obs
         this.transferPartnerId = transferPartnerId
+        this.installmentGroupId = installmentGroupId
+        this.installmentIndex = installmentIndex
+        this.applied = applied
+        this.installmentTotalValue = installmentTotalValue
     }
 
     static processTransaction(data) {
@@ -28,6 +32,10 @@ export class Transaction {
             installmentsNumber: Number(data.installmentsNumber),
             obs:               data.obs ?? '',
             transferPartnerId: Number(data.transferPartnerId ?? 0),
+            installmentGroupId: data.installmentGroupId == null ? null : Number(data.installmentGroupId),
+            installmentIndex:  data.installmentIndex == null ? null : Number(data.installmentIndex),
+            applied:           data.applied,
+            installmentTotalValue: data.installmentTotalValue == null ? null : Number(data.installmentTotalValue),
         })
     }
 

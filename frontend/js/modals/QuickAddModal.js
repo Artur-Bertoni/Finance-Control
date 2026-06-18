@@ -14,7 +14,7 @@ import { CATEGORY_ICONS } from '../components/IconPicker.js'
  * @param {function} opts.buildBody  - (values) => requestBody
  * @param {function} opts.onSuccess  - (createdItem) => void
  */
-export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
+export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, successToast = true }) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'
 
@@ -155,7 +155,13 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
     })
 
     overlay.querySelector('#qa-cancel').addEventListener('click', () => overlay.remove())
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
+
+    let pressedOnOverlay = false
+    overlay.addEventListener('mousedown', e => { pressedOnOverlay = e.target === overlay })
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay && pressedOnOverlay) overlay.remove()
+        pressedOnOverlay = false
+    })
 
     fields.filter(f => f.required).forEach(f => {
         const el = overlay.querySelector('#qaf-' + f.id)
@@ -207,6 +213,6 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess }) {
 
         overlay.remove()
         onSuccess(result.item)
-        showToast(I18n.t('createdSuccess'), 'success')
+        if (successToast) showToast(I18n.t('createdSuccess'), 'success')
     })
 }

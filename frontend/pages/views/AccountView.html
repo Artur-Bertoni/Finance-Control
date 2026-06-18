@@ -19,6 +19,7 @@
       <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
       <h1 class="page-title" id="page-title-text" data-i18n="accounts">Contas</h1>
       <div class="topbar-actions" id="header-actions">
+        <button class="btn btn-secondary btn-sm" id="view-invoices-btn" type="button" style="display:none" data-i18n="viewInvoices">Ver Faturas</button>
         <button class="btn btn-secondary btn-sm" id="view-transactions-btn" type="button" data-i18n="viewTransactions">Ver Transações</button>
         <button class="btn btn-primary btn-sm" id="edit-btn" type="button" data-i18n="commonEdit">Editar</button>
       </div>
@@ -48,6 +49,18 @@
             <div class="detail-field">
               <label for="detail-contact" data-i18n="contact">Contato</label>
               <p id="detail-contact">—</p>
+            </div>
+            <div class="detail-field">
+              <label for="detail-type" data-i18n="accountType">Tipo de Conta</label>
+              <p id="detail-type">—</p>
+            </div>
+            <div class="detail-field" id="closing-day-row" style="display:none">
+              <label for="detail-closing-day" data-i18n="closingDay">Dia de Fechamento</label>
+              <p id="detail-closing-day">—</p>
+            </div>
+            <div class="detail-field" id="due-day-row" style="display:none">
+              <label for="detail-due-day" data-i18n="dueDay">Dia de Vencimento</label>
+              <p id="detail-due-day">—</p>
             </div>
             <div class="detail-field">
               <label for="detail-balance" data-i18n="currentBalance">Saldo ($)</label>

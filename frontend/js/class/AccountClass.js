@@ -1,7 +1,7 @@
 import { populateSelect } from '../../utils/FrontendFunctions.js'
 
 export class Account {
-    constructor({ id, name, financialInstitution, contact, description, balance, financialInstitutionId, iconKey }) {
+    constructor({ id, name, financialInstitution, contact, description, balance, financialInstitutionId, iconKey, type, closingDay, dueDay }) {
         this.id = id
         this.name = name
         this.financialInstitution = financialInstitution
@@ -10,6 +10,9 @@ export class Account {
         this.balance = balance
         this.financialInstitutionId = financialInstitutionId
         this.iconKey = iconKey ?? null
+        this.type = type ?? 'CHECKING'
+        this.closingDay = closingDay ?? null
+        this.dueDay = dueDay ?? null
     }
 
     static addAccounts(elementId) {
@@ -26,6 +29,9 @@ export class Account {
             balance:              Number(data.balance),
             financialInstitutionId: data.financialInstitution?.id ?? null,
             iconKey:              data.iconKey ?? null,
+            type:                 data.type ?? 'CHECKING',
+            closingDay:           data.closingDay ?? null,
+            dueDay:               data.dueDay ?? null,
         })
     }
 }

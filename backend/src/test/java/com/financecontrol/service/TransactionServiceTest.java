@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -73,7 +74,7 @@ class TransactionServiceTest {
     private static Transaction transaction(Long id, Account acc, Category cat) {
         return new Transaction(id, 1L, acc, cat, null,
                 100.0, LocalDate.of(2025, 1, 15), TransactionType.DEBIT,
-                0, null, 0L, LocalDateTime.now());
+                0, null, 0L, LocalDateTime.now(), null, null, null);
     }
 
     private static TransactionRequest request(Long accountId, Long categoryId) {
@@ -525,5 +526,128 @@ class TransactionServiceTest {
         ArgumentCaptor<Map<String, String[]>> diff = ArgumentCaptor.forClass(Map.class);
         verify(historyService).recordChanges(eq(HistoryService.ENTITY_TRANSACTION), eq(10L), eq(1L), diff.capture());
         assertThat(diff.getValue()).containsOnlyKeys("transactionLocale");
+    }
+
+    // ------------------------------------------------------------------ parcelamento (installments)
+
+    @Test
+    void create_parcelado_geraUmaTransacaoPorParcelaLigadasPorGrupo() {
+        Account acc = account(1L);
+        Category cat = category(2L);
+        TransactionRequest req = new TransactionRequest(1L, 2L, null, 100.0,
+                LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 3, null, null);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(acc));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.of(cat));
+        when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> {
+            Transaction t = inv.getArgument(0);
+            if (t.getId() == null) t.setId(100L);
+            return t;
+        });
+
+        TransactionResponse resp = transactionService.create(1L, req, false);
+
+        assertThat(resp.installmentIndex()).isEqualTo(1);
+        assertThat(resp.installmentGroupId()).isEqualTo(100L);
+
+        ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionRepository, atLeast(3)).save(captor.capture());
+
+        Map<Integer, Double> byIndex = new HashMap<>();
+        for (Transaction t : captor.getAllValues()) byIndex.put(t.getInstallmentIndex(), t.getValue());
+
+        assertThat(byIndex.keySet()).containsExactlyInAnyOrder(1, 2, 3);
+        assertThat(byIndex.get(1)).isCloseTo(33.34, within(0.001));
+        assertThat(byIndex.get(2)).isCloseTo(33.33, within(0.001));
+        assertThat(byIndex.get(3)).isCloseTo(33.33, within(0.001));
+        assertThat(byIndex.values().stream().mapToDouble(Double::doubleValue).sum()).isCloseTo(100.0, within(0.001));
+
+        verify(transactionRepository, never()).existsDuplicate(any(), any(), any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void create_parcelado_parcelasFuturasNaoEntramNoSaldoAgora() {
+        Account acc = account(1L);
+        Category cat = category(2L);
+        TransactionRequest req = new TransactionRequest(1L, 2L, null, 90.0,
+                LocalDate.now(), TransactionType.DEBIT, 3, null, null);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(acc));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.of(cat));
+        when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> {
+            Transaction t = inv.getArgument(0);
+            if (t.getId() == null) t.setId(200L);
+            return t;
+        });
+
+        transactionService.create(1L, req, false);
+
+        verify(accountService, times(1)).patchBalance(1L, -30.0);
+
+        ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionRepository, atLeast(3)).save(captor.capture());
+        Map<Integer, Boolean> appliedByIndex = new HashMap<>();
+        for (Transaction t : captor.getAllValues()) appliedByIndex.put(t.getInstallmentIndex(), t.getApplied());
+        assertThat(appliedByIndex.get(1)).isTrue();
+        assertThat(appliedByIndex.get(2)).isFalse();
+        assertThat(appliedByIndex.get(3)).isFalse();
+    }
+
+    @Test
+    void delete_parcela_removeGrupoInteiroRevertendoSaldoDasAplicadas() {
+        Account acc = account(1L);
+        Category cat = category(2L);
+
+        Transaction p1 = transaction(50L, acc, cat);
+        p1.setInstallmentGroupId(50L); p1.setInstallmentIndex(1); p1.setApplied(true);
+        Transaction p2 = transaction(51L, acc, cat);
+        p2.setInstallmentGroupId(50L); p2.setInstallmentIndex(2); p2.setApplied(false);
+
+        when(transactionRepository.findById(51L)).thenReturn(Optional.of(p2));
+        when(transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(50L)).thenReturn(List.of(p1, p2));
+
+        transactionService.delete(51L);
+
+        verify(transactionRepository).deleteById(50L);
+        verify(transactionRepository).deleteById(51L);
+        verify(accountService, times(1)).patchBalance(1L, 100.0);
+    }
+
+    @Test
+    void update_parcelado_editaEmCascataReDividindoValorEnumeroDeParcelas() {
+        Account acc = account(1L);
+        Category cat = category(2L);
+
+        Transaction p1 = transaction(50L, acc, cat); p1.setInstallmentGroupId(50L); p1.setInstallmentIndex(1); p1.setApplied(true);
+        Transaction p2 = transaction(51L, acc, cat); p2.setInstallmentGroupId(50L); p2.setInstallmentIndex(2); p2.setApplied(true);
+        Transaction p3 = transaction(52L, acc, cat); p3.setInstallmentGroupId(50L); p3.setInstallmentIndex(3); p3.setApplied(true);
+
+        TransactionRequest req = new TransactionRequest(1L, 2L, null, 200.0,
+                LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 4, null, null);
+
+        when(transactionRepository.findById(50L)).thenReturn(Optional.of(p1));
+        when(transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(50L)).thenReturn(List.of(p1, p2, p3));
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(acc));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.of(cat));
+        when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> {
+            Transaction t = inv.getArgument(0);
+            if (t.getId() == null) t.setId(900L);
+            return t;
+        });
+
+        TransactionResponse resp = transactionService.update(50L, 1L, req);
+
+        assertThat(resp.id()).isEqualTo(50L);
+        verify(transactionRepository).deleteById(51L);
+        verify(transactionRepository).deleteById(52L);
+
+        ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionRepository, atLeast(4)).save(captor.capture());
+        Map<Integer, Double> byIndex = new HashMap<>();
+        for (Transaction t : captor.getAllValues()) byIndex.put(t.getInstallmentIndex(), t.getValue());
+        assertThat(byIndex.keySet()).containsExactlyInAnyOrder(1, 2, 3, 4);
+        assertThat(byIndex.values().stream().mapToDouble(Double::doubleValue).sum()).isCloseTo(200.0, within(0.001));
+
+        verify(historyService).recordChanges(eq(HistoryService.ENTITY_TRANSACTION), eq(50L), eq(1L), anyMap());
     }
 }

@@ -5,12 +5,10 @@ import com.financecontrol.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("SELECT t FROM Transaction t " +
@@ -104,6 +102,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                             @Param("obs") String obs);
 
     long countByUserId(Long userId);
+
+    List<Transaction> findByInstallmentGroupIdOrderByInstallmentIndexAsc(Long installmentGroupId);
+
+    List<Transaction> findByAccount_IdOrderByDateAsc(Long accountId);
+
+    @Query("SELECT t FROM Transaction t WHERE t.applied = false AND t.date <= :today")
+    List<Transaction> findUnappliedDue(@Param("today") LocalDate today);
 
     @Query("SELECT COUNT(DISTINCT t.date) FROM Transaction t WHERE t.userId = :userId AND t.date >= :since")
     long countDistinctDatesSince(@Param("userId") Long userId, @Param("since") LocalDate since);

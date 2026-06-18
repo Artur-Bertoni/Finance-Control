@@ -1,8 +1,11 @@
 package com.financecontrol.controller;
 
 import com.financecontrol.dto.request.AccountRequest;
+import com.financecontrol.dto.request.PayInvoiceRequest;
 import com.financecontrol.dto.response.AccountResponse;
+import com.financecontrol.dto.response.InvoiceResponse;
 import com.financecontrol.service.AccountService;
+import com.financecontrol.service.CreditCardInvoiceService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import java.util.List;
 public class AccountController extends BaseController {
 
     private final AccountService accountService;
+    private final CreditCardInvoiceService creditCardInvoiceService;
 
     @GetMapping
     public ResponseEntity<List<AccountResponse>> findAll(HttpSession session) {
@@ -51,11 +55,27 @@ public class AccountController extends BaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id, 
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
         requireUserId(session);
         accountService.delete(id);
-        
+
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/invoices")
+    public ResponseEntity<List<InvoiceResponse>> invoices(@PathVariable @NonNull Long id,
+                                                          HttpSession session) {
+        requireUserId(session);
+        return ResponseEntity.ok(creditCardInvoiceService.listInvoices(id));
+    }
+
+    @PostMapping("/{id}/invoices/{reference}/pay")
+    public ResponseEntity<InvoiceResponse> payInvoice(@PathVariable @NonNull Long id,
+                                                      @PathVariable @NonNull String reference,
+                                                      @RequestBody PayInvoiceRequest req,
+                                                      HttpSession session) {
+        Long userId = requireUserId(session);
+        return ResponseEntity.ok(creditCardInvoiceService.pay(userId, id, reference, req));
     }
 }

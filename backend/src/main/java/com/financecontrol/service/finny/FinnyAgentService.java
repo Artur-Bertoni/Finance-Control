@@ -200,7 +200,7 @@ public class FinnyAgentService {
         };
     }
 
-    private FinnyTip getOwned(Long userId, Long tipId) {
+    private FinnyTip getOwned(Long userId, @NonNull Long tipId) {
         return tipRepository.findById(tipId)
                 .filter(t -> Objects.equals(t.getUserId(), userId))
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.finnyTip"));

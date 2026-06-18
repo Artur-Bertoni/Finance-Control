@@ -44,7 +44,6 @@ class TransferControllerTest {
     @WithLongPrincipal(1L)
     void create_requestValido_retorna200() throws Exception {
         TransferRequest req = new TransferRequest(1L, 2L, null, null, 500.0, LocalDate.now(), null);
-        doNothing().when(transferService).create(eq(1L), any());
 
         mockMvc.perform(post("/api/transfers")
                         .contentType(MediaType.APPLICATION_JSON)

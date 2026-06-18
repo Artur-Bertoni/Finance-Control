@@ -13,6 +13,10 @@ export function init() {
 
     setupRequiredFieldValidation(['name-input', 'financial-institution-input', 'balance-input'])
 
+    const typeInput = document.getElementById('type-input')
+    typeInput.addEventListener('change', toggleCreditCardFields)
+    toggleCreditCardFields()
+
     const accountId = new URLSearchParams(globalThis.location.search).get('id')
     if (accountId) loadEditMode(accountId)
 
@@ -44,6 +48,11 @@ export function init() {
     })
 }
 
+function toggleCreditCardFields() {
+    const isCreditCard = document.getElementById('type-input').value === 'CREDIT_CARD'
+    document.getElementById('credit-card-fields').style.display = isCreditCard ? '' : 'none'
+}
+
 function loadEditMode(accountId) {
     const saveBtn = document.getElementById('save-btn')
     if (saveBtn) {
@@ -65,6 +74,10 @@ function loadEditMode(accountId) {
     document.getElementById('contact-input').value     = acc.contact ?? ''
     document.getElementById('description-input').value = acc.description ?? ''
     document.getElementById('balance-input').value     = acc.balance === undefined ? '' : acc.balance.toFixed(2)
+    document.getElementById('type-input').value         = acc.type ?? 'CHECKING'
+    document.getElementById('closing-day-input').value  = acc.closingDay ?? ''
+    document.getElementById('due-day-input').value      = acc.dueDay ?? ''
+    toggleCreditCardFields()
 
     if (acc.iconKey) IconPicker.setValue(acc.iconKey)
     selectOptionByText('financial-institution-input', acc.financialInstitution)
@@ -108,7 +121,10 @@ function handleSave(accountId) {
         contact:     document.getElementById('contact-input').value     || null,
         description: document.getElementById('description-input').value || null,
         balance:     Number(balance),
-        iconKey:     IconPicker.getValue() || null
+        iconKey:     IconPicker.getValue() || null,
+        type:        document.getElementById('type-input').value || 'CHECKING',
+        closingDay:  Number(document.getElementById('closing-day-input').value) || null,
+        dueDay:      Number(document.getElementById('due-day-input').value) || null
     }
 
     $.ajax({

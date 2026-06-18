@@ -46,12 +46,31 @@ export function init() {
         descEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
+    const isCreditCard = acc.type === 'CREDIT_CARD'
+    document.getElementById('detail-type').textContent =
+        I18n.t(isCreditCard ? 'accountTypeCreditCard' : 'accountTypeChecking')
+
+    if (isCreditCard) {
+        document.getElementById('closing-day-row').style.display = ''
+        document.getElementById('due-day-row').style.display     = ''
+        document.getElementById('detail-closing-day').textContent = acc.closingDay ?? I18n.t('commonNotInformed')
+        document.getElementById('detail-due-day').textContent     = acc.dueDay ?? I18n.t('commonNotInformed')
+    }
+
     const balEl = document.getElementById('detail-balance')
     let balClass = 'zero'
     if (acc.balance > 0) balClass = 'positive'
     else if (acc.balance < 0) balClass = 'negative'
     balEl.className = `detail-balance ${balClass}`
     balEl.textContent = `${acc.balance >= 0 ? '+' : '-'} $ ${formatCurrency(Math.abs(acc.balance))}`
+
+    if (acc.type === 'CREDIT_CARD') {
+        const invBtn = document.getElementById('view-invoices-btn')
+        if (invBtn) {
+            invBtn.style.display = ''
+            invBtn.addEventListener('click', () => navigate(`/pages/views/AccountInvoices.html?id=${accountId}`))
+        }
+    }
 
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate(`/pages/crud/Account.html?id=${accountId}`)

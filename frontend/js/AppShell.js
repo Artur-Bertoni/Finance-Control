@@ -24,6 +24,7 @@ const routes = {
     '/pages/lists/GoalList.html':                     () => import('./lists/GoalList.js'),
     '/pages/lists/TransactionLocaleList.html':        () => import('./lists/TransactionLocaleList.js'),
     '/pages/views/AccountView.html':                  () => import('./views/AccountView.js'),
+    '/pages/views/AccountInvoices.html':              () => import('./views/AccountInvoices.js'),
     '/pages/views/CategoryView.html':                 () => import('./views/CategoryView.js'),
     '/pages/views/FinancialInstitutionView.html':     () => import('./views/FinancialInstitutionView.js'),
     '/pages/views/GoalView.html':                     () => import('./views/GoalView.js'),
@@ -121,7 +122,13 @@ async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     document.getElementById('header-actions').innerHTML = srcActions?.innerHTML ?? ''
 
     const srcContent = doc.querySelector('main.page-content') || doc.querySelector('.page-content')
-    document.getElementById('view').innerHTML = srcContent?.innerHTML ?? ''
+    const view = document.getElementById('view')
+    view.innerHTML = srcContent?.innerHTML ?? ''
+
+    doc.querySelectorAll('template').forEach(tpl => {
+        if (srcContent?.contains(tpl)) return
+        view.appendChild(document.importNode(tpl, true))
+    })
 
     const newClasses = [...doc.body.classList].filter(c => c.startsWith('page-'))
     ;[...document.body.classList].filter(c => c.startsWith('page-')).forEach(c => document.body.classList.remove(c))

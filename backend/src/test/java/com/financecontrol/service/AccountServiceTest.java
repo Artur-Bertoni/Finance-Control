@@ -65,7 +65,28 @@ class AccountServiceTest {
 
         assertThat(resp.name()).isEqualTo("Nubank");
         assertThat(resp.balance()).isEqualTo(500.0);
+        assertThat(resp.type()).isEqualTo(com.financecontrol.enums.AccountType.CHECKING);
         verify(historyService).recordCreation(HistoryService.ENTITY_ACCOUNT, 10L, userId);
+    }
+
+    @Test
+    void create_comTypeCreditCard_persisteTipo() {
+        Long userId = 1L;
+        AccountRequest req = new AccountRequest(1L, "Cartao", null, null, 0.0, null,
+                com.financecontrol.enums.AccountType.CREDIT_CARD, null, null);
+        FinancialInstitution fi = fiWith(1L, "Banco");
+
+        when(accountRepository.existsByUserIdAndNameIgnoreCase(userId, "Cartao")).thenReturn(false);
+        when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(fi));
+        when(accountRepository.save(any(Account.class))).thenAnswer(inv -> {
+            Account a = inv.getArgument(0);
+            a.setId(11L);
+            return a;
+        });
+
+        AccountResponse resp = accountService.create(userId, req, false);
+
+        assertThat(resp.type()).isEqualTo(com.financecontrol.enums.AccountType.CREDIT_CARD);
     }
 
     @Test

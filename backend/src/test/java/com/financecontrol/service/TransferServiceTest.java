@@ -123,11 +123,11 @@ class TransferServiceTest {
 
     private static TransactionResponse txResponse(Long id) {
         return new TransactionResponse(id, null, null, null, 100.0,
-                LocalDate.now(), null, null, null, null, null);
+                LocalDate.now(), null, null, null, null, null, null, null, null, null);
     }
 
     private static TransactionResponse txResponseNullId() {
         return new TransactionResponse(null, null, null, null, 100.0,
-                LocalDate.now(), null, null, null, null, null);
+                LocalDate.now(), null, null, null, null, null, null, null, null, null);
     }
 }

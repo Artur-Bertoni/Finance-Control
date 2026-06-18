@@ -26,6 +26,10 @@
 
     <main class="page-content">
       <div class="form-card">
+        <div class="form-alert" id="installment-edit-alert" hidden>
+          <i class="ph ph-info"></i>
+          <span id="installment-edit-alert-text"></span>
+        </div>
         <div class="form-grid">
           <div class="field">
             <label for="account-input" data-i18n="transactionAccount">Conta</label>
@@ -75,6 +79,7 @@
           <div class="field">
             <label for="installments-number-input" data-i18n="installmentsNumber">Nº de Parcelas <span style="color:var(--text-muted);font-weight:400" data-i18n="installmentsHelper">(deixe 0 para à vista)</span></label>
             <input id="installments-number-input" type="number" min="0" placeholder="0">
+            <small class="field-hint" id="installments-total-hint" style="color:var(--text-muted);font-weight:400" data-i18n="installmentsTotalHint">Ao parcelar, informe o valor TOTAL da compra — ele será dividido entre as parcelas.</small>
           </div>
 
           <div class="field">

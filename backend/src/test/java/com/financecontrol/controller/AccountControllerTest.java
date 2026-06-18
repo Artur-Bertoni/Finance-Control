@@ -11,6 +11,7 @@ import com.financecontrol.dto.response.AccountResponse;
 import com.financecontrol.dto.response.FinancialInstitutionResponse;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.service.AccountService;
+import com.financecontrol.service.CreditCardInvoiceService;
 import com.financecontrol.service.OAuth2UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ class AccountControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockitoBean AccountService                                  accountService;
+    @MockitoBean CreditCardInvoiceService                        creditCardInvoiceService;
     @MockitoBean JwtAuthFilter                                   jwtAuthFilter;
     @MockitoBean OAuth2UserService                               oauth2UserService;
     @MockitoBean OAuth2AuthenticationSuccessHandler              oauth2SuccessHandler;
@@ -50,7 +52,7 @@ class AccountControllerTest {
     }
 
     private static AccountResponse accountResp(Long id, String name) {
-        return new AccountResponse(id, fiResp(), name, null, null, 500.0, null, LocalDateTime.now());
+        return new AccountResponse(id, fiResp(), name, null, null, 500.0, null, null, null, null, LocalDateTime.now());
     }
 
     // ------------------------------------------------------------------ GET /api/accounts

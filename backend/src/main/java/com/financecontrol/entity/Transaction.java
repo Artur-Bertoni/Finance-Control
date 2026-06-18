@@ -45,4 +45,13 @@ public class Transaction {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "installment_group_id")
+    private Long installmentGroupId;
+
+    @Column(name = "installment_index")
+    private Integer installmentIndex;
+
+    @Column(name = "applied")
+    private Boolean applied;
 }

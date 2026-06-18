@@ -43,7 +43,11 @@ export function init() {
 
     const installField = document.getElementById('detail-installments-field')
     if (tx.installmentsNumber > 0) {
-        document.getElementById('detail-installments').textContent = tx.installmentsNumber
+        let installText = tx.installmentIndex
+            ? `${tx.installmentIndex}/${tx.installmentsNumber}`
+            : String(tx.installmentsNumber)
+        if (tx.applied === false) installText += ` · ${I18n.t('installmentPending')}`
+        document.getElementById('detail-installments').textContent = installText
     } else {
         installField.style.display = 'none'
     }
@@ -62,12 +66,18 @@ export function init() {
         obsEl.innerHTML = `<span class="detail-empty">${I18n.t('commonNotInformed')}</span>`
     }
 
+    const isInstallmentGroup = tx.installmentsNumber > 1 && tx.installmentGroupId
+    const editTargetId       = isInstallmentGroup ? tx.installmentGroupId : transactionId
+
     document.getElementById('edit-btn').addEventListener('click', () =>
-        navigate(`/pages/crud/Transaction.html?id=${transactionId}`)
+        navigate(`/pages/crud/Transaction.html?id=${editTargetId}`)
     )
 
     document.getElementById('delete-btn').addEventListener('click', () => {
-        showConfirm(I18n.t('deleteConfirm'), () => {
+        const deleteMsg = isInstallmentGroup
+            ? I18n.t('installmentDeleteConfirm', { count: tx.installmentsNumber })
+            : I18n.t('deleteConfirm')
+        showConfirm(deleteMsg, () => {
             $.ajax({
                 url:   `/api/transactions/${transactionId}`,
                 type:  'DELETE',

@@ -52,10 +52,10 @@ class TransactionControllerTest {
 
     private static TransactionResponse txResp(Long id) {
         FinancialInstitutionResponse fi = new FinancialInstitutionResponse(1L, "Banco", null, null, null, LocalDateTime.now());
-        AccountResponse acc  = new AccountResponse(1L, fi, "Conta", null, null, 0.0, null, LocalDateTime.now());
+        AccountResponse acc  = new AccountResponse(1L, fi, "Conta", null, null, 0.0, null, null, null, null, LocalDateTime.now());
         CategoryResponse cat = new CategoryResponse(1L, "Cat", null, null, List.of(), LocalDateTime.now());
         return new TransactionResponse(id, acc, cat, null, 100.0,
-                LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, null, 0L, LocalDateTime.now());
+                LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, null, 0L, null, null, null, null, LocalDateTime.now());
     }
 
     private static TransactionRequest txReq() {

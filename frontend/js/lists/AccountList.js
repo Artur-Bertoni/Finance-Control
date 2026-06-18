@@ -119,6 +119,10 @@ function _buildAccountCard(acc) {
     }
     card.querySelector('.item-card-name').textContent = acc.name
 
+    const typeRow = card.querySelector('.ac-type')
+    typeRow.innerHTML = Icons.accounts()
+    typeRow.appendChild(document.createTextNode(' ' + I18n.t(acc.type === 'CREDIT_CARD' ? 'accountTypeCreditCard' : 'accountTypeChecking')))
+
     const inst = card.querySelector('.ac-institution')
     inst.innerHTML = Icons.institutions()
     inst.appendChild(document.createTextNode(' ' + (acc.financialInstitution || I18n.t('noInstitutionSelected'))))

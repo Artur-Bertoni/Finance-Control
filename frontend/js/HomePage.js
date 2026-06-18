@@ -242,7 +242,13 @@ function createTransactionItem(tx) {
     item.querySelector('.tx-date').textContent = formatDate(tx.date)
     if (tx.installmentsNumber > 0) {
         const inst = item.querySelector('.tx-installments')
-        inst.textContent = `${tx.installmentsNumber}x`
+        inst.textContent = tx.installmentIndex
+            ? `${tx.installmentIndex}/${tx.installmentsNumber}`
+            : `${tx.installmentsNumber}x`
+        if (tx.applied === false) {
+            inst.textContent += ` · ${I18n.t('installmentPending')}`
+            inst.classList.add('pending')
+        }
         inst.hidden = false
     }
 
@@ -258,10 +264,7 @@ function createTransactionItem(tx) {
 }
 
 function calculateTransactionValue(tx) {
-    if (tx.type === 'debit') {
-        return (tx.installmentsNumber > 0) ? 0 : -tx.value
-    }
-    return tx.value
+    return tx.type === 'debit' ? -tx.value : tx.value
 }
 
 function updateTotals(accountId, filteredTotal) {

@@ -22,8 +22,8 @@ public class TransferService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public void create(Long userId,
-                       TransferRequest req) {
+    public TransactionResponse create(Long userId,
+                                      TransferRequest req) {
         if (Objects.equals(req.originAccountId(), req.destinationAccountId()))
             throw new BusinessException("error.transfer.sameAccount");
 
@@ -43,10 +43,12 @@ public class TransferService {
 
         Long originId = originTx.id();
         Long destinationId = destinationTx.id();
-        
+
         if (originId != null && destinationId != null) {
             transactionService.patchTransferPartner(originId, destinationId);
             transactionService.patchTransferPartner(destinationId, originId);
         }
+
+        return destinationTx;
     }
 }

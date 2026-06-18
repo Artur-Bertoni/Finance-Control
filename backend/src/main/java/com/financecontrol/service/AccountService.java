@@ -4,6 +4,7 @@ import com.financecontrol.dto.request.AccountRequest;
 import com.financecontrol.dto.response.AccountResponse;
 import com.financecontrol.entity.Account;
 import com.financecontrol.entity.FinancialInstitution;
+import com.financecontrol.enums.AccountType;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.AccountRepository;
@@ -56,7 +57,9 @@ public class AccountService {
             throw new BusinessException("error.duplicate.name");
 
         FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
-        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(), LocalDateTime.now());
+        AccountType type = req.type() != null ? req.type() : AccountType.CHECKING;
+        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(),
+                type, req.closingDay(), req.dueDay(), LocalDateTime.now());
 
         AccountResponse result = AccountResponse.from(accountRepository.save(account));
 
@@ -80,6 +83,9 @@ public class AccountService {
         account.setDescription(req.description());
         account.setBalance(req.balance());
         account.setIconKey(req.iconKey());
+        if (req.type() != null) account.setType(req.type());
+        account.setClosingDay(req.closingDay());
+        account.setDueDay(req.dueDay());
 
         AccountResponse result = AccountResponse.from(accountRepository.save(account));
         historyService.recordChanges(ENTITY_ACCOUNT, id, userId, diff);
@@ -132,6 +138,9 @@ public class AccountService {
             diff.put("balance", diff(account.getBalance(), req.balance()));
         if (differs(account.getIconKey(), req.iconKey()))
             diff.put("iconKey", diff(account.getIconKey(), req.iconKey()));
+
+        if (req.type() != null && differs(account.getType(), req.type()))
+            diff.put("type", diff(account.getType() != null ? account.getType().name() : null, req.type().name()));
 
         return diff;
     }

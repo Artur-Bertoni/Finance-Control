@@ -1,5 +1,6 @@
 package com.financecontrol.entity;
 
+import com.financecontrol.enums.AccountType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -25,6 +26,16 @@ public class Account {
 
     @Column(name = "icon_key")
     private String iconKey;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private AccountType type;
+
+    @Column(name = "closing_day")
+    private Integer closingDay;
+
+    @Column(name = "due_day")
+    private Integer dueDay;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

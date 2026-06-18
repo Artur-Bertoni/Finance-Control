@@ -55,6 +55,18 @@ function loadEditMode(transactionId) {
 
     const tx = Transaction.processTransaction(response)
 
+    const isInstallment = tx.installmentsNumber > 1 && tx.installmentGroupId
+    if (isInstallment && tx.installmentIndex !== 1) {
+        navigate(`/pages/crud/Transaction.html?id=${tx.installmentGroupId}`)
+        return
+    }
+    if (isInstallment) {
+        const alertEl = document.getElementById('installment-edit-alert')
+        document.getElementById('installment-edit-alert-text').textContent =
+            I18n.t('installmentEditCascadeInfo', { count: tx.installmentsNumber })
+        alertEl.hidden = false
+    }
+
     setBreadcrumb([
         { i18nKey: 'movements', url: '/pages/HomePage.html' },
         { label: Transaction.formatLabel(tx), url: `/pages/views/TransactionView.html?id=${transactionId}` },
@@ -66,7 +78,7 @@ function loadEditMode(transactionId) {
     updateRadioStyle()
 
     document.getElementById('date-input').value                        = tx.date
-    document.getElementById('value-input').value                       = tx.value.toFixed(2)
+    document.getElementById('value-input').value                       = (isInstallment ? tx.installmentTotalValue : tx.value).toFixed(2)
     document.getElementById('installments-number-input').value         = tx.installmentsNumber
     document.getElementById('obs-input').value                         = tx.obs ?? ''
     document.getElementById('transfer-partner-id').value               = tx.transferPartnerId
@@ -149,7 +161,12 @@ async function handleSave(transactionId, force = false) {
     if (notifications.length > 0) sessionStorage.setItem('pendingNotifications', JSON.stringify(notifications))
     const id = transactionId ?? result.data?.transaction?.id ?? result.data?.id
     if (transactionId) {
-        navigate(`/pages/views/TransactionView.html?id=${id}`)
+        const installments = Number(document.getElementById('installments-number-input').value) || 0
+        if (installments > 1) {
+            navigateWithToast(`/pages/views/TransactionView.html?id=${id}`, I18n.t('installmentEditCascadeDone'), 'success')
+        } else {
+            navigate(`/pages/views/TransactionView.html?id=${id}`)
+        }
     } else {
         navigateWithToast('/pages/HomePage.html', I18n.t('transactionCreatedSuccess'), 'success', id ? `/pages/views/TransactionView.html?id=${id}` : null)
     }
