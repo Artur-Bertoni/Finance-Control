@@ -16,7 +16,10 @@ export async function init() {
         return
     }
 
-    setBreadcrumb([{ label: I18n.t('adminFeedbacksTitle'), url: '/pages/admin/FeedbackAdmin.html' }])
+    setBreadcrumb([
+        { label: I18n.t('adminPanel'), url: '/pages/admin/Admin.html' },
+        { label: I18n.t('adminFeedbacksTitle') }
+    ])
 
     _filterToggle = initFilterToggle(() => !!_typeFilter)
 
@@ -64,7 +67,7 @@ function _renderStats(data) {
     const withNps     = items.filter(f => f.npsScore != null)
     const avgNps      = withNps.length > 0
         ? (withNps.reduce((s, f) => s + f.npsScore, 0) / withNps.length).toFixed(1)
-        : '—'
+        : '-'
     const suggestions = items.filter(f => f.type === 'SUGGESTION').length
     const bugs        = items.filter(f => f.type === 'BUG').length
 

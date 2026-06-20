@@ -22,17 +22,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * O agente Finny. Orquestra a "linha de montagem":
- *   1. monta o perfil financeiro (FinancialProfileService);
- *   2. roda todas as regras (List&lt;TipRule&gt; injetada);
- *   3. ranqueia por score base × peso adaptativo da categoria;
- *   4. persiste as melhores como NEW (deduplicando por regra ativa e suprimindo dispensadas).
- *
- * Ciclo de vida da dica: NEW (gerada) → SHOWN (mostrada no popup) → feedback.
- * O modal só exibe SHOWN sem feedback; o histórico mostra tudo que já foi mostrado (≠ NEW),
- * com o feedback dado (que pode ser trocado).
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -44,7 +33,6 @@ public class FinnyAgentService {
     private static final double WEIGHT_MAX            = 3.0;
     private static final double WEIGHT_DEFAULT        = 1.0;
 
-    /** Dicas "vivas": ainda não receberam feedback. */
     private static final List<FinnyTipStatus> ACTIVE_STATUSES = List.of(FinnyTipStatus.NEW, FinnyTipStatus.SHOWN);
 
     private final List<TipRule> rules;
@@ -53,10 +41,6 @@ public class FinnyAgentService {
     private final FinnyTipPreferenceRepository preferenceRepository;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Gera novas dicas (persistidas como NEW) e devolve o conjunto ATIVO (NEW + SHOWN).
-     * O frontend usa os NEW como fila do popup e os SHOWN no modal.
-     */
     @Transactional
     public List<FinnyTipResponse> generateTips(Long userId, String lang) {
         FinancialProfile profile = profileService.build(userId);
@@ -66,7 +50,6 @@ public class FinnyAgentService {
         List<Scored> scored = new ArrayList<>();
         for (TipRule rule : rules) {
             for (TipCandidate c : rule.evaluate(profile)) {
-                // Não regerar uma regra que recebeu feedback (útil/não útil/dispensar) há pouco tempo.
                 if (tipRepository.existsByUserIdAndRuleKeyAndFeedbackAtAfter(userId, c.ruleKey(), suppressSince)) {
                     continue;
                 }
@@ -87,7 +70,6 @@ public class FinnyAgentService {
                 .stream().map(this::toResponse).toList();
     }
 
-    /** Marca uma dica como mostrada (NEW → SHOWN) quando ela aparece no popup. */
     @Transactional
     public FinnyTipResponse markShown(Long userId, @NonNull Long tipId) {
         FinnyTip tip = getOwned(userId, tipId);
@@ -99,10 +81,6 @@ public class FinnyAgentService {
         return toResponse(tip);
     }
 
-    /**
-     * Registra (ou TROCA) o feedback do usuário. Ao trocar, reverte o efeito do feedback
-     * anterior no peso antes de aplicar o novo, para não contar em dobro.
-     */
     @Transactional
     public FinnyTipResponse recordFeedback(Long userId, @NonNull Long tipId, FinnyTipFeedback feedback) {
         FinnyTip tip = getOwned(userId, tipId);
@@ -146,9 +124,6 @@ public class FinnyAgentService {
                 profile.currentBalance());
     }
 
-    /**
-     * Ajuste de peso por SINAL IMPLÍCITO (scheduler). Não conta como feedback explícito.
-     */
     @Transactional
     public void nudgeWeight(Long userId, FinnyTipCategory category, double delta) {
         FinnyTipPreference pref = pref(userId, category);
@@ -157,9 +132,6 @@ public class FinnyAgentService {
         preferenceRepository.save(pref);
     }
 
-    // ── internos ──────────────────────────────────────────────────────────────
-
-    /** Aplica (apply=true) ou reverte (apply=false) o efeito de um feedback no peso e nas contagens. */
     private void moveWeight(Long userId, FinnyTipCategory category, FinnyTipFeedback feedback, boolean apply) {
         FinnyTipPreference pref = pref(userId, category);
         int sign = apply ? 1 : -1;
@@ -190,7 +162,6 @@ public class FinnyAgentService {
         return Math.max(WEIGHT_MIN, Math.min(WEIGHT_MAX, weight));
     }
 
-    /** Mapeia um status de feedback de volta para o enum de feedback (vazio se for NEW/SHOWN). */
     private static Optional<FinnyTipFeedback> feedbackOf(FinnyTipStatus status) {
         return switch (status) {
             case HELPFUL     -> Optional.of(FinnyTipFeedback.HELPFUL);

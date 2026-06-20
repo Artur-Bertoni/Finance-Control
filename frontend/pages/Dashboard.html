@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Dashboard | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
   <link href="../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
   <script src="../js/Dashboard.js" type="module"></script>
 </head>
 <body>
@@ -59,20 +59,32 @@
       <!-- Stat cards -->
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="totalIncome">Total Receitas</div>
-          <div class="stat-card-value positive" id="stat-income">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="totalIncome">Total Receitas</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipTotalIncome" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value positive" id="stat-income">0,00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="totalExpenses">Total Despesas</div>
-          <div class="stat-card-value negative" id="stat-expenses">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="totalExpenses">Total Despesas</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipTotalExpenses" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value negative" id="stat-expenses">0,00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="netResult">Resultado</div>
-          <div class="stat-card-value" id="stat-net">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="netResult">Resultado</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipNetResult" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value" id="stat-net">0,00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="accountBalance">Saldo em Conta(s)</div>
-          <div class="stat-card-value" id="stat-wealth">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="accountBalance">Saldo em Conta(s)</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipAccountBalance" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value" id="stat-wealth">0,00</div>
         </div>
       </div>
 
@@ -129,25 +141,6 @@
               </div>
             </div>
             <div class="donut-legend" id="chart-cat-income-legend"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Widget do Finny -->
-      <div class="card mascot-dashboard-card">
-        <span data-finny-svg="mascot-dashboard-svg"></span>
-        <div class="mascot-dashboard-content">
-          <div class="mascot-dashboard-label" data-i18n="mascotTipTitle">Dica do Finny</div>
-          <p id="dashboard-mascot-tip" class="mascot-dashboard-tip">—</p>
-          <div id="dashboard-mascot-feedback" class="finny-feedback-bar" hidden>
-            <button class="finny-fb-btn" data-fb="HELPFUL" type="button" data-i18n-title="finnyFeedbackHelpful" title="Útil">👍</button>
-            <button class="finny-fb-btn" data-fb="NOT_HELPFUL" type="button" data-i18n-title="finnyFeedbackNotHelpful" title="Não foi útil">👎</button>
-            <button class="finny-fb-btn" data-fb="DISMISSED" type="button" data-i18n-title="finnyFeedbackDismiss" title="Dispensar">✕</button>
-          </div>
-          <div class="mascot-dashboard-nav">
-            <button id="dashboard-mascot-prev" class="btn btn-ghost btn-sm" type="button" aria-label="Dica anterior">‹</button>
-            <span id="dashboard-mascot-counter" class="mascot-dashboard-counter"></span>
-            <button id="dashboard-mascot-next" class="btn btn-ghost btn-sm" type="button" aria-label="Próxima dica">›</button>
           </div>
         </div>
       </div>

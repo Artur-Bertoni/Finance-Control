@@ -32,12 +32,10 @@ const SEVERITY_COLOR = { success: '#22c55e', warning: '#f59e0b', info: '#3b82f6'
 const STATUS_TO_FB = { HELPFUL: 'HELPFUL', NOT_HELPFUL: 'NOT_HELPFUL', DISMISSED: 'DISMISSED' }
 const FB_TITLE     = { HELPFUL: 'finnyFeedbackHelpful', NOT_HELPFUL: 'finnyFeedbackNotHelpful', DISMISSED: 'finnyFeedbackDismiss' }
 
-/** Clona o primeiro elemento de um <template> do HTML. */
 function _clone(id) {
     return document.getElementById(id).content.firstElementChild.cloneNode(true)
 }
 
-/** Mostra um estado vazio (texto) num container. */
 function _emptyState(container, msgKey) {
     container.innerHTML = ''
     const el = _clone('tpl-finny-empty')
@@ -51,9 +49,9 @@ function _notifDate(iso) {
 
 export function init() {
     FinnySvg.autoInit()
-    document.body.classList.add('page-finny') // layout de altura cheia + scroll interno (igual à HomePage)
-    if (!_i18nHooked) { _i18nHooked = true; I18n.onChange(_onLangChange) } // registra 1x (evita leak)
-    _notifFilterReady = false // DOM é recriado a cada navegação; religa o filtro nos elementos novos
+    document.body.classList.add('page-finny')
+    if (!_i18nHooked) { _i18nHooked = true; I18n.onChange(_onLangChange) }
+    _notifFilterReady = false
     _notifPage = 0
     _fpStart = null
     _fpEnd = null
@@ -87,8 +85,6 @@ function _switchTab(tab) {
     if (tab === 'messages') _loadMessages()
 }
 
-// ── Aba Dicas: dicas SHOWN aguardando feedback ──────────────────────────────────
-
 function _loadActiveTips() {
     const list = document.getElementById('nc-tips-list')
     if (!list) return
@@ -108,14 +104,12 @@ function _buildActiveTipCard(tip) {
     const card = _tipCardShell(tip)
     const bar  = _feedbackBar(tip, null, (fb) => {
         doRequest(`/api/finny/tips/${tip.id}/feedback`, 'POST', { feedback: fb })
-        card.remove() // some da aba Dicas; passa a viver no Histórico
+        card.remove()
         if (!document.querySelector('#nc-tips-list .finny-history-card')) _loadActiveTips()
     })
     card.querySelector('.finny-history-body').appendChild(bar)
     return card
 }
-
-// ── Aba Histórico: tudo já mostrado + feedback dado (editável) ───────────────────
 
 function _loadHistory() {
     _renderStats()
@@ -178,8 +172,6 @@ function _buildHistoryCard(tip) {
     return card
 }
 
-// ── Helpers de card/feedback ────────────────────────────────────────────────────
-
 function _tipCardShell(tip, withDate = false) {
     const card = _clone('tpl-finny-tip-card')
     card.style.setProperty('--finny-card-color', SEVERITY_COLOR[tip.severity] ?? SEVERITY_COLOR.info)
@@ -210,8 +202,6 @@ function _highlightFeedback(barEl, fb) {
     }
 }
 
-// ── Aba Mensagens: somente leitura (sem marcar como lida / contagem) ─────────────
-
 function _loadMessages() {
     _allNotifs = doRequest('/api/notifications', 'GET') ?? []
     _setupNotifFilter()
@@ -219,7 +209,6 @@ function _loadMessages() {
     _renderMessages()
 }
 
-/** Liga o filtro colapsável (data/hora, flatpickr) uma única vez — mesmo padrão das demais telas. */
 function _setupNotifFilter() {
     if (_notifFilterReady) return
     _notifFilterReady = true
@@ -244,7 +233,6 @@ function _setupNotifFilter() {
     _syncNotifClear()
 }
 
-/** flatpickr com data + hora, no mesmo estilo dos date pickers do sistema (HomePage). */
 function _initDateTimePicker(inputId, onChange) {
     const input = document.getElementById(inputId)
     if (!input || typeof flatpickr === 'undefined') return null
@@ -268,7 +256,6 @@ function _initDateTimePicker(inputId, onChange) {
     })
 
     if (fp.altInput) {
-        // data-i18n-placeholder faz o placeholder ser re-traduzido na troca de idioma (initTranslations global)
         fp.altInput.dataset.i18nPlaceholder = 'finnyFilterPlaceholder'
         fp.altInput.placeholder = I18n.t('finnyFilterPlaceholder')
     }
@@ -277,15 +264,13 @@ function _initDateTimePicker(inputId, onChange) {
     return fp
 }
 
-/** Na troca de idioma: atualiza o calendário e re-renderiza o conteúdo dinâmico da aba ativa. */
 function _onLangChange() {
     _applyPickerLocale()
     if (_activeTab === 'tips')     _loadActiveTips()
     if (_activeTab === 'history')  _loadHistory()
-    if (_activeTab === 'messages') _renderMessages() // mantém filtro/página, só re-renderiza os textos
+    if (_activeTab === 'messages') _renderMessages()
 }
 
-/** Atualiza o idioma do calendário (meses/dias) dos pickers do Finny na troca de idioma. */
 function _applyPickerLocale() {
     if (typeof flatpickr === 'undefined') return
     const lang      = I18n.getLanguage()
@@ -307,7 +292,6 @@ function _syncNotifClear() {
     if (wrapper) wrapper.style.display = _isNotifFilterActive() ? '' : 'none'
 }
 
-/** createdAt vem em UTC sem zona; normaliza para epoch ms. */
 function _createdMs(n) {
     const s = n.createdAt
     if (!s) return 0
@@ -344,7 +328,6 @@ function _renderMessages() {
         p => { _notifPage = p; _renderMessages() })
 }
 
-/** Paginação no estilo da HomePage (‹ select › + "X–Y de Z"), reutilizada por Histórico e Mensagens. */
 function _renderPager(container, page, pageSize, totalItems, onGoto) {
     if (!container) return
     const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
@@ -352,7 +335,6 @@ function _renderPager(container, page, pageSize, totalItems, onGoto) {
     container.hidden = totalPages <= 1
     if (totalPages <= 1) return
 
-    // tpl-pagination tem vários filhos; clonamos o fragmento inteiro e pegamos as referências
     container.appendChild(document.getElementById('tpl-pagination').content.cloneNode(true))
     const prevBtn = container.querySelector('.pg-prev')
     const nextBtn = container.querySelector('.pg-next')
@@ -367,7 +349,7 @@ function _renderPager(container, page, pageSize, totalItems, onGoto) {
     for (let i = 1; i <= totalPages; i++) {
         const opt = document.createElement('option')
         opt.value = i
-        opt.textContent = I18n.t('commonPageOf', { page: i, total: totalPages })
+        opt.textContent = `${i}/${totalPages}`
         opt.selected = i === page + 1
         select.appendChild(opt)
     }

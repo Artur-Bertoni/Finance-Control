@@ -33,7 +33,6 @@ class GoalNotificationSchedulerTest {
     @Mock AppNotificationService        appNotificationService;
     @Mock UserRepository                userRepository;
 
-    // Build scheduler manually (constructor takes @Value timezone)
     private GoalNotificationScheduler scheduler() {
         return new GoalNotificationScheduler(goalRepository, goalNotificationLogRepository,
                 goalService, emailService, appNotificationService, userRepository, "UTC");
@@ -114,7 +113,7 @@ class GoalNotificationSchedulerTest {
                 yesterday.minusMonths(1), yesterday);
         goal.setNotifyOnComplete(true);
         when(goalRepository.findByStatus(GoalStatus.ACTIVE)).thenReturn(List.of(goal));
-        when(goalService.calculateCurrentAmount(goal)).thenReturn(300.0); // < 500 = success
+        when(goalService.calculateCurrentAmount(goal)).thenReturn(300.0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(userWith(1L, "maria")));
         when(goalRepository.save(any(Goal.class))).thenAnswer(inv -> inv.getArgument(0));
         when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(2L, GoalNotificationType.COMPLETED))
@@ -130,7 +129,7 @@ class GoalNotificationSchedulerTest {
     @Test
     void processGoals_prazoProximo_criaAvisoDeadline() {
         LocalDate today    = LocalDate.now(java.time.ZoneId.of("UTC"));
-        LocalDate deadline = today.plusDays(3); // within 7-day window
+        LocalDate deadline = today.plusDays(3);
         Goal goal = activeGoal(3L, 1L, "Carro", GoalType.SAVINGS, 5000.0,
                 today.minusMonths(1), deadline);
         goal.setNotifyOnDeadline(true);
@@ -140,13 +139,12 @@ class GoalNotificationSchedulerTest {
         when(goalRepository.findByStatus(GoalStatus.ACTIVE)).thenReturn(List.of(goal));
         when(goalService.calculateCurrentAmount(goal)).thenReturn(2000.0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(3L, GoalNotificationType.DEADLINE_WARNING))
+        when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(3L, GoalNotificationType.GOAL_DEADLINE_WARNING))
                 .thenReturn(false);
 
         scheduler().processGoals();
 
-        verify(emailService).sendGoalNotification(eq(user), eq(goal),
-                eq(GoalNotificationType.DEADLINE_WARNING), eq(2000.0));
+        verify(emailService).sendGoalDeadlineEmail(user, goal, 2000.0);
         verify(appNotificationService).createGoalNotification(
                 eq(1L), eq(3L), eq("Carro"), eq(AppNotificationType.GOAL_DEADLINE_WARNING), isNull());
         verify(goalNotificationLogRepository).save(any());
@@ -165,7 +163,7 @@ class GoalNotificationSchedulerTest {
         when(goalRepository.findByStatus(GoalStatus.ACTIVE)).thenReturn(List.of(goal));
         when(goalService.calculateCurrentAmount(goal)).thenReturn(500.0);
         when(userRepository.findById(1L)).thenReturn(Optional.of(userWith(1L, "joao")));
-        when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(4L, GoalNotificationType.DEADLINE_WARNING))
+        when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(4L, GoalNotificationType.GOAL_DEADLINE_WARNING))
                 .thenReturn(true);
 
         scheduler().processGoals();
@@ -178,7 +176,7 @@ class GoalNotificationSchedulerTest {
     @Test
     void processGoals_prazoAindaDistante_naoEnviaAviso() {
         LocalDate today    = LocalDate.now(java.time.ZoneId.of("UTC"));
-        LocalDate deadline = today.plusDays(30); // beyond 7-day window
+        LocalDate deadline = today.plusDays(30);
         Goal goal = activeGoal(5L, 1L, "Meta", GoalType.SAVINGS, 1000.0,
                 today.minusMonths(1), deadline);
         goal.setNotifyOnDeadline(true);
@@ -205,7 +203,6 @@ class GoalNotificationSchedulerTest {
         when(goalService.calculateCurrentAmount(good)).thenReturn(50.0);
         when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
 
-        // should not throw
         scheduler().processGoals();
 
         verify(userRepository).findById(2L);

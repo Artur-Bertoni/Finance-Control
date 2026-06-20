@@ -8,9 +8,9 @@ import { showOverlay } from './modals/LoadingOverlay.js'
 import { openConflictModal } from './modals/ConflictResolutionModal.js'
 
 let selectedFile  = null
-let parsedRows    = []   // List<ParsedTransactionResponse> from /preview
-let allCategories = []   // [{id, name}] loaded once
-let allLocales    = []   // [{id, name}] loaded once
+let parsedRows    = []
+let allCategories = []
+let allLocales    = []
 let confirmedConflicts = new Set()
 
 const REVIEW_STATE_KEY = '__statementReview'
@@ -226,6 +226,8 @@ function buildReviewTable(rows) {
         tr.dataset.index = index
 
         const tdCheck = document.createElement('td')
+        tdCheck.className = 'review-cell-check'
+        tdCheck.dataset.label = I18n.t('shouldImport')
         tdCheck.style.cssText = 'padding:8px 6px;text-align:center'
         const checkLabel = document.createElement('label')
         checkLabel.className = 'checkbox-label row-toggle-label'
@@ -241,20 +243,28 @@ function buildReviewTable(rows) {
         tdCheck.appendChild(checkLabel)
 
         const tdDate = document.createElement('td')
+        tdDate.className = 'review-cell-date'
+        tdDate.dataset.label = I18n.t('transactionDate')
         tdDate.style.cssText = 'padding:8px 6px;white-space:nowrap;color:var(--text-muted);font-size:13px'
         tdDate.textContent = formatDate(row.date)
 
         const tdDesc = document.createElement('td')
+        tdDesc.className = 'review-cell-desc'
+        tdDesc.dataset.label = I18n.t('transactionDescription')
         tdDesc.style.cssText = 'padding:8px 6px;font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help'
         tdDesc.title = row.description
         tdDesc.textContent = row.description
 
         const tdAmount = document.createElement('td')
+        tdAmount.className = 'review-cell-amount'
+        tdAmount.dataset.label = I18n.t('transactionValue')
         tdAmount.style.cssText = 'padding:8px 6px;white-space:nowrap;font-weight:600'
         tdAmount.style.color = row.type === 'credit' ? 'var(--color-credit, #22c55e)' : 'var(--color-debit, #ef4444)'
         tdAmount.textContent = (row.type === 'credit' ? '+ ' : '- ') + formatCurrency(row.amount)
 
         const tdType = document.createElement('td')
+        tdType.className = 'review-cell-type'
+        tdType.dataset.label = I18n.t('transactionType')
         tdType.style.padding = '8px 6px'
         const badge = document.createElement('span')
         badge.className = `tx-badge ${row.type}`
@@ -262,10 +272,14 @@ function buildReviewTable(rows) {
         tdType.appendChild(badge)
 
         const tdCat = document.createElement('td')
+        tdCat.className = 'review-cell-cat'
+        tdCat.dataset.label = I18n.t('transactionCategory')
         tdCat.style.padding = '6px'
         tdCat.appendChild(buildCategoryCell(row, index))
 
         const tdLocale = document.createElement('td')
+        tdLocale.className = 'review-cell-locale'
+        tdLocale.dataset.label = I18n.t('transactionLocale')
         tdLocale.style.padding = '6px'
         tdLocale.appendChild(buildLocaleCell(row, index))
 

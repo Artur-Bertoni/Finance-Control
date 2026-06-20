@@ -1,7 +1,6 @@
 package com.financecontrol.controller;
 
 import com.financecontrol.entity.User;
-import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.UnauthorizedException;
 import com.financecontrol.service.EmailService;
@@ -26,17 +25,19 @@ public class AdminEmailController extends BaseController {
 
     @PostMapping("/send-test")
     public ResponseEntity<Void> sendTestEmail(HttpSession session,
-                                              @RequestParam(defaultValue = "weekly") String type) {
+                                              @RequestParam(defaultValue = "WEEKLY") String type) {
         Long userId = requireUserId(session);
         User user = userService.findEntityById(userId);
 
         if (!user.isAdmin()) throw new UnauthorizedException("error.unauthorized");
 
         try {
-            if ("weekly".equals(type)) {
-                emailService.sendTestEmail(user);
-            } else {
-                emailService.sendTestGoalEmail(user, GoalNotificationType.valueOf(type));
+            switch (type) {
+                case "WEEKLY" -> emailService.sendTestEmail(user);
+                case "VERIFICATION" -> emailService.sendTestVerificationEmail(user);
+                case "FEEDBACK" -> emailService.sendTestFeedbackEmail(user);
+                case "GOAL_DEADLINE_WARNING" -> emailService.sendTestGoalDeadlineEmail(user);
+                default -> throw new IllegalArgumentException("unknown email type: " + type);
             }
 
             log.info("E-mail de teste '{}' enviado com sucesso para {}", type, user.getEmail());

@@ -15,17 +15,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Monta o {@link FinancialProfile} a partir dos dados reais do usuário.
- * Reaproveita o {@link ReportService} (mesmas agregações do dashboard) e o {@link GoalService}
- * (mesmo cálculo de progresso de metas), garantindo que o agente "enxergue" os mesmos números
- * que o usuário vê nos gráficos.
- */
 @Service
 @RequiredArgsConstructor
 public class FinancialProfileService {
 
-    /** Janela de análise: mês atual + 5 anteriores. */
     private static final int WINDOW_MONTHS = 6;
 
     private final ReportService reportService;
@@ -77,7 +70,6 @@ public class FinancialProfileService {
                 balanceDropPct, topCategories, goals);
     }
 
-    /** Queda % entre os dois últimos pontos de patrimônio (>= 5% para evitar ruído). */
     private Double computeBalanceDrop(List<DashboardResponse.WealthDataPoint> balances) {
         if (balances == null || balances.size() < 2) return null;
         double last = nz(balances.get(balances.size() - 1).balance());

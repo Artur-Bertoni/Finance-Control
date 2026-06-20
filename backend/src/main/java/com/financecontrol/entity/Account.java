@@ -39,4 +39,7 @@ public class Account {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "seeded", nullable = false)
+    private boolean seeded = false;
 }

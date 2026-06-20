@@ -362,7 +362,7 @@ class TransactionServiceTest {
         Category oldCat = category(3L);
         Category newCat = category(4L);
 
-        Transaction existing = transaction(10L, oldAcc, oldCat);   // DEBIT 100
+        Transaction existing = transaction(10L, oldAcc, oldCat);
         TransactionRequest req = new TransactionRequest(2L, 4L, null, 250.0,
                 LocalDate.of(2025, 2, 20), TransactionType.CREDIT, 0, "nova obs", null);
 
@@ -377,7 +377,6 @@ class TransactionServiceTest {
         assertThat(resp.value()).isEqualTo(250.0);
         assertThat(resp.type()).isEqualTo(TransactionType.CREDIT);
 
-        // revert of old DEBIT 100 → +100 on old account, then apply CREDIT 250 → +250 on new
         verify(accountService).patchBalance(1L, 100.0);
         verify(accountService).patchBalance(2L, 250.0);
 
@@ -391,13 +390,12 @@ class TransactionServiceTest {
         Account acc = account(1L);
         Category cat = category(2L);
 
-        Transaction partner = transaction(11L, acc, cat);   // value 100
+        Transaction partner = transaction(11L, acc, cat);
         partner.setTransferPartnerId(0L);
 
-        Transaction main = transaction(10L, acc, cat);       // value 100
+        Transaction main = transaction(10L, acc, cat);
         main.setTransferPartnerId(11L);
 
-        // new value differs from partner's 100 → triggers recursive update of partner
         TransactionRequest req = new TransactionRequest(1L, 2L, null, 300.0,
                 LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, null, null);
 
@@ -409,10 +407,9 @@ class TransactionServiceTest {
 
         transactionService.update(10L, 1L, req);
 
-        // partner is updated to opposite type (CREDIT) with same value
         assertThat(partner.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(partner.getValue()).isEqualTo(300.0);
-        // both main and partner saved
+
         verify(transactionRepository, atLeast(2)).save(any(Transaction.class));
     }
 
@@ -466,7 +463,7 @@ class TransactionServiceTest {
 
     @Test
     void update_mudaApenasData_registraDiffDate() {
-        Transaction existing = transaction(10L, account(1L), category(2L)); // date 2025-01-15
+        Transaction existing = transaction(10L, account(1L), category(2L));
         TransactionRequest req = new TransactionRequest(1L, 2L, null, 100.0,
                 LocalDate.of(2025, 3, 1), TransactionType.DEBIT, 0, null, null);
 
@@ -477,7 +474,7 @@ class TransactionServiceTest {
 
     @Test
     void update_mudaApenasTipo_registraDiffType() {
-        Transaction existing = transaction(10L, account(1L), category(2L)); // DEBIT
+        Transaction existing = transaction(10L, account(1L), category(2L));
         TransactionRequest req = new TransactionRequest(1L, 2L, null, 100.0,
                 LocalDate.of(2025, 1, 15), TransactionType.CREDIT, 0, null, null);
 
@@ -488,7 +485,7 @@ class TransactionServiceTest {
 
     @Test
     void update_mudaApenasParcelas_registraDiffInstallmentsNumber() {
-        Transaction existing = transaction(10L, account(1L), category(2L)); // installments 0
+        Transaction existing = transaction(10L, account(1L), category(2L));
         TransactionRequest req = new TransactionRequest(1L, 2L, null, 100.0,
                 LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 3, null, null);
 
@@ -499,7 +496,7 @@ class TransactionServiceTest {
 
     @Test
     void update_mudaApenasObs_registraDiffObs() {
-        Transaction existing = transaction(10L, account(1L), category(2L)); // obs null
+        Transaction existing = transaction(10L, account(1L), category(2L));
         TransactionRequest req = new TransactionRequest(1L, 2L, null, 100.0,
                 LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, "observacao", null);
 
@@ -510,7 +507,7 @@ class TransactionServiceTest {
 
     @Test
     void update_mudaApenasLocale_registraDiffTransactionLocale() {
-        Transaction existing = transaction(10L, account(1L), category(2L)); // locale null
+        Transaction existing = transaction(10L, account(1L), category(2L));
         TransactionLocale loc = locale(7L);
         TransactionRequest req = new TransactionRequest(1L, 2L, 7L, 100.0,
                 LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, null, null);

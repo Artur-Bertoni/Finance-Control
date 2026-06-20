@@ -47,7 +47,7 @@ public class AchievementService {
         Set<AchievementType> already = achievementRepository.earnedSet(userId);
         List<AchievementType> toAward = new ArrayList<>();
 
-        if (!already.contains(AchievementType.FIRST_ACCOUNT) && accountRepository.countByUserId(userId) >= 1)
+        if (!already.contains(AchievementType.FIRST_ACCOUNT) && accountRepository.countByUserIdAndSeededFalse(userId) >= 1)
             toAward.add(AchievementType.FIRST_ACCOUNT);
 
         if (!already.contains(AchievementType.FIRST_TRANSACTION) && transactionRepository.countByUserId(userId) >= 1)
@@ -56,7 +56,7 @@ public class AchievementService {
         if (!already.contains(AchievementType.FIRST_GOAL) && goalRepository.countByUserId(userId) >= 1)
             toAward.add(AchievementType.FIRST_GOAL);
 
-        if (!already.contains(AchievementType.FIRST_CUSTOM_CATEGORY) && categoryRepository.countByUserId(userId) >= 1)
+        if (!already.contains(AchievementType.FIRST_CUSTOM_CATEGORY) && categoryRepository.countByUserIdAndSeededFalse(userId) >= 1)
             toAward.add(AchievementType.FIRST_CUSTOM_CATEGORY);
 
         long completed = goalRepository.countByUserIdAndStatus(userId, GoalStatus.COMPLETED);

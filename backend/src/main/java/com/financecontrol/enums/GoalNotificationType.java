@@ -5,6 +5,6 @@ public enum GoalNotificationType {
     MILESTONE_75,
     MILESTONE_90,
     COMPLETED,
-    DEADLINE_WARNING,
+    GOAL_DEADLINE_WARNING,
     EXCEEDED
 }

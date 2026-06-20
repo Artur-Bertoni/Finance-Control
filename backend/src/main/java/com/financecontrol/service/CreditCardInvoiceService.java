@@ -40,7 +40,6 @@ public class CreditCardInvoiceService {
     private final CreditCardInvoicePaymentRepository paymentRepository;
     private final TransferService transferService;
 
-    /** Lista as faturas do cartao, agrupando os lancamentos por ciclo de fechamento (mais recentes primeiro). */
     @Transactional(readOnly = true)
     public List<InvoiceResponse> listInvoices(@NonNull Long accountId) {
         return computeInvoices(accountId);
@@ -85,7 +84,6 @@ public class CreditCardInvoiceService {
         return today.isAfter(closing) ? "CLOSED" : "OPEN";
     }
 
-    /** Paga uma fatura: debita a conta de origem, abate a divida do cartao e registra o pagamento. */
     @Transactional
     public InvoiceResponse pay(@NonNull Long userId,
                                @NonNull Long accountId,

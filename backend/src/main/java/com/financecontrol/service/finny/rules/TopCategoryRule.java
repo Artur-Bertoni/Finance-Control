@@ -10,11 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Maior categoria de despesa → sugere revisão.
- * Guarda também o categoryId nos params (oculto na renderização) para o
- * aprendizado implícito poder medir, depois, se o gasto nessa categoria caiu.
- */
 @Component
 public class TopCategoryRule implements TipRule {
 

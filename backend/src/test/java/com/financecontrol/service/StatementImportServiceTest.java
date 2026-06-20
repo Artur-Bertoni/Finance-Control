@@ -143,7 +143,6 @@ class StatementImportServiceTest {
 
     // ── previewStatement happy path (real PDF) ───────────────────────────────
 
-    /** Builds an in-memory PDF whose lines match TX_PATTERN / buildBlocks logic. */
     private MultipartFile pdfWithLines(String... lines) throws IOException {
         try (PDDocument doc = new PDDocument()) {
             PDPage page = new PDPage();

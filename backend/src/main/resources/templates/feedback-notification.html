@@ -27,7 +27,7 @@
                   </td>
                 </tr>
               </table>
-              <p style="margin:8px 0 0;font-size:13px;color:#A5D6A7;letter-spacing:0.5px;">📬 Novo Feedback Recebido</p>
+              <p style="margin:8px 0 0;font-size:13px;color:#A5D6A7;letter-spacing:0.5px;">📬 {{emailSubtitle}}</p>
             </td>
           </tr>
 
@@ -40,7 +40,7 @@
                      style="background-color:#F9FAFB;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
                 <tr>
                   <td>
-                    <p style="margin:0 0 4px;font-size:13px;color:#6B7280;">Enviado por</p>
+                    <p style="margin:0 0 4px;font-size:13px;color:#6B7280;">{{emailSenderLabel}}</p>
                     <p style="margin:0;font-size:15px;font-weight:600;color:#1A2B1B;">{{senderName}}</p>
                     <p style="margin:2px 0 0;font-size:13px;color:#6B7280;">{{senderEmail}}</p>
                   </td>
@@ -55,7 +55,7 @@
                            style="background-color:#EFF6FF;border-radius:10px;padding:14px 16px;">
                       <tr>
                         <td>
-                          <p style="margin:0 0 4px;font-size:12px;color:#3B82F6;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tipo</p>
+                          <p style="margin:0 0 4px;font-size:12px;color:#3B82F6;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">{{emailTypeLabel}}</p>
                           <p style="margin:0;font-size:14px;font-weight:600;color:#1E40AF;">{{feedbackType}}</p>
                         </td>
                       </tr>
@@ -66,7 +66,7 @@
                            style="background-color:#F0FDF4;border-radius:10px;padding:14px 16px;">
                       <tr>
                         <td>
-                          <p style="margin:0 0 4px;font-size:12px;color:#16A34A;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">NPS</p>
+                          <p style="margin:0 0 4px;font-size:12px;color:#16A34A;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">{{emailNpsLabel}}</p>
                           <p style="margin:0;font-size:14px;font-weight:600;color:#15803D;">{{npsScore}}</p>
                         </td>
                       </tr>
@@ -76,7 +76,7 @@
               </table>
 
               <!-- Mensagem -->
-              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.5px;">Mensagem</p>
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:0.5px;">{{emailMessageLabel}}</p>
               <div style="background-color:#F9FAFB;border-left:4px solid #4CAF50;border-radius:0 8px 8px 0;padding:16px 20px;margin-bottom:28px;">
                 <p style="margin:0;font-size:15px;line-height:1.7;color:#374151;white-space:pre-wrap;">{{feedbackMessage}}</p>
               </div>
@@ -87,7 +87,7 @@
                   <td style="background-color:#2E7D32;border-radius:8px;padding:12px 28px;text-align:center;">
                     <a href="{{baseUrl}}/pages/admin/FeedbackAdmin.html"
                        style="font-size:14px;font-weight:600;color:#FFFFFF;text-decoration:none;display:block;">
-                      Ver todos os feedbacks →
+                      {{emailCtaLabel}}
                     </a>
                   </td>
                 </tr>

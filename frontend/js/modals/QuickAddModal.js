@@ -3,17 +3,6 @@ import { I18n } from '../i18n.js'
 import { showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { CATEGORY_ICONS } from '../components/IconPicker.js'
 
-/**
- * Abre um modal para criação rápida de uma entidade via API.
- *
- * @param {object} opts
- * @param {string}   opts.title
- * @param {object[]} opts.fields     - [{id, label, type, required, placeholder, step, options, addBtn}]
- *                                     type 'icon-picker' renderiza um seletor de ícone embutido
- * @param {string}   opts.apiUrl
- * @param {function} opts.buildBody  - (values) => requestBody
- * @param {function} opts.onSuccess  - (createdItem) => void
- */
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, successToast = true }) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'

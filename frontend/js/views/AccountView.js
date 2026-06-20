@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, setBreadcrumb } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, navigate, setBreadcrumb } from '../../utils/FrontendFunctions.js'
 import { Account } from '../class/AccountClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
@@ -62,7 +62,7 @@ export function init() {
     if (acc.balance > 0) balClass = 'positive'
     else if (acc.balance < 0) balClass = 'negative'
     balEl.className = `detail-balance ${balClass}`
-    balEl.textContent = `${acc.balance >= 0 ? '+' : '-'} $ ${formatCurrency(Math.abs(acc.balance))}`
+    balEl.textContent = `${acc.balance >= 0 ? '+' : '-'} ${formatMoney(Math.abs(acc.balance))}`
 
     if (acc.type === 'CREDIT_CARD') {
         const invBtn = document.getElementById('view-invoices-btn')

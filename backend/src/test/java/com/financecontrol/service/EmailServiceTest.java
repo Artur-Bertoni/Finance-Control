@@ -4,7 +4,6 @@ import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.User;
 import com.financecontrol.entity.UserFeedback;
 import com.financecontrol.enums.FeedbackType;
-import com.financecontrol.enums.GoalNotificationType;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,32 +105,30 @@ class EmailServiceTest {
         verify(mailSender).send(any(MimeMessage.class));
     }
 
-    @ParameterizedTest
-    @EnumSource(GoalNotificationType.class)
-    void sendTestGoalEmail_todosOsTipos(GoalNotificationType type) throws Exception {
-        service.sendTestGoalEmail(userWith("pt"), type);
-        verify(mailSender).send(any(MimeMessage.class));
-    }
-
-    @ParameterizedTest
-    @EnumSource(GoalNotificationType.class)
-    void sendGoalNotification_todosOsTipos_savings(GoalNotificationType type) {
-        service.sendGoalNotification(userWith("pt"), sampleGoal(GoalType.SAVINGS), type, 2500.0);
+    @Test
+    void sendTestGoalDeadlineEmail_enviaMime() throws Exception {
+        service.sendTestGoalDeadlineEmail(userWith("pt"));
         verify(mailSender).send(any(MimeMessage.class));
     }
 
     @Test
-    void sendGoalNotification_expenseLimit_progressColors() {
+    void sendGoalDeadlineEmail_savings() {
+        service.sendGoalDeadlineEmail(userWith("pt"), sampleGoal(GoalType.SAVINGS), 2500.0);
+        verify(mailSender).send(any(MimeMessage.class));
+    }
+
+    @Test
+    void sendGoalDeadlineEmail_expenseLimit_progressColors() {
         Goal g = sampleGoal(GoalType.EXPENSE_LIMIT);
-        service.sendGoalNotification(userWith("pt"), g, GoalNotificationType.MILESTONE_90, 4600.0);
+        service.sendGoalDeadlineEmail(userWith("pt"), g, 4600.0);
         verify(mailSender).send(any(MimeMessage.class));
     }
 
     @Test
-    void sendGoalNotification_targetZero_pctZero() {
+    void sendGoalDeadlineEmail_targetZero_pctZero() {
         Goal g = sampleGoal(GoalType.SAVINGS);
         g.setTargetAmount(0.0);
-        service.sendGoalNotification(userWith("pt"), g, GoalNotificationType.MILESTONE_50, 100.0);
+        service.sendGoalDeadlineEmail(userWith("pt"), g, 100.0);
         verify(mailSender).send(any(MimeMessage.class));
     }
 
@@ -157,7 +154,7 @@ class EmailServiceTest {
         when(mailSender.createMimeMessage()).thenThrow(new RuntimeException("boom"));
         assertThatCode(() -> service.sendVerificationEmail(userWith("pt"), "t")).doesNotThrowAnyException();
         assertThatCode(() -> service.sendWeeklyReminder(userWith("pt"))).doesNotThrowAnyException();
-        assertThatCode(() -> service.sendGoalNotification(userWith("pt"),
-                sampleGoal(GoalType.SAVINGS), GoalNotificationType.COMPLETED, 5000.0)).doesNotThrowAnyException();
+        assertThatCode(() -> service.sendGoalDeadlineEmail(userWith("pt"),
+                sampleGoal(GoalType.SAVINGS), 5000.0)).doesNotThrowAnyException();
     }
 }

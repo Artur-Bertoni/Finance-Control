@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Categoria | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
   <link href="../../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
   <script src="../../js/views/CategoryView.js" type="module"></script>
 </head>
 <body>
@@ -35,7 +35,7 @@
           <div class="detail-grid">
             <div class="detail-field">
               <label for="detail-name" data-i18n="categoryName">Nome</label>
-              <p id="detail-name">—</p>
+              <p id="detail-name">-</p>
             </div>
             <div class="detail-field" id="icon-row" style="display:none">
               <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
@@ -43,7 +43,7 @@
             </div>
             <div class="detail-field" style="grid-column: 1 / -1">
               <label for="detail-description" data-i18n="categoryDescription">Descrição</label>
-              <p id="detail-description">—</p>
+              <p id="detail-description">-</p>
             </div>
             <div class="detail-field" id="aliases-row" style="display:none;grid-column: 1 / -1">
               <div style="display:flex;align-items:center;gap:6px">

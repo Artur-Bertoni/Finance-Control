@@ -15,6 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     long countByUserId(Long userId);
 
+    long countByUserIdAndSeededFalse(Long userId);
+
     @Query("SELECT COUNT(DISTINCT a.financialInstitution.id) FROM Account a WHERE a.userId = :userId AND a.financialInstitution IS NOT NULL")
     long countDistinctInstitutionsByUserId(@Param("userId") Long userId);
 

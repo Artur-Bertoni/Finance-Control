@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Transação | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
   <link href="../../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
   <script src="../../js/crud/Transaction.js" type="module"></script>
 </head>
 <body>
@@ -56,11 +56,13 @@
             <div class="radio-group">
               <label class="radio-option" id="debit-option">
                 <input type="radio" name="typeRadio" id="debit-radio" value="debit">
-                <span data-i18n="debit">Débito</span>
+                <i class="ph ph-arrow-down" aria-hidden="true"></i>
+                <span data-i18n="debit">Saída</span>
               </label>
               <label class="radio-option" id="credit-option">
                 <input type="radio" name="typeRadio" id="credit-radio" value="credit">
-                <span data-i18n="credit">Crédito</span>
+                <i class="ph ph-arrow-up" aria-hidden="true"></i>
+                <span data-i18n="credit">Entrada</span>
               </label>
             </div>
           </div>
@@ -76,25 +78,32 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="installments-number-input" data-i18n="installmentsNumber">Nº de Parcelas <span style="color:var(--text-muted);font-weight:400" data-i18n="installmentsHelper">(deixe 0 para à vista)</span></label>
-            <input id="installments-number-input" type="number" min="0" placeholder="0">
-            <small class="field-hint" id="installments-total-hint" style="color:var(--text-muted);font-weight:400" data-i18n="installmentsTotalHint">Ao parcelar, informe o valor TOTAL da compra — ele será dividido entre as parcelas.</small>
-          </div>
+          <button type="button" class="form-more-toggle" id="tx-more-toggle" aria-expanded="false" aria-controls="tx-more-options">
+            <span data-i18n="txMoreOptions">Mais opções</span>
+            <i class="ph ph-caret-down form-more-caret" aria-hidden="true"></i>
+          </button>
 
-          <div class="field">
-            <label for="transaction-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transação</label>
-            <div class="select-with-add">
-              <select id="transaction-locale-input">
-                <option disabled selected value="" data-i18n="selectLocale">Selecione o local...</option>
-              </select>
-              <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="location" title="Adição Rápida de Local" data-icon="add"></button>
+          <div class="form-collapse" id="tx-more-options" hidden>
+            <div class="field">
+              <label for="installments-number-input" data-i18n="installmentsNumber">Nº de Parcelas <span style="color:var(--text-muted);font-weight:400" data-i18n="installmentsHelper">(deixe 0 para à vista)</span></label>
+              <input id="installments-number-input" type="number" min="0" placeholder="0">
+              <small class="field-hint" id="installments-total-hint" style="color:var(--text-muted);font-weight:400" data-i18n="installmentsTotalHint">Ao parcelar, informe o valor TOTAL da compra - ele será dividido entre as parcelas.</small>
             </div>
-          </div>
 
-          <div class="field">
-            <label for="obs-input" data-i18n="observations" data-optional-label>Observações</label>
-            <textarea id="obs-input" data-i18n-placeholder="observationsPlaceholder" placeholder="Detalhes adicionais sobre a transação…"></textarea>
+            <div class="field">
+              <label for="transaction-locale-input" data-i18n="transactionLocale" data-optional-label>Local da Transação</label>
+              <div class="select-with-add">
+                <select id="transaction-locale-input">
+                  <option disabled selected value="" data-i18n="selectLocale">Selecione o local...</option>
+                </select>
+                <button type="button" class="btn-add-inline" id="locale-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="location" title="Adição Rápida de Local" data-icon="add"></button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="obs-input" data-i18n="observations" data-optional-label>Observações</label>
+              <textarea id="obs-input" data-i18n-placeholder="observationsPlaceholder" placeholder="Detalhes adicionais sobre a transação…"></textarea>
+            </div>
           </div>
 
           <input type="hidden" id="transfer-partner-id" value="0">

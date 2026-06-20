@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset artur:20260515-4
---comment: in-app notifications — app_notification table
+--comment: in-app notifications - app_notification table
 
 CREATE TABLE app_notification
 (

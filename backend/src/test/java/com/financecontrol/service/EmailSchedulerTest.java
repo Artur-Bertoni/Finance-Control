@@ -20,8 +20,6 @@ class EmailSchedulerTest {
     @Mock UserRepository userRepository;
     @Mock EmailService   emailService;
 
-    // EmailScheduler uses a constructor with @Value; build it manually in each test.
-
     // ── sendWeeklyReminders – com usuários ───────────────────────────────────
 
     @Test

@@ -84,7 +84,6 @@ public class TransactionService {
         return result;
     }
 
-    /** Gera N parcelas (1 por mês) a partir do valor total, ligadas por grupo; parcelas futuras nascem não aplicadas no saldo. */
     @SuppressWarnings("null")
     private TransactionResponse createInstallments(Long userId,
                                                    TransactionRequest req,
@@ -127,7 +126,6 @@ public class TransactionService {
         return result;
     }
 
-    /** Edita uma compra parcelada em cascata: re-divide o total em N parcelas mantendo a parcela pai; se N menor que 2, colapsa em transação avulsa. */
     @SuppressWarnings("null")
     private TransactionResponse updateInstallmentGroup(Transaction anyMember,
                                                        Long userId,

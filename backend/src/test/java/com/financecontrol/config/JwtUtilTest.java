@@ -60,9 +60,7 @@ class JwtUtilTest {
         String token = expired.generateToken(9L);
         assertThat(jwtUtil.isValid(token)).isFalse();
     }
-
-    // ── new coverage tests ───────────────────────────────────────────────────
-
+    
     @Test
     void extractUserId_tokenMalformado_lancaJwtException() {
         assertThatThrownBy(() -> jwtUtil.extractUserId("not.a.jwt"))

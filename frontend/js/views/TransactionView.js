@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, formatDate, navigate, setBreadcrumb, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, formatDate, navigate, setBreadcrumb, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
 import { Transaction } from '../class/TransactionClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
@@ -39,7 +39,7 @@ export function init() {
 
     const valueEl = document.getElementById('detail-value')
     valueEl.className = `detail-balance ${tx.type === 'credit' ? 'positive' : 'negative'}`
-    valueEl.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
+    valueEl.textContent = tx.type === 'debit' ? `- ${formatMoney(tx.value)}` : `+ ${formatMoney(tx.value)}`
 
     const installField = document.getElementById('detail-installments-field')
     if (tx.installmentsNumber > 0) {

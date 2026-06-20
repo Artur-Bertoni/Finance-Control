@@ -123,7 +123,6 @@ class FinancialInstitutionServiceTest {
 
         financialInstitutionService.update(1L, new FinancialInstitutionRequest("Igual", "Rua A", "11", "ph-bank"));
 
-        // recordChanges still called (even if diff is empty — service always calls it)
         verify(historyService).recordChanges(any(), any(), any(), any());
     }
 

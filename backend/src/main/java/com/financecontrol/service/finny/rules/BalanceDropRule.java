@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-/** Patrimônio caiu de forma relevante entre os dois últimos meses → sugere revisar gastos. */
 @Component
 public class BalanceDropRule implements TipRule {
 

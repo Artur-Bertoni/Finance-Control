@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Meu Perfil | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
   <link href="../../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
   <script src="../../js/views/UserView.js" type="module"></script>
 </head>
 <body>
@@ -38,15 +38,15 @@
         <div class="detail-grid">
           <div class="detail-field">
             <label for="detail-username" data-i18n="username">Nome de Usuário</label>
-            <p id="detail-username">—</p>
+            <p id="detail-username">-</p>
           </div>
           <div class="detail-field">
             <label for="detail-email" data-i18n="emailAddress">E-mail</label>
-            <p id="detail-email">—</p>
+            <p id="detail-email">-</p>
           </div>
           <div class="detail-field">
             <label for="detail-language" data-i18n="preferredLanguage">Idioma Preferido</label>
-            <p id="detail-language">—</p>
+            <p id="detail-language">-</p>
           </div>
         </div>
 
@@ -58,18 +58,18 @@
             <div style="display:flex;align-items:flex-start;gap:0">
               <div>
                 <label for="detail-notification-status" data-i18n="weeklyReminderLabel">Lembrete semanal de lançamentos</label>
-                <p><span id="detail-notification-status" class="tx-badge">—</span></p>
+                <p><span id="detail-notification-status" class="tx-badge">-</span></p>
               </div>
               <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
               <div>
                 <label for="detail-notification-day" data-i18n="notificationDayLabel">Dia de envio</label>
-                <p id="detail-notification-day">—</p>
+                <p id="detail-notification-day">-</p>
               </div>
             </div>
           </div>
           <div class="detail-field">
             <label for="detail-goal-notification-status" data-i18n="goalNotificationsLabel">Notificações de metas financeiras</label>
-            <p><span id="detail-goal-notification-status" class="tx-badge">—</span></p>
+            <p><span id="detail-goal-notification-status" class="tx-badge">-</span></p>
           </div>
         </div>
 
@@ -81,32 +81,10 @@
             <label for="detail-google-status" style="display:flex;align-items:center;gap:6px">
               <span data-i18n="googleAccount">Conta Google</span>
             </label>
-            <p><span id="detail-google-status" class="tx-badge">—</span></p>
+            <p><span id="detail-google-status" class="tx-badge">-</span></p>
           </div>
         </div>
 
-        <div id="admin-section-header" class="section-divider" style="display:none">
-          <span data-i18n="adminTools">Ferramentas de Admin</span>
-        </div>
-        <div id="admin-section-grid" class="detail-grid" style="display:none">
-          <div class="detail-field">
-            <label for="test-email-type" data-i18n="testEmailType">Tipo de E-mail</label>
-            <select id="test-email-type">
-              <option value="weekly"           data-i18n="emailTypeWeekly">Lembrete Semanal</option>
-              <option value="MILESTONE_50"     data-i18n="emailTypeGoalMilestone" data-i18n-params='{"percent":50}'>Meta — Marco 50%</option>
-              <option value="MILESTONE_75"     data-i18n="emailTypeGoalMilestone" data-i18n-params='{"percent":75}'>Meta — Marco 75%</option>
-              <option value="MILESTONE_90"     data-i18n="emailTypeGoalMilestone" data-i18n-params='{"percent":90}'>Meta — Marco 90%</option>
-              <option value="COMPLETED"        data-i18n="emailTypeGoalCompleted">Meta — Concluída</option>
-              <option value="DEADLINE_WARNING" data-i18n="emailTypeGoalDeadline">Meta — Aviso de Prazo</option>
-              <option value="EXCEEDED"         data-i18n="emailTypeGoalExceeded">Meta — Limite Excedido</option>
-            </select>
-          </div>
-          <div class="detail-field" style="display:flex;align-items:flex-end">
-            <button class="btn btn-secondary btn-sm" type="button" id="send-test-email-btn" data-i18n="sendTestEmail">
-              Enviar E-mail de Teste
-            </button>
-          </div>
-        </div>
         </div><!-- end tab-details -->
 
         <div id="tab-history" class="view-tab-content" style="display:none">

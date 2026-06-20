@@ -12,6 +12,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     long countByUserId(Long userId);
 
+    long countByUserIdAndSeededFalse(Long userId);
+
     @Query("SELECT DISTINCT c FROM Category c LEFT JOIN FETCH c.aliases WHERE c.userId = :userId ORDER BY c.name ASC")
     List<Category> findByUserIdWithAliases(@Param("userId") Long userId);
 

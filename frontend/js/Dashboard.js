@@ -1,11 +1,11 @@
-import { doRequest, formatCurrency, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { Account } from './class/AccountClass.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
 import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 
-const CHART_CDN = 'https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js'
+const CHART_CDN = '/vendor/chart.umd.min.js'
 const FILTERS_KEY = '__dashboardFilters'
 const DONUT_COLORS = [
     '#4CAF50', '#2563EB', '#DC2626', '#F59E0B', '#8B5CF6',
@@ -79,7 +79,7 @@ function restoreFilters() {
         const accountEl = document.getElementById('account-input')
         if (periodEl  && saved.period  !== undefined) periodEl.value  = saved.period
         if (accountEl && saved.account !== undefined) accountEl.value = saved.account
-    } catch { /* ignore */ }
+    } catch { }
 }
 
 function isFilterActive() {
@@ -190,7 +190,6 @@ function loadAndRender() {
     renderWealthChart(data.balanceEvolution)
     renderDonutChart('chart-cat-expenses', data.categoryExpenses)
     renderDonutChart('chart-cat-income', data.categoryIncomes)
-    MascotManager.renderDashboardWidget(data, goals)
     MascotManager.refreshFloatingTips(data, goals)
 }
 
@@ -209,7 +208,7 @@ function updateStatCards(data) {
 function setCard(id, value, cls) {
     const el = document.getElementById(id)
     if (!el) return
-    el.textContent = `$ ${formatCurrency(value)}`
+    el.textContent = `${formatMoney(value)}`
     el.className = `stat-card-value ${cls}`
 }
 
@@ -240,7 +239,7 @@ function commonScaleOptions(c) {
     return {
         x: { ticks: { color: c.textSecondary }, grid: { color: c.border } },
         y: {
-            ticks: { color: c.textSecondary, callback: v => `$ ${formatCurrency(v)}` },
+            ticks: { color: c.textSecondary, callback: v => `${formatMoney(v)}` },
             grid:  { color: c.border },
         },
     }
@@ -321,7 +320,7 @@ function renderMonthlyChart(monthlyData) {
                             chart.update('none')
                         },
                     },
-                    tooltip: { callbacks: { label: ctx => ` $ ${formatCurrency(ctx.raw)}` } },
+                    tooltip: { callbacks: { label: ctx => ` ${formatMoney(ctx.raw)}` } },
                 },
                 scales: commonScaleOptions(c),
             },
@@ -381,7 +380,7 @@ function renderWealthChart(wealthData) {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { labels: { color: c.text, boxRadius: 4 } },
-                    tooltip: { callbacks: { label: ctx => ` $ ${formatCurrency(ctx.raw)}` } },
+                    tooltip: { callbacks: { label: ctx => ` ${formatMoney(ctx.raw)}` } },
                 },
                 scales: commonScaleOptions(c),
             },
@@ -410,7 +409,7 @@ function showOthersLegendTip(nativeEvent, details) {
     tip.className = 'others-legend-tip'
     for (const d of details) {
         const row = document.createElement('div')
-        row.textContent = `• ${d.name}: $ ${formatCurrency(d.total)}`
+        row.textContent = `• ${d.name}: ${formatMoney(d.total)}`
         tip.appendChild(row)
     }
     document.body.appendChild(tip)
@@ -509,12 +508,12 @@ function renderDonutChart(canvasId, categoryData) {
                         callbacks: {
                             label: ctx => {
                                 const pct = total > 0 ? Math.round((ctx.raw / total) * 100) : 0
-                                return ` $ ${formatCurrency(ctx.raw)} (${pct}%)`
+                                return ` ${formatMoney(ctx.raw)} (${pct}%)`
                             },
                             afterLabel: ctx => {
                                 const inst = chartInstances[canvasId]
                                 if (!inst?._othersDetails?.length || ctx.dataIndex !== inst._othersIndex) return []
-                                return inst._othersDetails.map(d => `  • ${d.name}: $ ${formatCurrency(d.total)}`)
+                                return inst._othersDetails.map(d => `  • ${d.name}: ${formatMoney(d.total)}`)
                             },
                         },
                     },

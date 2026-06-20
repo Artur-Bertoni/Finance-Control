@@ -149,7 +149,7 @@ class AppNotificationServiceTest {
         goal.setNotifyAt75(true);
 
         when(goalRepository.findByUserIdAndStatus(1L, GoalStatus.ACTIVE)).thenReturn(List.of(goal));
-        when(goalService.calculateCurrentAmount(goal)).thenReturn(800.0); // 80%
+        when(goalService.calculateCurrentAmount(goal)).thenReturn(800.0);
         when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(4L, GoalNotificationType.MILESTONE_75))
                 .thenReturn(false);
         AppNotification saved = notification(8L, 1L, AppNotificationType.GOAL_MILESTONE_75);
@@ -169,7 +169,7 @@ class AppNotificationServiceTest {
         goal.setNotifyAt50(true);
 
         when(goalRepository.findByUserIdAndStatus(1L, GoalStatus.ACTIVE)).thenReturn(List.of(goal));
-        when(goalService.calculateCurrentAmount(goal)).thenReturn(550.0); // 55%
+        when(goalService.calculateCurrentAmount(goal)).thenReturn(550.0);
         when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(5L, GoalNotificationType.MILESTONE_50))
                 .thenReturn(false);
         AppNotification saved = notification(9L, 1L, AppNotificationType.GOAL_MILESTONE_50);
@@ -192,7 +192,7 @@ class AppNotificationServiceTest {
         goal.setNotifyOnComplete(true);
 
         when(goalRepository.findByUserIdAndStatus(1L, GoalStatus.ACTIVE)).thenReturn(List.of(goal));
-        when(goalService.calculateCurrentAmount(goal)).thenReturn(1000.0); // 100%
+        when(goalService.calculateCurrentAmount(goal)).thenReturn(1000.0);
         when(goalNotificationLogRepository.existsByGoalIdAndNotificationType(eq(6L), any()))
                 .thenReturn(false);
         when(appNotificationRepository.save(any(AppNotification.class)))
@@ -200,7 +200,6 @@ class AppNotificationServiceTest {
 
         List<AppNotificationResponse> result = appNotificationService.checkGoalImpact(1L, 60L);
 
-        // completed + 90 + 75 + 50 = 4
         assertThat(result).hasSize(4);
         verify(goalNotificationLogRepository, times(4)).save(any());
     }
@@ -214,7 +213,7 @@ class AppNotificationServiceTest {
         goal.setNotifyOnExceed(true);
 
         when(goalRepository.findByUserIdAndStatus(1L, GoalStatus.ACTIVE)).thenReturn(List.of(goal));
-        when(goalService.calculateCurrentAmount(goal)).thenReturn(300.0); // 30%
+        when(goalService.calculateCurrentAmount(goal)).thenReturn(300.0);
 
         List<AppNotificationResponse> result = appNotificationService.checkGoalImpact(1L, 70L);
 
@@ -273,10 +272,10 @@ class AppNotificationServiceTest {
 
     @Test
     void markAsRead_pertenceAOutroUsuario_naoAltera() {
-        AppNotification n = notification(1L, 2L, AppNotificationType.GOAL_COMPLETED); // userId=2
+        AppNotification n = notification(1L, 2L, AppNotificationType.GOAL_COMPLETED);
         when(appNotificationRepository.findById(1L)).thenReturn(Optional.of(n));
 
-        appNotificationService.markAsRead(1L, 1L); // caller userId=1
+        appNotificationService.markAsRead(1L, 1L);
 
         assertThat(n.isRead()).isFalse();
         verify(appNotificationRepository, never()).save(any());

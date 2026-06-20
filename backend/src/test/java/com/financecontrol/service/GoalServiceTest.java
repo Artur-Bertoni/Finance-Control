@@ -468,7 +468,6 @@ class GoalServiceTest {
 
     // ── update per-field buildDiff branch coverage ──────────────────────────
 
-    /** Goal fully populated with notify flags = true so only the changed field differs. */
     private Goal baselineGoal() {
         Goal g = goalWith(1L, 1L, "Reserva", GoalType.SAVINGS, 1000.0, GoalStatus.ACTIVE);
         g.setDescription("desc");
@@ -483,7 +482,6 @@ class GoalServiceTest {
         return g;
     }
 
-    /** Request matching baselineGoal except where overridden by caller. */
     private static GoalRequest baselineReq(String name, String description, Double target,
                                            LocalDate start, LocalDate end,
                                            Boolean n50, Boolean n75, Boolean n90,

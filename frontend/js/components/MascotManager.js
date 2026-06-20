@@ -1,7 +1,6 @@
-import { doRequest, navigate, showToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, navigate, showToast, isWindowActive } from '../../utils/FrontendFunctions.js'
 import { I18n } from '../i18n.js'
 
-// Dicas estáticas (genéricas). Usadas só como "recheio" do popup quando não há dica nova do agente.
 const STATIC_TIPS = {
     pt: [
         'A regra 50/30/20 é simples: 50% para necessidades, 30% para desejos e 20% para poupança. Que tal tentar este mês?',
@@ -12,7 +11,7 @@ const STATIC_TIPS = {
         'Diversifique seus investimentos! Não coloque todos os ovos na mesma cesta.',
         'Categorizar suas transações ajuda a entender onde seu dinheiro vai. Continue cadastrando!',
         'Monitorar seus gastos regularmente é o primeiro passo para a saúde financeira. Parabéns por estar aqui!',
-        'Negocie dívidas! Pergunte sempre sobre condições especiais — desconto à vista pode chegar a 50%.',
+        'Negocie dívidas! Pergunte sempre sobre condições especiais - desconto à vista pode chegar a 50%.',
         'Automatize sua poupança: transfira para uma reserva logo que o salário cair.',
     ],
     en: [
@@ -24,7 +23,7 @@ const STATIC_TIPS = {
         'Diversify your investments! Don\'t put all your eggs in one basket.',
         'Categorizing your transactions helps you understand where your money goes. Keep it up!',
         'Monitoring your spending regularly is the first step to financial health. Glad you\'re here!',
-        'Negotiate your debts! Always ask about special conditions — cash discounts can reach 50%.',
+        'Negotiate your debts! Always ask about special conditions - cash discounts can reach 50%.',
         'Automate your savings: transfer to a reserve right when your paycheck arrives.',
     ],
     es: [
@@ -36,7 +35,7 @@ const STATIC_TIPS = {
         '¡Diversifica tus inversiones! No pongas todos los huevos en la misma canasta.',
         'Categorizar tus transacciones te ayuda a entender adónde va tu dinero. ¡Sigue haciéndolo!',
         'Monitorear tus gastos regularmente es el primer paso para la salud financiera. ¡Me alegra que estés aquí!',
-        '¡Negocia tus deudas! Siempre pregunta por condiciones especiales — el descuento al contado puede llegar al 50%.',
+        '¡Negocia tus deudas! Siempre pregunta por condiciones especiales - el descuento al contado puede llegar al 50%.',
         'Automatiza tu ahorro: transfiere a una reserva justo cuando llegue tu sueldo.',
     ],
 }
@@ -51,10 +50,6 @@ const TYPE_META = {
 }
 
 
-// ── Dicas do agente (backend) ──────────────────────────────────────────────────
-// O backend devolve dicas como dados (ruleKey + params + status); o texto é renderizado
-// aqui, no idioma atual. Ciclo: NEW (a popar) → SHOWN (no modal) → feedback (sai do modal).
-
 function renderTipText(tip) {
     return I18n.t('finnyTip_' + tip.ruleKey, tip.params ?? {})
 }
@@ -63,7 +58,6 @@ function fetchAgentTips() {
     try { return doRequest('/api/finny/tips', 'GET') ?? [] } catch { return [] }
 }
 
-/** Dicas SHOWN (já mostradas em popup, aguardando feedback) viram itens do modal. */
 function shownToItems(tips) {
     return (tips ?? [])
         .filter(t => t.status === 'SHOWN')
@@ -75,7 +69,6 @@ function randomStatic(lang) {
     return pool.length ? pool[Math.floor(Math.random() * pool.length)] : ''
 }
 
-/** Clona o primeiro elemento de um <template> do HTML (definido no AppShell). */
 function _clone(id) {
     return document.getElementById(id).content.firstElementChild.cloneNode(true)
 }
@@ -86,20 +79,21 @@ function _notifDate(iso) {
 
 
 export class MascotManager {
-    static _items          = []        // itens do painel flutuante (dicas SHOWN aguardando feedback)
+    static _items          = []
     static _index          = 0
-    static _dashItems      = []        // itens do widget do dashboard
+    static _dashItems      = []
     static _dashIndex      = 0
-    static _agentTipsRaw   = null      // cache das dicas cruas do agente (NEW + SHOWN)
+    static _agentTipsRaw   = null
     static _agentCacheTime = 0
     static _AGENT_TTL      = 5 * 60 * 1000
-    static _poppedIds      = new Set() // ids já mostrados em popup nesta sessão (evita repetir)
-    static _lastPopText    = ''        // último texto popado (evita estática repetida em sequência)
+    static _poppedIds      = new Set()
+    static _lastPopText    = ''
     static _currentTip     = ''
     static _nextTipTime    = 0
     static _countdownTimer = null
     static _activeTab      = 'tips'
     static _pushTimer      = null
+    static _popPending     = false
     static _TIP_PUSH_MS    = 30 * 60 * 1000
     static _FIRST_POP_MS   = 5000
     static _STORAGE_TIP    = 'fc_finny_tip'
@@ -150,9 +144,11 @@ export class MascotManager {
         })
 
         this._startPushSchedule()
-    }
 
-    // ── Popup periódico: pop da próxima dica NEW (marcando-a como SHOWN) ─────────
+        const retryPop = () => { if (this._popPending && isWindowActive()) this._popNextTip() }
+        window.addEventListener('focus', retryPop)
+        document.addEventListener('visibilitychange', retryPop)
+    }
 
     static _startPushSchedule() {
         if (this._pushTimer) return
@@ -167,6 +163,9 @@ export class MascotManager {
     }
 
     static _popNextTip() {
+        if (!isWindowActive()) { this._popPending = true; return }
+        this._popPending = false
+
         const raw  = this._getAgentTipsRaw()
         const next = (raw ?? []).find(t => t.status === 'NEW' && !this._poppedIds.has(t.id))
 
@@ -174,8 +173,8 @@ export class MascotManager {
         if (next) {
             this._poppedIds.add(next.id)
             text = renderTipText(next)
-            try { doRequest(`/api/finny/tips/${next.id}/shown`, 'POST') } catch { /* silencioso */ }
-            next.status = 'SHOWN' // passa a aparecer no modal
+            try { doRequest(`/api/finny/tips/${next.id}/shown`, 'POST') } catch { }
+            next.status = 'SHOWN'
         } else {
             text = this._pickStatic()
         }
@@ -186,7 +185,7 @@ export class MascotManager {
         localStorage.setItem(this._STORAGE_TIP,  this._currentTip)
         localStorage.setItem(this._STORAGE_NEXT, String(this._nextTipTime))
 
-        if (text) showToast(`💡 ${text}`, 'info', null, { saveToHistory: false })
+        if (text) showToast(`💡 ${text}`, 'info', null, { saveToHistory: false, longDuration: true })
 
         const panel = document.getElementById('mascot-panel')
         if (panel && !panel.hidden && this._activeTab === 'tips') {
@@ -197,7 +196,12 @@ export class MascotManager {
         this._pushTimer = setTimeout(() => this._popNextTip(), this._TIP_PUSH_MS)
     }
 
-    /** Escolhe uma dica estática evitando repetir a anterior. */
+    static popTestTip() {
+        const text = this._pickStatic()
+        this._lastPopText = text
+        if (text) showToast(`💡 ${text}`, 'info', null, { saveToHistory: false, longDuration: true })
+    }
+
     static _pickStatic() {
         const pool = STATIC_TIPS[I18n.getLanguage()] ?? STATIC_TIPS.pt
         if (!pool.length) return ''
@@ -238,8 +242,6 @@ export class MascotManager {
             this._loadNotifications()
         }
     }
-
-    // ── Cache / itens ───────────────────────────────────────────────────────────
 
     static _getAgentTipsRaw(force = false) {
         const now = Date.now()
@@ -293,10 +295,9 @@ export class MascotManager {
         this._renderFloatingTip()
     }
 
-    /** Liga/desliga a barra de feedback (👍 👎 ✕) para o item atual. */
     static _wireFeedback(barEl, item, onDone) {
         if (!barEl) return
-        if (!item || !item.feedbackable || item.id == null) { barEl.hidden = true; return }
+        if (!item?.feedbackable || item.id == null) { barEl.hidden = true; return }
         barEl.hidden = false
         for (const btn of barEl.querySelectorAll('.finny-fb-btn')) {
             btn.onclick = () => { this._submitFeedback(item.id, btn.dataset.fb); onDone?.() }
@@ -304,8 +305,7 @@ export class MascotManager {
     }
 
     static _submitFeedback(id, feedback) {
-        try { doRequest(`/api/finny/tips/${id}/feedback`, 'POST', { feedback }) } catch { /* silencioso */ }
-        // Remove do cache local para a dica sair do modal (passa a viver só no histórico).
+        try { doRequest(`/api/finny/tips/${id}/feedback`, 'POST', { feedback }) } catch { }
         if (Array.isArray(this._agentTipsRaw)) this._agentTipsRaw = this._agentTipsRaw.filter(t => t.id !== id)
         showToast(I18n.t('finnyFeedbackThanks'), 'success', null, { saveToHistory: false })
     }
@@ -337,7 +337,6 @@ export class MascotManager {
         if (this._countdownTimer) { clearInterval(this._countdownTimer); this._countdownTimer = null }
     }
 
-    // ── Aba Mensagens (somente leitura: sem "marcar como lida" nem contagem) ─────
 
     static _loadNotifications(listId = 'mascot-notifications-list') {
         const list = document.getElementById(listId)
@@ -388,9 +387,6 @@ export class MascotManager {
         return card
     }
 
-    // ── Widget do dashboard ─────────────────────────────────────────────────────
-
-    /** Re-renderiza o painel flutuante (chamado quando o dashboard recarrega). */
     static refreshFloatingTips() {
         const panel = document.getElementById('mascot-panel')
         if (panel && !panel.hidden && this._activeTab === 'tips') {
@@ -418,7 +414,6 @@ export class MascotManager {
         }
     }
 
-    /** Widget mostra dicas SHOWN; se não houver nenhuma, cai numa dica estática (sem feedback). */
     static _buildDashItems() {
         const active = this._buildActiveItems()
         if (active.length) return active

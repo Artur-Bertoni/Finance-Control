@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-/** Gastos acima da renda no período → alerta com o % de excesso. */
 @Component
 public class OverspendingRule implements TipRule {
 

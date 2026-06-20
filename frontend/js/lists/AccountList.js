@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, navigate, setupSearch, showPendingToast, initFilterToggle, createAddCard } from '../../utils/FrontendFunctions.js'
 import { Account } from '../class/AccountClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { CustomSelect } from '../components/CustomSelect.js'
@@ -139,7 +139,7 @@ function _buildAccountCard(acc) {
     else if (acc.balance < 0) balClass = 'negative'
     const bal = card.querySelector('.item-balance')
     bal.classList.add(balClass)
-    bal.textContent = `${acc.balance >= 0 ? '+ ' : '- '} $ ${formatCurrency(Math.abs(acc.balance))}`
+    bal.textContent = `${acc.balance >= 0 ? '+ ' : '- '} ${formatMoney(Math.abs(acc.balance))}`
 
     return card
 }

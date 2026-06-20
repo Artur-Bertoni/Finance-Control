@@ -33,7 +33,30 @@ export function init() {
     document.getElementById('save-btn').addEventListener('click', () => handleSave(transactionId, false))
 
     setupQuickAddButtons()
+    setupMoreOptions()
     setupDirtyGuard()
+}
+
+function setupMoreOptions() {
+    const toggle = document.getElementById('tx-more-toggle')
+    const panel  = document.getElementById('tx-more-options')
+    if (!toggle || !panel || toggle.dataset.bound) return
+    toggle.dataset.bound = '1'
+    toggle.addEventListener('click', () => {
+        const open = panel.hidden
+        panel.hidden = !open
+        toggle.setAttribute('aria-expanded', String(open))
+        toggle.classList.toggle('form-more-toggle--open', open)
+    })
+}
+
+function openMoreOptions() {
+    const toggle = document.getElementById('tx-more-toggle')
+    const panel  = document.getElementById('tx-more-options')
+    if (!toggle || !panel) return
+    panel.hidden = false
+    toggle.setAttribute('aria-expanded', 'true')
+    toggle.classList.add('form-more-toggle--open')
 }
 
 function updateRadioStyle() {
@@ -86,6 +109,9 @@ function loadEditMode(transactionId) {
     selectOptionByText('account-input',            tx.account)
     selectOptionByText('category-input',           tx.category)
     selectOptionByText('transaction-locale-input', tx.transactionLocale)
+
+    if ((tx.installmentsNumber && tx.installmentsNumber > 0) || tx.transactionLocale || (tx.obs && tx.obs.trim()))
+        openMoreOptions()
 
     const deleteBtn = addDeleteIcon()
     deleteBtn.addEventListener('click', () => {

@@ -12,11 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Progresso e prazo das metas ativas. Para cada meta emite, no máximo, a dica de
- * marco mais relevante e/ou um aviso de prazo. Limita o total a 3 para não
- * inundar o usuário só com metas.
- */
 @Component
 public class GoalProgressRule implements TipRule {
 

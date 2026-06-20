@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Admin | Finance Control</title>
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link href="../../styles/styles.css" rel="stylesheet">
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="../../js/admin/Admin.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" data-i18n="adminPanel">Admin</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <div class="admin-grid">
+
+        <!-- Feedbacks -->
+        <div class="card admin-card">
+          <div class="admin-card-icon"><i class="ph ph-chat-text" aria-hidden="true"></i></div>
+          <h2 class="admin-card-title" data-i18n="adminFeedbacksTitle">Gerenciar Feedbacks</h2>
+          <p class="admin-card-desc" data-i18n="adminFeedbacksDesc">Veja e filtre os feedbacks enviados pelos usuários.</p>
+          <button class="btn btn-primary btn-sm" id="admin-feedbacks-btn" type="button" data-i18n="adminViewFeedbacks">Ver feedbacks</button>
+        </div>
+
+        <!-- Teste de e-mail -->
+        <div class="card admin-card">
+          <div class="admin-card-icon"><i class="ph ph-envelope" aria-hidden="true"></i></div>
+          <h2 class="admin-card-title" data-i18n="adminEmailTestTitle">Teste de e-mail</h2>
+          <p class="admin-card-desc" data-i18n="adminEmailTestDesc">Envie um e-mail de teste para o seu próprio endereço.</p>
+          <div class="admin-email-form">
+            <div class="field">
+              <label for="test-email-type" data-i18n="testEmailType">Tipo de E-mail</label>
+              <select id="test-email-type">
+                <option value="VERIFICATION" data-i18n="emailTypeVerification">Confirmação de Conta</option>
+                <option value="WEEKLY" data-i18n="emailTypeWeekly">Lembrete Semanal</option>
+                <option value="FEEDBACK" data-i18n="emailTypeFeedback">Feedback (admin)</option>
+                <option value="GOAL_DEADLINE_WARNING" data-i18n="emailTypeGoalDeadline">Meta - Aviso de Prazo</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" id="send-test-email-btn" data-i18n="sendTestEmail">Enviar E-mail de Teste</button>
+          </div>
+        </div>
+
+        <!-- Testes do Finny -->
+        <div class="card admin-card">
+          <div class="admin-card-icon"><i class="ph ph-flask" aria-hidden="true"></i></div>
+          <h2 class="admin-card-title" data-i18n="adminFinnyTestsTitle">Testes do Finny</h2>
+          <p class="admin-card-desc" data-i18n="adminFinnyTestsDesc">Dispare o tour de boas-vindas ou uma dica para testar.</p>
+          <div class="admin-btn-row">
+            <button class="btn btn-secondary btn-sm" type="button" id="trigger-onboarding-btn" data-i18n="adminTriggerOnboarding">Disparar onboarding</button>
+            <button class="btn btn-secondary btn-sm" type="button" id="trigger-tip-btn" data-i18n="adminTriggerTip">Disparar dica aleatória</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

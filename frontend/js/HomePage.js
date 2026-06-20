@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, formatDate, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, formatDate, navigate, showPendingToast, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { Transaction } from './class/TransactionClass.js'
 import { Category } from './class/CategoryClass.js'
 import { Account } from './class/AccountClass.js'
@@ -191,7 +191,7 @@ function renderPagination() {
     for (let i = 1; i <= totalPages; i++) {
         const opt = document.createElement('option')
         opt.value = i
-        opt.textContent = I18n.t('commonPageOf', { page: i, total: totalPages })
+        opt.textContent = `${i}/${totalPages}`
         opt.selected = i === currentPage
         select.appendChild(opt)
     }
@@ -258,7 +258,7 @@ function createTransactionItem(tx) {
 
     const value = item.querySelector('.tx-value')
     value.classList.add(typeClass)
-    value.textContent = tx.type === 'debit' ? `- $ ${formatCurrency(tx.value)}` : `+ $ ${formatCurrency(tx.value)}`
+    value.textContent = tx.type === 'debit' ? `- ${formatMoney(tx.value)}` : `+ ${formatMoney(tx.value)}`
 
     return item
 }
@@ -281,10 +281,10 @@ function renderTotals() {
     const filteredBox = document.getElementById('filtered-total-box')
     if (!totalBox || !filteredBox) return
 
-    totalBox.textContent    = `$ ${formatCurrency(currentTotalNum)}`
+    totalBox.textContent    = `${formatMoney(currentTotalNum)}`
     totalBox.className      = 'stat-card-value ' + (currentTotalNum >= 0 ? 'positive' : 'negative')
 
-    filteredBox.textContent = `$ ${formatCurrency(currentFilteredTotal)}`
+    filteredBox.textContent = `${formatMoney(currentFilteredTotal)}`
     filteredBox.className   = 'stat-card-value ' + (currentFilteredTotal >= 0 ? 'positive' : 'negative')
 }
 

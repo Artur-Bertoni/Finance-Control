@@ -22,6 +22,7 @@ export class SidebarManager {
         SidebarManager.renderIcons()
         SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
+        SidebarManager.setupAdvancedNav()
         SidebarManager.setupToggleButton()
         SidebarManager.setupOverlayDismiss()
         SidebarManager.initTranslations()
@@ -42,7 +43,9 @@ export class SidebarManager {
 
     static onNavigate() {
         document.body.classList.remove('review-mode')
+        SidebarManager.closeSidebar()
         SidebarManager.setupActiveLink()
+        SidebarManager.setupAdvancedNav()
         SidebarManager.renderDataIcons()
         InputMasks.autoInit()
         NumberSpinner.autoInit()
@@ -179,11 +182,6 @@ export class SidebarManager {
         })
     }
 
-    /**
-     * Wheel sobre o calendário troca o mês — exceto quando o ponteiro está sobre o seletor
-     * de mês. Esse seletor vira um CustomSelect (`.cs-wrapper`, com dropdown e campo de busca
-     * próprios), então sobre ele deixamos o scroll agir no dropdown, sem mexer no mês ao fundo.
-     */
     static _attachWheelMonthNav(fp) {
         fp.calendarContainer.addEventListener('wheel', e => {
             if (e.target.closest('.cs-wrapper, select')) return
@@ -208,8 +206,11 @@ export class SidebarManager {
     }
 
     static applyAdminVisibility() {
-        const link = document.getElementById('admin-feedbacks-link')
-        if (link) link.hidden = !globalThis.__currentUser?.admin
+        const isAdmin = !!globalThis.__currentUser?.admin
+        const link    = document.getElementById('admin-link')
+        const section = document.getElementById('admin-section')
+        if (link)    link.hidden    = !isAdmin
+        if (section) section.hidden = !isAdmin
     }
 
     static refreshImportBadge() {
@@ -236,6 +237,7 @@ export class SidebarManager {
         const iconMap = {
             'HomePage.html': 'home',
             'Dashboard.html': 'dashboard',
+            'Budget.html': 'budget',
             'GoalList.html': 'goals',
             'Transaction.html': 'transaction',
             'Transfer.html': 'transfer',
@@ -247,6 +249,7 @@ export class SidebarManager {
             'AchievementList.html': 'achievements',
             'FinnyCenter.html':    'finny',
             'Feedback.html':      'feedback',
+            'Admin.html':         'adminPanel',
             'FeedbackAdmin.html': 'adminPanel',
             'UserView.html':      'profile'
         }
@@ -284,6 +287,31 @@ export class SidebarManager {
         })
     }
 
+    static setupAdvancedNav() {
+        const toggle = document.getElementById('advanced-nav-toggle')
+        const panel  = document.getElementById('advanced-nav')
+        if (!toggle || !panel) return
+
+        const setOpen = (open, persist = true) => {
+            panel.hidden = !open
+            toggle.setAttribute('aria-expanded', String(open))
+            toggle.classList.toggle('sidebar-advanced-toggle--open', open)
+            if (persist) { try { localStorage.setItem('sidebar_advanced_open', open ? '1' : '0') } catch { } }
+        }
+
+        if (!toggle.dataset.bound) {
+            toggle.dataset.bound = '1'
+            toggle.addEventListener('click', () => setOpen(panel.hidden, true))
+        }
+
+        const currentPage  = location.pathname.split('/').pop()
+        const onAdvancedPage = [...panel.querySelectorAll('a[href]')]
+            .some(a => a.href.split('/').pop() === currentPage)
+        let persisted = false
+        try { persisted = localStorage.getItem('sidebar_advanced_open') === '1' } catch { }
+        setOpen(onAdvancedPage || persisted, false)
+    }
+
     static setupToggleButton() {
         const toggleButton = document.getElementById('sidebar-toggle-btn')
         const sidebar      = document.getElementById('sidebar')
@@ -295,6 +323,11 @@ export class SidebarManager {
             sidebar.classList.toggle('open')
             if (overlay) overlay.classList.toggle('show')
         })
+    }
+
+    static closeSidebar() {
+        document.getElementById('sidebar')?.classList.remove('open')
+        document.getElementById('sidebar-overlay')?.classList.remove('show')
     }
 
     static setupOverlayDismiss() {

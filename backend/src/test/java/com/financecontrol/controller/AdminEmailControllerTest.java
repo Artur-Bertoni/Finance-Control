@@ -41,7 +41,7 @@ class AdminEmailControllerTest {
         User admin = adminUser(1L);
         when(userService.findEntityById(1L)).thenReturn(admin);
 
-        mockMvc.perform(post("/api/admin/email/send-test").param("type", "weekly"))
+        mockMvc.perform(post("/api/admin/email/send-test").param("type", "WEEKLY"))
                 .andExpect(status().isOk());
 
         verify(emailService).sendTestEmail(admin);
@@ -63,7 +63,6 @@ class AdminEmailControllerTest {
     void sendTestEmail_tipoInvalido_retorna400() throws Exception {
         User admin = adminUser(1L);
         when(userService.findEntityById(1L)).thenReturn(admin);
-        doThrow(new IllegalArgumentException("bad type")).when(emailService).sendTestGoalEmail(any(), any());
 
         mockMvc.perform(post("/api/admin/email/send-test").param("type", "INVALID_TYPE"))
                 .andExpect(status().isBadRequest());
@@ -71,42 +70,39 @@ class AdminEmailControllerTest {
 
     @Test
     @WithLongPrincipal(1L)
-    void sendTestEmail_tipoMetaMilestone50_chamaGoalEmailRetorna200() throws Exception {
+    void sendTestEmail_verification_retorna200() throws Exception {
         User admin = adminUser(1L);
         when(userService.findEntityById(1L)).thenReturn(admin);
 
-        mockMvc.perform(post("/api/admin/email/send-test").param("type", "MILESTONE_50"))
+        mockMvc.perform(post("/api/admin/email/send-test").param("type", "VERIFICATION"))
                 .andExpect(status().isOk());
 
-        verify(emailService).sendTestGoalEmail(admin,
-                com.financecontrol.enums.GoalNotificationType.MILESTONE_50);
+        verify(emailService).sendTestVerificationEmail(admin);
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void sendTestEmail_feedback_retorna200() throws Exception {
+        User admin = adminUser(1L);
+        when(userService.findEntityById(1L)).thenReturn(admin);
+
+        mockMvc.perform(post("/api/admin/email/send-test").param("type", "FEEDBACK"))
+                .andExpect(status().isOk());
+
+        verify(emailService).sendTestFeedbackEmail(admin);
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void sendTestEmail_goalDeadline_retorna200() throws Exception {
+        User admin = adminUser(1L);
+        when(userService.findEntityById(1L)).thenReturn(admin);
+
+        mockMvc.perform(post("/api/admin/email/send-test").param("type", "GOAL_DEADLINE_WARNING"))
+                .andExpect(status().isOk());
+
+        verify(emailService).sendTestGoalDeadlineEmail(admin);
         verify(emailService, never()).sendTestEmail(any());
-    }
-
-    @Test
-    @WithLongPrincipal(1L)
-    void sendTestEmail_tipoMetaCompleted_chamaGoalEmailRetorna200() throws Exception {
-        User admin = adminUser(1L);
-        when(userService.findEntityById(1L)).thenReturn(admin);
-
-        mockMvc.perform(post("/api/admin/email/send-test").param("type", "COMPLETED"))
-                .andExpect(status().isOk());
-
-        verify(emailService).sendTestGoalEmail(admin,
-                com.financecontrol.enums.GoalNotificationType.COMPLETED);
-    }
-
-    @Test
-    @WithLongPrincipal(1L)
-    void sendTestEmail_tipoMetaExceeded_chamaGoalEmailRetorna200() throws Exception {
-        User admin = adminUser(1L);
-        when(userService.findEntityById(1L)).thenReturn(admin);
-
-        mockMvc.perform(post("/api/admin/email/send-test").param("type", "EXCEEDED"))
-                .andExpect(status().isOk());
-
-        verify(emailService).sendTestGoalEmail(admin,
-                com.financecontrol.enums.GoalNotificationType.EXCEEDED);
     }
 
     @Test
@@ -114,9 +110,9 @@ class AdminEmailControllerTest {
     void sendTestEmail_goalEmailFalha_retorna400() throws Exception {
         User admin = adminUser(1L);
         when(userService.findEntityById(1L)).thenReturn(admin);
-        doThrow(new RuntimeException("smtp down")).when(emailService).sendTestGoalEmail(any(), any());
+        doThrow(new RuntimeException("smtp down")).when(emailService).sendTestGoalDeadlineEmail(any());
 
-        mockMvc.perform(post("/api/admin/email/send-test").param("type", "MILESTONE_90"))
+        mockMvc.perform(post("/api/admin/email/send-test").param("type", "GOAL_DEADLINE_WARNING"))
                 .andExpect(status().isBadRequest());
     }
 

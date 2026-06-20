@@ -26,7 +26,6 @@ class ReportServiceTest {
 
     @InjectMocks ReportService reportService;
 
-    /** Typed empty list helper — avoids List.of() inference to List<Object> */
     private static List<Object[]> noRows() {
         return new ArrayList<>();
     }
@@ -52,7 +51,7 @@ class ReportServiceTest {
 
         DashboardResponse result = reportService.getDashboard(1L, start, end, null);
 
-        assertThat(result.monthlyData()).isNotEmpty(); // months filled even with no rows
+        assertThat(result.monthlyData()).isNotEmpty();
         assertThat(result.categoryExpenses()).isEmpty();
         assertThat(result.categoryIncomes()).isEmpty();
         assertThat(result.balanceEvolution()).isNotEmpty();
@@ -65,7 +64,6 @@ class ReportServiceTest {
         LocalDate start = LocalDate.of(2025, 1, 1);
         LocalDate end   = LocalDate.of(2025, 1, 31);
 
-        // row: [year, month, type, sum]
         Object[] creditRow = {2025, 1, TransactionType.CREDIT, 1000.0};
         Object[] debitRow  = {2025, 1, TransactionType.DEBIT,  500.0};
 
@@ -91,7 +89,6 @@ class ReportServiceTest {
         LocalDate start = LocalDate.of(2025, 1, 1);
         LocalDate end   = LocalDate.of(2025, 1, 31);
 
-        // row: [catId, catName, iconKey, type, sum]
         Object[] expenseRow = {10L, "Alimentação", "ph-fork", TransactionType.DEBIT, 300.0};
         Object[] incomeRow  = {11L, "Salário",     "ph-coin", TransactionType.CREDIT, 5000.0};
 
@@ -135,8 +132,7 @@ class ReportServiceTest {
         LocalDate start = LocalDate.of(2025, 2, 1);
         LocalDate end   = LocalDate.of(2025, 2, 28);
 
-        // type as Integer code (simulates native query result)
-        Object[] row = {2025, 2, 1 /* DEBIT code */, 200.0};
+        Object[] row = {2025, 2, 1, 200.0};
 
         when(transactionRepository.findMonthlyTotals(eq(1L), any(), any(), isNull()))
                 .thenReturn(rows(row));

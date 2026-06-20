@@ -45,26 +45,6 @@ export function init() {
     renderGoogleStatus(user)
     I18n.onChange(() => { renderNotificationFields(user); renderGoogleStatus(user) })
 
-    if (user.admin) {
-        document.getElementById('admin-section-header').style.display = ''
-        document.getElementById('admin-section-grid').style.display = ''
-        document.getElementById('send-test-email-btn').addEventListener('click', () => {
-            const type    = document.getElementById('test-email-type').value
-            const overlay = document.createElement('div')
-            overlay.className = 'loading-overlay'
-            overlay.innerHTML = '<div class="loading-spinner"></div>'
-            document.body.appendChild(overlay)
-
-            $.ajax({
-                url:  `/api/admin/email/send-test?type=${encodeURIComponent(type)}`,
-                type: 'POST',
-                success:  () => showToast(I18n.t('testEmailSent'), 'success'),
-                error:    xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSendingTestEmail'), 'error'),
-                complete: () => overlay.remove()
-            })
-        })
-    }
-
     const actionsEl = document.getElementById('header-actions')
 
     const logoutBtn = document.createElement('button')
@@ -121,7 +101,7 @@ function renderNotificationFields(user) {
     statusEl.textContent = I18n.t(enabled ? 'enabled' : 'disabled')
     statusEl.className   = `tx-badge ${enabled ? 'enabled' : 'disabled'}`
     document.getElementById('detail-notification-day').textContent =
-        I18n.t(DAY_KEYS[user.emailNotificationDay] ?? 'notInformed')
+        I18n.t(DAY_KEYS[user.emailNotificationDay] ?? 'commonNotInformed')
     const goalEl = document.getElementById('detail-goal-notification-status')
     if (goalEl) {
         const goalEnabled = user.goalEmailNotificationEnabled !== false
@@ -129,7 +109,7 @@ function renderNotificationFields(user) {
         goalEl.className   = `tx-badge ${goalEnabled ? 'enabled' : 'disabled'}`
     }
     document.getElementById('detail-language').textContent =
-        I18n.t(LANG_KEYS[user.language] ?? 'notInformed')
+        I18n.t(LANG_KEYS[user.language] ?? 'commonNotInformed')
 }
 
 function renderGoogleStatus(user) {

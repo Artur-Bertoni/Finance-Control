@@ -1,7 +1,3 @@
-/**
- * Adiciona um overlay de carregamento em tela cheia ao body.
- * @returns {HTMLElement} o elemento overlay — chame .remove() quando finalizar.
- */
 export function showOverlay() {
     const overlay = document.createElement('div')
     overlay.className = 'loading-overlay'

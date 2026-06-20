@@ -6,10 +6,19 @@ export { showQuickAdd } from '../js/modals/QuickAddModal.js'
 const FINNY_FACE_SVG = FinnySvg.faceSvg('toast-finny')
 
 const CURRENCY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
+const CURRENCY_SYMBOL_MAP = { pt: 'R$', en: '$', es: '$' }
 
 export function formatCurrency(value) {
     const locale = CURRENCY_LOCALE_MAP[I18n.getLanguage()] ?? 'pt-BR'
     return new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
+}
+
+export function currencySymbol() {
+    return CURRENCY_SYMBOL_MAP[I18n.getLanguage()] ?? '$'
+}
+
+export function formatMoney(value) {
+    return `${currencySymbol()} ${formatCurrency(value)}`
 }
 
 export function formatDate(isoDateStr) {
@@ -30,7 +39,6 @@ export function formatDateTime(isoStr) {
 
 let _emailVerifToastAt = 0
 
-// Send current language with every AJAX request so the backend can respond in the right locale
 $.ajaxSetup({
     beforeSend(xhr, settings) {
         xhr.setRequestHeader('Accept-Language', I18n.getLanguage())
@@ -128,10 +136,14 @@ export function saveToFinnyHistory(message, type = 'info', link = null) {
             async: true,
             error: () => {}
         })
-    } catch { /* silencioso */ }
+    } catch { }
 }
 
-export function showToast(message, type = 'info', action = null, { saveToHistory = true } = {}) {
+export function isWindowActive() {
+    return document.visibilityState !== 'hidden' && document.hasFocus()
+}
+
+export function showToast(message, type = 'info', action = null, { saveToHistory = true, longDuration = false } = {}) {
     if (saveToHistory) saveToFinnyHistory(message, type, action?.url ?? null)
     let container = document.getElementById('toast-container')
     if (!container) {
@@ -140,6 +152,8 @@ export function showToast(message, type = 'info', action = null, { saveToHistory
         container.className = 'toast-container'
         document.body.appendChild(container)
     }
+
+    const duration = longDuration ? TOAST_DURATION * 2 : TOAST_DURATION
 
     const toast = document.createElement('div')
     toast.className = `toast ${type}${action ? ' toast--clickable' : ''}`
@@ -173,25 +187,39 @@ export function showToast(message, type = 'info', action = null, { saveToHistory
     function tick() {
         if (paused) return
         const now = performance.now()
-        elapsed = Math.min(elapsed + (now - lastTick), TOAST_DURATION)
+        elapsed = Math.min(elapsed + (now - lastTick), duration)
         lastTick = now
-        progressBar.style.width = `${(1 - elapsed / TOAST_DURATION) * 100}%`
-        if (elapsed < TOAST_DURATION) rafId = requestAnimationFrame(tick)
+        progressBar.style.width = `${(1 - elapsed / duration) * 100}%`
+        if (elapsed < duration) rafId = requestAnimationFrame(tick)
     }
 
     function start() {
+        if (!isWindowActive()) { paused = true; return }
         paused = false
         lastTick = performance.now()
-        timerId = setTimeout(() => { cancelAnimationFrame(rafId); dismissToast(toast) }, TOAST_DURATION - elapsed)
+        timerId = setTimeout(() => { cancelAnimationFrame(rafId); dismissToast(toast) }, duration - elapsed)
         rafId = requestAnimationFrame(tick)
     }
 
     function pause() {
         if (paused) return
         paused = true
-        elapsed = Math.min(elapsed + (performance.now() - lastTick), TOAST_DURATION)
+        elapsed = Math.min(elapsed + (performance.now() - lastTick), duration)
         clearTimeout(timerId)
         cancelAnimationFrame(rafId)
+    }
+
+    function onFocusChange() {
+        if (isWindowActive()) start()
+        else pause()
+    }
+    window.addEventListener('focus', onFocusChange)
+    window.addEventListener('blur', onFocusChange)
+    document.addEventListener('visibilitychange', onFocusChange)
+    toast._cleanup = () => {
+        window.removeEventListener('focus', onFocusChange)
+        window.removeEventListener('blur', onFocusChange)
+        document.removeEventListener('visibilitychange', onFocusChange)
     }
 
     toast.querySelector('.toast-close').addEventListener('click', () => {
@@ -208,6 +236,7 @@ export function showToast(message, type = 'info', action = null, { saveToHistory
 
 function dismissToast(toast) {
     if (toast.classList.contains('toast-closing')) return
+    toast._cleanup?.()
     toast.classList.add('toast-closing')
     setTimeout(() => toast.remove(), 260)
 }

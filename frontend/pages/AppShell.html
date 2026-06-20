@@ -2,19 +2,19 @@
 <html lang="pt-BR" id="root-html">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="icon" type="image/png" href="/images/logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';</script>
   <title>Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
+  <link rel="stylesheet" href="/vendor/flag-icons/css/flag-icons.min.css">
   <link rel="preload" href="../styles/fonts/phosphor/Phosphor.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../styles/fonts/phosphor/style.css">
   <link href="../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
   <script src="../js/AppShell.js" type="module"></script>
 </head>
 <body>
@@ -23,7 +23,7 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <img src="../images/logo.png" alt="Finance Control" class="sidebar-logo">
+      <img src="/images/logo.png" alt="Finance Control" class="sidebar-logo">
       <div class="sidebar-logo-text">Finance<span>Control</span></div>
     </div>
     <div class="sidebar-search">
@@ -42,6 +42,7 @@
     <nav class="sidebar-nav" aria-label="Menu principal">
       <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
       <a href="/pages/Dashboard.html" class="sidebar-link" data-i18n="dashboard">Dashboard</a>
+      <a href="/pages/Budget.html" class="sidebar-link" data-i18n="budget">Orçamento</a>
       <a href="/pages/lists/GoalList.html" class="sidebar-link" data-i18n="goals">Metas Financeiras</a>
       <a href="/pages/lists/AchievementList.html" class="sidebar-link" data-i18n="achievements">Conquistas</a>
       <a href="/pages/FinnyCenter.html" class="sidebar-link sidebar-link--finny" id="notifications-link"><span data-i18n="finnyLink">Finny</a>
@@ -52,10 +53,18 @@
       <div class="sidebar-section" data-i18n="settings">Configurações</div>
       <a href="/pages/lists/CategoryList.html" class="sidebar-link" data-i18n="categories">Categorias</a>
       <a href="/pages/lists/AccountList.html" class="sidebar-link" data-i18n="accounts">Contas</a>
-      <a href="/pages/lists/FinancialInstitutionList.html" class="sidebar-link" data-i18n="financialInstitutions">Instituições Financeiras</a>
-      <a href="/pages/lists/TransactionLocaleList.html" class="sidebar-link" data-i18n="locations">Locais</a>
-      <a href="/pages/Feedback.html" class="sidebar-link" data-i18n="feedback">Feedback</a>
-      <a href="/pages/admin/FeedbackAdmin.html" class="sidebar-link" id="admin-feedbacks-link" data-i18n="adminFeedbacks" hidden>Feedbacks (Admin)</a>
+      <button type="button" class="sidebar-link sidebar-advanced-toggle" id="advanced-nav-toggle" aria-expanded="false" aria-controls="advanced-nav">
+        <span data-i18n="advancedSettings">Avançado</span>
+        <i class="ph ph-caret-down sidebar-advanced-caret" aria-hidden="true"></i>
+      </button>
+      <div class="sidebar-advanced" id="advanced-nav" hidden>
+        <a href="/pages/lists/FinancialInstitutionList.html" class="sidebar-link" data-i18n="financialInstitutions">Instituições Financeiras</a>
+        <a href="/pages/lists/TransactionLocaleList.html" class="sidebar-link" data-i18n="locations">Locais</a>
+      </div>
+      <div class="sidebar-section" data-i18n="feedbackSection">Feedback</div>
+      <a href="/pages/Feedback.html" class="sidebar-link" data-i18n="sendFeedback">Enviar Feedback</a>
+      <div class="sidebar-section" id="admin-section" data-i18n="adminSection" hidden>Administração</div>
+      <a href="/pages/admin/Admin.html" class="sidebar-link" id="admin-link" data-i18n="adminPanel" hidden>Admin</a>
     </nav>
     <div class="sidebar-footer">
       <a href="/pages/views/UserView.html" class="sidebar-link" data-i18n="myProfile">Meu Perfil</a>
@@ -76,12 +85,12 @@
 
 </div>
 
-<!-- Mascote Finny — botão flutuante -->
-<button id="mascot-fab" class="mascot-fab" type="button" aria-label="Finny" title="Finny — dicas e notificações">
+<!-- Mascote Finny - botão flutuante -->
+<button id="mascot-fab" class="mascot-fab" type="button" aria-label="Finny" title="Finny - dicas e notificações">
   <span data-finny-svg=""></span>
 </button>
 
-<!-- Painel do Finny — duas abas: Dicas | Mensagens -->
+<!-- Painel do Finny - duas abas: Dicas | Mensagens -->
 <div id="mascot-panel" class="mascot-panel" hidden>
 
   <!-- Cabeçalho -->
@@ -173,16 +182,16 @@
       <span class="history-group-marker"></span>
       <span class="history-group-label"></span>
     </div>
-    <ul class="history-changes"></ul>
+    <div class="history-changes"></div>
   </div>
 </template>
 <template id="tpl-hist-change-item">
-  <li class="history-change-item">
+  <div class="history-change-item">
     <span class="history-field-name"></span>
     <span class="history-value-old"></span>
     <span class="history-arrow">→</span>
     <span class="history-value-new"></span>
-  </li>
+  </div>
 </template>
 <template id="tpl-hist-password">
   <div class="history-group">
@@ -190,9 +199,9 @@
       <span class="history-group-marker"></span>
       <span class="history-group-label"></span>
     </div>
-    <ul class="history-changes">
-      <li class="history-change-item"><span class="history-field-name"></span></li>
-    </ul>
+    <div class="history-changes">
+      <div class="history-change-item"><span class="history-field-name"></span></div>
+    </div>
   </div>
 </template>
 

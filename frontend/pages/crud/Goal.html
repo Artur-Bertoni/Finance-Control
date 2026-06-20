@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Meta Financeira | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
   <link href="../../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
   <script src="../../js/crud/Goal.js" type="module"></script>
 </head>
 <body>
@@ -36,13 +36,17 @@
 
           <!-- Type -->
           <div class="field">
-            <label for="type-select" data-i18n="goalType">Tipo de Meta</label>
+            <div style="display:flex;align-items:center;gap:6px">
+              <label for="type-select" data-i18n="goalType">Tipo de Meta</label>
+              <button type="button" class="info-hint-btn" data-i18n-title="tipGoalType" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+            </div>
             <select id="type-select" required>
               <option value="" data-i18n="goalSelectType">Selecione o tipo...</option>
               <option value="expense_limit" data-i18n="goalTypeExpenseLimit">Limite de Gastos</option>
               <option value="savings" data-i18n="goalTypeSavings">Economia / Acúmulo</option>
               <option value="income" data-i18n="goalTypeIncome">Receita</option>
             </select>
+            <small class="field-hint" id="goal-type-hint" style="color:var(--text-muted);font-weight:400"></small>
           </div>
 
           <!-- Target amount -->

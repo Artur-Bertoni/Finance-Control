@@ -35,6 +35,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final HistoryService historyService;
     private final EmailService emailService;
+    private final OnboardingService onboardingService;
 
     public UserResponse login(String identifier,
                               String password) {
@@ -79,6 +80,7 @@ public class UserService {
 
         UserResponse result = UserResponse.from(userRepository.save(user));
         historyService.recordCreation(ENTITY_USER, result.id(), result.id());
+        onboardingService.seedDefaults(result.id(), user.getLanguage());
 
         sendVerificationEmail(user);
         return result;
@@ -127,9 +129,12 @@ public class UserService {
                                    String email,
                                    String name) {
         return userRepository.findByProviderAndProviderId(provider, providerId)
+                .map(User::getId)
                 .orElseGet(() -> {
                     User user = email != null ? userRepository.findByEmail(email).orElse(null) : null;
+                    boolean isNew = false;
                     if (user == null) {
+                        isNew = true;
                         user = new User();
                         user.setEmail(email);
                         user.setUsername(generateOAuth2Username(name, email));
@@ -143,8 +148,10 @@ public class UserService {
                     user.setProvider(provider);
                     user.setProviderId(providerId);
                     user.setEmailVerified(true);
-                    return userRepository.save(user);
-                }).getId();
+                    User saved = userRepository.save(user);
+                    if (isNew) onboardingService.seedDefaults(saved.getId(), saved.getLanguage());
+                    return saved.getId();
+                });
     }
 
     @Transactional

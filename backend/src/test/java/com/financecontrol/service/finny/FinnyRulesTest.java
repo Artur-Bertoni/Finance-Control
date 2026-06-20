@@ -9,10 +9,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Testa cada regra (advisor) isoladamente a partir de um perfil financeiro controlado. */
 class FinnyRulesTest {
 
-    /** Cria um perfil com defaults "saudáveis"; cada teste sobrescreve o que importa. */
     private FinancialProfile profile(double income, double expenses, double balance,
                                      double avgMonthlyExpenses, Double balanceDrop,
                                      List<FinancialProfile.CategoryExpense> cats,
@@ -46,14 +44,14 @@ class FinnyRulesTest {
 
     @Test
     void savingsRate_baixa_emiteLow() {
-        FinancialProfile p = profile(1000, 950, 0, 950, null, List.of(), List.of()); // 5%
+        FinancialProfile p = profile(1000, 950, 0, 950, null, List.of(), List.of());
         assertThat(new SavingsRateRule().evaluate(p))
                 .singleElement().satisfies(t -> assertThat(t.ruleKey()).isEqualTo("SAVINGS_RATE_LOW"));
     }
 
     @Test
     void savingsRate_boa_emiteGood() {
-        FinancialProfile p = profile(1000, 700, 0, 700, null, List.of(), List.of()); // 30%
+        FinancialProfile p = profile(1000, 700, 0, 700, null, List.of(), List.of());
         assertThat(new SavingsRateRule().evaluate(p))
                 .singleElement().satisfies(t -> assertThat(t.ruleKey()).isEqualTo("SAVINGS_RATE_GOOD"));
     }
@@ -77,7 +75,7 @@ class FinnyRulesTest {
 
     @Test
     void emergencyFund_baixa_emiteLow() {
-        FinancialProfile p = profile(1000, 500, 500, 500, null, List.of(), List.of()); // 1 mês
+        FinancialProfile p = profile(1000, 500, 500, 500, null, List.of(), List.of());
         assertThat(new EmergencyFundRule().evaluate(p)).singleElement().satisfies(t -> {
             assertThat(t.ruleKey()).isEqualTo("EMERGENCY_FUND_LOW");
             assertThat(t.category()).isEqualTo(FinnyTipCategory.SAVINGS);
@@ -86,7 +84,7 @@ class FinnyRulesTest {
 
     @Test
     void emergencyFund_robustaComSobra_emiteInvestimentoEducacional() {
-        FinancialProfile p = profile(2000, 1000, 7000, 1000, null, List.of(), List.of()); // 7 meses, net>0
+        FinancialProfile p = profile(2000, 1000, 7000, 1000, null, List.of(), List.of());
         assertThat(new EmergencyFundRule().evaluate(p)).singleElement().satisfies(t -> {
             assertThat(t.ruleKey()).isEqualTo("EMERGENCY_FUND_READY");
             assertThat(t.category()).isEqualTo(FinnyTipCategory.INVESTMENT);
@@ -95,7 +93,7 @@ class FinnyRulesTest {
 
     @Test
     void emergencyFund_zonaSaudavel_naoEmite() {
-        FinancialProfile p = profile(2000, 1000, 4000, 1000, null, List.of(), List.of()); // 4 meses
+        FinancialProfile p = profile(2000, 1000, 4000, 1000, null, List.of(), List.of());
         assertThat(new EmergencyFundRule().evaluate(p)).isEmpty();
     }
 

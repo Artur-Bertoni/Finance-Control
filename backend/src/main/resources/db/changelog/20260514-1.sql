@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset artur:20260514-1
---comment: financial goals feature — goals, category/locale filters, notification log
+--comment: financial goals feature - goals, category/locale filters, notification log
 
 CREATE TABLE financial_goal
 (

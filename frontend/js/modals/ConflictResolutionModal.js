@@ -1,15 +1,6 @@
 import { I18n } from '../i18n.js'
 import { formatDate, formatCurrency } from '../../utils/FrontendFunctions.js'
 
-/**
- * Abre um modal para resolver conflitos de categoria, uma linha por vez.
- * Cada linha tem seu próprio card — linhas com a mesma descrição podem ser
- * resolvidas para categorias diferentes.
- *
- * @param {object[]} conflicts     - linhas com hasMultipleSuggestions=true, cada uma com rowIndex
- * @param {object[]} allCategories - [{id, name}] lista completa de categorias
- * @param {function} onConfirm     - chamado com Map<rowIndex, categoryId> ao confirmar
- */
 export function openConflictModal(conflicts, allCategories, onConfirm) {
     const selections = new Map()
     conflicts.forEach(c => selections.set(c.rowIndex, String(c.currentCategoryId ?? c.suggestedCategoryId ?? '')))

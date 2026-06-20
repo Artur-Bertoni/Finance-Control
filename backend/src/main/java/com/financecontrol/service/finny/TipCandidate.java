@@ -4,13 +4,6 @@ import com.financecontrol.enums.FinnyTipCategory;
 
 import java.util.Map;
 
-/**
- * Uma dica candidata emitida por uma regra, antes de ranquear/persistir.
- * O {@code baseScore} é a relevância "crua" da regra; o agente multiplica pelo peso
- * adaptativo da categoria para chegar ao score final.
- *
- * @param params valores que personalizam o texto (ex: {"pct":15}). Renderizados no front via i18n.
- */
 public record TipCandidate(
         String ruleKey,
         FinnyTipCategory category,

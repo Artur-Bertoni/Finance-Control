@@ -35,6 +35,7 @@ class UserServiceTest {
     @Mock PasswordEncoder passwordEncoder;
     @Mock HistoryService historyService;
     @Mock EmailService emailService;
+    @Mock OnboardingService onboardingService;
 
     @InjectMocks UserService userService;
 
@@ -468,7 +469,6 @@ class UserServiceTest {
         when(userRepository.findByProviderAndProviderId("google", "gidX"))
                 .thenReturn(Optional.empty());
         when(userRepository.findByEmail("colide@test.com")).thenReturn(Optional.empty());
-        // "Joao" → base "joao"; first candidate taken, second free → username becomes "joao1"
         when(userRepository.findByUsername("joao")).thenReturn(Optional.of(userWith(1L, "joao", "a@a.com", "h")));
         when(userRepository.findByUsername("joao1")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {

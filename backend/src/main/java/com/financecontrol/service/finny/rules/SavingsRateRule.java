@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Taxa de poupança (net/renda). Emite uma de três variantes conforme a faixa —
- * baixa (&lt;10%), média (&lt;20%) ou boa (&gt;=20%) — só quando há sobra positiva.
- */
 @Component
 public class SavingsRateRule implements TipRule {
 

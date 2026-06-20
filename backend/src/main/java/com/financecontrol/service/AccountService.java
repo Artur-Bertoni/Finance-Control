@@ -59,7 +59,7 @@ public class AccountService {
         FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         AccountType type = req.type() != null ? req.type() : AccountType.CHECKING;
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(),
-                type, req.closingDay(), req.dueDay(), LocalDateTime.now());
+                type, req.closingDay(), req.dueDay(), LocalDateTime.now(), false);
 
         AccountResponse result = AccountResponse.from(accountRepository.save(account));
 

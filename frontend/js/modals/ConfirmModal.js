@@ -1,11 +1,5 @@
 import { I18n } from '../i18n.js'
 
-/**
- * Exibe um diálogo de confirmação com botões cancelar/confirmar.
- * @param {string} message
- * @param {() => void} onConfirm
- * @param {string|null} title
- */
 export function showConfirm(message, onConfirm, title = null) {
     const overlay = document.createElement('div')
     overlay.className = 'modal-overlay'
@@ -29,14 +23,6 @@ export function showConfirm(message, onConfirm, title = null) {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
 }
 
-/**
- * Exibe um diálogo de confirmação e retorna uma Promise<boolean>.
- * Resolve com true se confirmado, false se cancelado.
- * @param {string} message
- * @param {string|null} title
- * @param {{ cancelLabel?: string, confirmLabel?: string, confirmClass?: string }} opts
- * @returns {Promise<boolean>}
- */
 export function showConfirmAsync(message, title = null, opts = {}) {
     const cancelLabel  = opts.cancelLabel  ?? I18n.t('commonStay')
     const confirmLabel = opts.confirmLabel ?? I18n.t('commonLeaveAnyway')

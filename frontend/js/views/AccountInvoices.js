@@ -1,4 +1,4 @@
-import { doRequest, formatCurrency, formatDate, navigate, setBreadcrumb, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, formatDate, navigate, setBreadcrumb, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
 import { Account } from '../class/AccountClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { I18n } from '../i18n.js'
@@ -64,7 +64,7 @@ function buildInvoiceRow(accountId, inv) {
 
     const value = document.createElement('div')
     value.className = 'tx-value'
-    value.textContent = `$ ${formatCurrency(inv.total)}`
+    value.textContent = formatMoney(inv.total)
 
     row.appendChild(info)
     row.appendChild(badge)

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Orçamento | Finance Control</title>
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="../js/Budget.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" data-i18n="budget">Orçamento</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <!-- Definir / editar orçamento -->
+      <div class="card budget-form-card">
+        <div class="card-header">
+          <span class="card-title" data-i18n="budgetSetTitle">Definir orçamento de uma categoria</span>
+        </div>
+        <div class="budget-form">
+          <div class="field">
+            <label for="budget-category" data-i18n="categories">Categoria</label>
+            <select id="budget-category">
+              <option value="" disabled selected data-i18n="selectCategory">Selecione a categoria...</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="budget-limit" data-i18n="budgetMonthlyLimit">Limite mensal</label>
+            <input id="budget-limit" type="text" inputmode="decimal" data-mask="money" placeholder="0,00">
+          </div>
+          <button class="btn btn-primary" id="budget-save-btn" type="button" data-i18n="commonSave">Salvar</button>
+        </div>
+        <p class="budget-form-hint" data-i18n="budgetHint">Defina quanto pretende gastar por mês em cada categoria. Acompanhe abaixo quanto já gastou.</p>
+      </div>
+
+      <!-- Lista do mês -->
+      <div class="card budget-list-card">
+        <div class="card-header">
+          <span class="card-title" data-i18n="budgetCurrentMonth">Orçamento deste mês</span>
+        </div>
+        <div id="budget-list" class="budget-list">
+          <div class="empty-state">
+            <p data-i18n="budgetEmpty">Você ainda não definiu nenhum orçamento.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="tpl-budget-item">
+  <div class="budget-item">
+    <div class="budget-item-head">
+      <i class="budget-item-icon ph" hidden aria-hidden="true"></i>
+      <span class="budget-item-name"></span>
+      <div class="budget-item-actions">
+        <button class="btn btn-ghost btn-sm budget-edit-btn" type="button" aria-label="Editar"><i class="ph ph-pencil-simple" aria-hidden="true"></i></button>
+        <button class="btn btn-ghost btn-sm budget-delete-btn" type="button" aria-label="Excluir"><i class="ph ph-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="budget-item-bar"><div class="budget-item-bar-fill"></div></div>
+    <div class="budget-item-values">
+      <span class="budget-item-spent"></span>
+      <span class="budget-item-percent"></span>
+    </div>
+  </div>
+</template>
+</body>
+</html>

@@ -50,7 +50,6 @@ class FinnyAgentServiceTest {
                 profileService, tipRepository, preferenceRepository, new ObjectMapper());
     }
 
-    /** save() atribui id incremental e guarda o tip para o teste inspecionar / devolver em queries. */
     private void stubSave() {
         when(tipRepository.save(any())).thenAnswer(inv -> {
             FinnyTip t = inv.getArgument(0);
@@ -94,7 +93,7 @@ class FinnyAgentServiceTest {
                 .thenReturn(Optional.empty());
         FinnyTipPreference savingsPref = new FinnyTipPreference();
         savingsPref.setCategory(FinnyTipCategory.SAVINGS);
-        savingsPref.setWeight(2.0); // SAVINGS 40*2=80 > BUDGET 50*1=50
+        savingsPref.setWeight(2.0);
         when(preferenceRepository.findByUserId(1L)).thenReturn(List.of(savingsPref));
         stubSave();
         when(tipRepository.findByUserIdAndStatusInOrderByScoreDesc(eq(1L), any())).thenAnswer(inv -> saved);
@@ -181,7 +180,7 @@ class FinnyAgentServiceTest {
         tip.setId(5L);
         tip.setUserId(1L);
         tip.setCategory(FinnyTipCategory.SAVINGS);
-        tip.setStatus(FinnyTipStatus.HELPFUL); // já tinha feedback
+        tip.setStatus(FinnyTipStatus.HELPFUL);
         when(tipRepository.findById(5L)).thenReturn(Optional.of(tip));
         FinnyTipPreference pref = new FinnyTipPreference();
         pref.setCategory(FinnyTipCategory.SAVINGS);
@@ -192,7 +191,6 @@ class FinnyAgentServiceTest {
         service.recordFeedback(1L, 5L, FinnyTipFeedback.DISMISSED);
 
         assertThat(tip.getStatus()).isEqualTo(FinnyTipStatus.DISMISSED);
-        // reverte HELPFUL (1.25 -> 1.00, count 0) e aplica DISMISSED (1.00 -> 0.90, count 1)
         assertThat(pref.getWeight()).isEqualTo(0.90);
         assertThat(pref.getHelpfulCount()).isZero();
         assertThat(pref.getDismissedCount()).isEqualTo(1);

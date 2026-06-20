@@ -19,22 +19,12 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Aprendizado IMPLÍCITO do agente (Fase 4).
- * Toda semana, olha as dicas "TOP_CATEGORY" geradas há ~30 dias e verifica se o usuário
- * realmente reduziu os gastos naquela categoria. Se reduziu de forma relevante, reforça o
- * peso da categoria BUDGET — ou seja, o Finny aprende que esse tipo de dica funciona para
- * aquele usuário, sem ele precisar clicar em nada.
- *
- * A janela (criadas entre 37 e 30 dias atrás) é escolhida para que, numa execução semanal,
- * cada dica seja avaliada aproximadamente uma única vez.
- */
 @Slf4j
 @Component
 public class FinnyLearningScheduler {
 
     private static final int    COMPARE_DAYS    = 30;
-    private static final double DROP_THRESHOLD  = 0.90;  // gastou < 90% do período anterior
+    private static final double DROP_THRESHOLD  = 0.90;
     private static final double IMPLICIT_REWARD = 0.15;
 
     private final FinnyTipRepository tipRepository;
@@ -89,7 +79,7 @@ public class FinnyLearningScheduler {
 
         if (before > 0 && after < before * DROP_THRESHOLD) {
             agentService.nudgeWeight(tip.getUserId(), FinnyTipCategory.BUDGET, IMPLICIT_REWARD);
-            log.info("Finny: usuário {} reduziu gastos na categoria {} (de {} para {}) — reforçando BUDGET",
+            log.info("Finny: usuário {} reduziu gastos na categoria {} (de {} para {}) - reforçando BUDGET",
                     tip.getUserId(), categoryId, before, after);
         }
     }

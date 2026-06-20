@@ -3,7 +3,7 @@ package com.financecontrol.service;
 import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.User;
 import com.financecontrol.entity.UserFeedback;
-import com.financecontrol.enums.GoalNotificationType;
+import com.financecontrol.enums.FeedbackType;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import jakarta.mail.MessagingException;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -53,23 +54,32 @@ public class EmailService {
     public void sendVerificationEmail(User user,
                                       String token) {
         try {
-            Locale locale = resolveLocale(user.getLanguage());
-            String subject = msg("email.verify.subject", null, locale);
-            String link = baseUrl + "/api/auth/verify-email?token=" + token;
-
-            String html = loadTemplate(TEMPLATE_VERIFICATION)
-                    .replace("{{emailGreeting}}",  msg("email.verify.greeting",  new Object[]{user.getUsername()}, locale))
-                    .replace("{{emailBody}}",       msg("email.verify.body",       null, locale))
-                    .replace("{{emailCtaLabel}}",   msg("email.verify.cta",        null, locale))
-                    .replace("{{emailFooterNote}}", msg("email.verify.footerNote", null, locale))
-                    .replace("{{verifyUrl}}",       link)
-                    .replace("{{baseUrl}}",         baseUrl);
-
-            sendMimeMessage(user.getEmail(), subject, html);
+            doSendVerification(user, token);
             log.info("Email de verificação enviado para {}", user.getEmail());
         } catch (Exception e) {
             log.error("Falha ao enviar email de verificação para {}: {}", user.getEmail(), e.getMessage());
         }
+    }
+
+    public void sendTestVerificationEmail(User user) throws MessagingException, IOException {
+        doSendVerification(user, "test-verification-token");
+    }
+
+    private void doSendVerification(User user,
+                                    String token) throws MessagingException, IOException {
+        Locale locale = resolveLocale(user.getLanguage());
+        String subject = msg("email.verify.subject", null, locale);
+        String link = baseUrl + "/api/auth/verify-email?token=" + token;
+
+        String html = loadTemplate(TEMPLATE_VERIFICATION)
+                .replace("{{emailGreeting}}",  msg("email.verify.greeting",  new Object[]{user.getUsername()}, locale))
+                .replace("{{emailBody}}",       msg("email.verify.body",       null, locale))
+                .replace("{{emailCtaLabel}}",   msg("email.verify.cta",        null, locale))
+                .replace("{{emailFooterNote}}", msg("email.verify.footerNote", null, locale))
+                .replace("{{verifyUrl}}",       link)
+                .replace("{{baseUrl}}",         baseUrl);
+
+        sendMimeMessage(user.getEmail(), subject, html);
     }
 
     @Async("emailTaskExecutor")
@@ -86,19 +96,9 @@ public class EmailService {
         doSendWeekly(user);
     }
 
-    public void sendTestGoalEmail(User user,
-                                  GoalNotificationType type) throws MessagingException, IOException {
+    public void sendTestGoalDeadlineEmail(User user) throws MessagingException, IOException {
         Goal sample = buildSampleGoal();
-        
-        double current = switch (type) {
-            case MILESTONE_50     -> sample.getTargetAmount() * 0.50;
-            case MILESTONE_75     -> sample.getTargetAmount() * 0.75;
-            case MILESTONE_90     -> sample.getTargetAmount() * 0.90;
-            case COMPLETED        -> sample.getTargetAmount();
-            case DEADLINE_WARNING -> sample.getTargetAmount() * 0.40;
-            case EXCEEDED         -> sample.getTargetAmount() * 1.10;
-        };
-        doSendGoal(user, sample, type, current);
+        doSendGoalDeadline(user, sample, sample.getTargetAmount() * 0.40);
     }
 
     private void doSendWeekly(User user) throws MessagingException, IOException {
@@ -127,39 +127,36 @@ public class EmailService {
     }
 
     @Async("emailTaskExecutor")
-    public void sendGoalNotification(User user, 
-                                     Goal goal,
-                                     GoalNotificationType type,
-                                     double current) {
+    public void sendGoalDeadlineEmail(User user,
+                                      Goal goal,
+                                      double current) {
         try {
-            doSendGoal(user, goal, type, current);
-            log.info("Notificação de meta enviada para {} (tipo={})", user.getEmail(), type);
+            doSendGoalDeadline(user, goal, current);
+            log.info("Aviso de prazo de meta enviado para {}", user.getEmail());
         } catch (Exception e) {
-            log.error("Falha ao enviar notificação de meta para {}: {}", user.getEmail(), e.getMessage());
+            log.error("Falha ao enviar aviso de prazo de meta para {}: {}", user.getEmail(), e.getMessage());
         }
     }
 
-    private void doSendGoal(User user,
-                            Goal goal,
-                            GoalNotificationType type,
-                            double current)
+    private void doSendGoalDeadline(User user,
+                                    Goal goal,
+                                    double current)
             throws MessagingException, IOException {
-        Locale locale  = resolveLocale(user.getLanguage());
-        String typeKey = goalTypeKey(type);
+        Locale locale = resolveLocale(user.getLanguage());
 
-        String subject     = msg("email.goal.subject." + typeKey,    null,                             locale);
-        String subtitle    = msg("email.goal.subtitle",              null,                             locale);
-        String greeting    = msg("email.goal.greeting",              new Object[]{user.getUsername()}, locale);
-        String title       = msg("email.goal." + typeKey + ".title", new Object[]{goal.getName()},     locale);
-        String body        = buildGoalBody(goal, type, locale);
-        String cta         = msg("email.goal.cta",                   null,                             locale);
-        String footer      = msg("email.goal.footerPrefix",          null,                             locale);
-        String profile     = msg("email.goal.profileLinkText",       null,                             locale);
-        String progressLbl = msg("email.goal.progress",              null,                             locale);
-        String targetLbl   = msg("email.goal.target",                null,                             locale);
+        String subject     = msg("email.goal.subject.deadline", null,                                                locale);
+        String subtitle    = msg("email.goal.subtitle",         null,                                                locale);
+        String greeting    = msg("email.goal.greeting",         new Object[]{user.getUsername()},                    locale);
+        String title       = msg("email.goal.deadline.title",   new Object[]{goal.getName()},                        locale);
+        String body        = msg("email.goal.deadline.body",    new Object[]{formatDate(goal.getEndDate(), locale)}, locale);
+        String cta         = msg("email.goal.cta",              null,                                                locale);
+        String footer      = msg("email.goal.footerPrefix",     null,                                                locale);
+        String profile     = msg("email.goal.profileLinkText",  null,                                                locale);
+        String progressLbl = msg("email.goal.progress",         null,                                                locale);
+        String targetLbl   = msg("email.goal.target",           null,                                                locale);
 
         double pct = goal.getTargetAmount() != null && goal.getTargetAmount() > 0
-                ? (current / goal.getTargetAmount()) * 100.0 
+                ? (current / goal.getTargetAmount()) * 100.0
                 : 0.0;
 
         String html = loadTemplate(TEMPLATE_GOAL)
@@ -167,7 +164,7 @@ public class EmailService {
                 .replace("{{emailGreeting}}",        greeting)
                 .replace("{{emailTitle}}",           title)
                 .replace("{{emailBody}}",            body)
-                .replace("{{emailProgressBar}}",     buildProgressBar(pct, type, goal.getType()))
+                .replace("{{emailProgressBar}}",     buildProgressBar(pct, goal.getType()))
                 .replace("{{emailProgressLabel}}",   progressLbl)
                 .replace("{{emailCurrentAmount}}",   String.format("%.2f", current))
                 .replace("{{emailTargetLabel}}",     targetLbl)
@@ -183,26 +180,53 @@ public class EmailService {
     @Async("emailTaskExecutor")
     public void sendFeedbackNotification(User admin, User sender, UserFeedback feedback) {
         try {
-            String typeLabel = switch (feedback.getType()) {
-                case SUGGESTION -> "Sugestão";
-                case BUG        -> "Bug / Problema";
-                case GENERAL    -> "Geral";
-            };
-            String npsText = feedback.getNpsScore() != null ? String.valueOf(feedback.getNpsScore()) + " / 10" : "—";
-
-            String html = loadTemplate(TEMPLATE_FEEDBACK)
-                    .replace("{{senderName}}",    sender.getUsername())
-                    .replace("{{senderEmail}}",   sender.getEmail())
-                    .replace("{{feedbackType}}",  typeLabel)
-                    .replace("{{npsScore}}",      npsText)
-                    .replace("{{feedbackMessage}}", feedback.getMessage())
-                    .replace("{{baseUrl}}",       baseUrl);
-
-            sendMimeMessage(admin.getEmail(), "Finance Control — Novo feedback recebido 📬", html);
+            doSendFeedback(admin, sender, feedback);
             log.info("Notificação de feedback enviada para admin {}", admin.getEmail());
         } catch (Exception e) {
             log.error("Falha ao enviar notificação de feedback: {}", e.getMessage());
         }
+    }
+
+    public void sendTestFeedbackEmail(User user) throws MessagingException, IOException {
+        Locale locale = resolveLocale(user.getLanguage());
+        UserFeedback sample = new UserFeedback();
+        sample.setUser(user);
+        sample.setType(FeedbackType.SUGGESTION);
+        sample.setMessage(msg("email.feedback.sampleMessage", null, locale));
+        sample.setNpsScore(9);
+        doSendFeedback(user, user, sample);
+    }
+
+    private void doSendFeedback(User admin,
+                                User sender,
+                                UserFeedback feedback) throws MessagingException, IOException {
+        Locale locale    = resolveLocale(admin.getLanguage());
+        String typeLabel = msg("email.feedback." + feedbackTypeKey(feedback.getType()), null, locale);
+        String npsText   = feedback.getNpsScore() != null ? feedback.getNpsScore() + " / 10" : "-";
+
+        String html = loadTemplate(TEMPLATE_FEEDBACK)
+                .replace("{{emailSubtitle}}",     msg("email.feedback.subtitle",    null, locale))
+                .replace("{{emailSenderLabel}}",  msg("email.feedback.sender",      null, locale))
+                .replace("{{emailTypeLabel}}",    msg("email.feedback.typeLabel",   null, locale))
+                .replace("{{emailNpsLabel}}",     msg("email.feedback.nps",         null, locale))
+                .replace("{{emailMessageLabel}}", msg("email.feedback.message",     null, locale))
+                .replace("{{emailCtaLabel}}",     msg("email.feedback.cta",         null, locale))
+                .replace("{{senderName}}",        sender.getUsername())
+                .replace("{{senderEmail}}",       sender.getEmail())
+                .replace("{{feedbackType}}",      typeLabel)
+                .replace("{{npsScore}}",          npsText)
+                .replace("{{feedbackMessage}}",   feedback.getMessage())
+                .replace("{{baseUrl}}",           baseUrl);
+
+        sendMimeMessage(admin.getEmail(), msg("email.feedback.subject", null, locale), html);
+    }
+
+    private String feedbackTypeKey(FeedbackType type) {
+        return switch (type) {
+            case SUGGESTION -> "suggestion";
+            case BUG        -> "bug";
+            case GENERAL    -> "general";
+        };
     }
 
     private Goal buildSampleGoal() {
@@ -217,25 +241,9 @@ public class EmailService {
         return g;
     }
 
-    private static final String GOAL_MILESTONE_BODY_KEY = "email.goal.milestone.body";
-
-    private String buildGoalBody(Goal goal,
-                                 GoalNotificationType type,
-                                 Locale locale) {
-        return switch (type) {
-            case MILESTONE_50     -> msg(GOAL_MILESTONE_BODY_KEY, new Object[]{"50"},              locale);
-            case MILESTONE_75     -> msg(GOAL_MILESTONE_BODY_KEY, new Object[]{"75"},              locale);
-            case MILESTONE_90     -> msg(GOAL_MILESTONE_BODY_KEY, new Object[]{"90"},              locale);
-            case COMPLETED        -> msg("email.goal.completed.body", null,                            locale);
-            case DEADLINE_WARNING -> msg("email.goal.deadline.body",  new Object[]{goal.getEndDate()}, locale);
-            case EXCEEDED         -> msg("email.goal.exceeded.body",  null,                            locale);
-        };
-    }
-
     private String buildProgressBar(double pct,
-                                    GoalNotificationType type,
                                     GoalType goalType) {
-        String color   = progressBarColor(pct, type, goalType);
+        String color   = progressBarColor(pct, goalType);
         double display = Math.min(pct, 100.0);
 
         return String.format(
@@ -246,10 +254,7 @@ public class EmailService {
     }
 
     private String progressBarColor(double pct,
-                                    GoalNotificationType type,
                                     GoalType goalType) {
-        if (type == GoalNotificationType.EXCEEDED) return "#EF4444";
-
         if (goalType == GoalType.EXPENSE_LIMIT) {
             if (pct >= 90) return "#EF4444";
             if (pct >= 75) return "#F97316";
@@ -257,17 +262,6 @@ public class EmailService {
             return "#2E7D32";
         }
         return pct >= 100 ? "#2E7D32" : "#3B82F6";
-    }
-
-    private String goalTypeKey(GoalNotificationType type) {
-        return switch (type) {
-            case MILESTONE_50     -> "milestone50";
-            case MILESTONE_75     -> "milestone75";
-            case MILESTONE_90     -> "milestone90";
-            case COMPLETED        -> "completed";
-            case DEADLINE_WARNING -> "deadline";
-            case EXCEEDED         -> "exceeded";
-        };
     }
 
     @SuppressWarnings("null")
@@ -290,6 +284,12 @@ public class EmailService {
     private String loadTemplate(String templatePath) throws IOException {
         ClassPathResource resource = new ClassPathResource(templatePath);
         return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    }
+
+    private String formatDate(LocalDate date, Locale locale) {
+        if (date == null) return "";
+        String pattern = "en".equals(locale.getLanguage()) ? "MM/dd/yyyy" : "dd/MM/yyyy";
+        return date.format(DateTimeFormatter.ofPattern(pattern, locale));
     }
 
     @NonNull

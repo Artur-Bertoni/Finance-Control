@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Início | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
   <link href="../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
   <script src="../js/HomePage.js" type="module"></script>
 </head>
 <body>
@@ -32,12 +32,18 @@
     <main class="page-content">
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="accountBalance">Saldo em Conta(s)</div>
-          <div class="stat-card-value" id="home-total-box">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="accountBalance">Saldo em Conta(s)</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipAccountBalance" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value" id="home-total-box">0,00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-label" data-i18n="filteredValue">Valor pelo Filtro</div>
-          <div class="stat-card-value" id="filtered-total-box">$ 0,00</div>
+          <div class="stat-card-label">
+            <span data-i18n="filteredValue">Valor pelo Filtro</span>
+            <button type="button" class="info-hint-btn" data-i18n-title="tipFilteredValue" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+          </div>
+          <div class="stat-card-value" id="filtered-total-box">0,00</div>
         </div>
       </div>
 

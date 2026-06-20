@@ -20,33 +20,28 @@ public class FinnyController extends BaseController {
 
     private final FinnyAgentService agentService;
 
-    /** Gera/atualiza e devolve as dicas mais relevantes do dia para o usuário. */
     @GetMapping("/tips")
     public ResponseEntity<List<FinnyTipResponse>> getTips(HttpSession session) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         return ResponseEntity.ok(agentService.generateTips(requireUserId(session), lang));
     }
 
-    /** Marca a dica como mostrada (NEW → SHOWN) quando ela aparece no popup. */
     @PostMapping("/tips/{id}/shown")
     public ResponseEntity<FinnyTipResponse> markShown(@PathVariable @NonNull Long id,
                                                       HttpSession session) {
         return ResponseEntity.ok(agentService.markShown(requireUserId(session), id));
     }
 
-    /** Histórico completo de dicas (mais recentes primeiro). */
     @GetMapping("/tips/history")
     public ResponseEntity<List<FinnyTipResponse>> getHistory(HttpSession session) {
         return ResponseEntity.ok(agentService.getHistory(requireUserId(session)));
     }
 
-    /** Resumo de progresso (contagens, distribuição por categoria, saúde financeira atual). */
     @GetMapping("/tips/stats")
     public ResponseEntity<FinnyStatsResponse> getStats(HttpSession session) {
         return ResponseEntity.ok(agentService.getStats(requireUserId(session)));
     }
 
-    /** Feedback do usuário sobre uma dica (ajusta o aprendizado do agente). */
     @PostMapping("/tips/{id}/feedback")
     public ResponseEntity<FinnyTipResponse> feedback(@PathVariable @NonNull Long id,
                                                      @RequestBody FinnyFeedbackRequest req,

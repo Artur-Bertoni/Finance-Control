@@ -71,7 +71,6 @@ class CustomOAuth2AuthorizationRequestResolverTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/oauth2/authorization/google");
         request.setParameter("link", "true");
-        // no auth cookie -> no user id
 
         OAuth2AuthorizationRequest result = resolver.resolve(request);
 

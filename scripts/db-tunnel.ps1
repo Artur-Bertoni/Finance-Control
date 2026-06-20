@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   O MySQL roda dentro do container `db` e é publicado APENAS em 127.0.0.1:3306
-  no host de produção (ver docker-compose.yml) — não fica exposto na internet.
+  no host de produção (ver docker-compose.yml) - não fica exposto na internet.
   Este script encaminha a porta local 3307 para o 3306 do servidor via SSH.
 
   Enquanto a janela estiver aberta, conecte um cliente (DBeaver, MySQL Workbench,

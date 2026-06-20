@@ -25,11 +25,14 @@ public class Category {
     private String iconKey;
 
     @Column(name = "internal_name")
-    private String internalName; // legacy column — not set for new records
+    private String internalName;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryAlias> aliases = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "seeded", nullable = false)
+    private boolean seeded = false;
 }

@@ -181,6 +181,7 @@ button { font-family: inherit; }
 }
 
 .sidebar-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -219,6 +220,24 @@ button { font-family: inherit; }
 .sidebar-link.active svg { opacity: 1; }
 .sidebar-link:hover .ph,
 .sidebar-link.active .ph { opacity: 1; }
+
+.sidebar-advanced-toggle { font-family: inherit; padding-left: 24px; }
+.sidebar-advanced-caret {
+  margin-left: auto;
+  font-size: 13px !important;
+  transition: transform var(--t);
+}
+.sidebar-advanced-toggle--open .sidebar-advanced-caret { transform: rotate(180deg); }
+.sidebar-advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 2px 24px;
+  padding-left: 6px;
+  border-left: 1.5px solid rgba(255,255,255,.12);
+}
+.sidebar-advanced[hidden] { display: none; }
+.sidebar-advanced .sidebar-link { padding-left: 12px; }
 
 .sidebar-finny-icon {
   width: 18px;
@@ -566,6 +585,9 @@ button { font-family: inherit; }
   letter-spacing: .5px;
   color: var(--text-muted);
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .stat-card-value {
@@ -741,6 +763,10 @@ body.page-dashboard .filter-section {
   min-height: 0;
   overflow: auto;
 }
+/* largura mínima da tabela só no desktop; no mobile vira cartões (ver media query) */
+@media (min-width: 641px) {
+  #review-table { min-width: 700px; }
+}
 #review-table thead th {
   position: sticky;
   top: 0;
@@ -765,6 +791,77 @@ body.page-dashboard .filter-section {
 }
 
 .form-grid.two-col { grid-template-columns: 1fr 1fr; }
+
+.form-more-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 2px 0;
+  justify-self: start;
+}
+.form-more-toggle:hover span { text-decoration: underline; }
+.form-more-caret { font-size: 13px; transition: transform var(--t); }
+.form-more-toggle--open .form-more-caret { transform: rotate(180deg); }
+.form-collapse { display: grid; gap: 16px; }
+.form-collapse[hidden] { display: none; }
+
+/* ===== ORÇAMENTO ===== */
+.budget-form-card { margin-bottom: 20px; }
+.budget-form {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.budget-form .field { flex: 1; min-width: 160px; }
+.budget-form-hint {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.budget-list { display: flex; flex-direction: column; gap: 16px; }
+.budget-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.budget-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.budget-item-icon { font-size: 18px; color: var(--text-secondary); }
+.budget-item-name { font-weight: 600; color: var(--text); }
+.budget-item-actions { margin-left: auto; display: flex; gap: 2px; }
+.budget-item-bar {
+  height: 8px;
+  background-color: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.budget-item-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width var(--t);
+}
+.budget-item-values {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.budget-item-percent { font-weight: 700; }
+.budget-item-percent.budget-over { color: var(--debit); }
 
 .field {
   display: flex;
@@ -840,7 +937,7 @@ input:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-input[type="number"] { -moz-appearance: textfield; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appearance: none; }
 
@@ -936,6 +1033,9 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 }
 
 .radio-option input[type="radio"] { display: none; }
+
+#debit-option .ph-arrow-down  { color: var(--debit); }
+#credit-option .ph-arrow-up   { color: var(--credit); }
 
 /* ===== FIELD ERROR STATE ===== */
 .field-error {
@@ -1571,6 +1671,137 @@ body.user-guest .toast-container {
 @keyframes scaleIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
 @keyframes spin    { to   { transform: rotate(360deg); } }
 
+/* ===== ADMIN (hub) ===== */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.admin-card-icon {
+  font-size: 24px;
+  color: var(--primary);
+  background-color: var(--primary-soft, rgba(46,125,50,.12));
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+.admin-card-title { font-size: 15.5px; font-weight: 700; color: var(--text); }
+.admin-card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; flex: 1; }
+.admin-email-form { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.admin-email-form .field { width: 100%; }
+.admin-btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ===== ONBOARDING - tour guiado do Finny (spotlight) ===== */
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  pointer-events: none;
+}
+
+/* Camada que bloqueia cliques no app durante o tour (transparente; vira escura só quando não há destaque). */
+.tour-blocker {
+  position: fixed;
+  inset: 0;
+  pointer-events: auto;
+  background-color: transparent;
+  transition: background-color .2s ease;
+}
+.tour-blocker--dim { background-color: rgba(0,0,0,.6); }
+
+/* Recorte que destaca o elemento - o box-shadow gigante escurece todo o resto. */
+.tour-spotlight {
+  position: fixed;
+  border-radius: 10px;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,.6);
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  pointer-events: none;
+  transition: top .25s ease, left .25s ease, width .25s ease, height .25s ease;
+}
+
+.tour-bubble {
+  position: fixed;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 18px 18px 14px;
+  pointer-events: auto;
+  z-index: 4001;
+  animation: scaleIn .18s ease;
+}
+.tour-bubble--center {
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%);
+}
+
+.tour-skip {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tour-skip:hover { color: var(--text-secondary); }
+
+.tour-bubble-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.tour-finny-svg { width: 34px; height: auto; }
+.tour-bubble-name { font-weight: 800; color: var(--text); font-size: 15px; }
+
+.tour-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.tour-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.tour-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--border);
+  transition: all var(--t);
+}
+.tour-dot--active {
+  background-color: var(--primary);
+  width: 18px;
+  border-radius: 4px;
+}
+
+.tour-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .loading-overlay {
   position: fixed;
   inset: 0;
@@ -1885,7 +2116,7 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
 }
 
 
-/* ===== HOME PAGE — STATIC LAYOUT ===== */
+/* ===== HOME PAGE - STATIC LAYOUT ===== */
 body.page-home { overflow: hidden; }
 
 body.page-home .app-shell { height: 100vh; overflow: hidden; }
@@ -2526,7 +2757,7 @@ body.page-finny .transactions-list {
   overflow: visible;
 }
 
-/* Campo de mês (select nativo) — largura contida; cobre ambas as classes do Flatpickr */
+/* Campo de mês (select nativo) - largura contida; cobre ambas as classes do Flatpickr */
 .flatpickr-calendar .flatpickr-current-month select.flatpickr-monthDropdown-months,
 .flatpickr-calendar .flatpickr-current-month select.cur-month {
   color: var(--text);
@@ -2552,7 +2783,7 @@ body.page-finny .transactions-list {
   background: var(--primary-50);
 }
 
-/* Campo de ano — ao lado do mês */
+/* Campo de ano - ao lado do mês */
 .flatpickr-calendar .flatpickr-current-month .numInputWrapper {
   flex: 0 0 auto;
   width: 62px;
@@ -2632,6 +2863,7 @@ body.page-finny .transactions-list {
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
 
 .language-trigger {
@@ -2667,8 +2899,8 @@ body.page-finny .transactions-list {
 .language-menu {
   display: none;
   position: absolute;
-  bottom: 48px;
-  right: 8px;
+  bottom: calc(100% + 6px);
+  right: 0;
   flex-direction: column;
   gap: 4px;
   background: var(--sidebar-bg);
@@ -2795,7 +3027,7 @@ body.page-finny .transactions-list {
   user-select: none;
 }
 
-/* ===== DASHBOARD PAGES — STATIC LAYOUT ===== */
+/* ===== DASHBOARD PAGES - STATIC LAYOUT ===== */
 body.page-dashboard { overflow: hidden; }
 body.page-dashboard .app-shell { height: 100vh; overflow: hidden; }
 body.page-dashboard .main-container { height: 100vh; min-height: unset; overflow: hidden; }
@@ -2813,7 +3045,7 @@ body.page-dashboard .dashboard-items-scroll {
   overflow-y: auto;
 }
 
-/* ===== STATEMENT IMPORT REVIEW — STATIC LAYOUT ===== */
+/* ===== STATEMENT IMPORT REVIEW - STATIC LAYOUT ===== */
 body.review-mode { overflow: hidden; }
 body.review-mode .app-shell { height: 100vh; overflow: hidden; }
 body.review-mode .main-container { height: 100vh; min-height: unset; overflow: hidden; }
@@ -3328,7 +3560,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
 }
 
 /* === NOTIFICATION BADGE === */
-.sidebar-link { position: relative; }
 .notification-badge {
   position: absolute;
   top: 50%;
@@ -3543,7 +3774,9 @@ body.page-charts .stat-card-value { font-size: 18px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9900;
+  /* flutua acima de todo o conteúdo, mas abaixo do menu lateral (z-index 100)
+     e do seu overlay (z-index 99) — fixo no viewport em mobile e desktop */
+  z-index: 90;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   padding: 0;
 }
@@ -3568,7 +3801,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
-  z-index: 9900;
+  z-index: 90;
   overflow: hidden;
   animation: mascot-slide-up 0.2s ease;
 }
@@ -3901,7 +4134,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   }
 }
 
-/* === FINNY AGENT — feedback, navegação e histórico === */
+/* === FINNY AGENT - feedback, navegação e histórico === */
 
 /* Barra de feedback (👍 👎 ✕) no painel e no widget do dashboard */
 .finny-feedback-bar {
@@ -4063,7 +4296,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   A second copy is offset by (130px, 130px), filling the gaps and
   creating diagonal rows when both layers repeat together.
 */
-.page-content {
+main.page-content {
   --_fp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg fill='none' stroke='%232E7D32' stroke-width='2' opacity='0.09' transform='rotate(-25 130 130)'%3E%3Crect x='20' y='42' width='11' height='25' rx='2'/%3E%3Crect x='35' y='28' width='11' height='39' rx='2'/%3E%3Crect x='50' y='35' width='11' height='32' rx='2'/%3E%3Crect x='65' y='14' width='11' height='53' rx='2'/%3E%3Ccircle cx='192' cy='52' r='24'/%3E%3Ccircle cx='192' cy='52' r='15'/%3E%3Cpolyline points='36,215 55,188 74,215' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='55' y1='188' x2='55' y2='237' stroke-linecap='round'/%3E%3Cpolyline points='150,242 167,222 184,229 201,207 218,214 235,194' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='150' cy='242' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='167' cy='222' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='201' cy='207' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='235' cy='194' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3C/g%3E%3C/svg%3E");
   background-image: var(--_fp), var(--_fp);
   background-size: 260px 260px, 260px 260px;
@@ -4313,6 +4546,13 @@ body.page-charts .stat-card-value { font-size: 18px; }
   color: var(--text-muted);
 }
 
+/* Botão "Prefiro não responder" selecionado */
+#nps-skip-btn.active {
+  border-color: var(--primary-500);
+  background: var(--primary-500);
+  color: #fff;
+}
+
 /* ── Feedback Admin ───────────────────────────────────────────────────────── */
 
 .feedback-admin-list {
@@ -4412,4 +4652,181 @@ body.page-charts .stat-card-value { font-size: 18px; }
   padding: 16px 0;
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS
+   Mantido no fim do arquivo para vencer, por ordem de origem, as regras
+   de viewport fixo de body.page-charts (mesma especificidade).
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* --- Dashboard: rola a página (só na vertical), cards numéricos em quadrado e gráficos maiores --- */
+  /* Modelo de rolagem do DOCUMENTO. Importante: NÃO colocar overflow no <body>,
+     senão ele vira container de scroll e o FAB (filho do body, position:fixed)
+     passa a rolar junto. min-width:0 evita o "estouro" horizontal do flex. */
+  body.page-charts,
+  body.page-charts .app-shell,
+  body.page-charts .main-container {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    min-width: 0;
+  }
+  /* corta a sobra horizontal SEM virar container de scroll (clip ≠ hidden):
+     mantém o scroll vertical no documento e o FAB fixo ao viewport */
+  body.page-charts .main-container { overflow-x: clip; }
+  body.page-charts .page-content {
+    height: auto;
+    overflow-x: clip;
+    overflow-y: visible;
+    min-width: 0;
+    max-width: 100%;
+    /* folga no rodapé p/ o FAB flutuar sobre espaço vazio, não sobre o último card */
+    padding: 14px 16px 96px;
+  }
+  body.page-charts .stat-cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  body.page-charts .stat-card { padding: 12px 14px; min-width: 0; }
+  body.page-charts .stat-card-label { font-size: 10.5px; }
+  body.page-charts .stat-card-value { font-size: 17px; }
+
+  .dashboard-charts-grid {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    gap: 12px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .dashboard-charts-grid .card { overflow: visible; padding: 14px 16px; min-width: 0; max-width: 100%; }
+  .dashboard-charts-grid .chart-container { min-height: 240px; min-width: 0; }
+  .chart-donut-wrap { flex-direction: column; min-width: 0; }
+  .chart-donut-wrap .chart-container { min-height: 220px; }
+  .donut-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0;
+    max-width: 100%;
+    max-height: none;
+  }
+  /* nomes longos de categoria não podem estourar a largura da tela */
+  .donut-legend-item { max-width: 100%; }
+
+  /* --- FinnyCenter: 4 cards de progresso lado a lado, sem quebra --- */
+  .finny-stats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .finny-stat-card { padding: 10px 4px; }
+  .finny-stat-value { font-size: 16px; }
+  .finny-stat-label { font-size: 9.5px; }
+
+  /* --- Feedback: notas 0–10 lado a lado, sem quebra --- */
+  .feedback-nps-row { flex-direction: column; align-items: stretch; }
+  .feedback-nps-buttons { flex-wrap: nowrap; gap: 4px; width: 100%; }
+  .feedback-nps-btn { flex: 1 1 0; width: auto; min-width: 0; padding: 0; font-size: 12px; }
+  #nps-skip-btn { align-self: flex-start; }
+}
+
+/* --- Importação de extrato: tabela de revisão vira cartões no mobile --- */
+@media (max-width: 640px) {
+  /* permite que o container encolha até a largura da tela (item flex que
+     senão cresceria com o min-content do conteúdo e estouraria o viewport) */
+  .main-container { min-width: 0; }
+  /* trava dura na largura da tela: nada pode empurrar o conteúdo para fora
+     do viewport (era a causa do corte à direita, inclusive do subtítulo) */
+  body.review-mode .main-container {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  body.review-mode .page-content,
+  body.review-mode #review-section,
+  body.review-mode #review-section .form-card,
+  body.review-mode #review-section .form-card.wide,
+  body.review-mode .review-table-wrapper {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  #review-table { min-width: 0 !important; width: 100% !important; display: block; }
+  #review-table thead { display: none; }
+  #review-table tbody { display: block; width: 100%; }
+  #review-table tr {
+    display: block;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    background: var(--surface);
+  }
+  /* rótulo (col. esquerda) + valor (minmax(0,1fr) permite quebrar e nunca sair da tela) */
+  #review-table td {
+    display: grid;
+    grid-template-columns: minmax(80px, 34%) minmax(0, 1fr);
+    align-items: center;
+    gap: 4px 12px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-right: none !important;
+    text-align: left !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding: 5px 0 !important;
+  }
+  #review-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--text-muted);
+    min-width: 0;
+  }
+  /* nada na coluna de valor pode estourar a largura da tela */
+  #review-table td > *,
+  #review-table td .tx-badge { max-width: 100%; min-width: 0; }
+  /* categoria e local: rótulo em cima, campo ocupa a largura toda */
+  #review-table td.review-cell-cat,
+  #review-table td.review-cell-locale {
+    display: block;
+  }
+  #review-table td.review-cell-cat::before,
+  #review-table td.review-cell-locale::before {
+    display: block;
+    margin-bottom: 4px;
+  }
+  #review-table td.review-cell-cat > div,
+  #review-table td.review-cell-locale > div { width: 100%; min-width: 0; }
+
+  /* botões de ação centralizados no mobile */
+  #review-section .form-actions { justify-content: center; }
+}
+
+/* --- Paginação no mobile: só um dropdown "1/10" (sem setas, sem "1–15 de 100") --- */
+@media (max-width: 640px) {
+  /* cabeçalho de card quebra linha p/ a paginação não estourar ao lado do título */
+  .card-header { flex-wrap: wrap; gap: 8px 10px; }
+  .card-header .pagination { margin-left: auto; }
+
+  .pagination { gap: 0; justify-content: center; }
+  .pagination .pagination-btn,
+  .pagination .pagination-info { display: none; }
+  .pagination .cs-wrapper { min-width: 0; }
+  .pagination .cs-trigger {
+    height: 30px;
+    font-size: 13px;
+    min-width: 60px;
+    padding: 0 24px 0 10px;
+    background-position: right 6px center;
+  }
+  .pagination .cs-option { padding: 7px 12px; font-size: 13px; }
+
+  /* FeedbackAdmin (admin) usa setas + rótulo, sem dropdown: mantém navegável, só compacta */
+  .pagination-row { gap: 8px; padding: 12px 0; font-size: 12px; flex-wrap: wrap; }
 }

@@ -25,8 +25,9 @@ export function init() {
         loadGoal(goalId)
     }
 
-    document.getElementById('type-select')?.addEventListener('change', toggleExceedRow)
+    document.getElementById('type-select')?.addEventListener('change', () => { toggleExceedRow(); updateGoalTypeHint() })
     toggleExceedRow()
+    updateGoalTypeHint()
 
     document.getElementById('cancel-btn')?.addEventListener('click', () =>
         navigate('/pages/lists/GoalList.html')
@@ -35,7 +36,7 @@ export function init() {
     document.getElementById('save-btn')?.addEventListener('click', () => handleSave(goalId))
 
     setupDirtyGuard()
-    I18n.onChange(() => { refreshI18nSelectOptions(); InputMasks.reformatAll() })
+    I18n.onChange(() => { refreshI18nSelectOptions(); InputMasks.reformatAll(); updateGoalTypeHint() })
 }
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
@@ -93,6 +94,7 @@ function loadGoal(goalId) {
     const typeSelect = document.getElementById('type-select')
     typeSelect.value = goal.type ?? ''
     toggleExceedRow()
+    updateGoalTypeHint()
 
     setFlatpickrDate('start-date-input', goal.startDate)
     setFlatpickrDate('end-date-input',   goal.endDate)
@@ -261,6 +263,19 @@ function toggleExceedRow() {
     const row  = document.getElementById('notify-exceed-row')
     if (!row) return
     row.style.display = type === 'expense_limit' ? '' : 'none'
+}
+
+const GOAL_TYPE_HINT_KEYS = {
+    'expense_limit': 'goalTypeHintExpenseLimit',
+    'savings':       'goalTypeHintSavings',
+    'income':        'goalTypeHintIncome',
+}
+
+function updateGoalTypeHint() {
+    const hint = document.getElementById('goal-type-hint')
+    if (!hint) return
+    const type = document.getElementById('type-select')?.value
+    hint.textContent = GOAL_TYPE_HINT_KEYS[type] ? I18n.t(GOAL_TYPE_HINT_KEYS[type]) : ''
 }
 
 function refreshI18nSelectOptions() {

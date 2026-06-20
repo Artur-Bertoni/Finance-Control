@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
   <title>Local | Finance Control</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
   <link href="../../styles/styles.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
   <script src="../../js/views/TransactionLocaleView.js" type="module"></script>
 </head>
 <body>
@@ -28,7 +28,7 @@
         <div class="detail-grid">
           <div class="detail-field">
             <label for="detail-name" data-i18n="localeName">Nome</label>
-            <p id="detail-name">—</p>
+            <p id="detail-name">-</p>
           </div>
           <div class="detail-field" id="icon-row" style="display:none">
             <span class="detail-label" data-i18n="categoryIcon">Ícone</span>
@@ -36,7 +36,7 @@
           </div>
           <div class="detail-field">
             <label for="detail-address" data-i18n="localeAddress">Endereço</label>
-            <p id="detail-address">—</p>
+            <p id="detail-address">-</p>
           </div>
         </div>
       </div>

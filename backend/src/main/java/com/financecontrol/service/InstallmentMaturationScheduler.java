@@ -29,7 +29,6 @@ public class InstallmentMaturationScheduler {
         this.zoneId = ZoneId.of(timezone);
     }
 
-    /** Aplica ao saldo, uma vez por dia, as parcelas futuras cuja data de vencimento já chegou. */
     @Transactional
     @Scheduled(cron = "0 10 0 * * *", zone = "${app.scheduler.timezone:America/Sao_Paulo}")
     public void matureDueInstallments() {

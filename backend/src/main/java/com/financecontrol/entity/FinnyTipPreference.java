@@ -6,11 +6,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * O "aprendizado" do agente por usuário: um peso por categoria de dica.
- * Começa em 1.0 e é ajustado pelo feedback (explícito e implícito). Quanto maior
- * o peso, mais o agente prioriza dicas daquela categoria para este usuário.
- */
 @Entity
 @Table(name = "finny_tip_preference",
        uniqueConstraints = @UniqueConstraint(name = "uq_finny_pref_user_category",

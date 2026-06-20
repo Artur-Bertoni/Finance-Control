@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/** Sem dados no período → incentiva o usuário a registrar receitas e despesas. */
 @Component
 public class EngagementRule implements TipRule {
 

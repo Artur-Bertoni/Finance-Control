@@ -42,7 +42,6 @@ class AchievementServiceTest {
 
         List<AchievementResponse> result = achievementService.checkAndList(1L);
 
-        // all AchievementType values must be represented
         assertThat(result).hasSize(AchievementType.values().length);
         assertThat(result).allMatch(r -> !r.earned());
     }
@@ -53,7 +52,7 @@ class AchievementServiceTest {
     void checkAndList_primeiraContaCriada_desbloqueia_FIRST_ACCOUNT() {
         stubNoAchievements();
         stubAllCountsZero();
-        when(accountRepository.countByUserId(1L)).thenReturn(1L);
+        when(accountRepository.countByUserIdAndSeededFalse(1L)).thenReturn(1L);
         when(achievementRepository.save(any(UserAchievement.class))).thenAnswer(inv -> inv.getArgument(0));
 
         achievementService.checkAndList(1L);
@@ -187,17 +186,15 @@ class AchievementServiceTest {
 
     @Test
     void checkAndList_conquistaJaObtida_naoSalvaNovamente() {
-        // FIRST_ACCOUNT already earned
         UserAchievement ua = new UserAchievement(1L, AchievementType.FIRST_ACCOUNT);
         when(achievementRepository.findByUserId(1L)).thenReturn(List.of(ua));
         when(achievementRepository.earnedSet(1L))
                 .thenReturn(new java.util.HashSet<>(java.util.Set.of(AchievementType.FIRST_ACCOUNT)));
         stubAllCountsZero();
-        when(accountRepository.countByUserId(1L)).thenReturn(1L); // would qualify again
+        when(accountRepository.countByUserIdAndSeededFalse(1L)).thenReturn(1L);
 
         achievementService.checkAndList(1L);
 
-        // save should NOT be called for FIRST_ACCOUNT
         verify(achievementRepository, never()).save(argThat(
                 u -> u.getAchievementType() == AchievementType.FIRST_ACCOUNT));
     }
@@ -242,10 +239,10 @@ class AchievementServiceTest {
     }
 
     private void stubAllCountsZero() {
-        when(accountRepository.countByUserId(1L)).thenReturn(0L);
+        when(accountRepository.countByUserIdAndSeededFalse(1L)).thenReturn(0L);
         when(transactionRepository.countByUserId(1L)).thenReturn(0L);
         when(goalRepository.countByUserId(1L)).thenReturn(0L);
-        when(categoryRepository.countByUserId(1L)).thenReturn(0L);
+        when(categoryRepository.countByUserIdAndSeededFalse(1L)).thenReturn(0L);
         when(goalRepository.countByUserIdAndStatus(1L, GoalStatus.COMPLETED)).thenReturn(0L);
         when(goalRepository.existsByUserIdAndStatusAndEndDateAfter(
                 eq(1L), eq(GoalStatus.COMPLETED), any(LocalDate.class))).thenReturn(false);

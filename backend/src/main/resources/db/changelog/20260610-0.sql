@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset artur:20260610-0
---comment: Finny AI agent — tabelas de histórico de dicas (finny_tip) e preferências aprendidas (finny_tip_preference)
+--comment: Finny AI agent - tabelas de histórico de dicas (finny_tip) e preferências aprendidas (finny_tip_preference)
 
 CREATE TABLE finny_tip
 (

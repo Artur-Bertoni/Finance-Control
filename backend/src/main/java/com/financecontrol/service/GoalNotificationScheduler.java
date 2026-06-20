@@ -104,11 +104,7 @@ public class GoalNotificationScheduler {
         if (!Boolean.TRUE.equals(goal.getNotifyOnDeadline())) return;
         if (goal.getEndDate() == null) return;
         if (today.isBefore(goal.getEndDate().minusDays(7))) return;
-        if (goalNotificationLogRepository.existsByGoalIdAndNotificationType(goal.getId(), GoalNotificationType.DEADLINE_WARNING)) return;
-
-        if (user.isGoalEmailNotificationEnabled()) {
-            emailService.sendGoalNotification(user, goal, GoalNotificationType.DEADLINE_WARNING, current);
-        }
+        if (goalNotificationLogRepository.existsByGoalIdAndNotificationType(goal.getId(), GoalNotificationType.GOAL_DEADLINE_WARNING)) return;
 
         appNotificationService.createGoalNotification(
                 user.getId(), goal.getId(), goal.getName(),
@@ -116,7 +112,7 @@ public class GoalNotificationScheduler {
 
         GoalNotificationLog entry = new GoalNotificationLog();
         entry.setGoalId(goal.getId());
-        entry.setNotificationType(GoalNotificationType.DEADLINE_WARNING);
+        entry.setNotificationType(GoalNotificationType.GOAL_DEADLINE_WARNING);
         entry.setSentAt(LocalDateTime.now());
         goalNotificationLogRepository.save(entry);
 

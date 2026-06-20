@@ -1,11 +1,13 @@
 import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
+import { OnboardingTour } from './components/OnboardingTour.js'
 import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotifications, showToast } from '../utils/FrontendFunctions.js'
 import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 
 const routes = {
     '/pages/Dashboard.html':                          () => import('./Dashboard.js'),
+    '/pages/Budget.html':                             () => import('./Budget.js'),
     '/pages/HomePage.html':                           () => import('./HomePage.js'),
     '/pages/StatementImport.html':                    () => import('./StatementImport.js'),
     '/pages/FinnyCenter.html':                        () => import('./FinnyCenter.js'),
@@ -32,6 +34,7 @@ const routes = {
     '/pages/views/TransactionView.html':              () => import('./views/TransactionView.js'),
     '/pages/views/UserView.html':                     () => import('./views/UserView.js'),
     '/pages/Feedback.html':                           () => import('./Feedback.js'),
+    '/pages/admin/Admin.html':                        () => import('./admin/Admin.js'),
     '/pages/admin/FeedbackAdmin.html':                () => import('./admin/FeedbackAdmin.js'),
 }
 
@@ -181,3 +184,5 @@ if (pendingUrl) {
 } else {
     await navigate('/pages/HomePage.html')
 }
+
+OnboardingTour.maybeStart()

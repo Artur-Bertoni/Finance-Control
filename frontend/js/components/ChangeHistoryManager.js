@@ -1,5 +1,5 @@
 import { I18n } from '../i18n.js'
-import { formatCurrency, formatDateTime } from '../../utils/FrontendFunctions.js'
+import { formatMoney, formatDateTime } from '../../utils/FrontendFunctions.js'
 
 const MONEY_FIELDS   = new Set(['balance', 'value', 'targetAmount'])
 const DATE_FIELDS    = new Set(['date', 'startDate', 'endDate'])
@@ -68,7 +68,6 @@ function _clone(id) {
     return document.getElementById(id).content.firstElementChild.cloneNode(true)
 }
 
-/** Preenche um <span> com o valor formatado (texto, ou um <em>/<i> quando aplicável). */
 function _setValue(span, fieldName, raw) {
     if (raw === null || raw === undefined || raw === '') {
         const em = document.createElement('em')
@@ -88,7 +87,7 @@ function _setValue(span, fieldName, raw) {
     let text = raw
     if (MONEY_FIELDS.has(fieldName)) {
         const n = parseFloat(raw)
-        text = isNaN(n) ? raw : `$ ${formatCurrency(Math.abs(n))}`
+        text = isNaN(n) ? raw : formatMoney(Math.abs(n))
     } else if (DATE_FIELDS.has(fieldName)) {
         const parts = raw.split('-')
         text = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : raw
@@ -139,7 +138,7 @@ export const ChangeHistoryManager = {
 
         const hasCreationLog = groups?.some(g => g.creation)
         if (!hasCreationLog && createdAt) {
-            timeline.appendChild(_creationGroup(`${I18n.t('histCreation')} — ${formatDateTime(createdAt)}`))
+            timeline.appendChild(_creationGroup(`${I18n.t('histCreation')} - ${formatDateTime(createdAt)}`))
         }
 
         container.appendChild(timeline)
@@ -170,22 +169,21 @@ function _creationGroup(labelText) {
     return g
 }
 
-/** Constrói o elemento de um grupo do histórico (criação / troca de senha / alterações). */
 function _groupElement(group) {
     const dateStr = formatDateTime(group.changedAt)
 
     if (group.creation) {
-        return _creationGroup(`${I18n.t('histCreation')} — ${dateStr}`)
+        return _creationGroup(`${I18n.t('histCreation')} - ${dateStr}`)
     }
     if (group.passwordChange) {
         const g = _clone('tpl-hist-password')
-        g.querySelector('.history-group-label').textContent = `${I18n.t('histChange')} — ${dateStr}`
+        g.querySelector('.history-group-label').textContent = `${I18n.t('histChange')} - ${dateStr}`
         g.querySelector('.history-field-name').textContent = I18n.t('histPasswordChanged')
         return g
     }
     if (group.changes && group.changes.length > 0) {
         const g = _clone('tpl-hist-change-group')
-        g.querySelector('.history-group-label').textContent = `${I18n.t('histChange')} — ${dateStr}`
+        g.querySelector('.history-group-label').textContent = `${I18n.t('histChange')} - ${dateStr}`
         const ul = g.querySelector('.history-changes')
         for (const ch of group.changes) {
             const li = _clone('tpl-hist-change-item')

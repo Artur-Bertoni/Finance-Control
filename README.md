@@ -20,7 +20,7 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 | E-mail | Spring Mail (SMTP) | - |
 | Frontend | HTML + CSS + JavaScript (ES6 modules, SPA) | - |
 | HTTP client | jQuery | 3.6.0 |
-| Deploy (produção) | Railway — 1 serviço web (Spring serve front + API) + MySQL | - |
+| Deploy (produção) | Railway - 1 serviço web (Spring serve front + API) + MySQL | - |
 | Proxy (dev local) | Node.js | - |
 | Proxy / TLS (self-host) | Nginx | alpine |
 | Build | Maven | 3.x |
@@ -42,7 +42,7 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 
 ## Rodando com Docker
 
-> **Produção roda no Railway** (1 serviço web + MySQL) — ver [Deploy em produção](#deploy-em-produção).
+> **Produção roda no Railway** (1 serviço web + MySQL) - ver [Deploy em produção](#deploy-em-produção).
 > A stack `docker-compose` abaixo (`db` + `api` + `web`/Nginx com TLS) é a opção de **self-host**
 > em VPS própria. Para desenvolver no dia a dia, use [Rodando localmente](#rodando-localmente-com-debug),
 > que sobe só o banco via Docker.
@@ -152,23 +152,23 @@ Browser :8080  →  proxy-server.js  →  /api/*  →  Spring Boot :8081  →  M
 
 O sistema roda no **Railway**, com **dois serviços**:
 
-- **web** — buildado a partir de `Dockerfile.railway`: o Maven empacota o backend e copia `frontend/` para `resources/static`; assim o **Spring Boot serve o frontend e a API no mesmo processo** (escuta na porta `$PORT` injetada pelo Railway; o TLS é terminado na borda do Railway, sem Nginx).
-- **MySQL** — banco gerenciado (plugin do Railway).
+- **web** - buildado a partir de `Dockerfile.railway`: o Maven empacota o backend e copia `frontend/` para `resources/static`; assim o **Spring Boot serve o frontend e a API no mesmo processo** (escuta na porta `$PORT` injetada pelo Railway; o TLS é terminado na borda do Railway, sem Nginx).
+- **MySQL** - banco gerenciado (plugin do Railway).
 
 ### Configuração
 
 1. Conecte o repositório Git ao serviço **web** e aponte o Dockerfile para `Dockerfile.railway`.
-2. Defina as variáveis de ambiente no painel do serviço web (não há `.env` em produção): `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `APP_BASE_URL`, SMTP e — se usar login social — `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`. Use o **hostname interno** do MySQL (`*.railway.internal`) em `DB_HOST` para evitar a latência do proxy público.
+2. Defina as variáveis de ambiente no painel do serviço web (não há `.env` em produção): `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `APP_BASE_URL`, SMTP e - se usar login social - `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`. Use o **hostname interno** do MySQL (`*.railway.internal`) em `DB_HOST` para evitar a latência do proxy público.
 3. Cada push na branch dispara um novo deploy.
 
 ### Otimizações de performance ativas
 
-- **gzip** via Spring (`server.compression`) — a borda do Railway não comprime, então é isto que reduz CSS/JS/JSON/locales no primeiro carregamento.
+- **gzip** via Spring (`server.compression`) - a borda do Railway não comprime, então é isto que reduz CSS/JS/JSON/locales no primeiro carregamento.
 - **Cache de estáticos** (`spring.web.resources.cache`, `max-age` 1h) com revalidação 304 por `Last-Modified`.
 - **JVM** (`Dockerfile.railway`): `MaxRAMPercentage`, `SerialGC` e `TieredStopAtLevel=1` para menor uso de memória e cold start mais rápido em 1 vCPU.
 - **Backend**: cache de leitura com Caffeine (TTL 10–30 min), `open-in-view=false` e pool HikariCP dimensionado.
 
-> Boa parte da lentidão percebida em planos pequenos vem de fatores de infra, não do código: se o **App Sleeping** estiver ativo, a instância hiberna e o **cold start da JVM** torna o primeiro acesso lento — desative o sleeping (ou use um plano sem hibernação). Garanta também que **web e MySQL estejam na mesma região**.
+> Boa parte da lentidão percebida em planos pequenos vem de fatores de infra, não do código: se o **App Sleeping** estiver ativo, a instância hiberna e o **cold start da JVM** torna o primeiro acesso lento - desative o sleeping (ou use um plano sem hibernação). Garanta também que **web e MySQL estejam na mesma região**.
 
 ### Acessar o banco de produção (Railway CLI)
 
@@ -187,10 +187,10 @@ railway connect MySQL      # abre uma sessão mysql no banco de produção
 
 Como alternativa ao Railway, dá para auto-hospedar com a stack `docker-compose` (Nginx + TLS):
 
-1. **Variáveis** — preencha o `.env` (ver `.env.example`).
-2. **Domínio e TLS** — em `nginx.conf`, troque `seu-dominio.com` e emita o certificado: `sudo certbot --nginx -d seu-dominio.com` (o volume `/etc/letsencrypt` já é montado no container `web`).
-3. **Suba** — `docker compose up --build -d`.
-4. **Banco** — o MySQL é publicado só no loopback (`127.0.0.1:3306`); abra um túnel SSH com `scripts/db-tunnel.ps1 -Server usuario@servidor` e conecte um cliente em `127.0.0.1:3307`.
+1. **Variáveis** - preencha o `.env` (ver `.env.example`).
+2. **Domínio e TLS** - em `nginx.conf`, troque `seu-dominio.com` e emita o certificado: `sudo certbot --nginx -d seu-dominio.com` (o volume `/etc/letsencrypt` já é montado no container `web`).
+3. **Suba** - `docker compose up --build -d`.
+4. **Banco** - o MySQL é publicado só no loopback (`127.0.0.1:3306`); abra um túnel SSH com `scripts/db-tunnel.ps1 -Server usuario@servidor` e conecte um cliente em `127.0.0.1:3307`.
 
 ---
 
@@ -198,7 +198,7 @@ Como alternativa ao Railway, dá para auto-hospedar com a stack `docker-compose`
 
 O banco inicia vazio (sem usuários). Para acessar o sistema:
 
-1. Acesse **http://localhost:8080/pages/Register.html** e crie sua conta — ou use **Continuar com Google** na tela de Login (requer OAuth2 configurado)
+1. Acesse **http://localhost:8080/pages/Register.html** e crie sua conta - ou use **Continuar com Google** na tela de Login (requer OAuth2 configurado)
 2. Após o cadastro/login você é levado ao app (`/pages/AppShell.html#/dashboard`)
 
 > A autenticação é **stateless via JWT**; o login social usa **OAuth2 (Google)**. A senha é armazenada com BCrypt. Cadastros por e-mail passam por verificação de e-mail.
@@ -283,16 +283,16 @@ Todos os endpoints exigem JWT válido, exceto login, criação de usuário e o f
 
 ## Funcionalidades principais
 
-- **Autenticação** — cadastro com verificação de e-mail, login por e-mail/senha (BCrypt) ou Google (OAuth2); sessão stateless via JWT
-- **Transações** — registro de débitos e créditos com categorias, contas, locais e parcelas; transferências entre contas
-- **Importação de extrato** — upload de PDFs bancários (Apache PDFBox) com pré-visualização, detecção de duplicatas e resolução de conflitos antes de confirmar
-- **Dashboard** — gráficos de receitas vs despesas com filtros por período, categoria e conta (resultado cacheado)
-- **Metas Financeiras** — metas de limite de gastos, economia e receita com acompanhamento de progresso e notificações
-- **Conquistas** — sistema de gamificação baseado em hábitos financeiros
-- **Notificações in-app** — pop-ups ao atingir marcos de metas, histórico persistido no banco; e-mail para aviso de prazo (7 dias)
-- **Histórico de alterações** — auditoria de mudanças por entidade
-- **Feedback do usuário** — envio de feedback com painel administrativo de leitura
-- **Mascote Finny** — porquinho cofre como botão flutuante (FAB) com painel de dicas financeiras e central de notificações; dicas rotativas a cada 30 minutos com countdown; página dedicada `/pages/FinnyCenter.html`
-- **Multi-idioma** — interface em Português, Inglês e Espanhol
-- **Tema escuro/claro** — alternância de tema com persistência via localStorage
-- **Atalhos de teclado** — `Alt+1`–`0` e `Alt+Q`–`P` para navegação direta pelos itens da sidebar
+- **Autenticação** - cadastro com verificação de e-mail, login por e-mail/senha (BCrypt) ou Google (OAuth2); sessão stateless via JWT
+- **Transações** - registro de débitos e créditos com categorias, contas, locais e parcelas; transferências entre contas
+- **Importação de extrato** - upload de PDFs bancários (Apache PDFBox) com pré-visualização, detecção de duplicatas e resolução de conflitos antes de confirmar
+- **Dashboard** - gráficos de receitas vs despesas com filtros por período, categoria e conta (resultado cacheado)
+- **Metas Financeiras** - metas de limite de gastos, economia e receita com acompanhamento de progresso e notificações
+- **Conquistas** - sistema de gamificação baseado em hábitos financeiros
+- **Notificações in-app** - pop-ups ao atingir marcos de metas, histórico persistido no banco; e-mail para aviso de prazo (7 dias)
+- **Histórico de alterações** - auditoria de mudanças por entidade
+- **Feedback do usuário** - envio de feedback com painel administrativo de leitura
+- **Mascote Finny** - porquinho cofre como botão flutuante (FAB) com painel de dicas financeiras e central de notificações; dicas rotativas a cada 30 minutos com countdown; página dedicada `/pages/FinnyCenter.html`
+- **Multi-idioma** - interface em Português, Inglês e Espanhol
+- **Tema escuro/claro** - alternância de tema com persistência via localStorage
+- **Atalhos de teclado** - `Alt+1`–`0` e `Alt+Q`–`P` para navegação direta pelos itens da sidebar
