@@ -555,7 +555,7 @@
   "advancedSettings": "Avanzado",
   "txMoreOptions": "Más opciones",
   "budget": "Presupuesto",
-  "budgetSetTitle": "Definir presupuesto de una categoría",
+  "budgetSetTitle": "Definir nuevo presupuesto",
   "budgetMonthlyLimit": "Límite mensual",
   "budgetHint": "Define cuánto piensas gastar al mes en cada categoría y sigue abajo cuánto ya gastaste este mes.",
   "budgetCurrentMonth": "Presupuesto de este mes",

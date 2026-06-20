@@ -1,4 +1,4 @@
-import { doRequest, formatMoney, showToast, showConfirm } from '../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, showToast, showConfirm, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
 
@@ -6,10 +6,18 @@ let budgets    = []
 let categories = []
 
 export function init() {
+    document.body.classList.add('page-budget')
     SidebarManager.initialize()
     loadData()
     document.getElementById('budget-save-btn')?.addEventListener('click', saveBudget)
+    initFilterToggle(() => false)
     I18n.onChange(renderAll)
+}
+
+function openForm() {
+    const section = document.getElementById('budget-form-section')
+    section?.classList.add('open')
+    section?.querySelector('.filter-toggle-btn')?.setAttribute('aria-expanded', 'true')
 }
 
 function loadData() {
@@ -112,6 +120,7 @@ function barColor(pct) {
 }
 
 function startEdit(b) {
+    openForm()
     const sel        = document.getElementById('budget-category')
     const limitInput = document.getElementById('budget-limit')
     sel.value        = b.categoryId

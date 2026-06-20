@@ -22,25 +22,29 @@
     </header>
 
     <main class="page-content">
-      <!-- Definir / editar orçamento -->
-      <div class="card budget-form-card">
-        <div class="card-header">
-          <span class="card-title" data-i18n="budgetSetTitle">Definir orçamento de uma categoria</span>
-        </div>
-        <div class="budget-form">
-          <div class="field">
-            <label for="budget-category" data-i18n="categories">Categoria</label>
-            <select id="budget-category">
-              <option value="" disabled selected data-i18n="selectCategory">Selecione a categoria...</option>
-            </select>
+      <!-- Definir / editar orçamento (recolhível, como os filtros das demais telas) -->
+      <div class="filter-section budget-form-section" id="budget-form-section">
+        <button class="filter-toggle-btn" id="budget-form-toggle-btn" type="button" aria-expanded="false">
+          <i class="ph ph-plus-circle"></i>
+          <span data-i18n="budgetSetTitle">Definir orçamento de uma categoria</span>
+          <i class="ph ph-caret-down filter-toggle-caret"></i>
+        </button>
+        <div class="card budget-form-card">
+          <div class="budget-form">
+            <div class="field">
+              <label for="budget-category" data-i18n="categories">Categoria</label>
+              <select id="budget-category">
+                <option value="" disabled selected data-i18n="selectCategory">Selecione a categoria...</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="budget-limit" data-i18n="budgetMonthlyLimit">Limite mensal</label>
+              <input id="budget-limit" type="text" inputmode="decimal" data-mask="money" placeholder="0,00">
+            </div>
+            <button class="btn btn-primary" id="budget-save-btn" type="button" data-i18n="commonSave">Salvar</button>
           </div>
-          <div class="field">
-            <label for="budget-limit" data-i18n="budgetMonthlyLimit">Limite mensal</label>
-            <input id="budget-limit" type="text" inputmode="decimal" data-mask="money" placeholder="0,00">
-          </div>
-          <button class="btn btn-primary" id="budget-save-btn" type="button" data-i18n="commonSave">Salvar</button>
+          <p class="budget-form-hint" data-i18n="budgetHint">Defina quanto pretende gastar por mês em cada categoria. Acompanhe abaixo quanto já gastou.</p>
         </div>
-        <p class="budget-form-hint" data-i18n="budgetHint">Defina quanto pretende gastar por mês em cada categoria. Acompanhe abaixo quanto já gastou.</p>
       </div>
 
       <!-- Lista do mês -->

@@ -555,7 +555,7 @@
   "advancedSettings": "Advanced",
   "txMoreOptions": "More options",
   "budget": "Budget",
-  "budgetSetTitle": "Set a category budget",
+  "budgetSetTitle": "Set new budget",
   "budgetMonthlyLimit": "Monthly limit",
   "budgetHint": "Set how much you plan to spend each month in each category, and track below how much you've spent this month.",
   "budgetCurrentMonth": "This month's budget",

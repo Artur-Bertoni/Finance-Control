@@ -663,18 +663,21 @@ button { font-family: inherit; }
 }
 
 .filter-section:not(.open) .filter-bar,
-.filter-section:not(.open) .dashboard-search-bar {
+.filter-section:not(.open) .dashboard-search-bar,
+.filter-section:not(.open) .budget-form-card {
   display: none;
 }
 
 .filter-section .filter-bar,
-.filter-section .dashboard-search-bar {
+.filter-section .dashboard-search-bar,
+.filter-section .budget-form-card {
   margin-bottom: 0;
 }
 
 body.page-home .filter-section,
 body.page-charts .filter-section,
-body.page-dashboard .filter-section {
+body.page-dashboard .filter-section,
+body.page-budget .filter-section {
   flex-shrink: 0;
 }
 
@@ -3045,6 +3048,31 @@ body.page-dashboard .dashboard-items-scroll {
   overflow-y: auto;
 }
 
+/* ===== BUDGET - full-height layout with internal scroll ===== */
+body.page-budget { overflow: hidden; }
+body.page-budget .app-shell { height: 100vh; overflow: hidden; }
+body.page-budget .main-container { height: 100vh; min-height: unset; overflow: hidden; }
+body.page-budget .page-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+body.page-budget .budget-list-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.page-budget .budget-list-card .card-header { flex-shrink: 0; }
+body.page-budget .budget-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 /* ===== STATEMENT IMPORT REVIEW - STATIC LAYOUT ===== */
 body.review-mode { overflow: hidden; }
 body.review-mode .app-shell { height: 100vh; overflow: hidden; }
@@ -4726,6 +4754,28 @@ main.page-content {
   .feedback-nps-buttons { flex-wrap: nowrap; gap: 4px; width: 100%; }
   .feedback-nps-btn { flex: 1 1 0; width: auto; min-width: 0; padding: 0; font-size: 12px; }
   #nps-skip-btn { align-self: flex-start; }
+
+  /* --- Home / listas / orçamento no mobile: mantêm o modelo de altura cheia com
+     SCROLL INTERNO (topbar/cabeçalho da página sempre visível), mas usando 100dvh
+     em vez de 100vh — o dvh desconta a barra dinâmica do navegador, então a
+     listagem encaixa na tela sem cortar/sumir no rodapé. Precisa ficar no FIM do
+     arquivo para vencer, por ordem de origem, as regras com 100vh definidas antes
+     (mesma especificidade). */
+  body.page-home .app-shell,
+  body.page-home .main-container,
+  body.page-dashboard .app-shell,
+  body.page-dashboard .main-container,
+  body.page-budget .app-shell,
+  body.page-budget .main-container {
+    height: 100dvh;
+  }
+
+  /* folga inferior dentro da área rolável p/ o último item não ficar sob o FAB do Finny */
+  body.page-home .transactions-list,
+  body.page-dashboard .dashboard-items-scroll,
+  body.page-budget .budget-list {
+    padding-bottom: 72px;
+  }
 }
 
 /* --- Importação de extrato: tabela de revisão vira cartões no mobile --- */
