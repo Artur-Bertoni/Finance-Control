@@ -29,13 +29,12 @@ class GoalNotificationSchedulerTest {
     @Mock GoalRepository                goalRepository;
     @Mock GoalNotificationLogRepository goalNotificationLogRepository;
     @Mock GoalService                   goalService;
-    @Mock EmailService                  emailService;
     @Mock AppNotificationService        appNotificationService;
     @Mock UserRepository                userRepository;
 
     private GoalNotificationScheduler scheduler() {
         return new GoalNotificationScheduler(goalRepository, goalNotificationLogRepository,
-                goalService, emailService, appNotificationService, userRepository, "UTC");
+                goalService, appNotificationService, userRepository, "UTC");
     }
 
     // ── processGoals – sem metas ativas ──────────────────────────────────────
@@ -46,7 +45,7 @@ class GoalNotificationSchedulerTest {
 
         scheduler().processGoals();
 
-        verifyNoInteractions(goalService, emailService, appNotificationService);
+        verifyNoInteractions(goalService, appNotificationService);
     }
 
     // ── processGoals – usuário não encontrado ────────────────────────────────
@@ -61,7 +60,7 @@ class GoalNotificationSchedulerTest {
 
         scheduler().processGoals();
 
-        verifyNoInteractions(emailService, appNotificationService);
+        verifyNoInteractions(appNotificationService);
     }
 
     // ── processGoals – meta expirou + poupança abaixo do alvo → EXPIRED ──────
@@ -144,7 +143,6 @@ class GoalNotificationSchedulerTest {
 
         scheduler().processGoals();
 
-        verify(emailService).sendGoalDeadlineEmail(user, goal, 2000.0);
         verify(appNotificationService).createGoalNotification(
                 eq(1L), eq(3L), eq("Carro"), eq(AppNotificationType.GOAL_DEADLINE_WARNING), isNull());
         verify(goalNotificationLogRepository).save(any());
@@ -168,7 +166,7 @@ class GoalNotificationSchedulerTest {
 
         scheduler().processGoals();
 
-        verifyNoInteractions(emailService, appNotificationService);
+        verifyNoInteractions(appNotificationService);
     }
 
     // ── processGoals – prazo ainda distante, não envia aviso ─────────────────
@@ -187,7 +185,7 @@ class GoalNotificationSchedulerTest {
 
         scheduler().processGoals();
 
-        verifyNoInteractions(emailService, appNotificationService);
+        verifyNoInteractions(appNotificationService);
     }
 
     // ── processGoals – exceção em meta individual não interrompe o loop ───────

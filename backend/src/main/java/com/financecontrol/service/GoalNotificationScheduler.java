@@ -28,7 +28,6 @@ public class GoalNotificationScheduler {
     private final GoalRepository goalRepository;
     private final GoalNotificationLogRepository goalNotificationLogRepository;
     private final GoalService goalService;
-    private final EmailService emailService;
     private final AppNotificationService appNotificationService;
     private final UserRepository userRepository;
     private final ZoneId zoneId;
@@ -36,14 +35,12 @@ public class GoalNotificationScheduler {
     public GoalNotificationScheduler(GoalRepository goalRepository,
                                      GoalNotificationLogRepository goalNotificationLogRepository,
                                      GoalService goalService,
-                                     EmailService emailService,
                                      AppNotificationService appNotificationService,
                                      UserRepository userRepository,
                                      @Value("${app.scheduler.timezone:America/Sao_Paulo}") String timezone) {
         this.goalRepository = goalRepository;
         this.goalNotificationLogRepository = goalNotificationLogRepository;
         this.goalService = goalService;
-        this.emailService = emailService;
         this.appNotificationService = appNotificationService;
         this.userRepository = userRepository;
         this.zoneId = ZoneId.of(timezone);
@@ -79,7 +76,7 @@ public class GoalNotificationScheduler {
             return;
         }
 
-        checkDeadlineWarning(goal, user, today, current);
+        checkDeadlineWarning(goal, user, today);
     }
 
     private void finalizeGoal(Goal goal,
@@ -99,8 +96,7 @@ public class GoalNotificationScheduler {
 
     private void checkDeadlineWarning(Goal goal,
                                       User user,
-                                      LocalDate today,
-                                      double current) {
+                                      LocalDate today) {
         if (!Boolean.TRUE.equals(goal.getNotifyOnDeadline())) return;
         if (goal.getEndDate() == null) return;
         if (today.isBefore(goal.getEndDate().minusDays(7))) return;

@@ -68,6 +68,7 @@ class ReportControllerTest {
 
     @Test
     @WithLongPrincipal(1L)
+    @SuppressWarnings("null")
     void exportPdf_retornaArquivoPdf() throws Exception {
         when(reportExportService.exportPdf(eq(1L), any(), any(), any(), anyString()))
                 .thenReturn(new byte[]{1, 2, 3});
@@ -82,6 +83,7 @@ class ReportControllerTest {
 
     @Test
     @WithLongPrincipal(1L)
+    @SuppressWarnings("null")
     void exportExcel_retornaArquivoXlsx() throws Exception {
         when(reportExportService.exportExcel(eq(1L), any(), any(), any(), anyString()))
                 .thenReturn(new byte[]{1, 2, 3});

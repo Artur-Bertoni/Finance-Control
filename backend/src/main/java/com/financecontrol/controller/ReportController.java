@@ -52,6 +52,7 @@ public class ReportController extends BaseController {
         return fileResponse(body, XLSX, "relatorio-financeiro.xlsx");
     }
 
+    @SuppressWarnings("null")
     private ResponseEntity<byte[]> fileResponse(byte[] body, MediaType type, String filename) {
         return ResponseEntity.ok()
                 .contentType(type)
