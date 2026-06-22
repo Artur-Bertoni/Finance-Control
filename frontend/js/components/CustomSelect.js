@@ -269,13 +269,6 @@ export class CustomSelect {
         this._searchInput = null
     }
 
-    _focusItem(index) {
-        const items = this._getVisibleOptions()
-        if (!items.length) { this._searchInput?.focus(); return }
-        const target = index === -1 ? items.at(-1) : items[0]
-        target?.focus()
-    }
-
     _patchValueSetter() {
         const sel = this.select
         const dV  = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')

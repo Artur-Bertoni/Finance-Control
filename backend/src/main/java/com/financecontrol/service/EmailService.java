@@ -126,18 +126,6 @@ public class EmailService {
         sendMimeMessage(user.getEmail(), subject, html);
     }
 
-    @Async("emailTaskExecutor")
-    public void sendGoalDeadlineEmail(User user,
-                                      Goal goal,
-                                      double current) {
-        try {
-            doSendGoalDeadline(user, goal, current);
-            log.info("Aviso de prazo de meta enviado para {}", user.getEmail());
-        } catch (Exception e) {
-            log.error("Falha ao enviar aviso de prazo de meta para {}: {}", user.getEmail(), e.getMessage());
-        }
-    }
-
     private void doSendGoalDeadline(User user,
                                     Goal goal,
                                     double current)

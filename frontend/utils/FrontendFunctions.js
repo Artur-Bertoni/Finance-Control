@@ -123,9 +123,6 @@ export function doRequest(url, httpMethod = 'GET', body = null) {
 
 const TOAST_DURATION = 4500
 
-const FINNY_HISTORY_KEY = '__finny_history'
-const FINNY_HISTORY_MAX = 200
-
 export function saveToFinnyHistory(message, type = 'info', link = null) {
     try {
         $.ajax({

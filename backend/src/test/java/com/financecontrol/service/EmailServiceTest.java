@@ -1,11 +1,8 @@
 package com.financecontrol.service;
 
-import com.financecontrol.entity.Goal;
 import com.financecontrol.entity.User;
 import com.financecontrol.entity.UserFeedback;
 import com.financecontrol.enums.FeedbackType;
-import com.financecontrol.enums.GoalStatus;
-import com.financecontrol.enums.GoalType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +17,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import jakarta.mail.internet.MimeMessage;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.*;
@@ -52,18 +47,6 @@ class EmailServiceTest {
         u.setEmail("artur@test.com");
         u.setLanguage(language);
         return u;
-    }
-
-    private static Goal sampleGoal(GoalType type) {
-        Goal g = new Goal();
-        g.setName("Meta Teste");
-        g.setType(type);
-        g.setTargetAmount(5000.0);
-        g.setStartDate(LocalDate.now().withDayOfMonth(1));
-        g.setEndDate(LocalDate.now().plusMonths(3));
-        g.setStatus(GoalStatus.ACTIVE);
-        g.setCreatedAt(LocalDateTime.now());
-        return g;
     }
 
     private static UserFeedback feedbackWith(FeedbackType type, Integer nps) {
@@ -111,27 +94,6 @@ class EmailServiceTest {
         verify(mailSender).send(any(MimeMessage.class));
     }
 
-    @Test
-    void sendGoalDeadlineEmail_savings() {
-        service.sendGoalDeadlineEmail(userWith("pt"), sampleGoal(GoalType.SAVINGS), 2500.0);
-        verify(mailSender).send(any(MimeMessage.class));
-    }
-
-    @Test
-    void sendGoalDeadlineEmail_expenseLimit_progressColors() {
-        Goal g = sampleGoal(GoalType.EXPENSE_LIMIT);
-        service.sendGoalDeadlineEmail(userWith("pt"), g, 4600.0);
-        verify(mailSender).send(any(MimeMessage.class));
-    }
-
-    @Test
-    void sendGoalDeadlineEmail_targetZero_pctZero() {
-        Goal g = sampleGoal(GoalType.SAVINGS);
-        g.setTargetAmount(0.0);
-        service.sendGoalDeadlineEmail(userWith("pt"), g, 100.0);
-        verify(mailSender).send(any(MimeMessage.class));
-    }
-
     @ParameterizedTest
     @EnumSource(FeedbackType.class)
     void sendFeedbackNotification_todosOsTipos(FeedbackType type) {
@@ -154,7 +116,5 @@ class EmailServiceTest {
         when(mailSender.createMimeMessage()).thenThrow(new RuntimeException("boom"));
         assertThatCode(() -> service.sendVerificationEmail(userWith("pt"), "t")).doesNotThrowAnyException();
         assertThatCode(() -> service.sendWeeklyReminder(userWith("pt"))).doesNotThrowAnyException();
-        assertThatCode(() -> service.sendGoalDeadlineEmail(userWith("pt"),
-                sampleGoal(GoalType.SAVINGS), 5000.0)).doesNotThrowAnyException();
     }
 }

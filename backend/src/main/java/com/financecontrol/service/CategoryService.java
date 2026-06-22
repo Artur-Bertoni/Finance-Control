@@ -145,22 +145,6 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category findOrCreateByInternalName(Long userId,
-                                               String internalName) {
-        return categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(userId, internalName)
-                .map(CategoryAlias::getCategory)
-                .orElseGet(() -> {
-                    Category c = new Category();
-                    c.setUserId(userId);
-                    String name = internalName.length() > 500 ? internalName.substring(0, 500) : internalName;
-                    c.setName(name);
-                    categoryRepository.save(c);
-                    c.getAliases().add(new CategoryAlias(c, internalName));
-                    return categoryRepository.save(c);
-                });
-    }
-
-    @Transactional
     @CacheEvict(value = "categories", allEntries = true)
     public void delete(@NonNull Long id) {
         getOrThrow(id);

@@ -56,7 +56,4 @@ public final class BrandAssets {
         }
         return logoCache;
     }
-
-    public static int logoWidth()  { logoPng(); return logoW; }
-    public static int logoHeight() { logoPng(); return logoH; }
 }

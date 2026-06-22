@@ -205,49 +205,6 @@ class CategoryServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── findOrCreateByInternalName ───────────────────────────────────────────
-
-    @Test
-    void findOrCreateByInternalName_aliasExistente_retornaCategoria() {
-        Category c = categoryWith(1L, 1L, "Saúde", null, null);
-        CategoryAlias alias = new CategoryAlias(c, "Farmácia");
-        when(categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(1L, "Farmácia"))
-                .thenReturn(Optional.of(alias));
-
-        Category result = categoryService.findOrCreateByInternalName(1L, "Farmácia");
-
-        assertThat(result.getName()).isEqualTo("Saúde");
-        verify(categoryRepository, never()).save(any());
-    }
-
-    @Test
-    void findOrCreateByInternalName_aliasNaoExistente_criaCategoria() {
-        when(categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(1L, "Nova"))
-                .thenReturn(Optional.empty());
-        when(categoryRepository.save(any(Category.class))).thenAnswer(inv -> {
-            Category c = inv.getArgument(0);
-            c.setId(99L);
-            return c;
-        });
-
-        Category result = categoryService.findOrCreateByInternalName(1L, "Nova");
-
-        assertThat(result.getName()).isEqualTo("Nova");
-        verify(categoryRepository, times(2)).save(any(Category.class));
-    }
-
-    @Test
-    void findOrCreateByInternalName_nomeMuitoLongo_truncaEm500() {
-        String longName = "A".repeat(600);
-        when(categoryAliasRepository.findFirstByCategoryUserIdAndAliasName(1L, longName))
-                .thenReturn(Optional.empty());
-        when(categoryRepository.save(any(Category.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        Category result = categoryService.findOrCreateByInternalName(1L, longName);
-
-        assertThat(result.getName()).hasSize(500);
-    }
-
     // ── delete ───────────────────────────────────────────────────────────────
 
     @Test

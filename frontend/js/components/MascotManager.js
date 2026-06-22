@@ -64,11 +64,6 @@ function shownToItems(tips) {
         .map(t => ({ id: t.id, text: renderTipText(t), severity: t.severity ?? 'info', feedbackable: true }))
 }
 
-function randomStatic(lang) {
-    const pool = STATIC_TIPS[lang] ?? STATIC_TIPS.pt
-    return pool.length ? pool[Math.floor(Math.random() * pool.length)] : ''
-}
-
 function _clone(id) {
     return document.getElementById(id).content.firstElementChild.cloneNode(true)
 }
@@ -393,49 +388,5 @@ export class MascotManager {
             this._items = this._buildActiveItems()
             this._renderFloatingTip()
         }
-    }
-
-    static renderDashboardWidget() {
-        this._dashItems = this._buildDashItems()
-        this._dashIndex = 0
-        this._renderDashboardTip()
-
-        const prevBtn = document.getElementById('dashboard-mascot-prev')
-        const nextBtn = document.getElementById('dashboard-mascot-next')
-        if (prevBtn) prevBtn.onclick = () => {
-            if (!this._dashItems.length) return
-            this._dashIndex = (this._dashIndex - 1 + this._dashItems.length) % this._dashItems.length
-            this._renderDashboardTip()
-        }
-        if (nextBtn) nextBtn.onclick = () => {
-            if (!this._dashItems.length) return
-            this._dashIndex = (this._dashIndex + 1) % this._dashItems.length
-            this._renderDashboardTip()
-        }
-    }
-
-    static _buildDashItems() {
-        const active = this._buildActiveItems()
-        if (active.length) return active
-        const text = randomStatic(I18n.getLanguage())
-        return text ? [{ id: null, text, severity: 'info', feedbackable: false }] : []
-    }
-
-    static _renderDashboardTip() {
-        const tipEl     = document.getElementById('dashboard-mascot-tip')
-        const counterEl = document.getElementById('dashboard-mascot-counter')
-        const barEl     = document.getElementById('dashboard-mascot-feedback')
-        if (!tipEl || !this._dashItems.length) return
-
-        if (this._dashIndex >= this._dashItems.length) this._dashIndex = 0
-        const item = this._dashItems[this._dashIndex]
-        tipEl.textContent = item.text
-        if (counterEl) counterEl.textContent = `${this._dashIndex + 1} / ${this._dashItems.length}`
-
-        this._wireFeedback(barEl, item, () => {
-            this._dashItems = this._buildDashItems()
-            if (this._dashIndex >= this._dashItems.length) this._dashIndex = Math.max(0, this._dashItems.length - 1)
-            this._renderDashboardTip()
-        })
     }
 }

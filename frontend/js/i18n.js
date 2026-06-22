@@ -51,8 +51,4 @@ export class I18n {
     static _notifyListeners() {
         this._listeners.forEach(cb => cb(this._currentLanguage))
     }
-
-    static getAvailableLanguages() {
-        return ['pt', 'en', 'es']
-    }
 }

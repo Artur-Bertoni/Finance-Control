@@ -8,7 +8,10 @@ import org.apache.poi.xssf.usermodel.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +63,7 @@ class ReportTemplateGeneratorTest {
         }
     }
 
-    private static void buildResumo(XSSFWorkbook wb, XSSFCellStyle title, XSSFCellStyle subtitle, XSSFCellStyle meta) {
+    private static void buildResumo(XSSFWorkbook wb, XSSFCellStyle title, XSSFCellStyle subtitle, XSSFCellStyle meta) throws Exception {
         XSSFSheet s = wb.createSheet("Resumo");
         s.setColumnWidth(0, 22 * 256);
         s.setColumnWidth(1, 18 * 256);
@@ -109,11 +112,12 @@ class ReportTemplateGeneratorTest {
         for (int i = 0; i < heads.length; i++) set(s, 0, i, heads[i], header);
     }
 
-    private static void drawLogo(XSSFWorkbook wb, XSSFSheet sheet) {
+    private static void drawLogo(XSSFWorkbook wb, XSSFSheet sheet) throws Exception {
         byte[] png = BrandAssets.logoPng();
         if (png.length == 0) return;
         int target = 90;
-        int lw = BrandAssets.logoWidth(), lh = BrandAssets.logoHeight();
+        BufferedImage img = ImageIO.read(new ByteArrayInputStream(png));
+        int lw = img != null ? img.getWidth() : 0, lh = img != null ? img.getHeight() : 0;
         double scale = (lw > 0 && lh > 0) ? (double) target / Math.max(lw, lh) : 1;
         int w = (int) Math.round(lw * scale);
         int h = (int) Math.round(lh * scale);
