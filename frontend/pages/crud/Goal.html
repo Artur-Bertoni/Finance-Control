@@ -27,14 +27,12 @@
       <div class="form-card">
         <div class="form-grid">
 
-          <!-- Name -->
           <div class="field">
             <label for="name-input" data-i18n="goalName">Nome da Meta</label>
             <input id="name-input" type="text" data-i18n-placeholder="goalNamePlaceholder"
                    placeholder="Ex: Economizar para viagem..." required>
           </div>
 
-          <!-- Type -->
           <div class="field">
             <div style="display:flex;align-items:center;gap:6px">
               <label for="type-select" data-i18n="goalType">Tipo de Meta</label>
@@ -49,25 +47,21 @@
             <small class="field-hint" id="goal-type-hint" style="color:var(--text-muted);font-weight:400"></small>
           </div>
 
-          <!-- Target amount -->
           <div class="field">
             <label for="target-input" data-i18n="goalTargetAmount">Valor Alvo ($)</label>
             <input id="target-input" type="text" inputmode="numeric" data-mask="money" placeholder="0,00" required>
           </div>
 
-          <!-- Start date -->
           <div class="field">
             <label for="start-date-input" data-i18n="goalStartDate">Data de Início</label>
             <input id="start-date-input" type="text" required>
           </div>
 
-          <!-- End date -->
           <div class="field">
             <label for="end-date-input" data-i18n="goalEndDate" data-optional-label>Data de Término</label>
             <input id="end-date-input" type="text">
           </div>
 
-          <!-- Description -->
           <div class="field" style="grid-column: 1 / -1">
             <label for="description-input" data-i18n="goalDescription" data-optional-label>Descrição</label>
             <textarea id="description-input" rows="2"
@@ -75,19 +69,16 @@
                       placeholder="Detalhes sobre a meta..."></textarea>
           </div>
 
-          <!-- Categories multi-select -->
           <div class="field" style="grid-column: 1 / -1">
             <label data-i18n="goalCategories">Categorias<span class="optional-label" data-i18n="commonOptional">(opcional)</span></label>
             <div id="categories-multi" class="multi-check-list"></div>
           </div>
 
-          <!-- Locales multi-select -->
           <div class="field" style="grid-column: 1 / -1">
             <label data-i18n="goalLocales">Locais<span class="optional-label" data-i18n="commonOptional">(opcional)</span></label>
             <div id="locales-multi" class="multi-check-list"></div>
           </div>
 
-          <!-- Notifications -->
           <div class="field" style="grid-column: 1 / -1">
             <label data-i18n="goalNotifications">Notificações</label>
             <div class="checkbox-group">

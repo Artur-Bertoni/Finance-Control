@@ -8,6 +8,7 @@ import { FinnySvg } from './utils/FinnySvg.js'
 const routes = {
     '/pages/Dashboard.html':                          () => import('./Dashboard.js'),
     '/pages/Budget.html':                             () => import('./Budget.js'),
+    '/pages/Reports.html':                            () => import('./Reports.js'),
     '/pages/HomePage.html':                           () => import('./HomePage.js'),
     '/pages/StatementImport.html':                    () => import('./StatementImport.js'),
     '/pages/FinnyCenter.html':                        () => import('./FinnyCenter.js'),
@@ -164,6 +165,7 @@ document.addEventListener('click', e => {
     if (!a) return
     const href = a.getAttribute('href')
     if (!href || href.startsWith('#') || href.startsWith('javascript:')) return
+    if (a.hasAttribute('download') || href.startsWith('blob:')) return
     const url = new URL(href, location.href)
     if (url.origin !== location.origin) return
     if (url.pathname.includes('Login.html') || url.pathname.includes('AppShell.html')) return

@@ -120,7 +120,6 @@ export class OnboardingTour {
         this._busy = false
     }
 
-    // Se o alvo for um <select> aprimorado pelo CustomSelect (fica hidden), destaca o gatilho visível.
     static async _resolveVisible(el) {
         if (!el || el.tagName !== 'SELECT') return el
         for (let i = 0; i < 30; i++) {

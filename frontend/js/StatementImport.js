@@ -14,6 +14,12 @@ let allLocales    = []
 let confirmedConflicts = new Set()
 
 const REVIEW_STATE_KEY = '__statementReview'
+const SUPPORTED_EXT = ['.pdf', '.ofx', '.cnab', '.ret', '.rem', '.txt']
+
+function isSupportedStatement(file) {
+    const name = (file?.name ?? '').toLowerCase()
+    return SUPPORTED_EXT.some(ext => name.endsWith(ext))
+}
 
 export function init() {
     SidebarManager.initialize()
@@ -49,7 +55,7 @@ export function init() {
         e.preventDefault()
         dropZone.classList.remove('drag-over')
         const files = e.dataTransfer.files
-        if (files.length > 0 && files[0].type === 'application/pdf') {
+        if (files.length > 0 && isSupportedStatement(files[0])) {
             selectedFile = files[0]
             dropZone.classList.remove('field-error')
             setFileSelected(dropZone, dropText, selectedFile.name)

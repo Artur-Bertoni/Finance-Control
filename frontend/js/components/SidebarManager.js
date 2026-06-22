@@ -237,6 +237,7 @@ export class SidebarManager {
         const iconMap = {
             'HomePage.html': 'home',
             'Dashboard.html': 'dashboard',
+            'Reports.html': 'reports',
             'Budget.html': 'budget',
             'GoalList.html': 'goals',
             'Transaction.html': 'transaction',

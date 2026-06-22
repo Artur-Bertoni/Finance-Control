@@ -23,18 +23,12 @@
 
     <main class="page-content">
 
-      <!-- Step 1: Upload form -->
       <div id="upload-section">
         <div class="form-card">
           <div class="form-grid">
 
             <div class="field">
-              <div style="display:flex;align-items:center;gap:6px">
-                <label for="account-input" data-i18n="transactionAccount">Conta</label>
-                <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
-                  <i class="ph ph-info" aria-hidden="true"></i>
-                </button>
-              </div>
+              <label for="account-input" data-i18n="transactionAccount">Conta</label>
               <div class="select-with-add">
                 <select id="account-input" required>
                   <option disabled selected value="" data-i18n="selectAccount">Selecione a conta</option>
@@ -42,13 +36,18 @@
                 <button type="button" class="btn-add-inline" id="account-add-btn" data-i18n-title="quickAdd" data-i18n-title-param="account" title="Adição Rápida de Conta" data-icon="add"></button>
               </div>
             </div>
-
+            
             <div class="field">
-              <label for="file-input" data-i18n="importFile">Arquivo PDF do extrato</label>
+              <div style="display:flex;align-items:center;gap:6px">
+                <label for="file-input" data-i18n="importFile">Arquivo do extrato (PDF, OFX ou CNAB240)</label>
+                <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
+                    <i class="ph ph-info" aria-hidden="true"></i>
+                  </button>
+              </div>
               <div class="file-drop-zone" id="file-drop-zone">
                 <span data-icon="upload"></span>
-                <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo PDF aqui, ou clique para selecionar</span>
-                <input type="file" id="file-input" accept=".pdf" style="display:none" required>
+                <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo aqui, ou clique para selecionar</span>
+                <input type="file" id="file-input" accept=".pdf,.ofx,.cnab,.ret,.rem,.txt" style="display:none" required>
               </div>
             </div>
 
@@ -61,7 +60,6 @@
         </div>
       </div>
 
-      <!-- Step 2: Review table (hidden until preview loads) -->
       <div id="review-section" style="display:none">
         <div class="form-card wide">
           <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px" id="review-hint" data-i18n="reviewHint">
@@ -97,7 +95,6 @@
         </div>
       </div>
 
-      <!-- Step 3: Result card (hidden until import done) -->
       <div class="form-card import-result-card" id="import-result" style="display:none;margin-top:16px">
         <p id="import-result-text"></p>
       </div>

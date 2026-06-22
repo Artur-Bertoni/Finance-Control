@@ -230,6 +230,48 @@ class StatementImportServiceTest {
     }
 
     @Test
+    void previewStatement_arquivoOfx_eDetectadoEParseado() {
+        when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
+
+        String ofx = "OFXHEADER:100\n<OFX><BANKTRANLIST>"
+                + "<STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20250110<TRNAMT>-150.50<MEMO>Mercado</STMTTRN>"
+                + "</BANKTRANLIST></OFX>";
+        MultipartFile file = new MockMultipartFile("file", "extrato.ofx", "application/octet-stream",
+                ofx.getBytes());
+
+        List<ParsedTransactionResponse> rows = statementImportService.previewStatement(1L, file);
+
+        assertThat(rows).hasSize(1);
+        assertThat(rows.get(0).date()).isEqualTo("2025-01-10");
+        assertThat(rows.get(0).description()).isEqualTo("Mercado");
+        assertThat(rows.get(0).amount()).isEqualTo(150.50);
+        assertThat(rows.get(0).type()).isEqualTo(TransactionType.DEBIT);
+    }
+
+    @Test
+    void previewStatement_arquivoCnab240_eDetectadoEParseado() {
+        when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
+
+        char[] rec = new char[240];
+        java.util.Arrays.fill(rec, ' ');
+        rec[7] = '3';
+        rec[13] = 'E';
+        "15012025".getChars(0, 8, rec, 142);
+        String.format("%018d", 15050L).getChars(0, 18, rec, 150);
+        rec[168] = 'D';
+        "COMPRA".getChars(0, 6, rec, 169);
+        MultipartFile file = new MockMultipartFile("file", "extrato.ret", "application/octet-stream",
+                new String(rec).getBytes());
+
+        List<ParsedTransactionResponse> rows = statementImportService.previewStatement(1L, file);
+
+        assertThat(rows).hasSize(1);
+        assertThat(rows.get(0).date()).isEqualTo("2025-01-15");
+        assertThat(rows.get(0).amount()).isEqualTo(150.50);
+        assertThat(rows.get(0).type()).isEqualTo(TransactionType.DEBIT);
+    }
+
+    @Test
     void previewStatement_blocosDuplicados_saoDeduplicados() throws IOException {
         when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
 

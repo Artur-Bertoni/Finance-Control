@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>var _t=localStorage.getItem('theme');if(_t==='dark')document.documentElement.dataset.theme='dark';if(!globalThis.__appRouter){sessionStorage.setItem('__spa_url',location.pathname+location.search);location.replace('/pages/AppShell.html')}</script>
+  <title>Relatórios | Finance Control</title>
+  <link href="/styles/fonts/inter/inter.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
+  <link href="../styles/styles.css" rel="stylesheet">
+  <script src="/vendor/jquery-3.6.0.min.js"></script>
+  <script src="/vendor/flatpickr.min.js"></script>
+  <script src="/vendor/flatpickr-l10n-pt.js"></script>
+  <script src="../js/Reports.js" type="module"></script>
+</head>
+<body>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+<div class="app-shell">
+  <div class="main-container">
+    <header class="topbar">
+      <button class="btn btn-ghost sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Menu"></button>
+      <h1 class="page-title" data-i18n="reports">Relatórios</h1>
+      <div class="topbar-actions" id="header-actions"></div>
+    </header>
+
+    <main class="page-content">
+      <div class="filter-section" id="filter-section">
+        <button class="filter-toggle-btn" id="filter-toggle-btn" type="button" aria-expanded="false">
+          <i class="ph ph-funnel"></i>
+          <span data-i18n="commonFilter">Filtro</span>
+          <span class="filter-toggle-active-dot"></span>
+          <i class="ph ph-caret-down filter-toggle-caret"></i>
+        </button>
+        <div class="filter-bar">
+          <div class="field">
+            <label for="period-input" data-i18n="dashboardPeriod">Período</label>
+            <select id="period-input">
+              <option value="1m" selected data-i18n="period1m">Este mês</option>
+              <option value="3m" data-i18n="period3m">Últimos 3 meses</option>
+              <option value="6m" data-i18n="period6m">Últimos 6 meses</option>
+              <option value="12m" data-i18n="period12m">Últimos 12 meses</option>
+              <option value="ytd" data-i18n="periodYtd">Este ano</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="account-input" data-i18n="accounts">Conta</label>
+            <select id="account-input">
+              <option value="" data-i18n="allAccounts">Todas as contas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <p class="report-intro" data-i18n="reportsIntro" style="margin:0 0 16px;color:var(--text-muted);line-height:1.5">
+          Gere um relatório financeiro do período selecionado, com resumo (entradas, saídas, saldo e totais por categoria) e a listagem detalhada das transações.
+        </p>
+        <div class="report-export-actions" style="display:flex;gap:12px;flex-wrap:wrap">
+          <button id="export-pdf-btn" class="btn btn-primary" type="button" style="display:inline-flex;align-items:center;gap:8px">
+            <i class="ph ph-file-pdf" aria-hidden="true"></i>
+            <span data-i18n="exportPdf">Exportar PDF</span>
+          </button>
+          <button id="export-excel-btn" class="btn btn-secondary" type="button" style="display:inline-flex;align-items:center;gap:8px">
+            <i class="ph ph-file-xls" aria-hidden="true"></i>
+            <span data-i18n="exportExcel">Exportar Excel</span>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

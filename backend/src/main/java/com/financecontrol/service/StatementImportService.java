@@ -6,11 +6,11 @@ import com.financecontrol.dto.response.CategorySuggestionDto;
 import com.financecontrol.dto.response.ImportResult;
 import com.financecontrol.dto.response.ParsedTransactionResponse;
 import com.financecontrol.entity.Category;
-import com.financecontrol.enums.TransactionType;
+import com.financecontrol.service.statement.Cnab240StatementParser;
+import com.financecontrol.service.statement.OfxStatementParser;
+import com.financecontrol.service.statement.PdfStatementParser;
+import com.financecontrol.service.statement.RawTransaction;
 import lombok.RequiredArgsConstructor;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,28 +20,13 @@ import java.io.UncheckedIOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class StatementImportService {
-
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    private static final Pattern TX_PATTERN = Pattern.compile(
-        "^(\\d{2}/\\d{2}/\\d{4})\\s+(.+)\\s+([+-])\\s*R\\$\\s*([\\d.,]+)\\s*$"
-    );
-
-    private static final List<String> SKIP_PREFIXES = List.of(
-        "Saldo", "Data ", "Lança", "Movimenta", "Cheque", "Este produto",
-        "Fim", "Central", "Não está", "Titular", "Cooperativa", "Momento",
-        "Período", "Extrato", "SAC", "Ouvidoria", "ola@", "0800"
-    );
 
     private final TransactionService transactionService;
     private final CategoryService categoryService;
@@ -49,12 +34,12 @@ public class StatementImportService {
     @Transactional(readOnly = true)
     public List<ParsedTransactionResponse> previewStatement(Long userId,
                                                             MultipartFile file) {
-        List<String> blocks = buildBlocks(extractLines(file));
+        List<RawTransaction> raw = parse(file);
         List<ParsedTransactionResponse> rows = new ArrayList<>();
         Set<String> seen = new HashSet<>();
 
-        for (String block : blocks) {
-            ParsedTransactionResponse row = parseBlock(block.trim(), userId, seen);
+        for (RawTransaction tx : raw) {
+            ParsedTransactionResponse row = toResponse(tx, userId, seen);
             if (row != null) rows.add(row);
         }
         return rows;
@@ -88,19 +73,27 @@ public class StatementImportService {
         return new ImportResult(imported, startDate, endDate);
     }
 
-    private ParsedTransactionResponse parseBlock(String block,
+    private List<RawTransaction> parse(MultipartFile file) {
+        byte[] bytes;
+        try {
+            bytes = file.getBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to read statement file", e);
+        }
+        String filename = file.getOriginalFilename();
+
+        if (OfxStatementParser.looksLikeOfx(filename, bytes))      return OfxStatementParser.parse(bytes);
+        if (Cnab240StatementParser.looksLikeCnab240(filename, bytes)) return Cnab240StatementParser.parse(bytes);
+        return PdfStatementParser.parse(bytes);
+    }
+
+    private ParsedTransactionResponse toResponse(RawTransaction tx,
                                                  Long userId,
                                                  Set<String> seen) {
-        Matcher m = TX_PATTERN.matcher(block);
-        if (!seen.add(block) || !m.matches()) return null;
+        String key = tx.date() + "|" + tx.description() + "|" + tx.amount() + "|" + tx.type();
+        if (!seen.add(key)) return null;
 
-        LocalDate date        = LocalDate.parse(m.group(1), DATE_FMT);
-        String description    = m.group(2).trim();
-        char sign             = m.group(3).charAt(0);
-        double value          = parseAmount(m.group(4));
-        TransactionType type  = sign == '+' ? TransactionType.CREDIT : TransactionType.DEBIT;
-
-        List<Category> suggestions = categoryService.findByAlias(userId, description);
+        List<Category> suggestions = categoryService.findByAlias(userId, tx.description());
         Category first = suggestions.isEmpty() ? null : suggestions.get(0);
 
         List<CategorySuggestionDto> allSuggestions = suggestions.stream()
@@ -108,49 +101,14 @@ public class StatementImportService {
                 .toList();
 
         return new ParsedTransactionResponse(
-            date.format(DateTimeFormatter.ISO_LOCAL_DATE),
-            description,
-            value,
-            type,
+            tx.date().format(DateTimeFormatter.ISO_LOCAL_DATE),
+            tx.description(),
+            tx.amount(),
+            tx.type(),
             first != null ? first.getId() : null,
             first != null ? first.getName() : null,
             suggestions.size() > 1,
             allSuggestions
         );
-    }
-
-    private List<String> extractLines(MultipartFile file) {
-        try (PDDocument doc = Loader.loadPDF(file.getBytes())) {
-            return Arrays.asList(new PDFTextStripper().getText(doc).split("\\r?\\n"));
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to read PDF statement", e);
-        }
-    }
-
-    private List<String> buildBlocks(List<String> lines) {
-        List<String> blocks   = new ArrayList<>();
-        StringBuilder current = null;
-
-        for (String line : lines) {
-            String trimmed = line.trim();
-            if (shouldSkip(trimmed)) {
-                if (current != null) { blocks.add(current.toString()); current = null; }
-            } else if (!trimmed.isEmpty() && trimmed.matches("^\\d{2}/\\d{2}/\\d{4}.*")) {
-                if (current != null) blocks.add(current.toString());
-                current = new StringBuilder(trimmed);
-            } else if (!trimmed.isEmpty() && current != null) {
-                current.append(" ").append(trimmed);
-            }
-        }
-        if (current != null) blocks.add(current.toString());
-        return blocks;
-    }
-
-    private boolean shouldSkip(String line) {
-        return SKIP_PREFIXES.stream().anyMatch(line::startsWith);
-    }
-
-    private double parseAmount(String raw) {
-        return Double.parseDouble(raw.replace(".", "").replace(",", "."));
     }
 }

@@ -3,6 +3,7 @@ const ph = name => `<i class="ph ph-${name}" aria-hidden="true"></i>`
 export const Icons = {
     home:            () => ph('house'),
     dashboard:       () => ph('squares-four'),
+    reports:         () => ph('file-text'),
     budget:          () => ph('chart-pie-slice'),
     transaction:     () => ph('credit-card'),
     transfer:        () => ph('arrows-left-right'),

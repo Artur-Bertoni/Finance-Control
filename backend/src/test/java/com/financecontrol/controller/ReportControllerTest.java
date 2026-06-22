@@ -8,6 +8,7 @@ import com.financecontrol.config.JwtAuthFilter;
 import com.financecontrol.config.OAuth2AuthenticationSuccessHandler;
 import com.financecontrol.dto.response.DashboardResponse;
 import com.financecontrol.service.OAuth2UserService;
+import com.financecontrol.service.ReportExportService;
 import com.financecontrol.service.ReportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,6 +33,7 @@ class ReportControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockitoBean ReportService                                   reportService;
+    @MockitoBean ReportExportService                             reportExportService;
     @MockitoBean JwtAuthFilter                                   jwtAuthFilter;
     @MockitoBean OAuth2UserService                               oauth2UserService;
     @MockitoBean OAuth2AuthenticationSuccessHandler              oauth2SuccessHandler;
@@ -61,5 +64,33 @@ class ReportControllerTest {
                         .param("endDate",   "2025-01-31")
                         .param("accountId", "5"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void exportPdf_retornaArquivoPdf() throws Exception {
+        when(reportExportService.exportPdf(eq(1L), any(), any(), any(), anyString()))
+                .thenReturn(new byte[]{1, 2, 3});
+
+        mockMvc.perform(get("/api/reports/export/pdf")
+                        .param("startDate", "2025-01-01")
+                        .param("endDate",   "2025-01-31"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("relatorio-financeiro.pdf")))
+                .andExpect(content().contentType("application/pdf"));
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void exportExcel_retornaArquivoXlsx() throws Exception {
+        when(reportExportService.exportExcel(eq(1L), any(), any(), any(), anyString()))
+                .thenReturn(new byte[]{1, 2, 3});
+
+        mockMvc.perform(get("/api/reports/export/excel")
+                        .param("startDate", "2025-01-01")
+                        .param("endDate",   "2025-01-31")
+                        .param("accountId", "5"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("relatorio-financeiro.xlsx")));
     }
 }

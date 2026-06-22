@@ -1,4 +1,3 @@
-/* === RESET & BASE === */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -107,13 +106,11 @@ a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 button { font-family: inherit; }
 
-/* ===== APP SHELL ===== */
 .app-shell {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
   width: var(--sidebar-w);
   background-color: var(--sidebar-bg);
@@ -246,7 +243,6 @@ button { font-family: inherit; }
   flex-shrink: 0;
 }
 
-/* ===== SIDEBAR SEARCH ===== */
 .sidebar-search {
   flex-shrink: 0;
   border-bottom: 1px solid rgba(255,255,255,.07);
@@ -389,7 +385,6 @@ button { font-family: inherit; }
   display: flex;
 }
 
-/* ===== MAIN ===== */
 .main-container {
   flex: 1;
   margin-left: var(--sidebar-w);
@@ -398,7 +393,6 @@ button { font-family: inherit; }
   min-height: 100vh;
 }
 
-/* ===== TOPBAR ===== */
 .topbar {
   height: var(--topbar-h);
   background-color: var(--surface);
@@ -450,7 +444,6 @@ button { font-family: inherit; }
   text-overflow: ellipsis;
 }
 
-/* ===== DETAIL CARD ===== */
 .detail-card {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -501,7 +494,6 @@ button { font-family: inherit; }
 .detail-balance.negative { color: var(--debit); }
 .detail-balance.zero     { color: var(--text-secondary); }
 
-/* pencil button inside pw-wrap */
 .pw-pencil {
   position: absolute;
   right: 43px;
@@ -526,13 +518,11 @@ button { font-family: inherit; }
   gap: 8px;
 }
 
-/* ===== PAGE CONTENT ===== */
 .page-content {
   flex: 1;
   padding: 24px;
 }
 
-/* ===== CARDS ===== */
 .card {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
@@ -562,7 +552,6 @@ button { font-family: inherit; }
   gap: 12px;
 }
 
-/* ===== STAT CARDS ===== */
 .stat-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -600,7 +589,6 @@ button { font-family: inherit; }
 .stat-card-value.positive { color: var(--credit); }
 .stat-card-value.negative { color: var(--debit); }
 
-/* ===== COLLAPSIBLE FILTER SECTION ===== */
 .filter-section {
   margin-bottom: 20px;
 }
@@ -681,7 +669,6 @@ body.page-budget .filter-section {
   flex-shrink: 0;
 }
 
-/* ===== FILTER BAR ===== */
 .filter-bar {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
@@ -720,7 +707,6 @@ body.page-budget .filter-section {
 .filter-clear-btn:hover { color: var(--danger); }
 .filter-clear-btn svg { width: 16px; height: 16px; }
 
-/* ===== BACK BUTTON ===== */
 .back-btn {
   display: flex;
   align-items: center;
@@ -732,7 +718,6 @@ body.page-budget .filter-section {
   color: var(--text-secondary);
 }
 
-/* ===== SECTION HEADER ===== */
 .section-header {
   display: flex;
   align-items: center;
@@ -746,7 +731,6 @@ body.page-budget .filter-section {
   color: var(--text);
 }
 
-/* ===== FORMS ===== */
 .form-card {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
@@ -766,7 +750,6 @@ body.page-budget .filter-section {
   min-height: 0;
   overflow: auto;
 }
-/* largura mínima da tabela só no desktop; no mobile vira cartões (ver media query) */
 @media (min-width: 641px) {
   #review-table { min-width: 700px; }
 }
@@ -815,7 +798,6 @@ body.page-budget .filter-section {
 .form-collapse { display: grid; gap: 16px; }
 .form-collapse[hidden] { display: none; }
 
-/* ===== ORÇAMENTO ===== */
 .budget-form-card { margin-bottom: 20px; }
 .budget-form {
   display: flex;
@@ -991,7 +973,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 
 .spin-btn svg { width: 9px; display: block; }
 
-/* password wrapper */
 .pw-wrap { position: relative; width: 100%; }
 .pw-wrap input { padding-right: 44px; width: 100%; }
 .pw-toggle {
@@ -1012,7 +993,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 .pw-toggle svg { width: 17px; height: 17px; }
 .pw-toggle .ph { font-size: 17px; }
 
-/* ===== RADIO TYPE SELECTOR ===== */
 .radio-group {
   display: flex;
   gap: 10px;
@@ -1040,13 +1020,11 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
 #debit-option .ph-arrow-down  { color: var(--debit); }
 #credit-option .ph-arrow-up   { color: var(--credit); }
 
-/* ===== FIELD ERROR STATE ===== */
 .field-error {
   border-color: var(--danger) !important;
   box-shadow: 0 0 0 3px rgba(220,38,38,.15) !important;
 }
 
-/* ===== REQUIRED / OPTIONAL LABELS ===== */
 .required-mark {
   color: var(--danger);
   font-weight: 600;
@@ -1058,7 +1036,6 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; appe
   font-weight: 400;
 }
 
-/* ===== FIELD VALIDATION ===== */
 input.field-error,
 select.field-error,
 textarea.field-error {
@@ -1083,7 +1060,6 @@ textarea.field-error {
   color: var(--credit);
 }
 
-/* ===== BUTTONS ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1145,7 +1121,6 @@ textarea.field-error {
   border-top: 1px solid var(--border);
 }
 
-/* ===== TRANSACTION LIST ===== */
 .transactions-list {
   display: flex;
   flex-direction: column;
@@ -1241,7 +1216,6 @@ textarea.field-error {
 .tx-value.credit      { color: var(--credit); }
 .tx-value.installment { color: var(--installment); }
 
-/* ===== ITEM CARDS (accounts, categories, etc.) ===== */
 .items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -1355,7 +1329,6 @@ textarea.field-error {
 .item-balance.negative { color: var(--debit); }
 .item-balance.zero     { color: var(--text-muted); }
 
-/* ===== EMPTY STATE ===== */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1370,7 +1343,6 @@ textarea.field-error {
 .empty-state .ph { font-size: 44px; opacity: .35; }
 .empty-state p { font-size: 15px; font-weight: 500; }
 
-/* ===== LOGIN PAGE ===== */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -1510,7 +1482,6 @@ textarea.field-error {
 }
 .btn-social svg { flex-shrink: 0; }
 
-/* ===== SOCIAL LINK ROW (profile page) ===== */
 .social-link-row {
   display: flex;
   align-items: center;
@@ -1539,7 +1510,6 @@ textarea.field-error {
   color: var(--text-secondary);
 }
 
-/* ===== TOAST ===== */
 .toast-container {
   position: fixed;
   top: 18px;
@@ -1642,7 +1612,6 @@ body.user-guest .toast-container {
 @keyframes cardHighlight { 0%,100% { box-shadow: var(--shadow); } 20%,60% { box-shadow: 0 0 0 3px var(--primary); } }
 .card-highlighted { animation: cardHighlight 1.8s ease; }
 
-/* ===== CONFIRM MODAL ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1674,7 +1643,6 @@ body.user-guest .toast-container {
 @keyframes scaleIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
 @keyframes spin    { to   { transform: rotate(360deg); } }
 
-/* ===== ADMIN (hub) ===== */
 .admin-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1704,7 +1672,6 @@ body.user-guest .toast-container {
 .admin-email-form .field { width: 100%; }
 .admin-btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* ===== ONBOARDING - tour guiado do Finny (spotlight) ===== */
 .tour-overlay {
   position: fixed;
   inset: 0;
@@ -1712,7 +1679,6 @@ body.user-guest .toast-container {
   pointer-events: none;
 }
 
-/* Camada que bloqueia cliques no app durante o tour (transparente; vira escura só quando não há destaque). */
 .tour-blocker {
   position: fixed;
   inset: 0;
@@ -1722,7 +1688,6 @@ body.user-guest .toast-container {
 }
 .tour-blocker--dim { background-color: rgba(0,0,0,.6); }
 
-/* Recorte que destaca o elemento - o box-shadow gigante escurece todo o resto. */
 .tour-spotlight {
   position: fixed;
   border-radius: 10px;
@@ -1824,7 +1789,6 @@ body.user-guest .toast-container {
   animation: spin .7s linear infinite;
 }
 
-/* ===== MOBILE OVERLAY ===== */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -1835,13 +1799,11 @@ body.user-guest .toast-container {
 
 .sidebar-toggle-btn { display: none; }
 
-/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background-color: transparent; }
 ::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 20px; }
 ::-webkit-scrollbar-thumb:hover { background-color: var(--primary-400); }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
@@ -1864,7 +1826,6 @@ body.user-guest .toast-container {
   .login-actions { flex-direction: column; }
 }
 
-/* ===== SELECT WITH QUICK-ADD BUTTON ===== */
 .select-with-add { display: flex; gap: 8px; align-items: stretch; }
 .select-with-add select { flex: 1; min-width: 0; }
 
@@ -1889,11 +1850,9 @@ body.user-guest .toast-container {
 .btn-add-inline svg { width: 16px; height: 16px; }
 .btn-add-inline .ph { font-size: 16px; }
 
-/* ===== QUICK-ADD MODAL ===== */
 .quick-add-card { max-width: 460px !important; }
 .quick-add-fields { margin: 16px 0; display: flex; flex-direction: column; gap: 14px; }
 
-/* ===== STATEMENT IMPORT ===== */
 .file-drop-zone {
   border: 2px dashed var(--border);
   border-radius: var(--radius);
@@ -1975,7 +1934,6 @@ body.user-guest .toast-container {
 .import-result-card { margin-top: 0; }
 .import-result-card p { line-height: 1.7; }
 
-/* ===== USER GUEST MODE ===== */
 body.user-guest .sidebar,
 body.user-guest .sidebar-overlay { display: none !important; }
 body.user-guest .main-container { margin-left: 0 !important; }
@@ -1996,7 +1954,6 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
 .guest-form-header h1 { font-size: 22px; font-weight: 800; color: #fff; margin: 12px 0 4px; letter-spacing: -.3px; }
 .guest-form-header p { font-size: 13.5px; color: rgba(255,255,255,.75); }
 
-/* ===== THEME TOGGLE BUTTON ===== */
 .theme-toggle {
   margin-left: auto;
   width: 30px;
@@ -2119,7 +2076,6 @@ body.user-guest .form-card { max-width: 480px; width: 100%; }
 }
 
 
-/* ===== HOME PAGE - STATIC LAYOUT ===== */
 body.page-home { overflow: hidden; }
 
 body.page-home .app-shell { height: 100vh; overflow: hidden; }
@@ -2153,7 +2109,6 @@ body.page-home .transactions-list {
   padding-top: 4px;
 }
 
-/* Finny Center: mesma estratégia de altura cheia + scroll interno da HomePage */
 body.page-finny { overflow: hidden; }
 body.page-finny .app-shell { height: 100vh; overflow: hidden; }
 body.page-finny .main-container {
@@ -2172,14 +2127,12 @@ body.page-finny .finny-page-hero,
 body.page-finny .finny-page-tabs,
 body.page-finny .finny-stats,
 body.page-finny .filter-section { flex: 0 0 auto; }
-/* a aba ativa ocupa o espaço restante e vira coluna flex */
 body.page-finny .finny-page-tab-content:not([hidden]) {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
-/* listas (dicas/histórico) e o card de notificações rolam internamente */
 body.page-finny .finny-history-list {
   flex: 1;
   min-height: 0;
@@ -2199,7 +2152,6 @@ body.page-finny .transactions-list {
   padding-top: 4px;
 }
 
-/* ===== PAGINATION ===== */
 .pagination {
   display: flex;
   align-items: center;
@@ -2265,7 +2217,6 @@ body.page-finny .transactions-list {
   white-space: nowrap;
 }
 
-/* ===== CUSTOM SELECT ===== */
 .cs-wrapper {
   position: relative;
   width: 100%;
@@ -2442,7 +2393,6 @@ body.page-finny .transactions-list {
 
 [data-theme="dark"] .cs-dropdown { box-shadow: 0 6px 20px rgba(0,0,0,.4); }
 
-/* Flatpickr alt-input (visible text field) */
 .field input.fc-date-input {
   cursor: pointer;
   padding-right: 36px;
@@ -2460,7 +2410,6 @@ body.page-finny .transactions-list {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23616161'%3E%3Cpath fill-rule='evenodd' d='M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z' clip-rule='evenodd'/%3E%3C/svg%3E");
 }
 
-/* Pagination compact CustomSelect */
 .pagination .cs-wrapper { width: auto; }
 
 .pagination .cs-trigger {
@@ -2478,7 +2427,6 @@ body.page-finny .transactions-list {
   font-size: 13px;
 }
 
-/* ===== FINANCIAL GOALS ===== */
 
 .goals-grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -2498,7 +2446,6 @@ body.page-finny .transactions-list {
   letter-spacing: 0.05em;
 }
 
-/* Status badges */
 .goal-status-badge {
   font-size: 11px;
   font-weight: 600;
@@ -2512,7 +2459,6 @@ body.page-finny .transactions-list {
 .goal-status-expired   { background: #FEF2F2;            color: #DC2626; }
 .goal-status-archived  { background: var(--surface-2);   color: var(--text-muted); }
 
-/* Progress */
 .goal-progress-section { display: flex; flex-direction: column; gap: 6px; }
 
 .goal-progress-bar-bg {
@@ -2544,7 +2490,6 @@ body.page-finny .transactions-list {
 
 .goal-amount-target { color: var(--text-muted); }
 
-/* Tags (category / locale chips) */
 .goal-tags {
   display: flex;
   flex-wrap: wrap;
@@ -2563,7 +2508,6 @@ body.page-finny .transactions-list {
 
 .goal-period { font-size: 12px; color: var(--text-muted); }
 
-/* Multi-checkbox list (categories / locales in goal form) */
 .multi-check-list {
   display: flex;
   flex-wrap: wrap;
@@ -2576,7 +2520,6 @@ body.page-finny .transactions-list {
   overflow-y: auto;
 }
 
-/* Checkbox group (notification options) */
 .checkbox-group {
   display: flex;
   flex-direction: column;
@@ -2642,7 +2585,6 @@ body.page-finny .transactions-list {
   outline-offset: 2px;
 }
 
-/* ===== GOAL VIEW ===== */
 .goal-type-badge {
   background: var(--primary-50);
   color: var(--primary);
@@ -2691,7 +2633,6 @@ body.page-finny .transactions-list {
   gap: 8px;
 }
 
-/* ===== FLATPICKR OVERRIDES ===== */
 .flatpickr-calendar {
   font-family: inherit;
   font-size: 13px;
@@ -2719,14 +2660,12 @@ body.page-finny .transactions-list {
   z-index: 10;
 }
 
-/* Remove overflow:hidden e height fixo do Flatpickr */
 .flatpickr-calendar .flatpickr-month {
   overflow: visible;
   height: auto;
   min-height: 34px;
 }
 
-/* Setas ficam acima de .flatpickr-month para receber cliques */
 .flatpickr-calendar .flatpickr-prev-month,
 .flatpickr-calendar .flatpickr-next-month {
   color: var(--text-secondary);
@@ -2747,7 +2686,6 @@ body.page-finny .transactions-list {
 .flatpickr-calendar .flatpickr-prev-month svg,
 .flatpickr-calendar .flatpickr-next-month svg { fill: inherit; }
 
-/* Mês e ano lado a lado */
 .flatpickr-calendar .flatpickr-current-month {
   display: inline-flex !important;
   align-items: center;
@@ -2760,7 +2698,6 @@ body.page-finny .transactions-list {
   overflow: visible;
 }
 
-/* Campo de mês (select nativo) - largura contida; cobre ambas as classes do Flatpickr */
 .flatpickr-calendar .flatpickr-current-month select.flatpickr-monthDropdown-months,
 .flatpickr-calendar .flatpickr-current-month select.cur-month {
   color: var(--text);
@@ -2786,7 +2723,6 @@ body.page-finny .transactions-list {
   background: var(--primary-50);
 }
 
-/* Campo de ano - ao lado do mês */
 .flatpickr-calendar .flatpickr-current-month .numInputWrapper {
   flex: 0 0 auto;
   width: 62px;
@@ -2861,7 +2797,6 @@ body.page-finny .transactions-list {
 
 [data-theme="dark"] .flatpickr-calendar { box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 
-/* ===== LANGUAGE SWITCHER ===== */
 .language-switcher {
   display: flex;
   align-items: center;
@@ -2960,7 +2895,6 @@ body.page-finny .transactions-list {
   color: inherit;
 }
 
-/* ===== SECTION DIVIDER ===== */
 .section-divider {
   display: flex;
   align-items: center;
@@ -2982,7 +2916,6 @@ body.page-finny .transactions-list {
 .section-divider--plain::after  { display: none; }
 .section-divider--first { margin-top: 0; }
 
-/* ===== TOGGLE SWITCH ===== */
 .toggle-switch {
   display: flex;
   align-items: center;
@@ -3030,7 +2963,6 @@ body.page-finny .transactions-list {
   user-select: none;
 }
 
-/* ===== DASHBOARD PAGES - STATIC LAYOUT ===== */
 body.page-dashboard { overflow: hidden; }
 body.page-dashboard .app-shell { height: 100vh; overflow: hidden; }
 body.page-dashboard .main-container { height: 100vh; min-height: unset; overflow: hidden; }
@@ -3048,7 +2980,6 @@ body.page-dashboard .dashboard-items-scroll {
   overflow-y: auto;
 }
 
-/* ===== BUDGET - full-height layout with internal scroll ===== */
 body.page-budget { overflow: hidden; }
 body.page-budget .app-shell { height: 100vh; overflow: hidden; }
 body.page-budget .main-container { height: 100vh; min-height: unset; overflow: hidden; }
@@ -3073,7 +3004,6 @@ body.page-budget .budget-list {
   overflow-y: auto;
 }
 
-/* ===== STATEMENT IMPORT REVIEW - STATIC LAYOUT ===== */
 body.review-mode { overflow: hidden; }
 body.review-mode .app-shell { height: 100vh; overflow: hidden; }
 body.review-mode .main-container { height: 100vh; min-height: unset; overflow: hidden; }
@@ -3093,7 +3023,6 @@ body.review-mode #review-section .form-card.wide {
   overflow: hidden;
 }
 
-/* ===== DASHBOARD SEARCH BAR ===== */
 .dashboard-search-bar {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
@@ -3129,9 +3058,7 @@ body.review-mode #review-section .form-card.wide {
   body.page-dashboard .page-content { gap: 16px; }
 }
 
-/* ===== CHARTS DASHBOARD ===== */
 
-/* ── Entrance animations ── */
 @keyframes chart-card-enter {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -3222,7 +3149,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   line-height: 1.7;
 }
 
-/* ===== DONUT HTML LEGEND ===== */
 .chart-donut-wrap {
   display: flex;
   align-items: stretch;
@@ -3286,7 +3212,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   flex-shrink: 0;
 }
 
-/* ===== ICON PICKER ===== */
 .icon-picker-trigger {
   display: flex;
   align-items: center;
@@ -3386,7 +3311,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   font-style: italic;
 }
 
-/* ===== QUICK-ADD INLINE ICON PICKER ===== */
 .qa-icon-field { position: relative; }
 
 .qa-icon-trigger {
@@ -3496,7 +3420,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   background: var(--primary-50);
 }
 
-/* ===== ACHIEVEMENTS ===== */
 .achievements-grid {
   display: flex;
   flex-direction: column;
@@ -3587,7 +3510,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   line-height: 1.4;
 }
 
-/* === NOTIFICATION BADGE === */
 .notification-badge {
   position: absolute;
   top: 50%;
@@ -3606,7 +3528,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   pointer-events: none;
 }
 
-/* === IMPORT PROGRESS DOT === */
 .sidebar-link.has-import-progress::after {
   content: '';
   position: absolute;
@@ -3625,7 +3546,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   50%       { opacity: 0.5; transform: translateY(-50%) scale(0.75); }
 }
 
-/* === NOTIFICATION CENTER === */
 .notifications-list {
   display: flex;
   flex-direction: column;
@@ -3682,7 +3602,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   align-items: center;
 }
 
-/* === FINNY PAGE (FinnyCenter) === */
 
 .finny-page-hero {
   display: flex;
@@ -3785,9 +3704,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   font-size: 14px;
 }
 
-/* === MASCOTE FINNY === */
 
-/* Botão flutuante (FAB) */
 .mascot-fab {
   position: fixed;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
@@ -3802,8 +3719,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  /* flutua acima de todo o conteúdo, mas abaixo do menu lateral (z-index 100)
-     e do seu overlay (z-index 99) — fixo no viewport em mobile e desktop */
   z-index: 90;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   padding: 0;
@@ -3819,7 +3734,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   height: 34px;
 }
 
-/* Painel de dicas */
 .mascot-panel {
   position: fixed;
   bottom: calc(92px + env(safe-area-inset-bottom, 0px));
@@ -3925,7 +3839,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   text-align: center;
 }
 
-/* Widget do Dashboard */
 .mascot-dashboard-card {
   display: flex;
   align-items: center;
@@ -3972,7 +3885,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   min-width: 42px;
 }
 
-/* Badge no FAB */
 .mascot-fab-badge {
   position: absolute;
   top: -4px;
@@ -3990,7 +3902,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   pointer-events: none;
 }
 
-/* Ícone do Finny nos toasts */
 .toast-finny {
   width: 28px;
   height: 28px;
@@ -4001,7 +3912,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   filter: brightness(0.88) saturate(1.1);
 }
 
-/* Abas do painel */
 .mascot-panel-tabs {
   display: flex;
   border-bottom: 1px solid var(--border);
@@ -4033,7 +3943,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   border-bottom-color: var(--primary-500);
 }
 
-/* Badge na aba de mensagens */
 .mascot-tab-badge {
   min-width: 16px;
   height: 16px;
@@ -4047,18 +3956,15 @@ body.page-charts .stat-card-value { font-size: 18px; }
   text-align: center;
 }
 
-/* Container das abas */
 .mascot-panel-tab-content {
   display: flex;
   flex-direction: column;
 }
 
-/* O display:flex acima empata em especificidade com [hidden]; reforça o ocultar da aba inativa. */
 .mascot-panel-tab-content[hidden] {
   display: none;
 }
 
-/* Lista de notificações no painel */
 .mascot-notif-list {
   max-height: 320px;
   overflow-y: auto;
@@ -4089,7 +3995,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   background: var(--surface);
   font-size: 13px;
   transition: background 0.15s, opacity 0.15s;
-  flex-shrink: 0; /* dentro do flex column com max-height, evita os cards encolherem e cortarem o texto */
+  flex-shrink: 0;
 }
 
 .mascot-notif-card--read {
@@ -4162,9 +4068,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   }
 }
 
-/* === FINNY AGENT - feedback, navegação e histórico === */
 
-/* Barra de feedback (👍 👎 ✕) no painel e no widget do dashboard */
 .finny-feedback-bar {
   display: flex;
   justify-content: center;
@@ -4172,7 +4076,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   margin: 8px 0 4px;
 }
 
-/* display:flex acima empata com [hidden]; reforça o ocultar quando não há dica para feedback */
 .finny-feedback-bar[hidden] {
   display: none;
 }
@@ -4194,14 +4097,12 @@ body.page-charts .stat-card-value { font-size: 18px; }
   border-color: var(--primary);
 }
 
-/* Feedback escolhido (destacado no histórico) */
 .finny-fb-btn--active {
   background: var(--primary);
   border-color: var(--primary);
   filter: none;
 }
 
-/* Barra de feedback dentro de um card de histórico/dica */
 .finny-feedback-bar--inline {
   justify-content: flex-start;
   margin: 8px 0 0;
@@ -4221,7 +4122,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   line-height: 1;
 }
 
-/* Painel de progresso (stats) na página do Finny */
 .finny-stats { margin-bottom: 18px; }
 
 .finny-stats-title {
@@ -4257,7 +4157,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
   margin-top: 2px;
 }
 
-/* Lista do histórico de dicas */
 .finny-history-list {
   display: flex;
   flex-direction: column;
@@ -4273,7 +4172,7 @@ body.page-charts .stat-card-value { font-size: 18px; }
   border-radius: 12px;
   padding: 12px 14px 12px 16px;
   overflow: hidden;
-  flex-shrink: 0; /* na lista flex com scroll, evita o card encolher e cortar os botões de feedback */
+  flex-shrink: 0;
 }
 
 .finny-history-bar {
@@ -4318,12 +4217,6 @@ body.page-charts .stat-card-value { font-size: 18px; }
 
 .finny-history-status { font-size: 13px; }
 
-/* === FINANCE BACKGROUND WATERMARK === */
-/*
-  Diagonal pattern: each 260x260 tile has 4 symbols (one per quadrant).
-  A second copy is offset by (130px, 130px), filling the gaps and
-  creating diagonal rows when both layers repeat together.
-*/
 main.page-content {
   --_fp: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg fill='none' stroke='%232E7D32' stroke-width='2' opacity='0.09' transform='rotate(-25 130 130)'%3E%3Crect x='20' y='42' width='11' height='25' rx='2'/%3E%3Crect x='35' y='28' width='11' height='39' rx='2'/%3E%3Crect x='50' y='35' width='11' height='32' rx='2'/%3E%3Crect x='65' y='14' width='11' height='53' rx='2'/%3E%3Ccircle cx='192' cy='52' r='24'/%3E%3Ccircle cx='192' cy='52' r='15'/%3E%3Cpolyline points='36,215 55,188 74,215' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='55' y1='188' x2='55' y2='237' stroke-linecap='round'/%3E%3Cpolyline points='150,242 167,222 184,229 201,207 218,214 235,194' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='150' cy='242' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='167' cy='222' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='201' cy='207' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3Ccircle cx='235' cy='194' r='3.5' fill='%232E7D32' opacity='0.09'/%3E%3C/g%3E%3C/svg%3E");
   background-image: var(--_fp), var(--_fp);
@@ -4332,7 +4225,6 @@ main.page-content {
   background-repeat: repeat;
 }
 
-/* === HISTORY TIMELINE === */
 
 .history-timeline {
   display: flex;
@@ -4483,7 +4375,6 @@ main.page-content {
   padding-top: 20px;
 }
 
-/* ── Feedback ──────────────────────────────────────────────────────────────── */
 
 .form-page-container {
   margin: 0 auto;
@@ -4574,14 +4465,12 @@ main.page-content {
   color: var(--text-muted);
 }
 
-/* Botão "Prefiro não responder" selecionado */
 #nps-skip-btn.active {
   border-color: var(--primary-500);
   background: var(--primary-500);
   color: #fff;
 }
 
-/* ── Feedback Admin ───────────────────────────────────────────────────────── */
 
 .feedback-admin-list {
   display: flex;
@@ -4682,16 +4571,7 @@ main.page-content {
   color: var(--text-secondary);
 }
 
-/* ==========================================================================
-   MOBILE OPTIMIZATIONS
-   Mantido no fim do arquivo para vencer, por ordem de origem, as regras
-   de viewport fixo de body.page-charts (mesma especificidade).
-   ========================================================================== */
 @media (max-width: 768px) {
-  /* --- Dashboard: rola a página (só na vertical), cards numéricos em quadrado e gráficos maiores --- */
-  /* Modelo de rolagem do DOCUMENTO. Importante: NÃO colocar overflow no <body>,
-     senão ele vira container de scroll e o FAB (filho do body, position:fixed)
-     passa a rolar junto. min-width:0 evita o "estouro" horizontal do flex. */
   body.page-charts,
   body.page-charts .app-shell,
   body.page-charts .main-container {
@@ -4700,8 +4580,6 @@ main.page-content {
     overflow: visible;
     min-width: 0;
   }
-  /* corta a sobra horizontal SEM virar container de scroll (clip ≠ hidden):
-     mantém o scroll vertical no documento e o FAB fixo ao viewport */
   body.page-charts .main-container { overflow-x: clip; }
   body.page-charts .page-content {
     height: auto;
@@ -4709,7 +4587,6 @@ main.page-content {
     overflow-y: visible;
     min-width: 0;
     max-width: 100%;
-    /* folga no rodapé p/ o FAB flutuar sobre espaço vazio, não sobre o último card */
     padding: 14px 16px 96px;
   }
   body.page-charts .stat-cards {
@@ -4740,27 +4617,18 @@ main.page-content {
     max-width: 100%;
     max-height: none;
   }
-  /* nomes longos de categoria não podem estourar a largura da tela */
   .donut-legend-item { max-width: 100%; }
 
-  /* --- FinnyCenter: 4 cards de progresso lado a lado, sem quebra --- */
   .finny-stats-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .finny-stat-card { padding: 10px 4px; }
   .finny-stat-value { font-size: 16px; }
   .finny-stat-label { font-size: 9.5px; }
 
-  /* --- Feedback: notas 0–10 lado a lado, sem quebra --- */
   .feedback-nps-row { flex-direction: column; align-items: stretch; }
   .feedback-nps-buttons { flex-wrap: nowrap; gap: 4px; width: 100%; }
   .feedback-nps-btn { flex: 1 1 0; width: auto; min-width: 0; padding: 0; font-size: 12px; }
   #nps-skip-btn { align-self: flex-start; }
 
-  /* --- Home / listas / orçamento no mobile: mantêm o modelo de altura cheia com
-     SCROLL INTERNO (topbar/cabeçalho da página sempre visível), mas usando 100dvh
-     em vez de 100vh — o dvh desconta a barra dinâmica do navegador, então a
-     listagem encaixa na tela sem cortar/sumir no rodapé. Precisa ficar no FIM do
-     arquivo para vencer, por ordem de origem, as regras com 100vh definidas antes
-     (mesma especificidade). */
   body.page-home .app-shell,
   body.page-home .main-container,
   body.page-dashboard .app-shell,
@@ -4770,7 +4638,6 @@ main.page-content {
     height: 100dvh;
   }
 
-  /* folga inferior dentro da área rolável p/ o último item não ficar sob o FAB do Finny */
   body.page-home .transactions-list,
   body.page-dashboard .dashboard-items-scroll,
   body.page-budget .budget-list {
@@ -4778,13 +4645,8 @@ main.page-content {
   }
 }
 
-/* --- Importação de extrato: tabela de revisão vira cartões no mobile --- */
 @media (max-width: 640px) {
-  /* permite que o container encolha até a largura da tela (item flex que
-     senão cresceria com o min-content do conteúdo e estouraria o viewport) */
   .main-container { min-width: 0; }
-  /* trava dura na largura da tela: nada pode empurrar o conteúdo para fora
-     do viewport (era a causa do corte à direita, inclusive do subtítulo) */
   body.review-mode .main-container {
     width: 100vw;
     max-width: 100vw;
@@ -4812,7 +4674,6 @@ main.page-content {
     margin-bottom: 12px;
     background: var(--surface);
   }
-  /* rótulo (col. esquerda) + valor (minmax(0,1fr) permite quebrar e nunca sair da tela) */
   #review-table td {
     display: grid;
     grid-template-columns: minmax(80px, 34%) minmax(0, 1fr);
@@ -4838,10 +4699,8 @@ main.page-content {
     color: var(--text-muted);
     min-width: 0;
   }
-  /* nada na coluna de valor pode estourar a largura da tela */
   #review-table td > *,
   #review-table td .tx-badge { max-width: 100%; min-width: 0; }
-  /* categoria e local: rótulo em cima, campo ocupa a largura toda */
   #review-table td.review-cell-cat,
   #review-table td.review-cell-locale {
     display: block;
@@ -4854,13 +4713,10 @@ main.page-content {
   #review-table td.review-cell-cat > div,
   #review-table td.review-cell-locale > div { width: 100%; min-width: 0; }
 
-  /* botões de ação centralizados no mobile */
   #review-section .form-actions { justify-content: center; }
 }
 
-/* --- Paginação no mobile: só um dropdown "1/10" (sem setas, sem "1–15 de 100") --- */
 @media (max-width: 640px) {
-  /* cabeçalho de card quebra linha p/ a paginação não estourar ao lado do título */
   .card-header { flex-wrap: wrap; gap: 8px 10px; }
   .card-header .pagination { margin-left: auto; }
 
@@ -4877,6 +4733,5 @@ main.page-content {
   }
   .pagination .cs-option { padding: 7px 12px; font-size: 13px; }
 
-  /* FeedbackAdmin (admin) usa setas + rótulo, sem dropdown: mantém navegável, só compacta */
   .pagination-row { gap: 8px; padding: 12px 0; font-size: 12px; flex-wrap: wrap; }
 }

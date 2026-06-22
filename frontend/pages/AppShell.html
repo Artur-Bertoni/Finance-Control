@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" id="root-html">
 <head>
   <meta charset="UTF-8">
@@ -42,6 +42,7 @@
     <nav class="sidebar-nav" aria-label="Menu principal">
       <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
       <a href="/pages/Dashboard.html" class="sidebar-link" data-i18n="dashboard">Dashboard</a>
+      <a href="/pages/Reports.html" class="sidebar-link" data-i18n="reports">Relatórios</a>
       <a href="/pages/Budget.html" class="sidebar-link" data-i18n="budget">Orçamento</a>
       <a href="/pages/lists/GoalList.html" class="sidebar-link" data-i18n="goals">Metas Financeiras</a>
       <a href="/pages/lists/AchievementList.html" class="sidebar-link" data-i18n="achievements">Conquistas</a>
@@ -85,15 +86,12 @@
 
 </div>
 
-<!-- Mascote Finny - botão flutuante -->
 <button id="mascot-fab" class="mascot-fab" type="button" aria-label="Finny" title="Finny - dicas e notificações">
   <span data-finny-svg=""></span>
 </button>
 
-<!-- Painel do Finny - duas abas: Dicas | Mensagens -->
 <div id="mascot-panel" class="mascot-panel" hidden>
 
-  <!-- Cabeçalho -->
   <div class="mascot-panel-header">
     <span class="mascot-panel-title">
       <span data-finny-svg="mascot-header-svg"></span>
@@ -104,13 +102,11 @@
     </button>
   </div>
 
-  <!-- Abas -->
   <div class="mascot-panel-tabs">
     <button id="mascot-tab-tips" class="mascot-tab-btn mascot-tab-btn--active" type="button" data-i18n="mascotTabTips">Dicas</button>
     <button id="mascot-tab-messages" class="mascot-tab-btn" type="button" data-i18n="mascotTabMessages">Mensagens</button>
   </div>
 
-  <!-- Conteúdo: Dicas -->
   <div id="mascot-content-tips" class="mascot-panel-tab-content">
     <div class="mascot-panel-body">
       <span data-finny-svg="mascot-body-svg"></span>
@@ -129,14 +125,12 @@
     </div>
   </div>
 
-  <!-- Conteúdo: Mensagens (somente leitura) -->
   <div id="mascot-content-messages" class="mascot-panel-tab-content" hidden>
     <div id="mascot-notifications-list" class="mascot-notif-list"></div>
   </div>
 
 </div>
 
-<!-- Templates do FAB do Finny (o JS apenas clona e preenche) -->
 <template id="tpl-mascot-notif-card">
   <div class="mascot-notif-card">
     <span class="mascot-notif-icon"></span>
@@ -165,7 +159,6 @@
   <div class="mascot-notif-empty"></div>
 </template>
 
-<!-- Templates do histórico de alterações (ChangeHistoryManager, usado nas telas de detalhe) -->
 <template id="tpl-hist-timeline"><div class="history-timeline"></div></template>
 <template id="tpl-hist-empty"><p class="history-empty"></p></template>
 <template id="tpl-hist-creation">

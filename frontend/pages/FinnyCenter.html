@@ -21,7 +21,6 @@
 </header>
 <main class="page-content">
 
-  <!-- Hero -->
   <div class="finny-page-hero">
     <span data-finny-svg="finny-page-hero-svg"></span>
     <div class="finny-page-hero-text">
@@ -30,19 +29,16 @@
     </div>
   </div>
 
-  <!-- Abas -->
   <div class="finny-page-tabs">
     <button id="nc-tab-tips" class="finny-page-tab finny-page-tab--active" type="button" data-i18n="mascotTabTips">Dicas</button>
     <button id="nc-tab-history" class="finny-page-tab" type="button" data-i18n="finnyTabHistory">Histórico</button>
     <button id="nc-tab-messages" class="finny-page-tab" type="button" data-i18n="mascotTabMessages">Mensagens</button>
   </div>
 
-  <!-- Conteúdo: Dicas (ativas, aguardando feedback) -->
   <div id="nc-content-tips" class="finny-page-tab-content">
     <div id="nc-tips-list" class="finny-history-list"></div>
   </div>
 
-  <!-- Conteúdo: Histórico de dicas + progresso -->
   <div id="nc-content-history" class="finny-page-tab-content" hidden>
     <div class="finny-stats">
       <h3 class="finny-stats-title" data-i18n="finnyStatsTitle">Seu progresso com o Finny</h3>
@@ -59,7 +55,6 @@
     </div>
   </div>
 
-  <!-- Conteúdo: Mensagens (somente leitura, com filtro de data/hora + paginação) -->
   <div id="nc-content-messages" class="finny-page-tab-content" hidden>
     <div class="filter-section" id="nc-filter-section">
       <button class="filter-toggle-btn" id="nc-filter-toggle-btn" type="button" aria-expanded="false">
@@ -93,7 +88,6 @@
     </div>
   </div>
 
-  <!-- Templates (markup dos itens; o JS apenas clona e preenche) -->
   <template id="tpl-finny-tip-card">
     <div class="finny-history-card">
       <span class="finny-history-bar"></span>
