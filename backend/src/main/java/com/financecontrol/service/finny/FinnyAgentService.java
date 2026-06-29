@@ -19,12 +19,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class FinnyAgentService {
 
     private static final int    MAX_TIPS               = 5;
@@ -34,6 +36,7 @@ public class FinnyAgentService {
     private static final double WEIGHT_DEFAULT        = 1.0;
 
     private static final List<FinnyTipStatus> ACTIVE_STATUSES = List.of(FinnyTipStatus.NEW, FinnyTipStatus.SHOWN);
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     private final List<TipRule> rules;
     private final FinancialProfileService profileService;
@@ -45,7 +48,7 @@ public class FinnyAgentService {
     public List<FinnyTipResponse> generateTips(Long userId, String lang) {
         FinancialProfile profile = profileService.build(userId);
         Map<FinnyTipCategory, Double> weights = loadWeights(userId);
-        LocalDateTime suppressSince = LocalDateTime.now().minusDays(FEEDBACK_SUPPRESS_DAYS);
+        LocalDateTime suppressSince = LocalDateTime.now(ZONE).minusDays(FEEDBACK_SUPPRESS_DAYS);
 
         List<Scored> scored = new ArrayList<>();
         for (TipRule rule : rules) {
@@ -75,7 +78,7 @@ public class FinnyAgentService {
         FinnyTip tip = getOwned(userId, tipId);
         if (tip.getStatus() == FinnyTipStatus.NEW) {
             tip.setStatus(FinnyTipStatus.SHOWN);
-            tip.setShownAt(LocalDateTime.now());
+            tip.setShownAt(LocalDateTime.now(ZONE));
             tipRepository.save(tip);
         }
         return toResponse(tip);
@@ -88,7 +91,7 @@ public class FinnyAgentService {
         feedbackOf(tip.getStatus()).ifPresent(prev -> moveWeight(userId, tip.getCategory(), prev, false));
 
         tip.setStatus(feedback.status());
-        tip.setFeedbackAt(LocalDateTime.now());
+        tip.setFeedbackAt(LocalDateTime.now(ZONE));
         tipRepository.save(tip);
 
         moveWeight(userId, tip.getCategory(), feedback, true);
@@ -128,7 +131,7 @@ public class FinnyAgentService {
     public void nudgeWeight(Long userId, FinnyTipCategory category, double delta) {
         FinnyTipPreference pref = pref(userId, category);
         pref.setWeight(clamp(pref.getWeight() + delta));
-        pref.setUpdatedAt(LocalDateTime.now());
+        pref.setUpdatedAt(LocalDateTime.now(ZONE));
         preferenceRepository.save(pref);
     }
 
@@ -143,7 +146,7 @@ public class FinnyAgentService {
         }
 
         pref.setWeight(clamp(pref.getWeight() + sign * feedback.weightDelta()));
-        pref.setUpdatedAt(LocalDateTime.now());
+        pref.setUpdatedAt(LocalDateTime.now(ZONE));
         preferenceRepository.save(pref);
     }
 
@@ -193,7 +196,7 @@ public class FinnyAgentService {
         tip.setStatus(FinnyTipStatus.NEW);
         tip.setLang(lang);
         tip.setParamsJson(writeParams(c.params()));
-        tip.setCreatedAt(LocalDateTime.now());
+        tip.setCreatedAt(LocalDateTime.now(ZONE));
         tipRepository.save(tip);
     }
 

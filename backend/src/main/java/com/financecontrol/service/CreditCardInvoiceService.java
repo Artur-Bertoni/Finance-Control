@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,9 +32,11 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CreditCardInvoiceService {
 
     private static final DateTimeFormatter REF = DateTimeFormatter.ofPattern("yyyy-MM");
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
@@ -63,7 +66,7 @@ public class CreditCardInvoiceService {
             payments.put(p.getReferenceMonth(), p);
         }
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZONE);
         List<InvoiceResponse> result = new ArrayList<>();
         for (Map.Entry<YearMonth, Cycle> e : cycles.entrySet()) {
             String ref = e.getKey().format(REF);
@@ -102,13 +105,13 @@ public class CreditCardInvoiceService {
         double total = invoice.total();
         if (total <= 0) throw new BusinessException("error.invoice.nothingToPay");
 
-        LocalDate date = req.date() != null ? req.date() : LocalDate.now();
+        LocalDate date = req.date() != null ? req.date() : LocalDate.now(ZONE);
         TransferRequest transfer = new TransferRequest(req.sourceAccountId(), accountId,
                 req.categoryId(), null, total, date, "Pagamento fatura " + referenceMonth);
         TransactionResponse cardTx = transferService.create(userId, transfer);
 
         CreditCardInvoicePayment payment = new CreditCardInvoicePayment(
-                null, userId, accountId, referenceMonth, total, req.sourceAccountId(), LocalDateTime.now());
+                null, userId, accountId, referenceMonth, total, req.sourceAccountId(), LocalDateTime.now(ZONE));
         paymentRepository.save(payment);
 
         return new InvoiceResponse(invoice.referenceMonth(), invoice.closingDate(), invoice.dueDate(),

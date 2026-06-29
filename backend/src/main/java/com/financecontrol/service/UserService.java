@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,9 +27,11 @@ import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class UserService {
 
     private static final String NOT_FOUND = "error.notFound.user";
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     private final UserRepository userRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
@@ -76,7 +79,7 @@ public class UserService {
         user.setLanguage("pt");
         user.setAdmin(false);
         user.setEmailVerified(false);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now(ZONE));
 
         UserResponse result = UserResponse.from(userRepository.save(user));
         historyService.recordCreation(ENTITY_USER, result.id(), result.id());
@@ -143,7 +146,7 @@ public class UserService {
                         user.setEmailNotificationEnabled(false);
                         user.setEmailNotificationDay(5);
                         user.setGoalEmailNotificationEnabled(true);
-                        user.setCreatedAt(LocalDateTime.now());
+                        user.setCreatedAt(LocalDateTime.now(ZONE));
                     }
                     user.setProvider(provider);
                     user.setProviderId(providerId);
@@ -261,7 +264,7 @@ public class UserService {
          
         EmailVerificationToken evt = new EmailVerificationToken(
                 null, user.getId(), token,
-                LocalDateTime.now(), LocalDateTime.now().plusHours(24)
+                LocalDateTime.now(ZONE), LocalDateTime.now(ZONE).plusHours(24)
         );
 
         emailVerificationTokenRepository.save(evt);

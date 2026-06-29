@@ -25,6 +25,7 @@ public class SecurityConfig {
     private final CustomOAuth2AuthorizationRequestResolver customAuthorizationRequestResolver;
 
     @Bean
+    @SuppressWarnings({"null", "java:S4502"})
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)

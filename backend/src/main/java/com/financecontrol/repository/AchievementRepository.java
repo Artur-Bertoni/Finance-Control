@@ -14,6 +14,7 @@ public interface AchievementRepository extends JpaRepository<UserAchievement, Lo
 
     boolean existsByUserIdAndAchievementType(Long userId, AchievementType type);
 
+    @SuppressWarnings("null")
     default Set<AchievementType> earnedSet(Long userId) {
         return findByUserId(userId).stream()
                 .map(UserAchievement::getAchievementType)

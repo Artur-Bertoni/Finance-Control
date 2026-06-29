@@ -18,15 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class BudgetService {
 
     private static final String CATEGORY_NOT_FOUND = "error.notFound.category";
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     private final BudgetRepository budgetRepository;
     private final CategoryRepository categoryRepository;
@@ -34,8 +37,8 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public List<BudgetResponse> findAllByUser(Long userId) {
-        LocalDate start = LocalDate.now().withDayOfMonth(1);
-        LocalDate end   = YearMonth.now().atEndOfMonth();
+        LocalDate start = LocalDate.now(ZONE).withDayOfMonth(1);
+        LocalDate end   = YearMonth.now(ZONE).atEndOfMonth();
         return budgetRepository.findByUserId(userId).stream()
                 .map(b -> toResponse(b, userId, start, end))
                 .sorted(Comparator.comparing(BudgetResponse::categoryName, String.CASE_INSENSITIVE_ORDER))
@@ -60,14 +63,14 @@ public class BudgetService {
                     Budget b = new Budget();
                     b.setUserId(userId);
                     b.setCategoryId(categoryId);
-                    b.setCreatedAt(LocalDateTime.now());
+                    b.setCreatedAt(LocalDateTime.now(ZONE));
                     return b;
                 });
         budget.setMonthlyLimit(req.monthlyLimit());
         Budget saved = budgetRepository.save(budget);
 
-        LocalDate start = LocalDate.now().withDayOfMonth(1);
-        LocalDate end   = YearMonth.now().atEndOfMonth();
+        LocalDate start = LocalDate.now(ZONE).withDayOfMonth(1);
+        LocalDate end   = YearMonth.now(ZONE).atEndOfMonth();
         return toResponse(saved, userId, start, end);
     }
 

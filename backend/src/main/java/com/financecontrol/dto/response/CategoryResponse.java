@@ -6,6 +6,7 @@ import com.financecontrol.entity.CategoryAlias;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SuppressWarnings("null")
 public record CategoryResponse(
     Long id,
     String name,

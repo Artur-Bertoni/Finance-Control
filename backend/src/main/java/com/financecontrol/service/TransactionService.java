@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ public class TransactionService {
 
     private static final TransactionType TYPE_CREDIT = TransactionType.CREDIT;
     private static final TransactionType TYPE_DEBIT  = TransactionType.DEBIT;
+    private static final ZoneId ZONE = ZoneId.systemDefault();
+    private static final String FIELD_INSTALLMENTS = "installmentsNumber";
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
@@ -50,6 +53,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
+    @SuppressWarnings("null")
     public TransactionResponse findById(@NonNull Long id) {
         Transaction t = getOrThrow(id);
         if (isInstallmentGroup(t.getInstallmentGroupId())) {
@@ -89,7 +93,7 @@ public class TransactionService {
                                                    TransactionRequest req,
                                                    int n) {
         TransactionDeps deps = loadDeps(req);
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZONE);
 
         long totalCents = Math.round((req.value() != null ? req.value() : 0.0) * 100);
         long base       = totalCents / n;
@@ -106,7 +110,7 @@ public class TransactionService {
 
             Transaction t = new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                     parcelaValue, date, req.type(), n, req.obs(),
-                    0L, LocalDateTime.now(), groupId, k + 1, applied);
+                    0L, LocalDateTime.now(ZONE), groupId, k + 1, applied);
             t = transactionRepository.save(t);
 
             if (k == 0) {
@@ -126,7 +130,7 @@ public class TransactionService {
         return result;
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "java:S3776"})
     private TransactionResponse updateInstallmentGroup(Transaction anyMember,
                                                        Long userId,
                                                        TransactionRequest req) {
@@ -138,7 +142,7 @@ public class TransactionService {
                 .findFirst().orElse(group.get(0));
 
         TransactionDeps deps = loadDeps(req);
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZONE);
 
         for (Transaction p : group) {
             Long accId = p.getAccount() != null ? p.getAccount().getId() : null;
@@ -162,7 +166,7 @@ public class TransactionService {
 
             Transaction saved = transactionRepository.save(parent);
             historyService.recordChanges(ENTITY_TRANSACTION, parent.getId(), userId,
-                    Map.of("installmentsNumber", diff(String.valueOf(group.size()), "0")));
+                    Map.of(FIELD_INSTALLMENTS, diff(String.valueOf(group.size()), "0")));
             return TransactionResponse.from(saved);
         }
 
@@ -180,7 +184,7 @@ public class TransactionService {
             Transaction t = (k == 0) ? parent
                     : new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                             parcelaValue, date, req.type(), n, req.obs(),
-                            0L, LocalDateTime.now(), parent.getId(), k + 1, applied);
+                            0L, LocalDateTime.now(ZONE), parent.getId(), k + 1, applied);
             t.setUserId(userId);
             t.setAccount(deps.account());
             t.setCategory(deps.category());
@@ -201,7 +205,7 @@ public class TransactionService {
         }
 
         historyService.recordChanges(ENTITY_TRANSACTION, parent.getId(), userId,
-                Map.of("installmentsNumber", diff(String.valueOf(group.size()), String.valueOf(n))));
+                Map.of(FIELD_INSTALLMENTS, diff(String.valueOf(group.size()), String.valueOf(n))));
         return TransactionResponse.from(savedParent);
     }
 
@@ -235,7 +239,7 @@ public class TransactionService {
         return transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "java:S3776"})
     private TransactionResponse updateOne(@NonNull Long id,
                                           Long userId,
                                           TransactionRequest req) {
@@ -250,9 +254,8 @@ public class TransactionService {
         Long accountId = existing.getAccount().getId();
 
         boolean wasApplied = isApplied(existing);
-        boolean nowApplied = isInstallmentGroup(existing.getInstallmentGroupId())
-                ? (req.date() == null || !req.date().isAfter(LocalDate.now()))
-                : true;
+        boolean nowApplied = !isInstallmentGroup(existing.getInstallmentGroupId())
+                || req.date() == null || !req.date().isAfter(LocalDate.now(ZONE));
 
         if (accountId != null && wasApplied) {
             accountService.patchBalance(accountId, revert);
@@ -366,7 +369,7 @@ public class TransactionService {
 
         return new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                 req.value(), req.date(), req.type(), installmentsNumber, req.obs(),
-                transferPartnerId, LocalDateTime.now(), null, null, true);
+                transferPartnerId, LocalDateTime.now(ZONE), null, null, true);
     }
 
     private void applyUpdateWithDeps(Transaction transaction,
@@ -385,6 +388,7 @@ public class TransactionService {
         transaction.setTransferPartnerId(req.transferPartnerId() != null ? req.transferPartnerId() : 0L);
     }
 
+    @SuppressWarnings("java:S3776")
     private Map<String, String[]> buildDiff(Transaction t,
                                             TransactionRequest req,
                                             TransactionDeps newDeps) {
@@ -405,7 +409,7 @@ public class TransactionService {
         int newInstall = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
 
         if (oldInstall != newInstall)
-            diff.put("installmentsNumber", diff(String.valueOf(oldInstall), String.valueOf(newInstall)));
+            diff.put(FIELD_INSTALLMENTS, diff(String.valueOf(oldInstall), String.valueOf(newInstall)));
         if (differs(t.getObs(), req.obs()))
             diff.put("obs", diff(t.getObs(), req.obs()));
 

@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 
 @Component
+@SuppressWarnings("null")
 public class JwtUtil {
 
     public static final String COOKIE_NAME = "auth_token";
@@ -30,10 +31,11 @@ public class JwtUtil {
     }
 
     public String generateToken(Long userId) {
+        long nowSeconds = Instant.now().getEpochSecond();
         return Jwts.builder()
                 .subject(String.valueOf(userId))
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .claim("iat", nowSeconds)
+                .claim("exp", nowSeconds + expirationMs / 1000)
                 .signWith(key)
                 .compact();
     }

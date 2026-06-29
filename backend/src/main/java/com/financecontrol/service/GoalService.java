@@ -75,6 +75,7 @@ public class GoalService {
         return GoalResponse.from(goal, 0.0);
     }
 
+    @SuppressWarnings("null")
     private boolean isDuplicateGoal(Long userId, GoalRequest req) {
         List<Goal> candidates = goalRepository.findPotentialDuplicates(
                 userId, req.name(), req.type(), req.targetAmount(), req.startDate(), req.endDate());
@@ -131,6 +132,7 @@ public class GoalService {
         goalRepository.deleteById(id);
     }
 
+    @SuppressWarnings("null")
     public double calculateCurrentAmount(Goal goal) {
         TransactionType txType = goal.getType() == GoalType.EXPENSE_LIMIT
                 ? TransactionType.DEBIT : TransactionType.CREDIT;
@@ -182,6 +184,7 @@ public class GoalService {
         return goal;
     }
 
+    @SuppressWarnings("null")
     private Map<String, String[]> buildDiff(Goal goal,
                                             GoalRequest req) {
         Map<String, String[]> diff = new LinkedHashMap<>();

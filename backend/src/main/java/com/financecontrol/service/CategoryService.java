@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,10 @@ import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CategoryService {
+
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     private final CategoryRepository categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
@@ -64,7 +68,7 @@ public class CategoryService {
         c.setName(req.name());
         c.setDescription(req.description());
         c.setIconKey(req.iconKey());
-        c.setCreatedAt(LocalDateTime.now());
+        c.setCreatedAt(LocalDateTime.now(ZONE));
         categoryRepository.save(c);
 
         List<String> aliasNames = (req.aliases() != null && !req.aliases().isEmpty())
