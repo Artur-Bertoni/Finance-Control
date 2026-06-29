@@ -16,7 +16,8 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 | Migrações | Liquibase | - |
 | Segurança | Spring Security + JWT (stateless) + OAuth2 (Google) | - |
 | Cache | Spring Cache + Caffeine | - |
-| Importação de extrato | Apache PDFBox | 3.0.x |
+| Importação de extrato | Apache PDFBox (PDF) + parsers OFX/CNAB240 | 3.0.x |
+| Exportação de relatórios | Apache POI (Excel) + PDFBox (PDF) | 5.3.x / 3.0.x |
 | E-mail | Spring Mail (SMTP) | - |
 | Frontend | HTML + CSS + JavaScript (ES6 modules, SPA) | - |
 | HTTP client | jQuery | 3.6.0 |
@@ -143,7 +144,7 @@ Acesse em: **http://localhost:8080**
 
 ```
 Browser :8080  →  proxy-server.js  →  /api/*  →  Spring Boot :8081  →  MySQL :3306
-                                    →  /*      →  frontend/ (arquivos estáticos)
+                                   →  /*      →  frontend/ (arquivos estáticos)
 ```
 
 ---
@@ -217,9 +218,10 @@ Finance-Control/
 │   │   │   ├── request/            # Payloads de entrada
 │   │   │   └── response/           # Payloads de saída
 │   │   ├── entity/                 # Entidades JPA
+│   │   ├── enums/                  # Enumerações (tipos de conta, transação, metas…)
 │   │   ├── exception/              # Exceções customizadas + GlobalExceptionHandler
 │   │   ├── repository/             # Interfaces Spring Data JPA
-│   │   └── service/                # Regras de negócio
+│   │   └── service/                # Regras de negócio (statement/, report/, finny/…)
 │   ├── src/main/resources/
 │   │   └── application.properties  # Configurações da aplicação
 │   └── pom.xml
@@ -267,13 +269,15 @@ Finance-Control/
 | Transferências | `/api/transfers` |
 | Locais | `/api/transaction-locales` |
 | Instituições Financeiras | `/api/financial-institutions` |
+| Orçamentos | `/api/budgets` |
 | Metas Financeiras | `/api/goals` |
 | Conquistas | `/api/achievements` |
 | Notificações in-app | `/api/notifications` |
-| Importação de extrato (PDF) | `/api/statements` |
+| Importação de extrato (OFX/CNAB240/PDF) | `/api/statements` |
+| Agente Finny (dicas e feedback) | `/api/finny` |
 | Histórico de alterações | `/api/change-history` |
 | Feedback do usuário | `/api/feedback` |
-| Relatórios / Dashboard | `/api/reports` |
+| Relatórios / Dashboard (+ export PDF/Excel) | `/api/reports` |
 | Admin (feedbacks, e-mail de teste) | `/api/admin/**` |
 | Health check | `/actuator/health` |
 
@@ -285,14 +289,16 @@ Todos os endpoints exigem JWT válido, exceto login, criação de usuário e o f
 
 - **Autenticação** - cadastro com verificação de e-mail, login por e-mail/senha (BCrypt) ou Google (OAuth2); sessão stateless via JWT
 - **Transações** - registro de débitos e créditos com categorias, contas, locais e parcelas; transferências entre contas
-- **Importação de extrato** - upload de PDFs bancários (Apache PDFBox) com pré-visualização, detecção de duplicatas e resolução de conflitos antes de confirmar
+- **Importação de extrato** - upload de extratos bancários em OFX, CNAB240 e PDF (parsers por formato, Apache PDFBox para PDF) com pré-visualização, detecção de duplicatas e resolução de conflitos antes de confirmar
+- **Orçamento** - definição de limites de gastos mensais por categoria com acompanhamento do realizado
 - **Dashboard** - gráficos de receitas vs despesas com filtros por período, categoria e conta (resultado cacheado)
+- **Relatórios** - exportação dos dados financeiros em PDF (PDFBox) e Excel (Apache POI)
 - **Metas Financeiras** - metas de limite de gastos, economia e receita com acompanhamento de progresso e notificações
 - **Conquistas** - sistema de gamificação baseado em hábitos financeiros
 - **Notificações in-app** - pop-ups ao atingir marcos de metas, histórico persistido no banco; e-mail para aviso de prazo (7 dias)
 - **Histórico de alterações** - auditoria de mudanças por entidade
 - **Feedback do usuário** - envio de feedback com painel administrativo de leitura
-- **Mascote Finny** - porquinho cofre como botão flutuante (FAB) com painel de dicas financeiras e central de notificações; dicas rotativas a cada 30 minutos com countdown; página dedicada `/pages/FinnyCenter.html`
+- **Mascote Finny** - porquinho cofre como botão flutuante (FAB) com central de dicas e notificações; um agente de regras adaptativo (sem API externa) monta um perfil financeiro do usuário e prioriza dicas personalizadas, aprendendo com o feedback (curtir/dispensar); página dedicada `/pages/FinnyCenter.html`
 - **Multi-idioma** - interface em Português, Inglês e Espanhol
 - **Tema escuro/claro** - alternância de tema com persistência via localStorage
 - **Atalhos de teclado** - `Alt+1`–`0` e `Alt+Q`–`P` para navegação direta pelos itens da sidebar
