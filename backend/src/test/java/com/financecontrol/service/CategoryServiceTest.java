@@ -60,7 +60,7 @@ class CategoryServiceTest {
         when(categoryRepository.findByIdWithAliases(1L))
                 .thenReturn(Optional.of(categoryWith(1L, 1L, "Transporte", "Ônibus/metrô", "ph-bus")));
 
-        CategoryResponse result = categoryService.findById(1L);
+        CategoryResponse result = categoryService.findById(1L, 1L);
 
         assertThat(result.name()).isEqualTo("Transporte");
         assertThat(result.description()).isEqualTo("Ônibus/metrô");
@@ -69,7 +69,7 @@ class CategoryServiceTest {
     @Test
     void findById_naoEncontrado_lancaResourceNotFoundException() {
         when(categoryRepository.findByIdWithAliases(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> categoryService.findById(99L))
+        assertThatThrownBy(() -> categoryService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -132,7 +132,7 @@ class CategoryServiceTest {
         when(categoryRepository.findByIdWithAliases(1L)).thenReturn(Optional.of(existing));
         when(categoryRepository.save(any(Category.class))).thenReturn(saved);
 
-        CategoryResponse result = categoryService.update(1L,
+        CategoryResponse result = categoryService.update(1L, 1L,
                 new CategoryRequest("Novo", "desc", "ph-tag", List.of("Novo")));
 
         assertThat(result.name()).isEqualTo("Novo");
@@ -142,7 +142,7 @@ class CategoryServiceTest {
     @Test
     void update_naoEncontrado_lancaResourceNotFoundException() {
         when(categoryRepository.findByIdWithAliases(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> categoryService.update(99L,
+        assertThatThrownBy(() -> categoryService.update(99L, 1L,
                 new CategoryRequest("X", null, null, null)))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -212,7 +212,7 @@ class CategoryServiceTest {
         when(categoryRepository.findByIdWithAliases(1L))
                 .thenReturn(Optional.of(categoryWith(1L, 1L, "X", null, null)));
 
-        categoryService.delete(1L);
+        categoryService.delete(1L, 1L);
 
         verify(categoryRepository).deleteById(1L);
     }
@@ -220,7 +220,7 @@ class CategoryServiceTest {
     @Test
     void delete_naoEncontrado_lancaResourceNotFoundException() {
         when(categoryRepository.findByIdWithAliases(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> categoryService.delete(99L))
+        assertThatThrownBy(() -> categoryService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

@@ -79,7 +79,7 @@ class TransactionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(transactionService.findById(10L)).thenReturn(txResp(10L));
+        when(transactionService.findById(10L, 1L)).thenReturn(txResp(10L));
 
         mockMvc.perform(get("/api/transactions/10"))
                 .andExpect(status().isOk())
@@ -89,7 +89,7 @@ class TransactionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(transactionService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(transactionService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/transactions/99"))
                 .andExpect(status().isNotFound());
@@ -141,7 +141,7 @@ class TransactionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(transactionService).delete(10L);
+        doNothing().when(transactionService).delete(10L, 1L);
 
         mockMvc.perform(delete("/api/transactions/10"))
                 .andExpect(status().isNoContent());
@@ -150,7 +150,7 @@ class TransactionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(transactionService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(transactionService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/transactions/99"))
                 .andExpect(status().isNotFound());

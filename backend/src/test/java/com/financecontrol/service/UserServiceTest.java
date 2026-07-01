@@ -113,11 +113,11 @@ class UserServiceTest {
 
     @Test
     void create_sucesso_salvaUsuarioEEnviaEmail() {
-        UserRequest req = new UserRequest("joao", "joao@test.com", "abc123", "abc123",
+        UserRequest req = new UserRequest("joao", "joao@test.com", "SenhaForte1!x", "SenhaForte1!x",
                 true, 3, false, "pt");
 
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.empty());
-        when(passwordEncoder.encode("abc123")).thenReturn("encoded");
+        when(passwordEncoder.encode("SenhaForte1!x")).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(10L);
@@ -144,6 +144,17 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.create(req))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("duplicateEmail");
+    }
+
+    @Test
+    void create_senhaFraca_lancaBusinessException() {
+        UserRequest req = new UserRequest("joao", "joao@test.com", "fraca", "fraca",
+                null, null, null, null);
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.create(req))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("weakPassword");
     }
 
     @Test
@@ -223,10 +234,12 @@ class UserServiceTest {
     }
 
     @Test
-    void resendVerification_emailNaoEncontrado_lancaResourceNotFoundException() {
+    void resendVerification_emailNaoEncontrado_naoEnviaEmailNemLancaExcecao() {
         when(userRepository.findByEmailAndActiveTrue("x@x.com")).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> userService.resendVerification("x@x.com"))
-                .isInstanceOf(ResourceNotFoundException.class);
+
+        userService.resendVerification("x@x.com");
+
+        verify(emailService, never()).sendVerificationEmail(any(), any());
     }
 
     // ── unlinkGoogle ─────────────────────────────────────────────────────────
@@ -391,10 +404,10 @@ class UserServiceTest {
         User user = userWith(1L, "joao", "joao@test.com", "oldHash");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("oldPass", "oldHash")).thenReturn(true);
-        when(passwordEncoder.encode("newPass")).thenReturn("newHash");
+        when(passwordEncoder.encode("NovaSenha1!x")).thenReturn("newHash");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.changePassword(1L, new PasswordChangeRequest("oldPass", "newPass", "newPass"));
+        userService.changePassword(1L, new PasswordChangeRequest("oldPass", "NovaSenha1!x", "NovaSenha1!x"));
 
         assertThat(user.getPassword()).isEqualTo("newHash");
         verify(historyService).recordPasswordChange(1L);
@@ -428,10 +441,10 @@ class UserServiceTest {
     void changePassword_semSenhaAtual_permiteAlterarSemVerificar() {
         User user = userWith(1L, "joao", "joao@test.com", null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(passwordEncoder.encode("nova")).thenReturn("novaHash");
+        when(passwordEncoder.encode("NovaSenha1!x")).thenReturn("novaHash");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        userService.changePassword(1L, new PasswordChangeRequest(null, "nova", "nova"));
+        userService.changePassword(1L, new PasswordChangeRequest(null, "NovaSenha1!x", "NovaSenha1!x"));
 
         assertThat(user.getPassword()).isEqualTo("novaHash");
     }

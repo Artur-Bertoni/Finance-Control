@@ -188,7 +188,10 @@ function loadUserData() {
             logoutBtn.addEventListener('click', () => {
                 $.ajax({
                     url: '/api/auth/logout', type: 'POST', async: false,
-                    complete: () => { globalThis.location.href = '/pages/Login.html' }
+                    complete: () => {
+                        sessionStorage.removeItem('authToken')
+                        globalThis.location.href = '/pages/Login.html'
+                    }
                 })
             })
             document.getElementById('header-actions').appendChild(logoutBtn)
@@ -323,6 +326,7 @@ function showPasswordChangeModal(userId, hasPassword) {
                         <input type="password" id="modal-new-pw" placeholder="${I18n.t('passwordPlaceholderNew')}" autocomplete="new-password">
                         <button class="pw-toggle" type="button" id="modal-new-pw-btn"></button>
                     </div>
+                    ${PasswordInput.requirementsHtml()}
                 </div>
                 <div class="field">
                     <label>${I18n.t('confirmPassword')} *</label>
@@ -344,6 +348,11 @@ function showPasswordChangeModal(userId, hasPassword) {
     PasswordInput.setupToggle('modal-new-pw',     'modal-new-pw-btn')
     PasswordInput.setupToggle('modal-confirm-pw', 'modal-confirm-pw-btn')
 
+    const pwRequirements = PasswordInput.attachRequirements(
+        overlay.querySelector('#modal-new-pw'),
+        overlay.querySelector('.pw-requirements')
+    )
+
     overlay.querySelector('#modal-pw-cancel').addEventListener('click', () => overlay.remove())
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove() })
 
@@ -360,6 +369,12 @@ function showPasswordChangeModal(userId, hasPassword) {
 
         if (missing.length > 0) {
             showToast(I18n.t('commonFillRequired', { fields: missing.join(', ') }), 'warning')
+            return
+        }
+
+        if (!pwRequirements.isValid()) {
+            showToast(I18n.t('passwordTooWeak'), 'warning')
+            overlay.querySelector('#modal-new-pw').focus()
             return
         }
 

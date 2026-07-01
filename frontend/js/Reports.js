@@ -45,7 +45,10 @@ async function exportReport(format) {
 
     const overlay = showOverlay()
     try {
-        const res = await fetch(`/api/reports/export/${format}?${params}`, { credentials: 'same-origin' })
+        const authToken = sessionStorage.getItem('authToken')
+        const res = await fetch(`/api/reports/export/${format}?${params}`, {
+            headers: authToken ? { Authorization: 'Bearer ' + authToken } : {},
+        })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
         const blob = await res.blob()

@@ -25,8 +25,7 @@ public class FinancialGoalController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<GoalResponse> findById(@PathVariable @NonNull Long id,
                                                           HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(goalService.findById(id));
+        return ResponseEntity.ok(goalService.findById(id, requireUserId(session)));
     }
 
     @PostMapping
@@ -46,8 +45,7 @@ public class FinancialGoalController extends BaseController {
     @PutMapping("/{id}/archive")
     public ResponseEntity<Void> archive(@PathVariable @NonNull Long id,
                                         HttpSession session) {
-        requireUserId(session);
-        goalService.archive(id);
+        goalService.archive(id, requireUserId(session));
 
         return ResponseEntity.noContent().build();
     }
@@ -55,9 +53,8 @@ public class FinancialGoalController extends BaseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        goalService.delete(id);
-        
+        goalService.delete(id, requireUserId(session));
+
         return ResponseEntity.noContent().build();
     }
 }

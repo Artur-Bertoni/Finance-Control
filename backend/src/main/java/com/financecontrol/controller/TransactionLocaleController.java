@@ -25,8 +25,7 @@ public class TransactionLocaleController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<TransactionLocaleResponse> findById(@PathVariable @NonNull Long id,
                                                               HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(transactionLocaleService.findById(id));
+        return ResponseEntity.ok(transactionLocaleService.findById(id, requireUserId(session)));
     }
 
     @PostMapping
@@ -40,15 +39,13 @@ public class TransactionLocaleController extends BaseController {
     public ResponseEntity<TransactionLocaleResponse> update(@PathVariable @NonNull Long id,
                                                             @RequestBody TransactionLocaleRequest req,
                                                             HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(transactionLocaleService.update(id, req));
+        return ResponseEntity.ok(transactionLocaleService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        transactionLocaleService.delete(id);
+        transactionLocaleService.delete(id, requireUserId(session));
         return ResponseEntity.noContent().build();
     }
 }

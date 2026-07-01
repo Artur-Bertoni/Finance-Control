@@ -43,7 +43,7 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
     }
 
     private Long extractUserIdFromJwt(HttpServletRequest request) {
-        String token = jwtUtil.extractTokenFromRequest(request);
+        String token = jwtUtil.extractTokenFromCookie(request);
 
         if (token == null || !jwtUtil.isValid(token)) return null;
         

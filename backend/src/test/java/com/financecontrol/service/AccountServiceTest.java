@@ -134,7 +134,7 @@ class AccountServiceTest {
         Account account = accountWith(5L, 1L, fiWith(1L, "B"), "Test");
         when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
 
-        accountService.delete(5L);
+        accountService.delete(5L, 1L);
 
         verify(accountRepository).deleteById(5L);
     }
@@ -143,7 +143,7 @@ class AccountServiceTest {
     void delete_contaNaoEncontrada_lancaResourceNotFoundException() {
         when(accountRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> accountService.delete(99L))
+        assertThatThrownBy(() -> accountService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -211,7 +211,7 @@ class AccountServiceTest {
     void findById_naoEncontrada_lancaResourceNotFoundException() {
         when(accountRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> accountService.findById(99L))
+        assertThatThrownBy(() -> accountService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -319,6 +319,7 @@ class AccountServiceTest {
     private static FinancialInstitution fiWith(Long id, String name) {
         FinancialInstitution fi = new FinancialInstitution();
         fi.setId(id);
+        fi.setUserId(1L);
         fi.setName(name);
         return fi;
     }

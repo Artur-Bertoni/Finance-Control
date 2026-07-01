@@ -52,8 +52,9 @@ public class GoalService {
     }
 
     @Transactional
-    public GoalResponse findById(@NonNull Long id) {
-        Goal g = getOrThrow(id);
+    public GoalResponse findById(@NonNull Long id,
+                                 @NonNull Long userId) {
+        Goal g = getOrThrow(id, userId);
         double current = calculateCurrentAmount(g);
         tryAutoComplete(g, current);
         return GoalResponse.from(g, current);
@@ -104,7 +105,7 @@ public class GoalService {
     public GoalResponse update(@NonNull Long id,
                                         Long userId,
                                         GoalRequest req) {
-        Goal goal = getOrThrow(id);
+        Goal goal = getOrThrow(id, userId);
         Map<String, String[]> diff = buildDiff(goal, req);
 
         applyRequest(goal, userId, req);
@@ -115,8 +116,9 @@ public class GoalService {
     }
 
     @Transactional
-    public void archive(@NonNull Long id) {
-        Goal goal = getOrThrow(id);
+    public void archive(@NonNull Long id,
+                        @NonNull Long userId) {
+        Goal goal = getOrThrow(id, userId);
         Map<String, String[]> diff = new LinkedHashMap<>();
 
         diff.put("status", diff(goal.getStatus().getValue(), GoalStatus.ARCHIVED.getValue()));
@@ -127,8 +129,9 @@ public class GoalService {
     }
 
     @Transactional
-    public void delete(@NonNull Long id) {
-        getOrThrow(id);
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        getOrThrow(id, userId);
         goalRepository.deleteById(id);
     }
 
@@ -170,8 +173,12 @@ public class GoalService {
         }
     }
 
-    Goal getOrThrow(@NonNull Long id) {
-        return goalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.goal"));
+    Goal getOrThrow(@NonNull Long id,
+                    @NonNull Long userId) {
+        Goal goal = goalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.goal"));
+        if (!userId.equals(goal.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.goal");
+        return goal;
     }
 
     private Goal buildEntity(Long userId,
@@ -257,14 +264,24 @@ public class GoalService {
 
         goal.getCategories().clear();
         catIds.stream()
-              .map(cid -> categoryRepository.findById(cid)
-                      .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category")))
+              .map(cid -> {
+                  Category c = categoryRepository.findById(cid)
+                          .orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+                  if (!userId.equals(c.getUserId()))
+                      throw new ResourceNotFoundException("error.notFound.category");
+                  return c;
+              })
               .forEach(goal.getCategories()::add);
 
         goal.getLocales().clear();
         locIds.stream()
-              .map(lid -> transactionLocaleRepository.findById(lid)
-                      .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale")))
+              .map(lid -> {
+                  TransactionLocale l = transactionLocaleRepository.findById(lid)
+                          .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
+                  if (!userId.equals(l.getUserId()))
+                      throw new ResourceNotFoundException("error.notFound.transactionLocale");
+                  return l;
+              })
               .forEach(goal.getLocales()::add);
     }
 }

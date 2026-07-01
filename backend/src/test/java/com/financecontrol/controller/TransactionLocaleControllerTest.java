@@ -64,7 +64,7 @@ class TransactionLocaleControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(transactionLocaleService.findById(1L)).thenReturn(localeResp(1L, "Farmácia"));
+        when(transactionLocaleService.findById(1L, 1L)).thenReturn(localeResp(1L, "Farmácia"));
 
         mockMvc.perform(get("/api/transaction-locales/1"))
                 .andExpect(status().isOk())
@@ -74,7 +74,7 @@ class TransactionLocaleControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(transactionLocaleService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(transactionLocaleService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/transaction-locales/99"))
                 .andExpect(status().isNotFound());
@@ -101,7 +101,7 @@ class TransactionLocaleControllerTest {
     @WithLongPrincipal(1L)
     void update_requestValido_retorna200() throws Exception {
         TransactionLocaleRequest req = new TransactionLocaleRequest("Restaurante VIP", null, null);
-        when(transactionLocaleService.update(eq(1L), any())).thenReturn(localeResp(1L, "Restaurante VIP"));
+        when(transactionLocaleService.update(eq(1L), eq(1L), any())).thenReturn(localeResp(1L, "Restaurante VIP"));
 
         mockMvc.perform(put("/api/transaction-locales/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +115,7 @@ class TransactionLocaleControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(transactionLocaleService).delete(1L);
+        doNothing().when(transactionLocaleService).delete(1L, 1L);
 
         mockMvc.perform(delete("/api/transaction-locales/1"))
                 .andExpect(status().isNoContent());
@@ -124,7 +124,7 @@ class TransactionLocaleControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(transactionLocaleService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(transactionLocaleService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/transaction-locales/99"))
                 .andExpect(status().isNotFound());

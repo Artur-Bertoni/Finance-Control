@@ -67,6 +67,7 @@ class TransactionServiceTest {
     private static Category category(Long id) {
         Category c = new Category();
         c.setId(id);
+        c.setUserId(1L);
         c.setName("Cat " + id);
         return c;
     }
@@ -124,7 +125,7 @@ class TransactionServiceTest {
 
         when(transactionRepository.findById(10L)).thenReturn(Optional.of(tx));
 
-        TransactionResponse resp = transactionService.findById(10L);
+        TransactionResponse resp = transactionService.findById(10L, 1L);
 
         assertThat(resp.id()).isEqualTo(10L);
         assertThat(resp.value()).isEqualTo(100.0);
@@ -134,7 +135,7 @@ class TransactionServiceTest {
     void findById_naoEncontrado_lancaResourceNotFoundException() {
         when(transactionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> transactionService.findById(99L))
+        assertThatThrownBy(() -> transactionService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -246,7 +247,7 @@ class TransactionServiceTest {
 
         when(transactionRepository.findById(10L)).thenReturn(Optional.of(tx));
 
-        transactionService.delete(10L);
+        transactionService.delete(10L, 1L);
 
         verify(transactionRepository).deleteById(10L);
         verify(accountService).patchBalance(eq(1L), anyDouble());
@@ -256,7 +257,7 @@ class TransactionServiceTest {
     void delete_naoEncontrada_lancaResourceNotFoundException() {
         when(transactionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> transactionService.delete(99L))
+        assertThatThrownBy(() -> transactionService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -275,7 +276,7 @@ class TransactionServiceTest {
         when(transactionRepository.findById(11L)).thenReturn(Optional.of(partner));
         when(transactionRepository.existsById(11L)).thenReturn(true);
 
-        transactionService.delete(10L);
+        transactionService.delete(10L, 1L);
 
         verify(transactionRepository).deleteById(10L);
         verify(transactionRepository).deleteById(11L);
@@ -326,6 +327,7 @@ class TransactionServiceTest {
     private static TransactionLocale locale(Long id) {
         TransactionLocale l = new TransactionLocale();
         l.setId(id);
+        l.setUserId(1L);
         l.setName("Local " + id);
         return l;
     }
@@ -603,7 +605,7 @@ class TransactionServiceTest {
         when(transactionRepository.findById(51L)).thenReturn(Optional.of(p2));
         when(transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(50L)).thenReturn(List.of(p1, p2));
 
-        transactionService.delete(51L);
+        transactionService.delete(51L, 1L);
 
         verify(transactionRepository).deleteById(50L);
         verify(transactionRepository).deleteById(51L);

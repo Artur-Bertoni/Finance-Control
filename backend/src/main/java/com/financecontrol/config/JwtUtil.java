@@ -26,6 +26,10 @@ public class JwtUtil {
 
     public JwtUtil(@Value("${app.jwt.secret}") String secret,
                    @Value("${app.jwt.expiration-days:7}") int expirationDays) {
+        if (secret == null || secret.isBlank())
+            throw new IllegalStateException("app.jwt.secret (env JWT_SECRET) é obrigatório e não pode ser vazio");
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32)
+            throw new IllegalStateException("app.jwt.secret (env JWT_SECRET) deve ter no mínimo 32 bytes");
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = (long) expirationDays * 24 * 60 * 60 * 1000;
     }
@@ -73,9 +77,16 @@ public class JwtUtil {
         response.addHeader("Set-Cookie", cookieValue);
     }
 
-    public String extractTokenFromRequest(HttpServletRequest request) {
+    public String extractBearerToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer "))
+            return header.substring(7).trim();
+        return null;
+    }
+
+    public String extractTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) return null;
-        
+
         return Arrays.stream(request.getCookies())
                 .filter(c -> COOKIE_NAME.equals(c.getName()))
                 .map(Cookie::getValue)

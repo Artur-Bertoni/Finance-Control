@@ -49,7 +49,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L))
                 .thenReturn(Optional.of(fi(1L, 1L, "Itaú", "Av P", "11 9999", "ph-bank")));
 
-        FinancialInstitutionResponse result = financialInstitutionService.findById(1L);
+        FinancialInstitutionResponse result = financialInstitutionService.findById(1L, 1L);
 
         assertThat(result.name()).isEqualTo("Itaú");
         assertThat(result.contact()).isEqualTo("11 9999");
@@ -58,7 +58,7 @@ class FinancialInstitutionServiceTest {
     @Test
     void findById_naoEncontrado_lancaResourceNotFoundException() {
         when(financialInstitutionRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> financialInstitutionService.findById(99L))
+        assertThatThrownBy(() -> financialInstitutionService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -108,7 +108,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenReturn(saved);
 
-        FinancialInstitutionResponse result = financialInstitutionService.update(1L,
+        FinancialInstitutionResponse result = financialInstitutionService.update(1L, 1L,
                 new FinancialInstitutionRequest("Novo", null, null, null));
 
         assertThat(result.name()).isEqualTo("Novo");
@@ -121,7 +121,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenReturn(existing);
 
-        financialInstitutionService.update(1L, new FinancialInstitutionRequest("Igual", "Rua A", "11", "ph-bank"));
+        financialInstitutionService.update(1L, 1L, new FinancialInstitutionRequest("Igual", "Rua A", "11", "ph-bank"));
 
         verify(historyService).recordChanges(any(), any(), any(), any());
     }
@@ -129,7 +129,7 @@ class FinancialInstitutionServiceTest {
     @Test
     void update_naoEncontrado_lancaResourceNotFoundException() {
         when(financialInstitutionRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> financialInstitutionService.update(99L,
+        assertThatThrownBy(() -> financialInstitutionService.update(99L, 1L,
                 new FinancialInstitutionRequest("X", null, null, null)))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -141,7 +141,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L))
                 .thenReturn(Optional.of(fi(1L, 1L, "X", null, null, null)));
 
-        financialInstitutionService.delete(1L);
+        financialInstitutionService.delete(1L, 1L);
 
         verify(financialInstitutionRepository).deleteById(1L);
     }
@@ -149,7 +149,7 @@ class FinancialInstitutionServiceTest {
     @Test
     void delete_naoEncontrado_lancaResourceNotFoundException() {
         when(financialInstitutionRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> financialInstitutionService.delete(99L))
+        assertThatThrownBy(() -> financialInstitutionService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -161,7 +161,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        financialInstitutionService.update(1L, new FinancialInstitutionRequest("Banco", "Rua B", "11 9999", "ph-bank"));
+        financialInstitutionService.update(1L, 1L, new FinancialInstitutionRequest("Banco", "Rua B", "11 9999", "ph-bank"));
 
         verify(historyService).recordChanges(eq(HistoryService.ENTITY_INSTITUTION), eq(1L), eq(1L), any());
     }
@@ -172,7 +172,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        financialInstitutionService.update(1L, new FinancialInstitutionRequest("Banco", "Rua A", "11 0000", "ph-bank"));
+        financialInstitutionService.update(1L, 1L, new FinancialInstitutionRequest("Banco", "Rua A", "11 0000", "ph-bank"));
 
         verify(historyService).recordChanges(eq(HistoryService.ENTITY_INSTITUTION), eq(1L), eq(1L), any());
     }
@@ -183,7 +183,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        FinancialInstitutionResponse result = financialInstitutionService.update(1L,
+        FinancialInstitutionResponse result = financialInstitutionService.update(1L, 1L,
                 new FinancialInstitutionRequest("Banco", "Rua A", "11 9999", "ph-wallet"));
 
         assertThat(result.iconKey()).isEqualTo("ph-wallet");
@@ -196,7 +196,7 @@ class FinancialInstitutionServiceTest {
         when(financialInstitutionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(financialInstitutionRepository.save(any(FinancialInstitution.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        FinancialInstitutionResponse result = financialInstitutionService.update(1L,
+        FinancialInstitutionResponse result = financialInstitutionService.update(1L, 1L,
                 new FinancialInstitutionRequest("Novo", "Rua B", "11 0000", "ph-wallet"));
 
         assertThat(result.name()).isEqualTo("Novo");

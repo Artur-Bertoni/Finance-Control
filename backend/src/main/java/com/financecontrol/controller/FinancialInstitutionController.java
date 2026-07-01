@@ -25,8 +25,7 @@ public class FinancialInstitutionController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<FinancialInstitutionResponse> findById(@PathVariable @NonNull Long id,
                                                                  HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(financialInstitutionService.findById(id));
+        return ResponseEntity.ok(financialInstitutionService.findById(id, requireUserId(session)));
     }
 
     @PostMapping
@@ -40,16 +39,14 @@ public class FinancialInstitutionController extends BaseController {
     public ResponseEntity<FinancialInstitutionResponse> update(@PathVariable @NonNull Long id,
                                                                @RequestBody FinancialInstitutionRequest req,
                                                                HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(financialInstitutionService.update(id, req));
+        return ResponseEntity.ok(financialInstitutionService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        financialInstitutionService.delete(id);
-        
+        financialInstitutionService.delete(id, requireUserId(session));
+
         return ResponseEntity.noContent().build();
     }
 }

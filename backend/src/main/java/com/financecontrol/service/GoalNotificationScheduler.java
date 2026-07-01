@@ -112,7 +112,7 @@ public class GoalNotificationScheduler {
         entry.setSentAt(LocalDateTime.now());
         goalNotificationLogRepository.save(entry);
 
-        log.info("Aviso de prazo registrado para meta '{}' (user={})", goal.getName(), user.getEmail());
+        log.info("Aviso de prazo registrado para meta '{}' (userId={})", goal.getName(), user.getId());
     }
 
     private void sendInAppIfNotSent(Goal goal,
@@ -130,7 +130,7 @@ public class GoalNotificationScheduler {
         entry.setSentAt(LocalDateTime.now());
         goalNotificationLogRepository.save(entry);
 
-        log.info("Notificação {} registrada para meta '{}' (user={})", appType, goal.getName(), user.getEmail());
+        log.info("Notificação {} registrada para meta '{}' (userId={})", appType, goal.getName(), user.getId());
     }
 
     private double percentOf(double current,

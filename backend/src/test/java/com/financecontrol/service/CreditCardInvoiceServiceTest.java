@@ -74,7 +74,7 @@ class CreditCardInvoiceServiceTest {
         when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(t1, t2));
         when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
 
-        List<InvoiceResponse> invoices = service.listInvoices(1L);
+        List<InvoiceResponse> invoices = service.listInvoices(1L, 1L);
 
         assertThat(invoices).hasSize(2);
         assertThat(invoices.get(0).referenceMonth()).isEqualTo("2026-07");
@@ -89,10 +89,11 @@ class CreditCardInvoiceServiceTest {
     void listInvoices_naoSendoCartao_lancaBusinessException() {
         Account checking = new Account();
         checking.setId(1L);
+        checking.setUserId(1L);
         checking.setType(AccountType.CHECKING);
         when(accountRepository.findById(1L)).thenReturn(Optional.of(checking));
 
-        assertThatThrownBy(() -> service.listInvoices(1L))
+        assertThatThrownBy(() -> service.listInvoices(1L, 1L))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("notCreditCard");
     }

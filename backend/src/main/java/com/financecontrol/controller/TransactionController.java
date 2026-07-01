@@ -35,8 +35,7 @@ public class TransactionController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponse> findById(@PathVariable @NonNull Long id,
                                                         HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(transactionService.findById(id));
+        return ResponseEntity.ok(transactionService.findById(id, requireUserId(session)));
     }
 
     @PostMapping
@@ -60,8 +59,7 @@ public class TransactionController extends BaseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        transactionService.delete(id);
+        transactionService.delete(id, requireUserId(session));
         return ResponseEntity.noContent().build();
     }
 }

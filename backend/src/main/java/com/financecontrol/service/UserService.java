@@ -67,6 +67,7 @@ public class UserService {
             throw new BusinessException("error.user.duplicateEmail");
         if (!req.password().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");
+        validatePasswordStrength(req.password());
 
         User user = new User();
 
@@ -108,11 +109,11 @@ public class UserService {
 
     @Transactional
     public void resendVerification(String email) {
-        User user = userRepository.findByEmailAndActiveTrue(email)
-                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
-        if (user.isEmailVerified()) return;
-        emailVerificationTokenRepository.deleteByUserId(user.getId());
-        sendVerificationEmail(user);
+        userRepository.findByEmailAndActiveTrue(email).ifPresent(user -> {
+            if (user.isEmailVerified()) return;
+            emailVerificationTokenRepository.deleteByUserId(user.getId());
+            sendVerificationEmail(user);
+        });
     }
 
     @Transactional
@@ -245,6 +246,7 @@ public class UserService {
             throw new BusinessException("error.user.wrongCurrentPassword");
         if (!req.newPassword().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");
+        validatePasswordStrength(req.newPassword());
 
         user.setPassword(passwordEncoder.encode(req.newPassword()));
         userRepository.save(user);
@@ -260,6 +262,16 @@ public class UserService {
 
         user.setActive(false);
         userRepository.save(user);
+    }
+
+    private void validatePasswordStrength(String password) {
+        if (password == null
+                || password.length() < 12
+                || !password.matches(".*\\d.*")
+                || !password.matches(".*[A-Z].*")
+                || !password.matches(".*[a-z].*")
+                || !password.matches(".*[^A-Za-z0-9].*"))
+            throw new BusinessException("error.user.weakPassword");
     }
 
     private void sendVerificationEmail(User user) {

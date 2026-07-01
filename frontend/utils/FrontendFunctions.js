@@ -43,6 +43,9 @@ $.ajaxSetup({
     beforeSend(xhr, settings) {
         xhr.setRequestHeader('Accept-Language', I18n.getLanguage())
 
+        const authToken = sessionStorage.getItem('authToken')
+        if (authToken) xhr.setRequestHeader('Authorization', 'Bearer ' + authToken)
+
         const method = (settings.type || 'GET').toUpperCase()
         const isWrite = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)
         const url = settings.url || ''

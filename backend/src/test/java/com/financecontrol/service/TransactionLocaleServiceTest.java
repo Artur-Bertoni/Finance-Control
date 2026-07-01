@@ -53,7 +53,7 @@ class TransactionLocaleServiceTest {
         when(transactionLocaleRepository.findById(1L))
                 .thenReturn(Optional.of(locale(1L, 1L, "Farmácia", "Av B", "ph-pill")));
 
-        TransactionLocaleResponse result = transactionLocaleService.findById(1L);
+        TransactionLocaleResponse result = transactionLocaleService.findById(1L, 1L);
 
         assertThat(result.name()).isEqualTo("Farmácia");
         assertThat(result.iconKey()).isEqualTo("ph-pill");
@@ -62,7 +62,7 @@ class TransactionLocaleServiceTest {
     @Test
     void findById_naoEncontrado_lancaResourceNotFoundException() {
         when(transactionLocaleRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> transactionLocaleService.findById(99L))
+        assertThatThrownBy(() -> transactionLocaleService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -111,7 +111,7 @@ class TransactionLocaleServiceTest {
         when(transactionLocaleRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(transactionLocaleRepository.save(any(TransactionLocale.class))).thenReturn(saved);
 
-        TransactionLocaleResponse result = transactionLocaleService.update(1L,
+        TransactionLocaleResponse result = transactionLocaleService.update(1L, 1L,
                 new TransactionLocaleRequest("Novo", "Rua Y", "ph-map"));
 
         assertThat(result.name()).isEqualTo("Novo");
@@ -121,7 +121,7 @@ class TransactionLocaleServiceTest {
     @Test
     void update_naoEncontrado_lancaResourceNotFoundException() {
         when(transactionLocaleRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> transactionLocaleService.update(99L,
+        assertThatThrownBy(() -> transactionLocaleService.update(99L, 1L,
                 new TransactionLocaleRequest("X", null, null)))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -133,7 +133,7 @@ class TransactionLocaleServiceTest {
         when(transactionLocaleRepository.findById(1L))
                 .thenReturn(Optional.of(locale(1L, 1L, "X", null, null)));
 
-        transactionLocaleService.delete(1L);
+        transactionLocaleService.delete(1L, 1L);
 
         verify(transactionLocaleRepository).deleteById(1L);
     }
@@ -141,7 +141,7 @@ class TransactionLocaleServiceTest {
     @Test
     void delete_naoEncontrado_lancaResourceNotFoundException() {
         when(transactionLocaleRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> transactionLocaleService.delete(99L))
+        assertThatThrownBy(() -> transactionLocaleService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

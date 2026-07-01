@@ -51,6 +51,13 @@
           <input id="password-input" type="password" data-i18n-placeholder="passwordPlaceholderNew" placeholder="Digite uma senha" autocomplete="new-password" required>
           <button class="pw-toggle" type="button" id="password-img" aria-label="Mostrar/ocultar senha"></button>
         </div>
+        <ul class="pw-requirements" id="pw-requirements">
+          <li class="pw-req" data-rule="length"><i class="ph ph-circle"></i><span data-i18n="pwReqLength">Mínimo de 12 caracteres</span></li>
+          <li class="pw-req" data-rule="upper"><i class="ph ph-circle"></i><span data-i18n="pwReqUpper">1 letra maiúscula</span></li>
+          <li class="pw-req" data-rule="lower"><i class="ph ph-circle"></i><span data-i18n="pwReqLower">1 letra minúscula</span></li>
+          <li class="pw-req" data-rule="digit"><i class="ph ph-circle"></i><span data-i18n="pwReqDigit">1 número</span></li>
+          <li class="pw-req" data-rule="special"><i class="ph ph-circle"></i><span data-i18n="pwReqSpecial">1 caractere especial</span></li>
+        </ul>
       </div>
       <div class="field" style="margin-top:14px">
         <label for="password-confirm-input" data-i18n="confirmPassword">Confirmar Senha</label>

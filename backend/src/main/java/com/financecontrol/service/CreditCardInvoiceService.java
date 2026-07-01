@@ -44,12 +44,14 @@ public class CreditCardInvoiceService {
     private final TransferService transferService;
 
     @Transactional(readOnly = true)
-    public List<InvoiceResponse> listInvoices(@NonNull Long accountId) {
-        return computeInvoices(accountId);
+    public List<InvoiceResponse> listInvoices(@NonNull Long userId,
+                                              @NonNull Long accountId) {
+        return computeInvoices(userId, accountId);
     }
 
-    private List<InvoiceResponse> computeInvoices(@NonNull Long accountId) {
-        Account card = requireCreditCard(accountId);
+    private List<InvoiceResponse> computeInvoices(@NonNull Long userId,
+                                                  @NonNull Long accountId) {
+        Account card = requireCreditCard(userId, accountId);
         int closingDay = card.getClosingDay();
         int dueDay     = card.getDueDay();
 
@@ -92,12 +94,12 @@ public class CreditCardInvoiceService {
                                @NonNull Long accountId,
                                @NonNull String referenceMonth,
                                PayInvoiceRequest req) {
-        Account card = requireCreditCard(accountId);
+        Account card = requireCreditCard(userId, accountId);
 
         if (paymentRepository.findByAccount_IdAndReferenceMonth(accountId, referenceMonth).isPresent())
             throw new BusinessException("error.invoice.alreadyPaid");
 
-        InvoiceResponse invoice = computeInvoices(accountId).stream()
+        InvoiceResponse invoice = computeInvoices(userId, accountId).stream()
                 .filter(i -> i.referenceMonth().equals(referenceMonth))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.invoice"));
@@ -120,9 +122,12 @@ public class CreditCardInvoiceService {
                 invoice.total(), invoice.itemCount(), "PAID", payment.getPaidAt(), cardTx.id());
     }
 
-    private Account requireCreditCard(@NonNull Long accountId) {
+    private Account requireCreditCard(@NonNull Long userId,
+                                      @NonNull Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        if (!userId.equals(account.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.account");
         if (account.getType() != AccountType.CREDIT_CARD || account.getClosingDay() == null || account.getDueDay() == null)
             throw new BusinessException("error.invoice.notCreditCard");
         return account;
