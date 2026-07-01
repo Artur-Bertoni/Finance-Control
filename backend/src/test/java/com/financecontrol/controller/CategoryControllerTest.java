@@ -65,7 +65,7 @@ class CategoryControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(categoryService.findById(1L)).thenReturn(catResp(1L, "Transporte"));
+        when(categoryService.findById(1L, 1L)).thenReturn(catResp(1L, "Transporte"));
 
         mockMvc.perform(get("/api/categories/1"))
                 .andExpect(status().isOk())
@@ -75,7 +75,7 @@ class CategoryControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(categoryService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(categoryService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/categories/99"))
                 .andExpect(status().isNotFound());
@@ -102,7 +102,7 @@ class CategoryControllerTest {
     @WithLongPrincipal(1L)
     void update_requestValido_retorna200() throws Exception {
         CategoryRequest req = new CategoryRequest("Lazer Atualizado", null, null, List.of());
-        when(categoryService.update(eq(1L), any())).thenReturn(catResp(1L, "Lazer Atualizado"));
+        when(categoryService.update(eq(1L), eq(1L), any())).thenReturn(catResp(1L, "Lazer Atualizado"));
 
         mockMvc.perform(put("/api/categories/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class CategoryControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(categoryService).delete(1L);
+        doNothing().when(categoryService).delete(1L, 1L);
 
         mockMvc.perform(delete("/api/categories/1"))
                 .andExpect(status().isNoContent());
@@ -125,7 +125,7 @@ class CategoryControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(categoryService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(categoryService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/categories/99"))
                 .andExpect(status().isNotFound());

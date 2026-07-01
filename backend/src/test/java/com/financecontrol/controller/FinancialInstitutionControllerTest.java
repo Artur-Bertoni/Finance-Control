@@ -65,7 +65,7 @@ class FinancialInstitutionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(financialInstitutionService.findById(1L)).thenReturn(fiResp(1L, "Bradesco"));
+        when(financialInstitutionService.findById(1L, 1L)).thenReturn(fiResp(1L, "Bradesco"));
 
         mockMvc.perform(get("/api/financial-institutions/1"))
                 .andExpect(status().isOk())
@@ -75,7 +75,7 @@ class FinancialInstitutionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(financialInstitutionService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(financialInstitutionService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/financial-institutions/99"))
                 .andExpect(status().isNotFound());
@@ -102,7 +102,7 @@ class FinancialInstitutionControllerTest {
     @WithLongPrincipal(1L)
     void update_requestValido_retorna200() throws Exception {
         FinancialInstitutionRequest req = new FinancialInstitutionRequest("Itaú Atualizado", null, null, null);
-        when(financialInstitutionService.update(eq(1L), any())).thenReturn(fiResp(1L, "Itaú Atualizado"));
+        when(financialInstitutionService.update(eq(1L), eq(1L), any())).thenReturn(fiResp(1L, "Itaú Atualizado"));
 
         mockMvc.perform(put("/api/financial-institutions/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class FinancialInstitutionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(financialInstitutionService).delete(1L);
+        doNothing().when(financialInstitutionService).delete(1L, 1L);
 
         mockMvc.perform(delete("/api/financial-institutions/1"))
                 .andExpect(status().isNoContent());
@@ -125,7 +125,7 @@ class FinancialInstitutionControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(financialInstitutionService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(financialInstitutionService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/financial-institutions/99"))
                 .andExpect(status().isNotFound());

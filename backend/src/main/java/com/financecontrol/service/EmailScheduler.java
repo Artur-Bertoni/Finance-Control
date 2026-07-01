@@ -30,7 +30,7 @@ public class EmailScheduler {
     @Scheduled(cron = "0 0 8 * * *", zone = "${app.scheduler.timezone:America/Sao_Paulo}")
     public void sendWeeklyReminders() {
         int today = LocalDate.now(zoneId).getDayOfWeek().getValue();
-        List<User> users = userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDay(today);
+        List<User> users = userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDayAndActiveTrue(today);
 
         if (users.isEmpty()) return;
 

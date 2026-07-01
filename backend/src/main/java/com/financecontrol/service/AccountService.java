@@ -39,8 +39,9 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
-    public AccountResponse findById(@NonNull Long id) {
-        return AccountResponse.from(getOrThrow(id));
+    public AccountResponse findById(@NonNull Long id,
+                                    @NonNull Long userId) {
+        return AccountResponse.from(getOrThrow(id, userId));
     }
 
     public Double totalValue(Long userId,
@@ -56,7 +57,7 @@ public class AccountService {
         if (!force && accountRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
             throw new BusinessException("error.duplicate.name");
 
-        FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+        FinancialInstitution fi = requireInstitution(req.financialInstitutionId(), userId);
         AccountType type = req.type() != null ? req.type() : AccountType.CHECKING;
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(),
                 type, req.closingDay(), req.dueDay(), LocalDateTime.now(), false);
@@ -72,8 +73,8 @@ public class AccountService {
     public AccountResponse update(@NonNull Long id,
                                   Long userId,
                                   AccountRequest req) {
-        Account account = getOrThrow(id);
-        FinancialInstitution fi = financialInstitutionRepository.findById(req.financialInstitutionId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+        Account account = getOrThrow(id, userId);
+        FinancialInstitution fi = requireInstitution(req.financialInstitutionId(), userId);
 
         Map<String, String[]> diff = buildDiff(account, req, fi);
 
@@ -94,8 +95,9 @@ public class AccountService {
 
     @Transactional
     @CacheEvict(value = "accounts", allEntries = true)
-    public void delete(@NonNull Long id) {
-        getOrThrow(id);
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        getOrThrow(id, userId);
 
         accountRepository.deleteById(id);
     }
@@ -104,7 +106,8 @@ public class AccountService {
     @CacheEvict(value = "accounts", allEntries = true)
     public void patchBalance(@NonNull Long id,
                              Double delta) {
-        Account account    = getOrThrow(id);
+        Account account    = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
         double oldBalance  = account.getBalance() != null ? account.getBalance() : 0.0;
         double newBalance  = oldBalance + delta;
 
@@ -115,8 +118,22 @@ public class AccountService {
         historyService.recordChanges(ENTITY_ACCOUNT, id, account.getUserId(), diff);
     }
 
-    Account getOrThrow(@NonNull Long id) {
-        return accountRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+    Account getOrThrow(@NonNull Long id,
+                       @NonNull Long userId) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        if (!userId.equals(account.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.account");
+        return account;
+    }
+
+    private FinancialInstitution requireInstitution(@NonNull Long id,
+                                                    @NonNull Long userId) {
+        FinancialInstitution fi = financialInstitutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+        if (!userId.equals(fi.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.financialInstitution");
+        return fi;
     }
 
     private Map<String, String[]> buildDiff(Account account,

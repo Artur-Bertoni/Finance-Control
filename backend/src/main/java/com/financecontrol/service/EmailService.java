@@ -55,9 +55,9 @@ public class EmailService {
                                       String token) {
         try {
             doSendVerification(user, token);
-            log.info("Email de verificação enviado para {}", user.getEmail());
+            log.info("Email de verificação enviado para userId={}", user.getId());
         } catch (Exception e) {
-            log.error("Falha ao enviar email de verificação para {}: {}", user.getEmail(), e.getMessage());
+            log.error("Falha ao enviar email de verificação para userId={}: {}", user.getId(), e.getMessage());
         }
     }
 
@@ -86,9 +86,9 @@ public class EmailService {
     public void sendWeeklyReminder(User user) {
         try {
             doSendWeekly(user);
-            log.info("Email semanal enviado para {} (lang={})", user.getEmail(), user.getLanguage());
+            log.info("Email semanal enviado para userId={} (lang={})", user.getId(), user.getLanguage());
         } catch (Exception e) {
-            log.error("Falha ao enviar email semanal para {}: {}", user.getEmail(), e.getMessage());
+            log.error("Falha ao enviar email semanal para userId={}: {}", user.getId(), e.getMessage());
         }
     }
 
@@ -169,7 +169,7 @@ public class EmailService {
     public void sendFeedbackNotification(User admin, User sender, UserFeedback feedback) {
         try {
             doSendFeedback(admin, sender, feedback);
-            log.info("Notificação de feedback enviada para admin {}", admin.getEmail());
+            log.info("Notificação de feedback enviada para adminId={}", admin.getId());
         } catch (Exception e) {
             log.error("Falha ao enviar notificação de feedback: {}", e.getMessage());
         }

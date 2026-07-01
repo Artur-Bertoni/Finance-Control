@@ -43,8 +43,8 @@ public class UserService {
     public UserResponse login(String identifier,
                               String password) {
         User user = identifier.contains("@")
-                ? userRepository.findByEmail(identifier).orElse(null)
-                : userRepository.findByUsername(identifier).orElse(null);
+                ? userRepository.findByEmailAndActiveTrue(identifier).orElse(null)
+                : userRepository.findByUsernameAndActiveTrue(identifier).orElse(null);
 
         if (user == null || !passwordEncoder.matches(password, user.getPassword()))
             throw new UnauthorizedException("error.auth.invalidCredentials");
@@ -63,10 +63,11 @@ public class UserService {
 
     @Transactional
     public UserResponse create(UserRequest req) {
-        if (userRepository.findByEmail(req.email()).isPresent())
+        if (userRepository.findByEmailAndActiveTrue(req.email()).isPresent())
             throw new BusinessException("error.user.duplicateEmail");
         if (!req.password().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");
+        validatePasswordStrength(req.password());
 
         User user = new User();
 
@@ -108,11 +109,11 @@ public class UserService {
 
     @Transactional
     public void resendVerification(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
-        if (user.isEmailVerified()) return;
-        emailVerificationTokenRepository.deleteByUserId(user.getId());
-        sendVerificationEmail(user);
+        userRepository.findByEmailAndActiveTrue(email).ifPresent(user -> {
+            if (user.isEmailVerified()) return;
+            emailVerificationTokenRepository.deleteByUserId(user.getId());
+            sendVerificationEmail(user);
+        });
     }
 
     @Transactional
@@ -131,10 +132,10 @@ public class UserService {
                                    String providerId,
                                    String email,
                                    String name) {
-        return userRepository.findByProviderAndProviderId(provider, providerId)
+        return userRepository.findByProviderAndProviderIdAndActiveTrue(provider, providerId)
                 .map(User::getId)
                 .orElseGet(() -> {
-                    User user = email != null ? userRepository.findByEmail(email).orElse(null) : null;
+                    User user = email != null ? userRepository.findByEmailAndActiveTrue(email).orElse(null) : null;
                     boolean isNew = false;
                     if (user == null) {
                         isNew = true;
@@ -163,7 +164,7 @@ public class UserService {
                                   String providerId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
 
-        userRepository.findByProviderAndProviderId(provider, providerId)
+        userRepository.findByProviderAndProviderIdAndActiveTrue(provider, providerId)
             .ifPresent(existing -> {
                 if (!existing.getId().equals(userId))
                     throw new BusinessException("error.auth.googleAlreadyLinked");
@@ -188,7 +189,7 @@ public class UserService {
         String candidate = base;
         int i = 1;
 
-        while (userRepository.findByUsername(candidate).isPresent()) {
+        while (userRepository.existsByUsernameAndActiveTrue(candidate)) {
             candidate = base + i++;
         }
 
@@ -198,7 +199,7 @@ public class UserService {
     @Transactional
     public UserResponse update(@NonNull Long id,
                                UserRequest req) {
-        if (userRepository.existsByEmailAndIdNot(req.email(), id))
+        if (userRepository.existsByEmailAndActiveTrueAndIdNot(req.email(), id))
             throw new BusinessException("error.user.duplicateEmail");
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
@@ -245,6 +246,7 @@ public class UserService {
             throw new BusinessException("error.user.wrongCurrentPassword");
         if (!req.newPassword().equals(req.passwordConfirmation()))
             throw new BusinessException("error.user.passwordMismatch");
+        validatePasswordStrength(req.newPassword());
 
         user.setPassword(passwordEncoder.encode(req.newPassword()));
         userRepository.save(user);
@@ -253,10 +255,23 @@ public class UserService {
 
     @Transactional
     public void delete(@NonNull Long id) {
-        if (!userRepository.existsById(id))
-            throw new ResourceNotFoundException(NOT_FOUND);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
 
-        userRepository.deleteById(id);
+        if (!user.isActive()) return;
+
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    private void validatePasswordStrength(String password) {
+        if (password == null
+                || password.length() < 12
+                || !password.matches(".*\\d.*")
+                || !password.matches(".*[A-Z].*")
+                || !password.matches(".*[a-z].*")
+                || !password.matches(".*[^A-Za-z0-9].*"))
+            throw new BusinessException("error.user.weakPassword");
     }
 
     private void sendVerificationEmail(User user) {

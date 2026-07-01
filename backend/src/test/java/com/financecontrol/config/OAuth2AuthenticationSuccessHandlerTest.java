@@ -54,7 +54,7 @@ class OAuth2AuthenticationSuccessHandlerTest {
         handler.onAuthenticationSuccess(req, res, token);
 
         verify(jwtUtil).setTokenCookie(res, "jwt-token", false);
-        assertThat(res.getRedirectedUrl()).isEqualTo("/pages/AppShell.html");
+        assertThat(res.getRedirectedUrl()).isEqualTo("/pages/AppShell.html#token=jwt-token");
     }
 
     @Test
@@ -77,7 +77,7 @@ class OAuth2AuthenticationSuccessHandlerTest {
         handler.onAuthenticationSuccess(req, res, token);
 
         verify(jwtUtil).setTokenCookie(res, "jwt8", false);
-        assertThat(res.getRedirectedUrl()).isEqualTo("/pages/AppShell.html");
+        assertThat(res.getRedirectedUrl()).isEqualTo("/pages/AppShell.html#token=jwt8");
     }
 
     @Test

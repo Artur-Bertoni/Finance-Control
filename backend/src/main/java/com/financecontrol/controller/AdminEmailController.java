@@ -40,13 +40,13 @@ public class AdminEmailController extends BaseController {
                 default -> throw new IllegalArgumentException("unknown email type: " + type);
             }
 
-            log.info("E-mail de teste '{}' enviado com sucesso para {}", type, user.getEmail());
+            log.info("E-mail de teste '{}' enviado com sucesso para userId={}", type, user.getId());
 
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             throw new BusinessException("error.email.sendFailed");
         } catch (Exception e) {
-            log.error("Falha ao enviar e-mail de teste para {} (tipo={}): {}", user.getEmail(), type, e.getMessage(), e);
+            log.error("Falha ao enviar e-mail de teste para userId={} (tipo={}): {}", user.getId(), type, e.getMessage(), e);
             throw new BusinessException("error.email.sendFailed");
         }
     }

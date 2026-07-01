@@ -113,7 +113,7 @@ class GoalServiceTest {
     void findById_naoEncontrada_lancaResourceNotFoundException() {
         when(goalRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> goalService.findById(99L))
+        assertThatThrownBy(() -> goalService.findById(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -124,7 +124,7 @@ class GoalServiceTest {
 
         when(goalRepository.findById(1L)).thenReturn(Optional.of(meta));
 
-        goalService.archive(1L);
+        goalService.archive(1L, 1L);
 
         assertThat(meta.getStatus()).isEqualTo(GoalStatus.ARCHIVED);
         verify(goalRepository).save(meta);
@@ -210,7 +210,7 @@ class GoalServiceTest {
         when(transactionRepository.sumForGoal(any(), any(), any(), any())).thenReturn(1500.0);
         when(goalRepository.save(any(Goal.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        GoalResponse resp = goalService.findById(1L);
+        GoalResponse resp = goalService.findById(1L, 1L);
 
         assertThat(meta.getStatus()).isEqualTo(GoalStatus.COMPLETED);
         assertThat(resp.status()).isEqualTo(GoalStatus.COMPLETED);
@@ -222,7 +222,7 @@ class GoalServiceTest {
         Goal meta = goalWith(7L, 1L, "Reserva", GoalType.SAVINGS, 1000.0, GoalStatus.ACTIVE);
         when(goalRepository.findById(7L)).thenReturn(Optional.of(meta));
 
-        goalService.delete(7L);
+        goalService.delete(7L, 1L);
 
         verify(goalRepository).deleteById(7L);
     }
@@ -231,7 +231,7 @@ class GoalServiceTest {
     void delete_metaNaoEncontrada_lancaResourceNotFoundException() {
         when(goalRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> goalService.delete(99L))
+        assertThatThrownBy(() -> goalService.delete(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -322,7 +322,7 @@ class GoalServiceTest {
         when(goalRepository.findById(1L)).thenReturn(Optional.of(meta));
         when(transactionRepository.sumForGoal(any(), any(), any(), any())).thenReturn(1000.0);
 
-        GoalResponse resp = goalService.findById(1L);
+        GoalResponse resp = goalService.findById(1L, 1L);
 
         assertThat(meta.getStatus()).isEqualTo(GoalStatus.ACTIVE);
         assertThat(resp.status()).isEqualTo(GoalStatus.ACTIVE);
@@ -338,7 +338,7 @@ class GoalServiceTest {
         when(goalRepository.findById(1L)).thenReturn(Optional.of(meta));
         when(transactionRepository.sumForGoal(any(), any(), any(), any())).thenReturn(300.0);
 
-        GoalResponse resp = goalService.findById(1L);
+        GoalResponse resp = goalService.findById(1L, 1L);
 
         assertThat(resp.status()).isEqualTo(GoalStatus.ACTIVE);
         verify(goalRepository, never()).save(any());
@@ -413,7 +413,7 @@ class GoalServiceTest {
         Goal meta = goalWith(1L, 1L, "Reserva", GoalType.SAVINGS, 1000.0, GoalStatus.ARCHIVED);
         when(goalRepository.findById(1L)).thenReturn(Optional.of(meta));
 
-        goalService.archive(1L);
+        goalService.archive(1L, 1L);
 
         assertThat(meta.getStatus()).isEqualTo(GoalStatus.ARCHIVED);
         verify(goalRepository).save(meta);
@@ -424,7 +424,7 @@ class GoalServiceTest {
     void archive_metaNaoEncontrada_lancaResourceNotFoundException() {
         when(goalRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> goalService.archive(99L))
+        assertThatThrownBy(() -> goalService.archive(99L, 1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -586,6 +586,7 @@ class GoalServiceTest {
     private static Category categoryWith(Long id, String name) {
         Category c = new Category();
         c.setId(id);
+        c.setUserId(1L);
         c.setName(name);
         return c;
     }
@@ -593,6 +594,7 @@ class GoalServiceTest {
     private static TransactionLocale localeWith(Long id, String name) {
         TransactionLocale l = new TransactionLocale();
         l.setId(id);
+        l.setUserId(1L);
         l.setName(name);
         return l;
     }

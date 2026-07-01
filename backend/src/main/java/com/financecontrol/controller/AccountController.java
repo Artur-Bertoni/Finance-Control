@@ -28,10 +28,9 @@ public class AccountController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> findById(@PathVariable @NonNull Long id, 
+    public ResponseEntity<AccountResponse> findById(@PathVariable @NonNull Long id,
                                                     HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(accountService.findById(id));
+        return ResponseEntity.ok(accountService.findById(id, requireUserId(session)));
     }
 
     @GetMapping("/total-value")
@@ -57,8 +56,7 @@ public class AccountController extends BaseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        accountService.delete(id);
+        accountService.delete(id, requireUserId(session));
 
         return ResponseEntity.noContent().build();
     }
@@ -66,8 +64,7 @@ public class AccountController extends BaseController {
     @GetMapping("/{id}/invoices")
     public ResponseEntity<List<InvoiceResponse>> invoices(@PathVariable @NonNull Long id,
                                                           HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(creditCardInvoiceService.listInvoices(id));
+        return ResponseEntity.ok(creditCardInvoiceService.listInvoices(requireUserId(session), id));
     }
 
     @PostMapping("/{id}/invoices/{reference}/pay")

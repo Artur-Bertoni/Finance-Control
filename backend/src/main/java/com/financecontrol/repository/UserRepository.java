@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-    Optional<User> findByUsername(String username);
-    boolean existsByEmailAndIdNot(String email, Long id);
-    List<User> findByEmailNotificationEnabledTrueAndEmailNotificationDay(int day);
-    Optional<User> findByProviderAndProviderId(String provider, String providerId);
-    List<User> findAllByAdminTrue();
+    boolean existsByIdAndActiveTrue(Long id);
+    Optional<User> findByEmailAndActiveTrue(String email);
+    Optional<User> findByUsernameAndActiveTrue(String username);
+    boolean existsByUsernameAndActiveTrue(String username);
+    boolean existsByEmailAndActiveTrueAndIdNot(String email, Long id);
+    List<User> findByEmailNotificationEnabledTrueAndEmailNotificationDayAndActiveTrue(int day);
+    Optional<User> findByProviderAndProviderIdAndActiveTrue(String provider, String providerId);
+    List<User> findAllByAdminTrueAndActiveTrue();
 }

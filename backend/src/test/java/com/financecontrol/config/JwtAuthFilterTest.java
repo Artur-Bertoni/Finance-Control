@@ -1,5 +1,6 @@
 package com.financecontrol.config;
 
+import com.financecontrol.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
 class JwtAuthFilterTest {
 
     @Mock JwtUtil jwtUtil;
+    @Mock UserRepository userRepository;
     @InjectMocks JwtAuthFilter filter;
 
     @AfterEach
@@ -32,9 +34,10 @@ class JwtAuthFilterTest {
         MockHttpServletResponse res = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        when(jwtUtil.extractTokenFromRequest(req)).thenReturn("tok");
+        when(jwtUtil.extractBearerToken(req)).thenReturn("tok");
         when(jwtUtil.isValid("tok")).thenReturn(true);
         when(jwtUtil.extractUserId("tok")).thenReturn(42L);
+        when(userRepository.existsByIdAndActiveTrue(42L)).thenReturn(true);
 
         filter.doFilterInternal(req, res, chain);
 
@@ -44,12 +47,29 @@ class JwtAuthFilterTest {
     }
 
     @Test
+    void doFilterInternal_usuarioInativo_naoAutentica() throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        when(jwtUtil.extractBearerToken(req)).thenReturn("tok");
+        when(jwtUtil.isValid("tok")).thenReturn(true);
+        when(jwtUtil.extractUserId("tok")).thenReturn(42L);
+        when(userRepository.existsByIdAndActiveTrue(42L)).thenReturn(false);
+
+        filter.doFilterInternal(req, res, chain);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(chain).doFilter(req, res);
+    }
+
+    @Test
     void doFilterInternal_semToken_naoAutentica() throws Exception {
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        when(jwtUtil.extractTokenFromRequest(req)).thenReturn(null);
+        when(jwtUtil.extractBearerToken(req)).thenReturn(null);
 
         filter.doFilterInternal(req, res, chain);
 
@@ -63,7 +83,7 @@ class JwtAuthFilterTest {
         MockHttpServletResponse res = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        when(jwtUtil.extractTokenFromRequest(req)).thenReturn("bad");
+        when(jwtUtil.extractBearerToken(req)).thenReturn("bad");
         when(jwtUtil.isValid("bad")).thenReturn(false);
 
         filter.doFilterInternal(req, res, chain);

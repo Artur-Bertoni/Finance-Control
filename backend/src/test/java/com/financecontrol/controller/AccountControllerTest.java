@@ -72,7 +72,7 @@ class AccountControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(accountService.findById(1L)).thenReturn(accountResp(1L, "Poupança"));
+        when(accountService.findById(1L, 1L)).thenReturn(accountResp(1L, "Poupança"));
 
         mockMvc.perform(get("/api/accounts/1"))
                 .andExpect(status().isOk())
@@ -82,7 +82,7 @@ class AccountControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(accountService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(accountService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/accounts/99"))
                 .andExpect(status().isNotFound());
@@ -135,7 +135,7 @@ class AccountControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(accountService).delete(1L);
+        doNothing().when(accountService).delete(1L, 1L);
 
         mockMvc.perform(delete("/api/accounts/1"))
                 .andExpect(status().isNoContent());
@@ -144,7 +144,7 @@ class AccountControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(accountService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(accountService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/accounts/99"))
                 .andExpect(status().isNotFound());

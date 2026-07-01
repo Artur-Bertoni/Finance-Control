@@ -50,8 +50,9 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryResponse findById(@NonNull Long id) {
-        return CategoryResponse.from(getOrThrow(id));
+    public CategoryResponse findById(@NonNull Long id,
+                                     @NonNull Long userId) {
+        return CategoryResponse.from(getOrThrow(id, userId));
     }
 
     @Transactional
@@ -85,8 +86,9 @@ public class CategoryService {
     @Transactional
     @CacheEvict(value = "categories", allEntries = true)
     public CategoryResponse update(@NonNull Long id,
+                                   @NonNull Long userId,
                                    CategoryRequest req) {
-        Category c = getOrThrow(id);
+        Category c = getOrThrow(id, userId);
 
         String oldAliases = c.getAliases().stream()
                 .map(CategoryAlias::getAliasName).sorted().collect(Collectors.joining(", "));
@@ -144,18 +146,26 @@ public class CategoryService {
         if (!alreadyMapped) {
             Category target = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+            if (!userId.equals(target.getUserId()))
+                throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
             categoryAliasRepository.save(new CategoryAlias(target, aliasName));
         }
     }
 
     @Transactional
     @CacheEvict(value = "categories", allEntries = true)
-    public void delete(@NonNull Long id) {
-        getOrThrow(id);
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        getOrThrow(id, userId);
         categoryRepository.deleteById(id);
     }
 
-    private Category getOrThrow(@NonNull Long id) {
-        return categoryRepository.findByIdWithAliases(id).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+    private Category getOrThrow(@NonNull Long id,
+                               @NonNull Long userId) {
+        Category c = categoryRepository.findByIdWithAliases(id)
+                .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        if (!userId.equals(c.getUserId()))
+            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+        return c;
     }
 }

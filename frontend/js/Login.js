@@ -67,11 +67,9 @@ document.getElementById('login-btn').addEventListener('click', function () {
         async: false,
         contentType: 'application/json',
         data: JSON.stringify({ identifier, password }),
-        success: function () {
-            $.ajax({
-                url: '/api/auth/me', type: 'GET', async: false,
-                success: function (user) { I18n.setLanguage(user.language || 'pt') }
-            })
+        success: function (resp) {
+            if (resp?.token) sessionStorage.setItem('authToken', resp.token)
+            I18n.setLanguage(resp?.user?.language || 'pt')
             globalThis.location.href = '/pages/AppShell.html'
         },
         error: function (xhr) {

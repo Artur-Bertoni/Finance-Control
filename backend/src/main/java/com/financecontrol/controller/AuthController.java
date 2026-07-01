@@ -2,6 +2,7 @@ package com.financecontrol.controller;
 
 import com.financecontrol.config.JwtUtil;
 import com.financecontrol.dto.request.LoginRequest;
+import com.financecontrol.dto.response.LoginResponse;
 import com.financecontrol.dto.response.UserResponse;
 import com.financecontrol.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,15 +22,16 @@ public class AuthController extends BaseController {
     private final JwtUtil     jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest req, 
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req,
                                               HttpServletRequest request,
                                               HttpServletResponse response) {
         UserResponse user = userService.login(req.identifier(), req.password());
         boolean secure = request.isSecure();
 
-        jwtUtil.setTokenCookie(response, jwtUtil.generateToken(user.id()), secure);
+        String token = jwtUtil.generateToken(user.id());
+        jwtUtil.setTokenCookie(response, token, secure);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new LoginResponse(token, user));
     }
 
     @PostMapping("/logout")
@@ -49,8 +51,9 @@ public class AuthController extends BaseController {
                                             HttpServletResponse response) {
         Long userId = userService.verifyEmail(token);
 
-        jwtUtil.setTokenCookie(response, jwtUtil.generateToken(userId), request.isSecure());
-        response.setHeader("Location", "/pages/AppShell.html");
+        String jwt = jwtUtil.generateToken(userId);
+        jwtUtil.setTokenCookie(response, jwt, request.isSecure());
+        response.setHeader("Location", "/pages/AppShell.html#token=" + jwt);
 
         return ResponseEntity.status(302).build();
     }

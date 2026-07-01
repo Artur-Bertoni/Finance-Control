@@ -44,12 +44,14 @@ public class CreditCardInvoiceService {
     private final TransferService transferService;
 
     @Transactional(readOnly = true)
-    public List<InvoiceResponse> listInvoices(@NonNull Long accountId) {
-        return computeInvoices(accountId);
+    public List<InvoiceResponse> listInvoices(@NonNull Long userId,
+                                              @NonNull Long accountId) {
+        return computeInvoices(userId, accountId);
     }
 
-    private List<InvoiceResponse> computeInvoices(@NonNull Long accountId) {
-        Account card = requireCreditCard(accountId);
+    private List<InvoiceResponse> computeInvoices(@NonNull Long userId,
+                                                  @NonNull Long accountId) {
+        Account card = requireCreditCard(userId, accountId);
         int closingDay = card.getClosingDay();
         int dueDay     = card.getDueDay();
 
@@ -62,7 +64,7 @@ public class CreditCardInvoiceService {
         }
 
         Map<String, CreditCardInvoicePayment> payments = new LinkedHashMap<>();
-        for (CreditCardInvoicePayment p : paymentRepository.findByAccountId(accountId)) {
+        for (CreditCardInvoicePayment p : paymentRepository.findByAccount_Id(accountId)) {
             payments.put(p.getReferenceMonth(), p);
         }
 
@@ -92,12 +94,12 @@ public class CreditCardInvoiceService {
                                @NonNull Long accountId,
                                @NonNull String referenceMonth,
                                PayInvoiceRequest req) {
-        requireCreditCard(accountId);
+        Account card = requireCreditCard(userId, accountId);
 
-        if (paymentRepository.findByAccountIdAndReferenceMonth(accountId, referenceMonth).isPresent())
+        if (paymentRepository.findByAccount_IdAndReferenceMonth(accountId, referenceMonth).isPresent())
             throw new BusinessException("error.invoice.alreadyPaid");
 
-        InvoiceResponse invoice = computeInvoices(accountId).stream()
+        InvoiceResponse invoice = computeInvoices(userId, accountId).stream()
                 .filter(i -> i.referenceMonth().equals(referenceMonth))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.invoice"));
@@ -110,17 +112,22 @@ public class CreditCardInvoiceService {
                 req.categoryId(), null, total, date, "Pagamento fatura " + referenceMonth);
         TransactionResponse cardTx = transferService.create(userId, transfer);
 
+        Account sourceAccount = accountRepository.findById(req.sourceAccountId()).orElse(null);
+
         CreditCardInvoicePayment payment = new CreditCardInvoicePayment(
-                null, userId, accountId, referenceMonth, total, req.sourceAccountId(), LocalDateTime.now(ZONE));
+                null, userId, card, referenceMonth, total, sourceAccount, LocalDateTime.now(ZONE));
         paymentRepository.save(payment);
 
         return new InvoiceResponse(invoice.referenceMonth(), invoice.closingDate(), invoice.dueDate(),
                 invoice.total(), invoice.itemCount(), "PAID", payment.getPaidAt(), cardTx.id());
     }
 
-    private Account requireCreditCard(@NonNull Long accountId) {
+    private Account requireCreditCard(@NonNull Long userId,
+                                      @NonNull Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        if (!userId.equals(account.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.account");
         if (account.getType() != AccountType.CREDIT_CARD || account.getClosingDay() == null || account.getDueDay() == null)
             throw new BusinessException("error.invoice.notCreditCard");
         return account;

@@ -33,8 +33,9 @@ public class FinancialInstitutionService {
         return financialInstitutionRepository.findByUserIdOrderByNameAsc(userId).stream().map(FinancialInstitutionResponse::from).toList();
     }
 
-    public FinancialInstitutionResponse findById(@NonNull Long id) {
-        return FinancialInstitutionResponse.from(getOrThrow(id));
+    public FinancialInstitutionResponse findById(@NonNull Long id,
+                                                 @NonNull Long userId) {
+        return FinancialInstitutionResponse.from(getOrThrow(id, userId));
     }
 
     @Transactional
@@ -56,8 +57,9 @@ public class FinancialInstitutionService {
     @Transactional
     @CacheEvict(value = "financialInstitutions", allEntries = true)
     public FinancialInstitutionResponse update(@NonNull Long id,
+                                               @NonNull Long userId,
                                                FinancialInstitutionRequest req) {
-        FinancialInstitution fi = getOrThrow(id);
+        FinancialInstitution fi = getOrThrow(id, userId);
 
         Map<String, String[]> diff = new LinkedHashMap<>();
         if (differs(fi.getName(), req.name()))
@@ -82,12 +84,18 @@ public class FinancialInstitutionService {
 
     @Transactional
     @CacheEvict(value = "financialInstitutions", allEntries = true)
-    public void delete(@NonNull Long id) {
-        getOrThrow(id);
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        getOrThrow(id, userId);
         financialInstitutionRepository.deleteById(id);
     }
 
-    private FinancialInstitution getOrThrow(@NonNull Long id) {
-        return financialInstitutionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+    private FinancialInstitution getOrThrow(@NonNull Long id,
+                                            @NonNull Long userId) {
+        FinancialInstitution fi = financialInstitutionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
+        if (!userId.equals(fi.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.financialInstitution");
+        return fi;
     }
 }

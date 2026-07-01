@@ -25,8 +25,7 @@ public class CategoryController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> findById(@PathVariable @NonNull Long id,
                                                      HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(categoryService.findById(id));
+        return ResponseEntity.ok(categoryService.findById(id, requireUserId(session)));
     }
 
     @PostMapping
@@ -40,15 +39,13 @@ public class CategoryController extends BaseController {
     public ResponseEntity<CategoryResponse> update(@PathVariable @NonNull Long id, 
                                                    @RequestBody CategoryRequest req,
                                                    HttpSession session) {
-        requireUserId(session);
-        return ResponseEntity.ok(categoryService.update(id, req));
+        return ResponseEntity.ok(categoryService.update(id, requireUserId(session), req));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {
-        requireUserId(session);
-        categoryService.delete(id);
+        categoryService.delete(id, requireUserId(session));
         return ResponseEntity.noContent().build();
     }
 }

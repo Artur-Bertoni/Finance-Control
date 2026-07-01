@@ -27,8 +27,9 @@ public class TransactionLocaleService {
                 .map(TransactionLocaleResponse::from).toList();
     }
 
-    public TransactionLocaleResponse findById(@NonNull Long id) {
-        return TransactionLocaleResponse.from(getOrThrow(id));
+    public TransactionLocaleResponse findById(@NonNull Long id,
+                                              @NonNull Long userId) {
+        return TransactionLocaleResponse.from(getOrThrow(id, userId));
     }
 
     @Transactional
@@ -44,8 +45,9 @@ public class TransactionLocaleService {
     @Transactional
     @CacheEvict(value = "transactionLocales", allEntries = true)
     public TransactionLocaleResponse update(@NonNull Long id,
+                                            @NonNull Long userId,
                                             TransactionLocaleRequest req) {
-        TransactionLocale tl = getOrThrow(id);
+        TransactionLocale tl = getOrThrow(id, userId);
 
         tl.setName(req.name());
         tl.setAddress(req.address());
@@ -56,12 +58,18 @@ public class TransactionLocaleService {
 
     @Transactional
     @CacheEvict(value = "transactionLocales", allEntries = true)
-    public void delete(@NonNull Long id) {
-        getOrThrow(id);
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        getOrThrow(id, userId);
         transactionLocaleRepository.deleteById(id);
     }
 
-    private TransactionLocale getOrThrow(@NonNull Long id) {
-        return transactionLocaleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
+    private TransactionLocale getOrThrow(@NonNull Long id,
+                                         @NonNull Long userId) {
+        TransactionLocale tl = transactionLocaleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transactionLocale"));
+        if (!userId.equals(tl.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transactionLocale");
+        return tl;
     }
 }

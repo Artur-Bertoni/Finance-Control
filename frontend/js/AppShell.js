@@ -5,6 +5,20 @@ import { setBreadcrumb, showConfirmAsync, showPendingToast, showPendingNotificat
 import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 
+// Captura o token entregue via fragment (#token=) nos fluxos OAuth / verificação de e-mail
+if (location.hash.startsWith('#token=')) {
+    sessionStorage.setItem('authToken', decodeURIComponent(location.hash.substring('#token='.length)))
+    history.replaceState(null, '', location.pathname + location.search)
+}
+
+// Sessão inválida/expirada em qualquer chamada de API -> volta ao login
+$(document).ajaxError((event, xhr) => {
+    if (xhr.status === 401) {
+        sessionStorage.removeItem('authToken')
+        globalThis.location.href = '/pages/Login.html'
+    }
+})
+
 const routes = {
     '/pages/Dashboard.html':                          () => import('./Dashboard.js'),
     '/pages/Budget.html':                             () => import('./Budget.js'),

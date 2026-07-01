@@ -75,7 +75,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         Long userId = userService.resolveOAuth2Login(provider, providerId, email, name);
-        jwtUtil.setTokenCookie(response, jwtUtil.generateToken(userId), secure);
-        getRedirectStrategy().sendRedirect(request, response, "/pages/AppShell.html");
+        String jwt = jwtUtil.generateToken(userId);
+        jwtUtil.setTokenCookie(response, jwt, secure);
+        getRedirectStrategy().sendRedirect(request, response, "/pages/AppShell.html#token=" + jwt);
     }
 }

@@ -54,8 +54,11 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     @SuppressWarnings("null")
-    public TransactionResponse findById(@NonNull Long id) {
+    public TransactionResponse findById(@NonNull Long id,
+                                        @NonNull Long userId) {
         Transaction t = getOrThrow(id);
+        if (!userId.equals(t.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transaction");
         if (isInstallmentGroup(t.getInstallmentGroupId())) {
             double total = transactionRepository.findByInstallmentGroupIdOrderByInstallmentIndexAsc(t.getInstallmentGroupId())
                     .stream().mapToDouble(Transaction::getValue).sum();
@@ -80,9 +83,10 @@ public class TransactionService {
                 req.value(), req.date(), req.type(), req.installmentsNumber(), req.obs()))
             throw new BusinessException("error.duplicate.transaction");
 
+        TransactionDeps deps = loadDeps(userId, req);
         applyBalanceDelta(req.accountId(), req.type(), req.value());
 
-        TransactionResponse result = TransactionResponse.from(transactionRepository.save(buildEntity(userId, req)));
+        TransactionResponse result = TransactionResponse.from(transactionRepository.save(buildEntity(userId, req, deps)));
         historyService.recordCreation(ENTITY_TRANSACTION, result.id(), userId);
 
         return result;
@@ -92,7 +96,7 @@ public class TransactionService {
     private TransactionResponse createInstallments(Long userId,
                                                    TransactionRequest req,
                                                    int n) {
-        TransactionDeps deps = loadDeps(req);
+        TransactionDeps deps = loadDeps(userId, req);
         LocalDate today = LocalDate.now(ZONE);
 
         long totalCents = Math.round((req.value() != null ? req.value() : 0.0) * 100);
@@ -141,7 +145,7 @@ public class TransactionService {
                 .filter(t -> groupId.equals(t.getId()))
                 .findFirst().orElse(group.get(0));
 
-        TransactionDeps deps = loadDeps(req);
+        TransactionDeps deps = loadDeps(userId, req);
         LocalDate today = LocalDate.now(ZONE);
 
         for (Transaction p : group) {
@@ -219,7 +223,11 @@ public class TransactionService {
 
     @Transactional
     @CacheEvict(value = "transactions", allEntries = true)
-    public void delete(@NonNull Long id) {
+    public void delete(@NonNull Long id,
+                       @NonNull Long userId) {
+        Transaction t = getOrThrow(id);
+        if (!userId.equals(t.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transaction");
         deleteOne(id);
     }
 
@@ -244,11 +252,14 @@ public class TransactionService {
                                           Long userId,
                                           TransactionRequest req) {
         Transaction existing = getOrThrow(id);
+        if (!userId.equals(existing.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transaction");
 
         if (isInstallmentGroup(existing.getInstallmentGroupId())) {
             return updateInstallmentGroup(existing, userId, req);
         }
 
+        TransactionDeps newDeps = loadDeps(userId, req);
         TransactionType oldType = existing.getType();
         double revert = TYPE_CREDIT == oldType ? -existing.getValue() : existing.getValue();
         Long accountId = existing.getAccount().getId();
@@ -282,7 +293,6 @@ public class TransactionService {
             }
         }
 
-        TransactionDeps newDeps = loadDeps(req);
         Map<String, String[]> diff = buildDiff(existing, req, newDeps);
 
         applyUpdateWithDeps(existing, userId, req, newDeps);
@@ -348,22 +358,28 @@ public class TransactionService {
     private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
 
     @SuppressWarnings("null")
-    private TransactionDeps loadDeps(TransactionRequest req) {
+    private TransactionDeps loadDeps(Long userId, TransactionRequest req) {
         Account account = accountRepository.findById(req.accountId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
+        if (!userId.equals(account.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.account");
+
         Category category = categoryRepository.findById(req.categoryId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.category"));
+        if (!userId.equals(category.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.category");
 
         Long localeId = req.transactionLocaleId();
-        
         TransactionLocale locale = localeId != null
                 ? transactionLocaleRepository.findById(localeId).orElse(null)
                 : null;
-        
-                return new TransactionDeps(account, category, locale);
+        if (locale != null && !userId.equals(locale.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transactionLocale");
+
+        return new TransactionDeps(account, category, locale);
     }
 
     private Transaction buildEntity(Long userId,
-                                    TransactionRequest req) {
-        TransactionDeps deps = loadDeps(req);
+                                    TransactionRequest req,
+                                    TransactionDeps deps) {
         Integer installmentsNumber = req.installmentsNumber() != null ? req.installmentsNumber() : 0;
         Long transferPartnerId = req.transferPartnerId() != null ? req.transferPartnerId() : 0L;
 

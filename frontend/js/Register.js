@@ -9,6 +9,9 @@ ThemeManager.updateToggleIcon()
 PasswordInput.setupToggle('password-input', 'password-img')
 PasswordInput.setupToggle('password-confirm-input', 'password-confirm-img')
 
+const pwInput = document.getElementById('password-input')
+const pwRequirements = PasswordInput.attachRequirements(pwInput, document.getElementById('pw-requirements'))
+
 function applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         el.textContent = I18n.t(el.dataset.i18n)
@@ -69,6 +72,12 @@ document.getElementById('register-btn').addEventListener('click', () => {
         return
     }
 
+    if (!pwRequirements.isValid()) {
+        showToast(I18n.t('passwordTooWeak'), 'warning')
+        pwInput.focus()
+        return
+    }
+
     const body = {
         username,
         email,
@@ -88,8 +97,9 @@ document.getElementById('register-btn').addEventListener('click', () => {
                 type:        'POST',
                 async:       false,
                 contentType: 'application/json',
-                data:        JSON.stringify({ email: body.email, password: body.password }),
-                success: function () {
+                data:        JSON.stringify({ identifier: body.email, password: body.password }),
+                success: function (resp) {
+                    if (resp?.token) sessionStorage.setItem('authToken', resp.token)
                     sessionStorage.setItem('showEmailVerificationNotice', 'true')
                     showToast(I18n.t('accountCreatedLoginSuccess'), 'success')
                     globalThis.location.href = '/pages/AppShell.html'

@@ -130,11 +130,37 @@ class JwtUtilTest {
     }
 
     @Test
+    void extractBearerToken_comHeaderBearer_retornaToken() {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer tok-abc");
+
+        assertThat(jwtUtil.extractBearerToken(request)).isEqualTo("tok-abc");
+    }
+
+    @Test
+    void extractBearerToken_semHeader_retornaNull() {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+
+        assertThat(jwtUtil.extractBearerToken(request)).isNull();
+    }
+
+    @Test
+    void extractBearerToken_headerSemPrefixoBearer_retornaNull() {
+        org.springframework.mock.web.MockHttpServletRequest request =
+                new org.springframework.mock.web.MockHttpServletRequest();
+        request.addHeader("Authorization", "tok-sem-prefixo");
+
+        assertThat(jwtUtil.extractBearerToken(request)).isNull();
+    }
+
+    @Test
     void extractTokenFromRequest_semCookies_retornaNull() {
         org.springframework.mock.web.MockHttpServletRequest request =
                 new org.springframework.mock.web.MockHttpServletRequest();
 
-        assertThat(jwtUtil.extractTokenFromRequest(request)).isNull();
+        assertThat(jwtUtil.extractTokenFromCookie(request)).isNull();
     }
 
     @Test
@@ -145,7 +171,7 @@ class JwtUtilTest {
                 new jakarta.servlet.http.Cookie("other", "x"),
                 new jakarta.servlet.http.Cookie(JwtUtil.COOKIE_NAME, "tok999"));
 
-        assertThat(jwtUtil.extractTokenFromRequest(request)).isEqualTo("tok999");
+        assertThat(jwtUtil.extractTokenFromCookie(request)).isEqualTo("tok999");
     }
 
     @Test
@@ -154,6 +180,6 @@ class JwtUtilTest {
                 new org.springframework.mock.web.MockHttpServletRequest();
         request.setCookies(new jakarta.servlet.http.Cookie("other", "x"));
 
-        assertThat(jwtUtil.extractTokenFromRequest(request)).isNull();
+        assertThat(jwtUtil.extractTokenFromCookie(request)).isNull();
     }
 }

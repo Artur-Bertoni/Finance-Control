@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CreditCardInvoicePaymentRepository extends JpaRepository<CreditCardInvoicePayment, Long> {
 
-    List<CreditCardInvoicePayment> findByAccountId(Long accountId);
+    List<CreditCardInvoicePayment> findByAccount_Id(Long accountId);
 
-    Optional<CreditCardInvoicePayment> findByAccountIdAndReferenceMonth(Long accountId, String referenceMonth);
+    Optional<CreditCardInvoicePayment> findByAccount_IdAndReferenceMonth(Long accountId, String referenceMonth);
 }

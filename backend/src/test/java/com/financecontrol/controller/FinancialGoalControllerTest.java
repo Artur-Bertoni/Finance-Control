@@ -79,7 +79,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_encontrado_retorna200() throws Exception {
-        when(goalService.findById(1L)).thenReturn(goalResp(1L, "Meta Casa"));
+        when(goalService.findById(1L, 1L)).thenReturn(goalResp(1L, "Meta Casa"));
 
         mockMvc.perform(get("/api/goals/1"))
                 .andExpect(status().isOk())
@@ -89,7 +89,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void findById_naoEncontrado_retorna404() throws Exception {
-        when(goalService.findById(99L)).thenThrow(new ResourceNotFoundException("not found"));
+        when(goalService.findById(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
 
         mockMvc.perform(get("/api/goals/99"))
                 .andExpect(status().isNotFound());
@@ -128,7 +128,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void archive_retorna204() throws Exception {
-        doNothing().when(goalService).archive(1L);
+        doNothing().when(goalService).archive(1L, 1L);
 
         mockMvc.perform(put("/api/goals/1/archive"))
                 .andExpect(status().isNoContent());
@@ -137,7 +137,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void archive_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(goalService).archive(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(goalService).archive(99L, 1L);
 
         mockMvc.perform(put("/api/goals/99/archive"))
                 .andExpect(status().isNotFound());
@@ -148,7 +148,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna204() throws Exception {
-        doNothing().when(goalService).delete(1L);
+        doNothing().when(goalService).delete(1L, 1L);
 
         mockMvc.perform(delete("/api/goals/1"))
                 .andExpect(status().isNoContent());
@@ -157,7 +157,7 @@ class FinancialGoalControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_naoEncontrado_retorna404() throws Exception {
-        doThrow(new ResourceNotFoundException("not found")).when(goalService).delete(99L);
+        doThrow(new ResourceNotFoundException("not found")).when(goalService).delete(99L, 1L);
 
         mockMvc.perform(delete("/api/goals/99"))
                 .andExpect(status().isNotFound());
