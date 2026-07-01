@@ -16,8 +16,9 @@ public class CreditCardInvoicePayment {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "account_id")
-    private Long accountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Column(name = "reference_month")
     private String referenceMonth;
@@ -25,8 +26,9 @@ public class CreditCardInvoicePayment {
     @Column(name = "value")
     private Double value;
 
-    @Column(name = "source_account_id")
-    private Long sourceAccountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source_account_id")
+    private Account sourceAccount;
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;

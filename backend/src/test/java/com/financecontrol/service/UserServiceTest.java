@@ -44,7 +44,7 @@ class UserServiceTest {
     @Test
     void login_porEmail_sucesso() {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senha123", "hash")).thenReturn(true);
 
         UserResponse result = userService.login("joao@test.com", "senha123");
@@ -55,7 +55,7 @@ class UserServiceTest {
     @Test
     void login_porUsername_sucesso() {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
-        when(userRepository.findByUsername("joao")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameAndActiveTrue("joao")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senha123", "hash")).thenReturn(true);
 
         UserResponse result = userService.login("joao", "senha123");
@@ -65,7 +65,7 @@ class UserServiceTest {
 
     @Test
     void login_usuarioNaoEncontrado_lancaUnauthorizedException() {
-        when(userRepository.findByEmail("x@x.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("x@x.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.login("x@x.com", "pass"))
                 .isInstanceOf(UnauthorizedException.class);
@@ -74,7 +74,7 @@ class UserServiceTest {
     @Test
     void login_senhaErrada_lancaUnauthorizedException() {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("errada", "hash")).thenReturn(false);
 
         assertThatThrownBy(() -> userService.login("joao@test.com", "errada"))
@@ -116,7 +116,7 @@ class UserServiceTest {
         UserRequest req = new UserRequest("joao", "joao@test.com", "abc123", "abc123",
                 true, 3, false, "pt");
 
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("abc123")).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
@@ -138,7 +138,7 @@ class UserServiceTest {
     void create_emailDuplicado_lancaBusinessException() {
         UserRequest req = new UserRequest("joao", "joao@test.com", "abc123", "abc123",
                 null, null, null, null);
-        when(userRepository.findByEmail("joao@test.com"))
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com"))
                 .thenReturn(Optional.of(userWith(1L, "joao", "joao@test.com", "hash")));
 
         assertThatThrownBy(() -> userService.create(req))
@@ -150,7 +150,7 @@ class UserServiceTest {
     void create_senhasDivergentes_lancaBusinessException() {
         UserRequest req = new UserRequest("joao", "joao@test.com", "abc123", "diferente",
                 null, null, null, null);
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.create(req))
                 .isInstanceOf(BusinessException.class)
@@ -201,7 +201,7 @@ class UserServiceTest {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(false);
 
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(emailVerificationTokenRepository.save(any(EmailVerificationToken.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
@@ -215,7 +215,7 @@ class UserServiceTest {
     void resendVerification_emailJaVerificado_naoEnviaEmail() {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(true);
-        when(userRepository.findByEmail("joao@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
 
         userService.resendVerification("joao@test.com");
 
@@ -224,7 +224,7 @@ class UserServiceTest {
 
     @Test
     void resendVerification_emailNaoEncontrado_lancaResourceNotFoundException() {
-        when(userRepository.findByEmail("x@x.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("x@x.com")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> userService.resendVerification("x@x.com"))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -267,7 +267,7 @@ class UserServiceTest {
     @Test
     void resolveOAuth2Login_existePorProvider_retornaIdExistente() {
         User user = userWith(1L, "joao", "joao@test.com", null);
-        when(userRepository.findByProviderAndProviderId("google", "gid123"))
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gid123"))
                 .thenReturn(Optional.of(user));
 
         Long id = userService.resolveOAuth2Login("google", "gid123", "joao@test.com", "João");
@@ -279,9 +279,9 @@ class UserServiceTest {
     @Test
     void resolveOAuth2Login_existePorEmail_vinculaProvider() {
         User user = userWith(2L, "maria", "maria@test.com", null);
-        when(userRepository.findByProviderAndProviderId("google", "gid456"))
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gid456"))
                 .thenReturn(Optional.empty());
-        when(userRepository.findByEmail("maria@test.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailAndActiveTrue("maria@test.com")).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Long id = userService.resolveOAuth2Login("google", "gid456", "maria@test.com", "Maria");
@@ -293,10 +293,10 @@ class UserServiceTest {
 
     @Test
     void resolveOAuth2Login_naoExiste_criaNovoUsuario() {
-        when(userRepository.findByProviderAndProviderId("google", "gid789"))
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gid789"))
                 .thenReturn(Optional.empty());
-        when(userRepository.findByEmail("novo@test.com")).thenReturn(Optional.empty());
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("novo@test.com")).thenReturn(Optional.empty());
+        when(userRepository.existsByUsernameAndActiveTrue(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(99L);
@@ -315,7 +315,7 @@ class UserServiceTest {
     void linkGoogleAccount_sucesso_vinculaProvider() {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.findByProviderAndProviderId("google", "gid")).thenReturn(Optional.empty());
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gid")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         userService.linkGoogleAccount(1L, "google", "gid");
@@ -333,7 +333,7 @@ class UserServiceTest {
         outro.setProviderId("gid");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(joao));
-        when(userRepository.findByProviderAndProviderId("google", "gid")).thenReturn(Optional.of(outro));
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gid")).thenReturn(Optional.of(outro));
 
         assertThatThrownBy(() -> userService.linkGoogleAccount(1L, "google", "gid"))
                 .isInstanceOf(BusinessException.class)
@@ -352,7 +352,7 @@ class UserServiceTest {
     @Test
     void update_sucesso_alteraDadosERegistraDiff() {
         User user = userWith(1L, "antigo", "antigo@test.com", "hash");
-        when(userRepository.existsByEmailAndIdNot("novo@test.com", 1L)).thenReturn(false);
+        when(userRepository.existsByEmailAndActiveTrueAndIdNot("novo@test.com", 1L)).thenReturn(false);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -366,7 +366,7 @@ class UserServiceTest {
 
     @Test
     void update_emailDuplicado_lancaBusinessException() {
-        when(userRepository.existsByEmailAndIdNot("dup@test.com", 1L)).thenReturn(true);
+        when(userRepository.existsByEmailAndActiveTrueAndIdNot("dup@test.com", 1L)).thenReturn(true);
         UserRequest req = new UserRequest("x", "dup@test.com", null, null, null, null, null, null);
 
         assertThatThrownBy(() -> userService.update(1L, req))
@@ -376,7 +376,7 @@ class UserServiceTest {
 
     @Test
     void update_naoEncontrado_lancaResourceNotFoundException() {
-        when(userRepository.existsByEmailAndIdNot("x@x.com", 99L)).thenReturn(false);
+        when(userRepository.existsByEmailAndActiveTrueAndIdNot("x@x.com", 99L)).thenReturn(false);
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         UserRequest req = new UserRequest("x", "x@x.com", null, null, null, null, null, null);
@@ -447,17 +447,32 @@ class UserServiceTest {
     // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
-    void delete_encontrado_deletaDoRepositorio() {
-        when(userRepository.existsById(1L)).thenReturn(true);
+    void delete_encontrado_marcaComoInativoSemRemoverFisicamente() {
+        User user = userWith(1L, "joao", "joao@test.com", "hash");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         userService.delete(1L);
 
-        verify(userRepository).deleteById(1L);
+        assertThat(user.isActive()).isFalse();
+        verify(userRepository).save(user);
+        verify(userRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void delete_jaInativo_naoFazNada() {
+        User user = userWith(1L, "joao", "joao@test.com", "hash");
+        user.setActive(false);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.delete(1L);
+
+        verify(userRepository, never()).save(any());
     }
 
     @Test
     void delete_naoEncontrado_lancaResourceNotFoundException() {
-        when(userRepository.existsById(99L)).thenReturn(false);
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> userService.delete(99L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
@@ -466,11 +481,11 @@ class UserServiceTest {
 
     @Test
     void resolveOAuth2Login_novoUsuarioComUsernameColidindo_geraSufixo() {
-        when(userRepository.findByProviderAndProviderId("google", "gidX"))
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gidX"))
                 .thenReturn(Optional.empty());
-        when(userRepository.findByEmail("colide@test.com")).thenReturn(Optional.empty());
-        when(userRepository.findByUsername("joao")).thenReturn(Optional.of(userWith(1L, "joao", "a@a.com", "h")));
-        when(userRepository.findByUsername("joao1")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAndActiveTrue("colide@test.com")).thenReturn(Optional.empty());
+        when(userRepository.existsByUsernameAndActiveTrue("joao")).thenReturn(true);
+        when(userRepository.existsByUsernameAndActiveTrue("joao1")).thenReturn(false);
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(50L);
@@ -488,9 +503,9 @@ class UserServiceTest {
 
     @Test
     void resolveOAuth2Login_emailNulo_geraUsernamePadrao() {
-        when(userRepository.findByProviderAndProviderId("google", "gidNull"))
+        when(userRepository.findByProviderAndProviderIdAndActiveTrue("google", "gidNull"))
                 .thenReturn(Optional.empty());
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByUsernameAndActiveTrue(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(60L);
@@ -512,7 +527,7 @@ class UserServiceTest {
         user.setEmailNotificationEnabled(false);
         user.setGoalEmailNotificationEnabled(false);
 
-        when(userRepository.existsByEmailAndIdNot("joao@test.com", 1L)).thenReturn(false);
+        when(userRepository.existsByEmailAndActiveTrueAndIdNot("joao@test.com", 1L)).thenReturn(false);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 

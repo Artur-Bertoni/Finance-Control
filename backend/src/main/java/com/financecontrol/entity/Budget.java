@@ -16,8 +16,9 @@ public class Budget {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "category_id")
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "monthly_limit")
     private Double monthlyLimit;

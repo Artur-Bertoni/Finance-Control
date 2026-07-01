@@ -37,7 +37,7 @@ public class UserFeedbackService {
 
         UserFeedback saved = feedbackRepository.save(feedback);
 
-        userRepository.findAllByAdminTrue().forEach(admin ->
+        userRepository.findAllByAdminTrueAndActiveTrue().forEach(admin ->
                 emailService.sendFeedbackNotification(admin, user, saved));
 
         return toResponse(saved);

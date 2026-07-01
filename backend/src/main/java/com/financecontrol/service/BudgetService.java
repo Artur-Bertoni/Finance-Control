@@ -58,11 +58,11 @@ public class BudgetService {
         if (!category.getUserId().equals(userId))
             throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
 
-        Budget budget = budgetRepository.findByUserIdAndCategoryId(userId, categoryId)
+        Budget budget = budgetRepository.findByUserIdAndCategory_Id(userId, categoryId)
                 .orElseGet(() -> {
                     Budget b = new Budget();
                     b.setUserId(userId);
-                    b.setCategoryId(categoryId);
+                    b.setCategory(category);
                     b.setCreatedAt(LocalDateTime.now(ZONE));
                     return b;
                 });
@@ -84,10 +84,10 @@ public class BudgetService {
     }
 
     private BudgetResponse toResponse(Budget b, Long userId, LocalDate start, LocalDate end) {
-        Long categoryId = Objects.requireNonNull(b.getCategoryId());
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        String name = category != null ? category.getName() : "";
-        String icon = category != null ? category.getIconKey() : null;
+        Category category = Objects.requireNonNull(b.getCategory());
+        Long categoryId = Objects.requireNonNull(category.getId());
+        String name = category.getName();
+        String icon = category.getIconKey();
         double spent = transactionRepository.sumForGoalByCategories(
                 userId, start, end, TransactionType.DEBIT, List.of(categoryId));
         double limit = b.getMonthlyLimit() != null ? b.getMonthlyLimit() : 0.0;

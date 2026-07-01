@@ -47,7 +47,7 @@ class BudgetServiceTest {
         Budget b = new Budget();
         b.setId(id);
         b.setUserId(userId);
-        b.setCategoryId(categoryId);
+        b.setCategory(category(categoryId, userId));
         b.setMonthlyLimit(limit);
         return b;
     }
@@ -55,7 +55,6 @@ class BudgetServiceTest {
     @Test
     void findAllByUser_calculaGastoEPercentual() {
         when(budgetRepository.findByUserId(1L)).thenReturn(List.of(budget(10L, 1L, 5L, 200.0)));
-        when(categoryRepository.findById(5L)).thenReturn(Optional.of(category(5L, 1L)));
         when(transactionRepository.sumForGoalByCategories(eq(1L), any(LocalDate.class), any(LocalDate.class),
                 eq(TransactionType.DEBIT), eq(List.of(5L)))).thenReturn(50.0);
 
@@ -71,7 +70,7 @@ class BudgetServiceTest {
     @Test
     void upsert_categoriaSemOrcamento_criaNovo() {
         when(categoryRepository.findById(5L)).thenReturn(Optional.of(category(5L, 1L)));
-        when(budgetRepository.findByUserIdAndCategoryId(1L, 5L)).thenReturn(Optional.empty());
+        when(budgetRepository.findByUserIdAndCategory_Id(1L, 5L)).thenReturn(Optional.empty());
         when(budgetRepository.save(any(Budget.class))).thenAnswer(inv -> {
             Budget b = inv.getArgument(0);
             b.setId(99L);
@@ -83,13 +82,13 @@ class BudgetServiceTest {
         BudgetResponse resp = budgetService.upsert(1L, new BudgetRequest(5L, 300.0));
 
         assertThat(resp.monthlyLimit()).isEqualTo(300.0);
-        verify(budgetRepository).save(argThat(b -> b.getUserId().equals(1L) && b.getCategoryId().equals(5L)));
+        verify(budgetRepository).save(argThat(b -> b.getUserId().equals(1L) && b.getCategory().getId().equals(5L)));
     }
 
     @Test
     void upsert_categoriaJaComOrcamento_atualizaLimite() {
         when(categoryRepository.findById(5L)).thenReturn(Optional.of(category(5L, 1L)));
-        when(budgetRepository.findByUserIdAndCategoryId(1L, 5L)).thenReturn(Optional.of(budget(10L, 1L, 5L, 100.0)));
+        when(budgetRepository.findByUserIdAndCategory_Id(1L, 5L)).thenReturn(Optional.of(budget(10L, 1L, 5L, 100.0)));
         when(budgetRepository.save(any(Budget.class))).thenAnswer(inv -> inv.getArgument(0));
         when(transactionRepository.sumForGoalByCategories(eq(1L), any(), any(), eq(TransactionType.DEBIT), anyList()))
                 .thenReturn(0.0);

@@ -1,5 +1,6 @@
 package com.financecontrol.config;
 
+import com.financecontrol.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.*;
 class JwtAuthFilterTest {
 
     @Mock JwtUtil jwtUtil;
+    @Mock UserRepository userRepository;
     @InjectMocks JwtAuthFilter filter;
 
     @AfterEach
@@ -35,11 +37,29 @@ class JwtAuthFilterTest {
         when(jwtUtil.extractTokenFromRequest(req)).thenReturn("tok");
         when(jwtUtil.isValid("tok")).thenReturn(true);
         when(jwtUtil.extractUserId("tok")).thenReturn(42L);
+        when(userRepository.existsByIdAndActiveTrue(42L)).thenReturn(true);
 
         filter.doFilterInternal(req, res, chain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
         assertThat(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).isEqualTo(42L);
+        verify(chain).doFilter(req, res);
+    }
+
+    @Test
+    void doFilterInternal_usuarioInativo_naoAutentica() throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        when(jwtUtil.extractTokenFromRequest(req)).thenReturn("tok");
+        when(jwtUtil.isValid("tok")).thenReturn(true);
+        when(jwtUtil.extractUserId("tok")).thenReturn(42L);
+        when(userRepository.existsByIdAndActiveTrue(42L)).thenReturn(false);
+
+        filter.doFilterInternal(req, res, chain);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(chain).doFilter(req, res);
     }
 

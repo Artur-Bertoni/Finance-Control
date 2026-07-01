@@ -72,7 +72,7 @@ class CreditCardInvoiceServiceTest {
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
         when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(t1, t2));
-        when(paymentRepository.findByAccountId(1L)).thenReturn(List.of());
+        when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
 
         List<InvoiceResponse> invoices = service.listInvoices(1L);
 
@@ -103,9 +103,10 @@ class CreditCardInvoiceServiceTest {
         Transaction t1 = tx(10L, c, 200.0, LocalDate.of(2026, 5, 5), TransactionType.DEBIT);
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
+        when(accountRepository.findById(2L)).thenReturn(Optional.of(card(2L, 10, 20)));
         when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(t1));
-        when(paymentRepository.findByAccountId(1L)).thenReturn(List.of());
-        when(paymentRepository.findByAccountIdAndReferenceMonth(1L, "2026-05")).thenReturn(Optional.empty());
+        when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
+        when(paymentRepository.findByAccount_IdAndReferenceMonth(1L, "2026-05")).thenReturn(Optional.empty());
         when(transferService.create(eq(1L), any())).thenReturn(txResp(600L));
 
         InvoiceResponse resp = service.pay(1L, 1L, "2026-05", new PayInvoiceRequest(2L, 9L, null));
@@ -120,7 +121,7 @@ class CreditCardInvoiceServiceTest {
     void pay_faturaJaPaga_lancaBusinessException() {
         Account c = card(1L, 10, 20);
         when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
-        when(paymentRepository.findByAccountIdAndReferenceMonth(1L, "2026-05"))
+        when(paymentRepository.findByAccount_IdAndReferenceMonth(1L, "2026-05"))
                 .thenReturn(Optional.of(new CreditCardInvoicePayment()));
 
         assertThatThrownBy(() -> service.pay(1L, 1L, "2026-05", new PayInvoiceRequest(2L, 9L, null)))

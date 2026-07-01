@@ -41,7 +41,7 @@ class UserFeedbackServiceTest {
         UserFeedbackRequest req = req("SUGGESTION", "Adicionem suporte a exportação em CSV", null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.findAllByAdminTrue()).thenReturn(List.of());
+        when(userRepository.findAllByAdminTrueAndActiveTrue()).thenReturn(List.of());
         when(feedbackRepository.save(any(UserFeedback.class))).thenAnswer(inv -> {
             UserFeedback f = inv.getArgument(0);
             f.setId(1L);
@@ -62,7 +62,7 @@ class UserFeedbackServiceTest {
         UserFeedbackRequest req = req("BUG", "O botão não responde no mobile", 8);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.findAllByAdminTrue()).thenReturn(List.of());
+        when(userRepository.findAllByAdminTrueAndActiveTrue()).thenReturn(List.of());
         when(feedbackRepository.save(any(UserFeedback.class))).thenAnswer(inv -> {
             UserFeedback f = inv.getArgument(0);
             f.setId(2L);
@@ -83,7 +83,7 @@ class UserFeedbackServiceTest {
         UserFeedbackRequest req = req("GENERAL", "Ótima aplicação!", 10);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.findAllByAdminTrue()).thenReturn(List.of(admin));
+        when(userRepository.findAllByAdminTrueAndActiveTrue()).thenReturn(List.of(admin));
         when(feedbackRepository.save(any(UserFeedback.class))).thenAnswer(inv -> {
             UserFeedback f = inv.getArgument(0);
             f.setId(3L);

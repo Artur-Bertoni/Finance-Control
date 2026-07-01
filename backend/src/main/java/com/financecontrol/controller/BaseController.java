@@ -24,4 +24,9 @@ public abstract class BaseController {
     protected Long requireUserId(HttpSession session) {
         return requireUserId();
     }
+
+    protected void requireSelf(@NonNull Long id) {
+        if (!requireUserId().equals(id))
+            throw new UnauthorizedException("error.auth.forbidden");
+    }
 }

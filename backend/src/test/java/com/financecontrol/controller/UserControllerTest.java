@@ -5,6 +5,7 @@ import com.financecontrol.annotation.WithLongPrincipal;
 import com.financecontrol.config.CookieOAuth2AuthorizationRequestRepository;
 import com.financecontrol.config.CustomOAuth2AuthorizationRequestResolver;
 import com.financecontrol.config.JwtAuthFilter;
+import com.financecontrol.config.JwtUtil;
 import com.financecontrol.config.OAuth2AuthenticationSuccessHandler;
 import com.financecontrol.dto.request.PasswordChangeRequest;
 import com.financecontrol.dto.request.UserRequest;
@@ -37,6 +38,7 @@ class UserControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockitoBean UserService                                     userService;
+    @MockitoBean JwtUtil                                         jwtUtil;
     @MockitoBean JwtAuthFilter                                   jwtAuthFilter;
     @MockitoBean OAuth2UserService                               oauth2UserService;
     @MockitoBean OAuth2AuthenticationSuccessHandler              oauth2SuccessHandler;
@@ -88,7 +90,7 @@ class UserControllerTest {
     }
 
     @Test
-    @WithLongPrincipal(1L)
+    @WithLongPrincipal(99L)
     void update_usuarioNaoEncontrado_retorna404() throws Exception {
         UserRequest req = new UserRequest("x", "x@test.com", null, null, false, 1, false, "pt");
         when(userService.update(eq(99L), any())).thenThrow(new ResourceNotFoundException("not found"));
@@ -97,6 +99,19 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void update_outroUsuario_retorna401() throws Exception {
+        UserRequest req = new UserRequest("x", "x@test.com", null, null, false, 1, false, "pt");
+
+        mockMvc.perform(put("/api/users/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isUnauthorized());
+
+        verify(userService, never()).update(any(), any());
     }
 
     @Test
@@ -121,11 +136,20 @@ class UserControllerTest {
     }
 
     @Test
-    @WithLongPrincipal(1L)
+    @WithLongPrincipal(99L)
     void delete_naoEncontrado_retorna404() throws Exception {
         doThrow(new ResourceNotFoundException("not found")).when(userService).delete(99L);
 
         mockMvc.perform(delete("/api/users/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void delete_outroUsuario_retorna401() throws Exception {
+        mockMvc.perform(delete("/api/users/2"))
+                .andExpect(status().isUnauthorized());
+
+        verify(userService, never()).delete(any());
     }
 }
