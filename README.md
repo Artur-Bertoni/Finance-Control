@@ -34,7 +34,7 @@ Iniciado em 2023/2 como projeto da cadeira de Implementação de Aplicações Es
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) com Docker Compose
 
 ### Para rodar localmente (debug)
-- [JDK 17](https://adoptium.net/pt-BR/temurin/releases?version=17&os=any&arch=any)
+- [JDK 25](https://adoptium.net/pt-BR/temurin/releases?version=25&os=any&arch=any)
 - [Maven 3.x](https://maven.apache.org/download.cgi)
 - [Docker](https://www.docker.com/products/docker-desktop/)
 - [Node.js 24.x](https://nodejs.org/pt-br/download)

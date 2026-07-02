@@ -14,7 +14,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -252,7 +252,6 @@ public class EmailService {
         return pct >= 100 ? "#2E7D32" : "#3B82F6";
     }
 
-    @SuppressWarnings("null")
     private void sendMimeMessage(String to,
                                  String subject,
                                  String html) throws MessagingException {
@@ -268,7 +267,6 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    @SuppressWarnings("null")
     private String loadTemplate(String templatePath) throws IOException {
         ClassPathResource resource = new ClassPathResource(templatePath);
         return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
@@ -293,7 +291,6 @@ public class EmailService {
     }
 
     @NonNull
-    @SuppressWarnings("null")
     private String msg(String key, Object[] args, Locale locale) {
         return messageSource.getMessage(key, args, locale);
     }

@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 
 import static org.assertj.core.api.Assertions.*;
 
-@SuppressWarnings("null")
 class CookieOAuth2AuthorizationRequestRepositoryTest {
 
     private final CookieOAuth2AuthorizationRequestRepository repo =

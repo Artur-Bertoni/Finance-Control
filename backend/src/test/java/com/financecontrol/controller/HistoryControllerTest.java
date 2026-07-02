@@ -1,6 +1,6 @@
 package com.financecontrol.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.financecontrol.annotation.WithLongPrincipal;
 import com.financecontrol.config.CookieOAuth2AuthorizationRequestRepository;
 import com.financecontrol.config.CustomOAuth2AuthorizationRequestResolver;
@@ -11,8 +11,8 @@ import com.financecontrol.service.HistoryService;
 import com.financecontrol.service.OAuth2UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

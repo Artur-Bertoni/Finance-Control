@@ -1,7 +1,7 @@
 package com.financecontrol.dto.request;
 
 import java.time.LocalDate;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public record TransferRequest(
         @NonNull Long originAccountId,

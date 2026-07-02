@@ -71,7 +71,6 @@ public class AppNotificationService {
     }
 
     @Transactional
-    @SuppressWarnings("null")
     public AppNotificationResponse createGoalNotification(Long userId, 
                                                           Long goalId,
                                                           String goalName,
@@ -91,7 +90,6 @@ public class AppNotificationService {
     }
 
     @Transactional
-    @SuppressWarnings("null")
     public void markAsRead(Long userId,
                            Long id) {
         appNotificationRepository.findById(id).ifPresent(n -> {
@@ -125,7 +123,6 @@ public class AppNotificationService {
         return AppNotificationResponse.from(appNotificationRepository.save(n));
     }
 
-    @SuppressWarnings("null")
     private Optional<AppNotificationResponse> tryCreate(Long userId,
                                                         Goal goal,
             Long transactionId, GoalNotificationType logType, AppNotificationType appType) {

@@ -1,6 +1,6 @@
 package com.financecontrol.service.finny;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.financecontrol.dto.response.FinnyStatsResponse;
 import com.financecontrol.dto.response.FinnyTipResponse;
 import com.financecontrol.entity.FinnyTip;
@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
 class FinnyAgentServiceTest {
 

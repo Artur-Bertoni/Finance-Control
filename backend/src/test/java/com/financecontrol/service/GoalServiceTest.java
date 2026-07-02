@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"null", "unchecked"})
+@SuppressWarnings("unchecked")
 @ExtendWith(MockitoExtension.class)
 class GoalServiceTest {
 

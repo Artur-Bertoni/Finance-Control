@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +53,6 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    @SuppressWarnings("null")
     public TransactionResponse findById(@NonNull Long id,
                                         @NonNull Long userId) {
         Transaction t = getOrThrow(id);
@@ -68,7 +67,6 @@ public class TransactionService {
     }
 
     @Transactional
-    @SuppressWarnings("null")
     @CacheEvict(value = "transactions", allEntries = true)
     public TransactionResponse create(Long userId,
                                       TransactionRequest req,
@@ -92,7 +90,6 @@ public class TransactionService {
         return result;
     }
 
-    @SuppressWarnings("null")
     private TransactionResponse createInstallments(Long userId,
                                                    TransactionRequest req,
                                                    int n) {
@@ -134,7 +131,7 @@ public class TransactionService {
         return result;
     }
 
-    @SuppressWarnings({"null", "java:S3776"})
+    @SuppressWarnings("java:S3776")
     private TransactionResponse updateInstallmentGroup(Transaction anyMember,
                                                        Long userId,
                                                        TransactionRequest req) {
@@ -242,12 +239,11 @@ public class TransactionService {
     }
 
     @NonNull
-    @SuppressWarnings("null")
     Transaction getOrThrow(@NonNull Long id) {
         return transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
     }
 
-    @SuppressWarnings({"null", "java:S3776"})
+    @SuppressWarnings("java:S3776")
     private TransactionResponse updateOne(@NonNull Long id,
                                           Long userId,
                                           TransactionRequest req) {
@@ -303,7 +299,6 @@ public class TransactionService {
         return result;
     }
 
-    @SuppressWarnings("null")
     private void deleteOne(@NonNull Long id) {
         Transaction t = getOrThrow(id);
 
@@ -357,7 +352,6 @@ public class TransactionService {
 
     private record TransactionDeps(Account account, Category category, TransactionLocale locale) {}
 
-    @SuppressWarnings("null")
     private TransactionDeps loadDeps(Long userId, TransactionRequest req) {
         Account account = accountRepository.findById(req.accountId()).orElseThrow(() -> new ResourceNotFoundException("error.notFound.account"));
         if (!userId.equals(account.getUserId()))

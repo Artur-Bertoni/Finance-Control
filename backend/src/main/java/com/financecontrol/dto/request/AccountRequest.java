@@ -1,7 +1,7 @@
 package com.financecontrol.dto.request;
 
 import com.financecontrol.enums.AccountType;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public record AccountRequest(
     @NonNull Long financialInstitutionId,

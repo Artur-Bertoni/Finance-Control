@@ -2,7 +2,7 @@ package com.financecontrol.controller;
 
 import com.financecontrol.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

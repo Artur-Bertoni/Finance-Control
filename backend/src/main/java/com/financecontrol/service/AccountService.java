@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +51,7 @@ public class AccountService {
 
     @Transactional
     @CacheEvict(value = "accounts", key = "#userId")
-    public AccountResponse create(Long userId,
+    public AccountResponse create(@NonNull Long userId,
                                   AccountRequest req,
                                   boolean force) {
         if (!force && accountRepository.existsByUserIdAndNameIgnoreCase(userId, req.name()))
@@ -71,7 +71,7 @@ public class AccountService {
     @Transactional
     @CacheEvict(value = "accounts", key = "#userId")
     public AccountResponse update(@NonNull Long id,
-                                  Long userId,
+                                  @NonNull Long userId,
                                   AccountRequest req) {
         Account account = getOrThrow(id, userId);
         FinancialInstitution fi = requireInstitution(req.financialInstitutionId(), userId);

@@ -11,7 +11,7 @@ import com.financecontrol.repository.BudgetRepository;
 import com.financecontrol.repository.CategoryRepository;
 import com.financecontrol.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,6 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class BudgetService {
 
     private static final String CATEGORY_NOT_FOUND = "error.notFound.category";

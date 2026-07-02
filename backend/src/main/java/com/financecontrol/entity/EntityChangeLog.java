@@ -2,7 +2,7 @@ package com.financecontrol.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import java.time.LocalDateTime;
 
 @Entity

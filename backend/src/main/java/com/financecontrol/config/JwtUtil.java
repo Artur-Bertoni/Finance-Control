@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.util.Arrays;
 
 @Component
-@SuppressWarnings("null")
 public class JwtUtil {
 
     public static final String COOKIE_NAME = "auth_token";

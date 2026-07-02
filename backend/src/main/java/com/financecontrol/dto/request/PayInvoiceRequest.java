@@ -1,6 +1,6 @@
 package com.financecontrol.dto.request;
 
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import java.time.LocalDate;
 
 public record PayInvoiceRequest(

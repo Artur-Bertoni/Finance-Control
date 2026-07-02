@@ -63,7 +63,6 @@ public class GoalNotificationScheduler {
         }
     }
 
-    @SuppressWarnings("null")
     private void processGoal(Goal goal,
                              LocalDate today) {
         double current = goalService.calculateCurrentAmount(goal);

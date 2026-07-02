@@ -46,7 +46,6 @@ public class StatementImportService {
     }
 
     @Transactional
-    @SuppressWarnings("null")
     public ImportResult confirmImport(Long userId,
                                       Long accountId,
                                       List<ImportRowRequest> rows) {

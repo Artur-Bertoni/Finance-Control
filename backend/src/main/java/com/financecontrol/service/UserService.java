@@ -11,7 +11,7 @@ import com.financecontrol.exception.UnauthorizedException;
 import com.financecontrol.repository.EmailVerificationTokenRepository;
 import com.financecontrol.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,6 @@ import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class UserService {
 
     private static final String NOT_FOUND = "error.notFound.user";

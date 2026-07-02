@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +29,6 @@ import static com.financecontrol.service.HistoryService.*;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class CategoryService {
 
     private static final ZoneId ZONE = ZoneId.systemDefault();

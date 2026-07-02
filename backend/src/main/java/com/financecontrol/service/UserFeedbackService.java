@@ -9,7 +9,7 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.UserFeedbackRepository;
 import com.financecontrol.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

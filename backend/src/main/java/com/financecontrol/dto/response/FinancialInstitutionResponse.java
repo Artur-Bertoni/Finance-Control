@@ -12,6 +12,7 @@ public record FinancialInstitutionResponse(
     LocalDateTime createdAt
 ) {
     public static FinancialInstitutionResponse from(FinancialInstitution fi) {
+        if (fi == null) return null;
         return new FinancialInstitutionResponse(fi.getId(), fi.getName(), fi.getAddress(), fi.getContact(), fi.getIconKey(), fi.getCreatedAt());
     }
 }

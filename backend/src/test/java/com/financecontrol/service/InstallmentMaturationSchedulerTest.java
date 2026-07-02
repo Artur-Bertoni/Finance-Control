@@ -14,7 +14,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
 class InstallmentMaturationSchedulerTest {
 

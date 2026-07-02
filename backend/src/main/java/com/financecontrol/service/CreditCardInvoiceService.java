@@ -15,7 +15,7 @@ import com.financecontrol.repository.AccountRepository;
 import com.financecontrol.repository.CreditCardInvoicePaymentRepository;
 import com.financecontrol.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +32,6 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class CreditCardInvoiceService {
 
     private static final DateTimeFormatter REF = DateTimeFormatter.ofPattern("yyyy-MM");

@@ -1,7 +1,7 @@
 package com.financecontrol.service.finny;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import com.financecontrol.dto.response.FinnyStatsResponse;
 import com.financecontrol.dto.response.FinnyTipResponse;
 import com.financecontrol.entity.FinnyTip;
@@ -14,7 +14,7 @@ import com.financecontrol.repository.FinnyTipPreferenceRepository;
 import com.financecontrol.repository.FinnyTipRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 public class FinnyAgentService {
 
     private static final int    MAX_TIPS               = 5;

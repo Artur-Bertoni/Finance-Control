@@ -1,7 +1,7 @@
 package com.financecontrol.service.finny;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import com.financecontrol.entity.FinnyTip;
 import com.financecontrol.enums.FinnyTipCategory;
 import com.financecontrol.enums.TransactionType;
