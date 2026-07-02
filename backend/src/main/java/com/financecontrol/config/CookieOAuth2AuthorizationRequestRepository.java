@@ -41,7 +41,7 @@ public class CookieOAuth2AuthorizationRequestRepository
              ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(authorizationRequest);
             value = Base64.getUrlEncoder().withoutPadding().encodeToString(bos.toByteArray());
-        } catch (Exception e) {
+        } catch (Exception _) {
             return;
         }
 
@@ -83,7 +83,7 @@ public class CookieOAuth2AuthorizationRequestRepository
                         try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
                             return (OAuth2AuthorizationRequest) ois.readObject();
                         }
-                    } catch (Exception e) {
+                    } catch (Exception _) {
                         return null;
                     }
                 })

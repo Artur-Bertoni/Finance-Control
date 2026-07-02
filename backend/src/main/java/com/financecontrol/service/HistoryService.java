@@ -68,7 +68,7 @@ public class HistoryService {
 
         return grouped.entrySet().stream().map(entry -> {
             List<EntityChangeLog> group  = entry.getValue();
-            EntityChangeLog       first  = group.get(0);
+            EntityChangeLog       first  = group.getFirst();
             boolean isCreation       = group.stream().anyMatch(l -> FIELD_CREATED.equals(l.getFieldName()));
             boolean isPasswordChange = group.stream().anyMatch(l -> FIELD_PASSWORD_CHANGED.equals(l.getFieldName()));
 

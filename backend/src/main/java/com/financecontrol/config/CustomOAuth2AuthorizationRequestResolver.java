@@ -49,7 +49,7 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
         
         try {
             return jwtUtil.extractUserId(token);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return null;
         }
     }

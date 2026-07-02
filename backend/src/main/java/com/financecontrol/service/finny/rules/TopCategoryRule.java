@@ -16,7 +16,7 @@ public class TopCategoryRule implements TipRule {
     @Override
     public List<TipCandidate> evaluate(FinancialProfile p) {
         if (p.topExpenseCategories().isEmpty()) return List.of();
-        FinancialProfile.CategoryExpense top = p.topExpenseCategories().get(0);
+        FinancialProfile.CategoryExpense top = p.topExpenseCategories().getFirst();
         if (top.name() == null || top.name().isBlank()) return List.of();
 
         Map<String, Object> params = new HashMap<>();

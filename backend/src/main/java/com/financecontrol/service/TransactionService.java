@@ -140,7 +140,7 @@ public class TransactionService {
 
         Transaction parent = group.stream()
                 .filter(t -> groupId.equals(t.getId()))
-                .findFirst().orElse(group.get(0));
+                .findFirst().orElse(group.getFirst());
 
         TransactionDeps deps = loadDeps(userId, req);
         LocalDate today = LocalDate.now(ZONE);

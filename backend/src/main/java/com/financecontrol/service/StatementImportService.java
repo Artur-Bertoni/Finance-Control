@@ -93,7 +93,7 @@ public class StatementImportService {
         if (!seen.add(key)) return null;
 
         List<Category> suggestions = categoryService.findByAlias(userId, tx.description());
-        Category first = suggestions.isEmpty() ? null : suggestions.get(0);
+        Category first = suggestions.isEmpty() ? null : suggestions.getFirst();
 
         List<CategorySuggestionDto> allSuggestions = suggestions.stream()
                 .map(c -> new CategorySuggestionDto(c.getId(), c.getName()))

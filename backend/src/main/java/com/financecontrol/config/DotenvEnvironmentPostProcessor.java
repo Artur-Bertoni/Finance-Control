@@ -25,7 +25,7 @@ public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor,
         Properties props = new Properties();
         try (FileReader reader = new FileReader(envFile)) {
             props.load(reader);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return;
         }
 

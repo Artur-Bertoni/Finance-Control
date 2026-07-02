@@ -51,7 +51,7 @@ public final class BrandAssets {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(dst, "png", out);
             logoCache = out.toByteArray();
-        } catch (Exception e) {
+        } catch (Exception _) {
             logoCache = new byte[0];
         }
         return logoCache;

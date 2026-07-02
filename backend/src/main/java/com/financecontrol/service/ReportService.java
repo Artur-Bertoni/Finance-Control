@@ -131,8 +131,10 @@ public class ReportService {
     }
 
     private TransactionType extractType(Object obj) {
-        if (obj instanceof TransactionType tt) return tt;
-        if (obj instanceof Number n) return TransactionType.fromCode(n.intValue());
-        throw new IllegalArgumentException("Unexpected TransactionType value: " + obj);
+        return switch (obj) {
+            case TransactionType tt -> tt;
+            case Number n           -> TransactionType.fromCode(n.intValue());
+            default -> throw new IllegalArgumentException("Unexpected TransactionType value: " + obj);
+        };
     }
 }
