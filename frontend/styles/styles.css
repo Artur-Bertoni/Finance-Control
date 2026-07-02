@@ -218,7 +218,7 @@ button { font-family: inherit; }
 .sidebar-link:hover .ph,
 .sidebar-link.active .ph { opacity: 1; }
 
-.sidebar-advanced-toggle { font-family: inherit; padding-left: 24px; }
+.sidebar-advanced-toggle { font-family: inherit; }
 .sidebar-advanced-caret {
   margin-left: auto;
   font-size: 13px !important;
@@ -1948,6 +1948,11 @@ body.user-guest .toast-container {
 .toggle-switch[data-tooltip]:hover::after {
   opacity: 1;
   visibility: visible;
+}
+
+.stat-card .info-hint-btn[data-tooltip]::after {
+  bottom: auto;
+  top: calc(100% + 8px);
 }
 
 .import-result-card { margin-top: 0; }

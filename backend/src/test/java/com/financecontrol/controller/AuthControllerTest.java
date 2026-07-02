@@ -44,7 +44,7 @@ class AuthControllerTest {
 
     private static UserResponse userResp(Long id) {
         return new UserResponse(id, "testuser", "test@test.com",
-                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true);
+                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false);
     }
 
     @Test

@@ -39,7 +39,7 @@ class AchievementControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void list_retorna200ComAchievements() throws Exception {
-        AchievementResponse ach = new AchievementResponse("FIRST_TRANSACTION", "BRONZE", "trophy", true, null);
+        AchievementResponse ach = new AchievementResponse("FIRST_TRANSACTION", "BRONZE", "trophy", true, null, false);
         when(achievementService.checkAndList(1L)).thenReturn(List.of(ach));
 
         mockMvc.perform(get("/api/achievements"))

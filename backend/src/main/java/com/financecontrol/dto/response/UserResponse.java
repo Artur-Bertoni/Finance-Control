@@ -15,7 +15,8 @@ public record UserResponse(
     LocalDateTime createdAt,
     boolean googleLinked,
     boolean hasPassword,
-    boolean emailVerified
+    boolean emailVerified,
+    boolean onboardingCompleted
 ) {
     public static UserResponse from(User u) {
         return new UserResponse(u.getId(), u.getUsername(), u.getEmail(),
@@ -24,6 +25,7 @@ public record UserResponse(
                 u.getLanguage(), u.isAdmin(), u.getCreatedAt(),
                 "google".equals(u.getProvider()),
                 u.getPassword() != null && !u.getPassword().isBlank(),
-                u.isEmailVerified());
+                u.isEmailVerified(),
+                u.isOnboardingCompleted());
     }
 }

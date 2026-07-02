@@ -32,4 +32,7 @@ public class User {
 
     @Column(name = "active", nullable = false)
     private boolean active = true;
+
+    @Column(name = "onboarding_completed", nullable = false)
+    private boolean onboardingCompleted = false;
 }

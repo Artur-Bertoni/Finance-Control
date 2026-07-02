@@ -46,7 +46,7 @@ class UserControllerTest {
 
     private static UserResponse userResp(Long id, String username) {
         return new UserResponse(id, username, username + "@test.com",
-                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true);
+                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false);
     }
 
     @Test

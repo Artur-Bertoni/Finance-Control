@@ -24,6 +24,9 @@ public class UserAchievement {
     @Column(name = "earned_at")
     private LocalDateTime earnedAt;
 
+    @Column(name = "notified", nullable = false)
+    private boolean notified = false;
+
     public UserAchievement(Long userId, AchievementType type) {
         this.userId = userId;
         this.achievementType = type;

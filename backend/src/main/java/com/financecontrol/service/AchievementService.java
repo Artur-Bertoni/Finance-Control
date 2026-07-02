@@ -113,16 +113,27 @@ public class AchievementService {
         Map<AchievementType, UserAchievement> earnedMap = new HashMap<>();
         achievementRepository.findByUserId(userId).forEach(ua -> earnedMap.put(ua.getAchievementType(), ua));
 
-        return Arrays.stream(AchievementType.values()).map(type -> {
+        List<AchievementResponse> result = Arrays.stream(AchievementType.values()).map(type -> {
             Meta meta     = METADATA.get(type);
             UserAchievement ua = earnedMap.get(type);
+            boolean justUnlocked = ua != null && !ua.isNotified();
             return new AchievementResponse(
                     type.name(),
                     meta.tier(),
                     meta.iconKey(),
                     ua != null,
-                    ua != null ? ua.getEarnedAt() : null
+                    ua != null ? ua.getEarnedAt() : null,
+                    justUnlocked
             );
         }).toList();
+
+        earnedMap.values().stream()
+                .filter(ua -> !ua.isNotified())
+                .forEach(ua -> {
+                    ua.setNotified(true);
+                    achievementRepository.save(ua);
+                });
+
+        return result;
     }
 }

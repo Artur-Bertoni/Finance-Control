@@ -45,6 +45,12 @@ public class AuthController extends BaseController {
         return ResponseEntity.ok(userService.findById(requireUserId()));
     }
 
+    @PostMapping("/onboarding/complete")
+    public ResponseEntity<Void> completeOnboarding() {
+        userService.markOnboardingCompleted(requireUserId());
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/verify-email")
     public ResponseEntity<Void> verifyEmail(@RequestParam String token,
                                             HttpServletRequest request,

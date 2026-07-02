@@ -16,17 +16,14 @@ const STEPS = [
 
 export class OnboardingTour {
 
-    static _storageKey() {
-        const uid = globalThis.__currentUser?.id ?? 'anon'
-        return `finny_onboarding_done_${uid}`
-    }
-
     static isDone() {
-        try { return localStorage.getItem(OnboardingTour._storageKey()) === '1' } catch { return false }
+        return globalThis.__currentUser?.onboardingCompleted === true
     }
 
     static markDone() {
-        try { localStorage.setItem(OnboardingTour._storageKey(), '1') } catch { }
+        if (OnboardingTour.isDone()) return
+        if (globalThis.__currentUser) globalThis.__currentUser.onboardingCompleted = true
+        $.ajax({ url: '/api/auth/onboarding/complete', type: 'POST', async: true, error: () => {} })
     }
 
     static maybeStart() {

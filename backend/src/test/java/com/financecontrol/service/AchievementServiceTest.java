@@ -186,6 +186,7 @@ class AchievementServiceTest {
     @Test
     void checkAndList_conquistaJaObtida_naoSalvaNovamente() {
         UserAchievement ua = new UserAchievement(1L, AchievementType.FIRST_ACCOUNT);
+        ua.setNotified(true);
         when(achievementRepository.findByUserId(1L)).thenReturn(List.of(ua));
         when(achievementRepository.earnedSet(1L))
                 .thenReturn(new java.util.HashSet<>(java.util.Set.of(AchievementType.FIRST_ACCOUNT)));
@@ -196,6 +197,26 @@ class AchievementServiceTest {
 
         verify(achievementRepository, never()).save(argThat(
                 u -> u.getAchievementType() == AchievementType.FIRST_ACCOUNT));
+    }
+
+    // ── notified: conquista recem-desbloqueada volta como justUnlocked e é marcada ──
+
+    @Test
+    void checkAndList_conquistaRecemDesbloqueada_marcaComoJustUnlockedENotified() {
+        when(achievementRepository.earnedSet(1L)).thenReturn(new java.util.HashSet<>());
+        stubAllCountsZero();
+        when(accountRepository.countByUserIdAndSeededFalse(1L)).thenReturn(1L);
+        UserAchievement awarded = new UserAchievement(1L, AchievementType.FIRST_ACCOUNT);
+        when(achievementRepository.findByUserId(1L)).thenReturn(List.of(awarded));
+        when(achievementRepository.save(any(UserAchievement.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        List<AchievementResponse> result = achievementService.checkAndList(1L);
+
+        assertThat(result)
+                .filteredOn(r -> r.type().equals(AchievementType.FIRST_ACCOUNT.name()))
+                .singleElement()
+                .matches(AchievementResponse::justUnlocked);
+        verify(achievementRepository, atLeastOnce()).save(argThat(UserAchievement::isNotified));
     }
 
     // ── ALL_TRANSACTIONS_CATEGORIZED ─────────────────────────────────────────

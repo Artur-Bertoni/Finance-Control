@@ -263,6 +263,17 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void markOnboardingCompleted(@NonNull Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
+
+        if (user.isOnboardingCompleted()) return;
+
+        user.setOnboardingCompleted(true);
+        userRepository.save(user);
+    }
+
     private void validatePasswordStrength(String password) {
         if (password == null
                 || password.length() < 12

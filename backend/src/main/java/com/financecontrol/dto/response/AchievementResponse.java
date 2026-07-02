@@ -7,5 +7,6 @@ public record AchievementResponse(
         String tier,
         String iconKey,
         boolean earned,
-        LocalDateTime earnedAt
+        LocalDateTime earnedAt,
+        boolean justUnlocked
 ) {}
