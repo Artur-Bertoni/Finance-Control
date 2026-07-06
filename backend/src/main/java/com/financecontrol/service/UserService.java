@@ -10,12 +10,15 @@ import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.exception.UnauthorizedException;
 import com.financecontrol.repository.EmailVerificationTokenRepository;
 import com.financecontrol.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
@@ -25,6 +28,7 @@ import java.util.UUID;
 
 import static com.financecontrol.service.HistoryService.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -108,11 +112,17 @@ public class UserService {
 
     @Transactional
     public void resendVerification(String email) {
-        userRepository.findByEmailAndActiveTrue(email).ifPresent(user -> {
-            if (user.isEmailVerified()) return;
-            emailVerificationTokenRepository.deleteByUserId(user.getId());
-            sendVerificationEmail(user);
-        });
+        User user = userRepository.findByEmailAndActiveTrue(email).orElse(null);
+        if (user == null || user.isEmailVerified()) return;
+
+        emailVerificationTokenRepository.deleteByUserId(user.getId());
+        String token = createVerificationToken(user);
+        try {
+            emailService.sendVerificationEmailNow(user, token);
+        } catch (MessagingException | IOException e) {
+            log.error("Falha ao reenviar email de verificação para userId={}: {}", user.getId(), e.getMessage());
+            throw new BusinessException("error.auth.emailSendFailed");
+        }
     }
 
     @Transactional
@@ -285,14 +295,19 @@ public class UserService {
     }
 
     private void sendVerificationEmail(User user) {
+        String token = createVerificationToken(user);
+        emailService.sendVerificationEmail(user, token);
+    }
+
+    private String createVerificationToken(User user) {
         String token = UUID.randomUUID().toString().replace("-", "");
-         
+
         EmailVerificationToken evt = new EmailVerificationToken(
                 null, user.getId(), token,
                 LocalDateTime.now(ZONE), LocalDateTime.now(ZONE).plusHours(24)
         );
 
         emailVerificationTokenRepository.save(evt);
-        emailService.sendVerificationEmail(user, token);
+        return token;
     }
 }

@@ -61,6 +61,11 @@ public class EmailService {
         }
     }
 
+    public void sendVerificationEmailNow(User user,
+                                         String token) throws MessagingException, IOException {
+        doSendVerification(user, token);
+    }
+
     public void sendTestVerificationEmail(User user) throws MessagingException, IOException {
         doSendVerification(user, "test-verification-token");
     }

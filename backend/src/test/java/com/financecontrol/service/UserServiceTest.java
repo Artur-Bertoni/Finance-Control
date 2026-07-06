@@ -208,7 +208,7 @@ class UserServiceTest {
     // ── resendVerification ───────────────────────────────────────────────────
 
     @Test
-    void resendVerification_emailNaoVerificado_enviaNovamenteEToken() {
+    void resendVerification_emailNaoVerificado_enviaNovamenteEToken() throws Exception {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(false);
 
@@ -219,27 +219,43 @@ class UserServiceTest {
         userService.resendVerification("joao@test.com");
 
         verify(emailVerificationTokenRepository).deleteByUserId(1L);
-        verify(emailService).sendVerificationEmail(any(User.class), anyString());
+        verify(emailService).sendVerificationEmailNow(any(User.class), anyString());
     }
 
     @Test
-    void resendVerification_emailJaVerificado_naoEnviaEmail() {
+    void resendVerification_falhaNoEnvio_lancaBusinessException() throws Exception {
+        User user = userWith(1L, "joao", "joao@test.com", "hash");
+        user.setEmailVerified(false);
+
+        when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
+        when(emailVerificationTokenRepository.save(any(EmailVerificationToken.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+        doThrow(new jakarta.mail.MessagingException("smtp down"))
+                .when(emailService).sendVerificationEmailNow(any(User.class), anyString());
+
+        assertThatThrownBy(() -> userService.resendVerification("joao@test.com"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("emailSendFailed");
+    }
+
+    @Test
+    void resendVerification_emailJaVerificado_naoEnviaEmail() throws Exception {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(true);
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
 
         userService.resendVerification("joao@test.com");
 
-        verify(emailService, never()).sendVerificationEmail(any(), any());
+        verify(emailService, never()).sendVerificationEmailNow(any(), any());
     }
 
     @Test
-    void resendVerification_emailNaoEncontrado_naoEnviaEmailNemLancaExcecao() {
+    void resendVerification_emailNaoEncontrado_naoEnviaEmailNemLancaExcecao() throws Exception {
         when(userRepository.findByEmailAndActiveTrue("x@x.com")).thenReturn(Optional.empty());
 
         userService.resendVerification("x@x.com");
 
-        verify(emailService, never()).sendVerificationEmail(any(), any());
+        verify(emailService, never()).sendVerificationEmailNow(any(), any());
     }
 
     // ── unlinkGoogle ─────────────────────────────────────────────────────────
