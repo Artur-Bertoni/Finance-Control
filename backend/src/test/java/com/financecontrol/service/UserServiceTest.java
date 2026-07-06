@@ -233,7 +233,7 @@ class UserServiceTest {
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(emailVerificationTokenRepository.save(any(EmailVerificationToken.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
-        doThrow(new jakarta.mail.MessagingException("smtp down"))
+        doThrow(new org.springframework.mail.MailSendException("connect timed out"))
                 .when(emailService).sendVerificationEmailNow(any(User.class), anyString());
 
         assertThatThrownBy(() -> userService.resendVerification("joao@test.com"))
@@ -261,6 +261,21 @@ class UserServiceTest {
         userService.resendVerification("x@x.com");
 
         verify(emailService, never()).sendVerificationEmailNow(any(), any());
+    }
+
+    // ── markEmailUnverified ──────────────────────────────────────────────────
+
+    @Test
+    void markEmailUnverified_marcaFalseELimpaTokens() {
+        User user = userWith(1L, "joao", "joao@test.com", "hash");
+        user.setEmailVerified(true);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        userService.markEmailUnverified(1L);
+
+        assertThat(user.isEmailVerified()).isFalse();
+        verify(emailVerificationTokenRepository).deleteByUserId(1L);
     }
 
     // ── unlinkGoogle ─────────────────────────────────────────────────────────

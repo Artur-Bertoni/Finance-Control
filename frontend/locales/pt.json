@@ -591,5 +591,11 @@
   "adminFinnyTestsTitle": "Testes do Finny",
   "adminFinnyTestsDesc": "Dispare o tour de boas-vindas ou uma dica para testar.",
   "adminTriggerOnboarding": "Disparar onboarding",
-  "adminTriggerTip": "Disparar dica aleatória"
+  "adminTriggerTip": "Disparar dica aleatória",
+  "adminAccountOptionsTitle": "Opções de conta",
+  "adminAccountOptionsDesc": "Ações na sua própria conta para testes manuais.",
+  "adminUnlinkGoogle": "Desvincular conta Google",
+  "adminMarkEmailUnverified": "Marcar e-mail como não-verificado",
+  "adminGoogleUnlinked": "Conta Google desvinculada.",
+  "adminEmailMarkedUnverified": "E-mail marcado como não-verificado. Recarregue para ver o botão de reenvio."
 }

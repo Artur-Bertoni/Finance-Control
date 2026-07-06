@@ -22,6 +22,28 @@ export async function init() {
 
     document.getElementById('trigger-tip-btn')?.addEventListener('click',
         () => MascotManager.popTestTip())
+
+    document.getElementById('unlink-google-btn')?.addEventListener('click', unlinkGoogle)
+
+    document.getElementById('mark-email-unverified-btn')?.addEventListener('click', markEmailUnverified)
+}
+
+function unlinkGoogle() {
+    $.ajax({
+        url:     '/api/auth/link/google',
+        type:    'DELETE',
+        success: () => showToast(I18n.t('adminGoogleUnlinked'), 'success'),
+        error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorGeneric'), 'error')
+    })
+}
+
+function markEmailUnverified() {
+    $.ajax({
+        url:     '/api/admin/test/mark-email-unverified',
+        type:    'POST',
+        success: () => showToast(I18n.t('adminEmailMarkedUnverified'), 'success'),
+        error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorGeneric'), 'error')
+    })
 }
 
 function sendTestEmail() {

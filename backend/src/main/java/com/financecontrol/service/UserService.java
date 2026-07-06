@@ -118,7 +118,7 @@ public class UserService {
 
         try {
             emailService.sendVerificationEmailNow(data.user(), data.token());
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException | IOException | org.springframework.mail.MailException e) {
             log.error("Falha ao reenviar email de verificação para userId={}: {}", data.user().getId(), e.getMessage());
             throw new BusinessException("error.auth.emailSendFailed");
         }
@@ -134,6 +134,15 @@ public class UserService {
     }
 
     public record ResendData(User user, String token) {}
+
+    @Transactional
+    public void markEmailUnverified(@NonNull Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(NOT_FOUND));
+        user.setEmailVerified(false);
+        emailVerificationTokenRepository.deleteByUserId(user.getId());
+        userRepository.save(user);
+    }
 
     @Transactional
     public void unlinkGoogle(@NonNull Long userId) {

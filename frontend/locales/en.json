@@ -591,5 +591,11 @@
   "adminFinnyTestsTitle": "Finny tests",
   "adminFinnyTestsDesc": "Trigger the welcome tour or a tip to test them.",
   "adminTriggerOnboarding": "Trigger onboarding",
-  "adminTriggerTip": "Trigger random tip"
+  "adminTriggerTip": "Trigger random tip",
+  "adminAccountOptionsTitle": "Account options",
+  "adminAccountOptionsDesc": "Actions on your own account for manual testing.",
+  "adminUnlinkGoogle": "Unlink Google account",
+  "adminMarkEmailUnverified": "Mark email as unverified",
+  "adminGoogleUnlinked": "Google account unlinked.",
+  "adminEmailMarkedUnverified": "Email marked as unverified. Reload to see the resend button."
 }

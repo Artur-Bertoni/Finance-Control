@@ -7,13 +7,10 @@ import com.financecontrol.enums.FeedbackType;
 import com.financecontrol.enums.GoalStatus;
 import com.financecontrol.enums.GoalType;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.jspecify.annotations.NonNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -35,19 +32,22 @@ public class EmailService {
     private static final String TEMPLATE_VERIFICATION = "templates/email-verification.html";
     private static final String TEMPLATE_FEEDBACK     = "templates/feedback-notification.html";
 
-    private final JavaMailSender mailSender;
+    private final BrevoMailClient brevoClient;
     private final MessageSource messageSource;
     private final String baseUrl;
     private final String mailFrom;
+    private final String mailFromName;
 
-    public EmailService(JavaMailSender mailSender,
+    public EmailService(BrevoMailClient brevoClient,
                         MessageSource messageSource,
                         @Value("${app.base-url}") String baseUrl,
-                        @Value("${app.mail.from}") String mailFrom) {
-        this.mailSender = mailSender;
+                        @Value("${app.mail.from}") String mailFrom,
+                        @Value("${app.mail.from-name:Finance Control}") String mailFromName) {
+        this.brevoClient = brevoClient;
         this.messageSource = messageSource;
         this.baseUrl = Objects.requireNonNull(baseUrl,  "app.base-url must be configured");
         this.mailFrom = Objects.requireNonNull(mailFrom, "app.mail.from must be configured");
+        this.mailFromName = Objects.requireNonNull(mailFromName, "app.mail.from-name must be configured");
     }
 
     @Async("emailTaskExecutor")
@@ -84,7 +84,7 @@ public class EmailService {
                 .replace("{{verifyUrl}}",       link)
                 .replace("{{baseUrl}}",         baseUrl);
 
-        sendMimeMessage(user.getEmail(), subject, html);
+        send(user.getEmail(), subject, html);
     }
 
     @Async("emailTaskExecutor")
@@ -128,7 +128,7 @@ public class EmailService {
                 .replace("{{emailProfileLinkText}}", profile)
                 .replace("{{baseUrl}}", baseUrl);
 
-        sendMimeMessage(user.getEmail(), subject, html);
+        send(user.getEmail(), subject, html);
     }
 
     private void doSendGoalDeadline(User user,
@@ -167,7 +167,7 @@ public class EmailService {
                 .replace("{{emailProfileLinkText}}", profile)
                 .replace("{{baseUrl}}",              baseUrl);
 
-        sendMimeMessage(user.getEmail(), subject, html);
+        send(user.getEmail(), subject, html);
     }
 
     @Async("emailTaskExecutor")
@@ -211,7 +211,7 @@ public class EmailService {
                 .replace("{{feedbackMessage}}",   feedback.getMessage())
                 .replace("{{baseUrl}}",           baseUrl);
 
-        sendMimeMessage(admin.getEmail(), msg("email.feedback.subject", null, locale), html);
+        send(admin.getEmail(), msg("email.feedback.subject", null, locale), html);
     }
 
     private String feedbackTypeKey(FeedbackType type) {
@@ -257,19 +257,10 @@ public class EmailService {
         return pct >= 100 ? "#2E7D32" : "#3B82F6";
     }
 
-    private void sendMimeMessage(String to,
-                                 String subject,
-                                 String html) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        helper.setFrom(mailFrom);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(html, true);
-        helper.addInline("emailLogo", new ClassPathResource("templates/logo.png"), "image/png");
-
-        mailSender.send(message);
+    private void send(String to,
+                      String subject,
+                      String html) throws MessagingException {
+        brevoClient.send(mailFrom, mailFromName, to, subject, html);
     }
 
     private String loadTemplate(String templatePath) throws IOException {

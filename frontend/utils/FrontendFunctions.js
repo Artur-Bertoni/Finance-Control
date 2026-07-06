@@ -55,7 +55,7 @@ $.ajaxSetup({
             const now = Date.now()
             if (now - _emailVerifToastAt > 4000) {
                 _emailVerifToastAt = now
-                showToast(I18n.t('emailVerificationRequired'), 'warning', null, { saveToHistory: false })
+                showToast(I18n.t('emailVerificationRequired'), 'warning', { url: '/pages/views/UserView.html' }, { saveToHistory: false })
             }
             return false
         }
