@@ -501,6 +501,7 @@
   "loginWithGoogle": "Continue with Google",
   "orDivider": "or",
   "resendVerificationEmail": "Resend verification email",
+  "resendingVerificationEmail": "Sending…",
   "verificationEmailSent": "Verification email resent! Please check your inbox.",
   "errorResendVerification": "Error resending the email. Please try again.",
 

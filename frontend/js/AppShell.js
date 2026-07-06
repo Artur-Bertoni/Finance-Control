@@ -59,7 +59,7 @@ await SidebarManager.initialize()
 if (globalThis.__currentUser && !globalThis.__currentUser.emailVerified) {
     const justRegistered = sessionStorage.getItem('showEmailVerificationNotice')
     if (justRegistered) sessionStorage.removeItem('showEmailVerificationNotice')
-    setTimeout(() => showToast(I18n.t('verifyEmailToast'), 'warning', null, { saveToHistory: false }), 1200)
+    setTimeout(() => showToast(I18n.t('verifyEmailToast'), 'warning', { url: '/pages/views/UserView.html' }, { saveToHistory: false }), 1200)
 }
 
 MascotManager.initFloating()

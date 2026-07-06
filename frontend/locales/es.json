@@ -501,6 +501,7 @@
   "loginWithGoogle": "Continuar con Google",
   "orDivider": "o",
   "resendVerificationEmail": "Reenviar correo de verificación",
+  "resendingVerificationEmail": "Enviando…",
   "verificationEmailSent": "¡Correo de verificación reenviado! Por favor revisa tu bandeja de entrada.",
   "errorResendVerification": "Error al reenviar el correo. Inténtalo de nuevo.",
 

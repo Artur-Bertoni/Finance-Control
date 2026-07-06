@@ -14,6 +14,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class UserService {
     private final HistoryService historyService;
     private final EmailService emailService;
     private final OnboardingService onboardingService;
+    private final ObjectProvider<UserService> selfProvider;
 
     public UserResponse login(String identifier,
                               String password) {
@@ -110,20 +112,28 @@ public class UserService {
         return java.util.Objects.requireNonNull(user.getId());
     }
 
-    @Transactional
     public void resendVerification(String email) {
-        User user = userRepository.findByEmailAndActiveTrue(email).orElse(null);
-        if (user == null || user.isEmailVerified()) return;
+        ResendData data = selfProvider.getObject().prepareResendVerification(email);
+        if (data == null) return;
 
-        emailVerificationTokenRepository.deleteByUserId(user.getId());
-        String token = createVerificationToken(user);
         try {
-            emailService.sendVerificationEmailNow(user, token);
+            emailService.sendVerificationEmailNow(data.user(), data.token());
         } catch (MessagingException | IOException e) {
-            log.error("Falha ao reenviar email de verificação para userId={}: {}", user.getId(), e.getMessage());
+            log.error("Falha ao reenviar email de verificação para userId={}: {}", data.user().getId(), e.getMessage());
             throw new BusinessException("error.auth.emailSendFailed");
         }
     }
+
+    @Transactional
+    public ResendData prepareResendVerification(String email) {
+        User user = userRepository.findByEmailAndActiveTrue(email).orElse(null);
+        if (user == null || user.isEmailVerified()) return null;
+
+        emailVerificationTokenRepository.deleteByUserId(user.getId());
+        return new ResendData(user, createVerificationToken(user));
+    }
+
+    public record ResendData(User user, String token) {}
 
     @Transactional
     public void unlinkGoogle(@NonNull Long userId) {

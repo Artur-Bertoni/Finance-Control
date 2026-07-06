@@ -31,11 +31,21 @@ export function init() {
         resendBtn.style.marginTop = '8px'
         resendBtn.textContent = I18n.t('resendVerificationEmail')
         resendBtn.addEventListener('click', () => {
+            if (resendBtn.disabled) return
+            const originalLabel = resendBtn.textContent
+            resendBtn.disabled = true
+            resendBtn.classList.add('is-loading')
+            resendBtn.textContent = I18n.t('resendingVerificationEmail')
             $.ajax({
-                url:     `/api/auth/resend-verification?email=${encodeURIComponent(user.email)}`,
-                type:    'POST',
-                success: () => showToast(I18n.t('verificationEmailSent'), 'success'),
-                error:   () => showToast(I18n.t('errorResendVerification'), 'error')
+                url:      `/api/auth/resend-verification?email=${encodeURIComponent(user.email)}`,
+                type:     'POST',
+                success:  () => showToast(I18n.t('verificationEmailSent'), 'success'),
+                error:    () => showToast(I18n.t('errorResendVerification'), 'error'),
+                complete: () => {
+                    resendBtn.disabled = false
+                    resendBtn.classList.remove('is-loading')
+                    resendBtn.textContent = originalLabel
+                }
             })
         })
         document.getElementById('detail-email').insertAdjacentElement('afterend', resendBtn)

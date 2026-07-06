@@ -36,6 +36,7 @@ class UserServiceTest {
     @Mock HistoryService historyService;
     @Mock EmailService emailService;
     @Mock OnboardingService onboardingService;
+    @Mock org.springframework.beans.factory.ObjectProvider<UserService> selfProvider;
 
     @InjectMocks UserService userService;
 
@@ -212,6 +213,7 @@ class UserServiceTest {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(false);
 
+        when(selfProvider.getObject()).thenReturn(userService);
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(emailVerificationTokenRepository.save(any(EmailVerificationToken.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
@@ -227,6 +229,7 @@ class UserServiceTest {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(false);
 
+        when(selfProvider.getObject()).thenReturn(userService);
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
         when(emailVerificationTokenRepository.save(any(EmailVerificationToken.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
@@ -242,6 +245,7 @@ class UserServiceTest {
     void resendVerification_emailJaVerificado_naoEnviaEmail() throws Exception {
         User user = userWith(1L, "joao", "joao@test.com", "hash");
         user.setEmailVerified(true);
+        when(selfProvider.getObject()).thenReturn(userService);
         when(userRepository.findByEmailAndActiveTrue("joao@test.com")).thenReturn(Optional.of(user));
 
         userService.resendVerification("joao@test.com");
@@ -251,6 +255,7 @@ class UserServiceTest {
 
     @Test
     void resendVerification_emailNaoEncontrado_naoEnviaEmailNemLancaExcecao() throws Exception {
+        when(selfProvider.getObject()).thenReturn(userService);
         when(userRepository.findByEmailAndActiveTrue("x@x.com")).thenReturn(Optional.empty());
 
         userService.resendVerification("x@x.com");
