@@ -8,5 +8,11 @@ public record RawTransaction(
     LocalDate date,
     String description,
     double amount,
-    TransactionType type
-) {}
+    TransactionType type,
+    String installmentLabel,
+    String invoiceReference
+) {
+    public RawTransaction(LocalDate date, String description, double amount, TransactionType type) {
+        this(date, description, amount, type, null, null);
+    }
+}

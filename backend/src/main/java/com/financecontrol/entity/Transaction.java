@@ -54,4 +54,7 @@ public class Transaction {
 
     @Column(name = "applied")
     private Boolean applied;
+
+    @Column(name = "invoice_reference")
+    private String invoiceReference;
 }

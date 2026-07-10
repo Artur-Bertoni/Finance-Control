@@ -59,7 +59,8 @@ public class AccountService {
 
         FinancialInstitution fi = requireInstitution(req.financialInstitutionId(), userId);
         AccountType type = req.type() != null ? req.type() : AccountType.CHECKING;
-        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(), req.iconKey(),
+        Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(),
+                req.creditLimit(), req.iconKey(),
                 type, req.closingDay(), req.dueDay(), LocalDateTime.now(), false);
 
         AccountResponse result = AccountResponse.from(accountRepository.save(account));
@@ -83,6 +84,7 @@ public class AccountService {
         account.setContact(req.contact());
         account.setDescription(req.description());
         account.setBalance(req.balance());
+        account.setCreditLimit(req.creditLimit());
         account.setIconKey(req.iconKey());
         if (req.type() != null) account.setType(req.type());
         account.setClosingDay(req.closingDay());
@@ -153,6 +155,8 @@ public class AccountService {
             diff.put("description", diff(account.getDescription(), req.description()));
         if (differs(account.getBalance(), req.balance()))
             diff.put("balance", diff(account.getBalance(), req.balance()));
+        if (differs(account.getCreditLimit(), req.creditLimit()))
+            diff.put("creditLimit", diff(account.getCreditLimit(), req.creditLimit()));
         if (differs(account.getIconKey(), req.iconKey()))
             diff.put("iconKey", diff(account.getIconKey(), req.iconKey()));
 

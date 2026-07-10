@@ -12,5 +12,14 @@ public record ParsedTransactionResponse(
     Long suggestedCategoryId,
     String suggestedCategoryName,
     boolean hasMultipleSuggestions,
-    List<CategorySuggestionDto> allSuggestedCategories
-) {}
+    List<CategorySuggestionDto> allSuggestedCategories,
+    String installmentLabel,
+    String invoiceReference
+) {
+    public ParsedTransactionResponse(String date, String description, double amount, TransactionType type,
+                                     Long suggestedCategoryId, String suggestedCategoryName,
+                                     boolean hasMultipleSuggestions, List<CategorySuggestionDto> allSuggestedCategories) {
+        this(date, description, amount, type, suggestedCategoryId, suggestedCategoryName,
+             hasMultipleSuggestions, allSuggestedCategories, null, null);
+    }
+}

@@ -2,6 +2,7 @@ package com.financecontrol.controller;
 
 import com.financecontrol.dto.request.AccountRequest;
 import com.financecontrol.dto.request.PayInvoiceRequest;
+import com.financecontrol.dto.request.ReconcileInvoiceRequest;
 import com.financecontrol.dto.response.AccountResponse;
 import com.financecontrol.dto.response.InvoiceResponse;
 import com.financecontrol.service.AccountService;
@@ -74,5 +75,14 @@ public class AccountController extends BaseController {
                                                       HttpSession session) {
         Long userId = requireUserId(session);
         return ResponseEntity.ok(creditCardInvoiceService.pay(userId, id, reference, req));
+    }
+
+    @PostMapping("/{id}/invoices/{reference}/reconcile")
+    public ResponseEntity<InvoiceResponse> reconcileInvoice(@PathVariable @NonNull Long id,
+                                                            @PathVariable @NonNull String reference,
+                                                            @RequestBody ReconcileInvoiceRequest req,
+                                                            HttpSession session) {
+        Long userId = requireUserId(session);
+        return ResponseEntity.ok(creditCardInvoiceService.reconcile(userId, id, reference, req.paymentTransactionId()));
     }
 }

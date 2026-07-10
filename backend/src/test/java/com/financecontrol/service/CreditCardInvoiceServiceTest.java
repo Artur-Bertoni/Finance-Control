@@ -53,6 +53,15 @@ class CreditCardInvoiceServiceTest {
         return a;
     }
 
+    private static Account checking(Long id) {
+        Account a = new Account();
+        a.setId(id);
+        a.setUserId(1L);
+        a.setType(AccountType.CHECKING);
+        a.setBalance(1000.0);
+        return a;
+    }
+
     private static Transaction tx(Long id, Account acc, double value, LocalDate date, TransactionType type) {
         Transaction t = new Transaction();
         t.setId(id);
@@ -60,6 +69,12 @@ class CreditCardInvoiceServiceTest {
         t.setValue(value);
         t.setDate(date);
         t.setType(type);
+        return t;
+    }
+
+    private static Transaction stamped(Long id, Account acc, double value, LocalDate date, String ref) {
+        Transaction t = tx(id, acc, value, date, TransactionType.DEBIT);
+        t.setInvoiceReference(ref);
         return t;
     }
 
@@ -82,6 +97,23 @@ class CreditCardInvoiceServiceTest {
         assertThat(invoices.get(0).dueDate()).isEqualTo(LocalDate.of(2026, 7, 20));
         assertThat(invoices.get(1).referenceMonth()).isEqualTo("2026-06");
         assertThat(invoices.get(1).total()).isEqualTo(100.0);
+    }
+
+    @Test
+    void listInvoices_referenciaCarimbada_venceOAgrupamentoPorData() {
+        Account c = card(1L, 24, 8);
+        Transaction stamped = stamped(10L, c, 13.90, LocalDate.of(2026, 7, 10), "2026-06");
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
+        when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(stamped));
+        when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
+
+        List<InvoiceResponse> invoices = service.listInvoices(1L, 1L);
+
+        assertThat(invoices).hasSize(1);
+        assertThat(invoices.get(0).referenceMonth()).isEqualTo("2026-06");
+        assertThat(invoices.get(0).dueDate()).isEqualTo(LocalDate.of(2026, 7, 8));
+        assertThat(invoices.get(0).total()).isEqualTo(13.90);
     }
 
     @Test
@@ -127,5 +159,45 @@ class CreditCardInvoiceServiceTest {
         assertThatThrownBy(() -> service.pay(1L, 1L, "2026-05", new PayInvoiceRequest(2L, 9L, null)))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("alreadyPaid");
+    }
+
+    @Test
+    void reconcile_sucesso_vinculaLancamentoSemCriarTransacao() {
+        Account c = card(1L, 10, 20);
+        Transaction purchase = tx(10L, c, 200.0, LocalDate.of(2026, 5, 5), TransactionType.DEBIT);
+        Transaction pay = tx(500L, checking(2L), 200.0, LocalDate.of(2026, 5, 20), TransactionType.DEBIT);
+        pay.setUserId(1L);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
+        when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(purchase));
+        when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
+        when(paymentRepository.findByAccount_IdAndReferenceMonth(1L, "2026-05")).thenReturn(Optional.empty());
+        when(transactionRepository.findById(500L)).thenReturn(Optional.of(pay));
+
+        InvoiceResponse resp = service.reconcile(1L, 1L, "2026-05", 500L);
+
+        assertThat(resp.status()).isEqualTo("PAID");
+        assertThat(resp.paymentTransactionId()).isEqualTo(500L);
+        verify(paymentRepository).save(any(CreditCardInvoicePayment.class));
+        verify(accountRepository).patchBalance(1L, 200.0);
+        verifyNoInteractions(transferService);
+    }
+
+    @Test
+    void reconcile_lancamentoNaoDebito_lancaBusinessException() {
+        Account c = card(1L, 10, 20);
+        Transaction purchase = tx(10L, c, 200.0, LocalDate.of(2026, 5, 5), TransactionType.DEBIT);
+        Transaction credit = tx(500L, checking(2L), 200.0, LocalDate.of(2026, 5, 20), TransactionType.CREDIT);
+        credit.setUserId(1L);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(c));
+        when(transactionRepository.findByAccount_IdOrderByDateAsc(1L)).thenReturn(List.of(purchase));
+        when(paymentRepository.findByAccount_Id(1L)).thenReturn(List.of());
+        when(paymentRepository.findByAccount_IdAndReferenceMonth(1L, "2026-05")).thenReturn(Optional.empty());
+        when(transactionRepository.findById(500L)).thenReturn(Optional.of(credit));
+
+        assertThatThrownBy(() -> service.reconcile(1L, 1L, "2026-05", 500L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("notADebit");
     }
 }

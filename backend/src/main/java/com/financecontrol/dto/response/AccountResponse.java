@@ -15,6 +15,7 @@ public record AccountResponse(
     AccountType type,
     Integer closingDay,
     Integer dueDay,
+    Double creditLimit,
     LocalDateTime createdAt
 ) {
     public static AccountResponse from(Account a) {
@@ -25,6 +26,7 @@ public record AccountResponse(
                 a.getIconKey(),
                 a.getType() != null ? a.getType() : AccountType.CHECKING,
                 a.getClosingDay(), a.getDueDay(),
+                a.getCreditLimit(),
                 a.getCreatedAt());
     }
 }

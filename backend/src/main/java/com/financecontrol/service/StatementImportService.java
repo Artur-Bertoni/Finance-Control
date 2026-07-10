@@ -7,6 +7,7 @@ import com.financecontrol.dto.response.ImportResult;
 import com.financecontrol.dto.response.ParsedTransactionResponse;
 import com.financecontrol.entity.Category;
 import com.financecontrol.service.statement.Cnab240StatementParser;
+import com.financecontrol.service.statement.CreditCardInvoiceParser;
 import com.financecontrol.service.statement.OfxStatementParser;
 import com.financecontrol.service.statement.PdfStatementParser;
 import com.financecontrol.service.statement.RawTransaction;
@@ -20,9 +21,7 @@ import java.io.UncheckedIOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,11 +35,9 @@ public class StatementImportService {
                                                             MultipartFile file) {
         List<RawTransaction> raw = parse(file);
         List<ParsedTransactionResponse> rows = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
 
         for (RawTransaction tx : raw) {
-            ParsedTransactionResponse row = toResponse(tx, userId, seen);
-            if (row != null) rows.add(row);
+            rows.add(toResponse(tx, userId));
         }
         return rows;
     }
@@ -59,8 +56,11 @@ public class StatementImportService {
             categoryService.learnAlias(userId, row.description(), row.categoryId());
 
             LocalDate date = LocalDate.parse(row.date());
+            String obs = row.installmentLabel() != null && !row.installmentLabel().isBlank()
+                    ? "Parcela " + row.installmentLabel() : null;
             transactionService.create(userId, new TransactionRequest(
-                accountId, row.categoryId(), row.localeId(), row.amount(), date, row.type(), 0, null, null
+                accountId, row.categoryId(), row.localeId(), row.amount(), date, row.type(), 0, obs, null,
+                row.invoiceReference()
             ), true);
             imported++;
             if (minDate == null || date.isBefore(minDate)) minDate = date;
@@ -83,15 +83,12 @@ public class StatementImportService {
 
         if (OfxStatementParser.looksLikeOfx(filename, bytes))      return OfxStatementParser.parse(bytes);
         if (Cnab240StatementParser.looksLikeCnab240(filename, bytes)) return Cnab240StatementParser.parse(bytes);
+        if (CreditCardInvoiceParser.looksLikeCreditCardInvoice(filename, bytes)) return CreditCardInvoiceParser.parse(bytes);
         return PdfStatementParser.parse(bytes);
     }
 
     private ParsedTransactionResponse toResponse(RawTransaction tx,
-                                                 Long userId,
-                                                 Set<String> seen) {
-        String key = tx.date() + "|" + tx.description() + "|" + tx.amount() + "|" + tx.type();
-        if (!seen.add(key)) return null;
-
+                                                 Long userId) {
         List<Category> suggestions = categoryService.findByAlias(userId, tx.description());
         Category first = suggestions.isEmpty() ? null : suggestions.getFirst();
 
@@ -107,7 +104,9 @@ public class StatementImportService {
             first != null ? first.getId() : null,
             first != null ? first.getName() : null,
             suggestions.size() > 1,
-            allSuggestions
+            allSuggestions,
+            tx.installmentLabel(),
+            tx.invoiceReference()
         );
     }
 }

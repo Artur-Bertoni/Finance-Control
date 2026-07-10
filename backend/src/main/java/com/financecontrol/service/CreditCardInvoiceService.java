@@ -54,11 +54,23 @@ public class CreditCardInvoiceService {
         int closingDay = card.getClosingDay();
         int dueDay     = card.getDueDay();
 
-        Map<YearMonth, Cycle> cycles = new LinkedHashMap<>();
+        Map<String, Cycle> cycles = new LinkedHashMap<>();
         for (Transaction t : transactionRepository.findByAccount_IdOrderByDateAsc(accountId)) {
             if (t.getDate() == null) continue;
-            LocalDate closing = closingDateFor(t.getDate(), closingDay);
-            Cycle cycle = cycles.computeIfAbsent(YearMonth.from(closing), ym -> new Cycle(closing));
+
+            String ref;
+            LocalDate closing;
+            if (t.getInvoiceReference() != null && !t.getInvoiceReference().isBlank()) {
+                ref = t.getInvoiceReference();
+                YearMonth ym = YearMonth.parse(ref);
+                closing = ym.atDay(Math.min(closingDay, ym.lengthOfMonth()));
+            } else {
+                closing = closingDateFor(t.getDate(), closingDay);
+                ref = YearMonth.from(closing).format(REF);
+            }
+
+            final LocalDate cycleClosing = closing;
+            Cycle cycle = cycles.computeIfAbsent(ref, k -> new Cycle(cycleClosing));
             cycle.add(t);
         }
 
@@ -69,8 +81,8 @@ public class CreditCardInvoiceService {
 
         LocalDate today = LocalDate.now(ZONE);
         List<InvoiceResponse> result = new ArrayList<>();
-        for (Map.Entry<YearMonth, Cycle> e : cycles.entrySet()) {
-            String ref = e.getKey().format(REF);
+        for (Map.Entry<String, Cycle> e : cycles.entrySet()) {
+            String ref = e.getKey();
             Cycle c = e.getValue();
             LocalDate dueDate = dueDateFor(c.closing, closingDay, dueDay);
             CreditCardInvoicePayment payment = payments.get(ref);
@@ -114,11 +126,48 @@ public class CreditCardInvoiceService {
         Account sourceAccount = accountRepository.findById(req.sourceAccountId()).orElse(null);
 
         CreditCardInvoicePayment payment = new CreditCardInvoicePayment(
-                null, userId, card, referenceMonth, total, sourceAccount, LocalDateTime.now(ZONE));
+                null, userId, card, referenceMonth, total, sourceAccount, LocalDateTime.now(ZONE), null);
         paymentRepository.save(payment);
 
         return new InvoiceResponse(invoice.referenceMonth(), invoice.closingDate(), invoice.dueDate(),
                 invoice.total(), invoice.itemCount(), "PAID", payment.getPaidAt(), cardTx.id());
+    }
+
+    @Transactional
+    public InvoiceResponse reconcile(@NonNull Long userId,
+                                     @NonNull Long accountId,
+                                     @NonNull String referenceMonth,
+                                     @NonNull Long paymentTransactionId) {
+        Account card = requireCreditCard(userId, accountId);
+
+        if (paymentRepository.findByAccount_IdAndReferenceMonth(accountId, referenceMonth).isPresent())
+            throw new BusinessException("error.invoice.alreadyPaid");
+
+        InvoiceResponse invoice = computeInvoices(userId, accountId).stream()
+                .filter(i -> i.referenceMonth().equals(referenceMonth))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.invoice"));
+
+        Transaction tx = transactionRepository.findById(paymentTransactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("error.notFound.transaction"));
+        if (!userId.equals(tx.getUserId()))
+            throw new ResourceNotFoundException("error.notFound.transaction");
+        if (TransactionType.DEBIT != tx.getType())
+            throw new BusinessException("error.reconcile.notADebit");
+
+        Account source = tx.getAccount();
+        if (source == null || source.getType() == AccountType.CREDIT_CARD)
+            throw new BusinessException("error.reconcile.invalidSource");
+
+        LocalDateTime paidAt = tx.getDate() != null ? tx.getDate().atStartOfDay() : LocalDateTime.now(ZONE);
+        CreditCardInvoicePayment payment = new CreditCardInvoicePayment(
+                null, userId, card, referenceMonth, tx.getValue(), source, paidAt, tx);
+        paymentRepository.save(payment);
+
+        accountRepository.patchBalance(accountId, invoice.total());
+
+        return new InvoiceResponse(invoice.referenceMonth(), invoice.closingDate(), invoice.dueDate(),
+                invoice.total(), invoice.itemCount(), "PAID", paidAt, tx.getId());
     }
 
     private Account requireCreditCard(@NonNull Long userId,

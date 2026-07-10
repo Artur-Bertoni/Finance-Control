@@ -35,8 +35,9 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
                 '</div>'
             )
         }
-        const stepAttr = f.step ? ' step="' + f.step + '"' : ''
-        return '<input id="qaf-' + f.id + '" type="' + (f.type ?? 'text') + '" placeholder="' + (f.placeholder ?? '') + '"' + stepAttr + '>'
+        const stepAttr  = f.step ? ' step="' + f.step + '"' : ''
+        const valueAttr = f.value ? ' value="' + f.value + '"' : ''
+        return '<input id="qaf-' + f.id + '" type="' + (f.type ?? 'text') + '" placeholder="' + (f.placeholder ?? '') + '"' + stepAttr + valueAttr + '>'
     }
 
     const fieldsHtml = fields.map(f => {

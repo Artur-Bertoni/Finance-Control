@@ -75,7 +75,7 @@ class TransactionServiceTest {
     private static Transaction transaction(Long id, Account acc, Category cat) {
         return new Transaction(id, 1L, acc, cat, null,
                 100.0, LocalDate.of(2025, 1, 15), TransactionType.DEBIT,
-                0, null, 0L, LocalDateTime.now(), null, null, null);
+                0, null, 0L, LocalDateTime.now(), null, null, null, null);
     }
 
     private static TransactionRequest request(Long accountId, Long categoryId) {

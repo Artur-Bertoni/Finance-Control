@@ -271,7 +271,7 @@ class StatementImportServiceTest {
     }
 
     @Test
-    void previewStatement_blocosDuplicados_saoDeduplicados() throws IOException {
+    void previewStatement_lancamentosIdenticosNoMesmoDia_saoPreservados() throws IOException {
         when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
 
         MultipartFile file = pdfWithLines(
@@ -281,6 +281,6 @@ class StatementImportServiceTest {
 
         List<ParsedTransactionResponse> rows = statementImportService.previewStatement(1L, file);
 
-        assertThat(rows).hasSize(1);
+        assertThat(rows).hasSize(2);
     }
 }

@@ -77,6 +77,7 @@ function loadEditMode(accountId) {
     document.getElementById('type-input').value         = acc.type ?? 'CHECKING'
     document.getElementById('closing-day-input').value  = acc.closingDay ?? ''
     document.getElementById('due-day-input').value      = acc.dueDay ?? ''
+    document.getElementById('credit-limit-input').value = acc.creditLimit == null ? '' : acc.creditLimit.toFixed(2)
     toggleCreditCardFields()
 
     if (acc.iconKey) IconPicker.setValue(acc.iconKey)
@@ -124,7 +125,9 @@ function handleSave(accountId) {
         iconKey:     IconPicker.getValue() || null,
         type:        document.getElementById('type-input').value || 'CHECKING',
         closingDay:  Number(document.getElementById('closing-day-input').value) || null,
-        dueDay:      Number(document.getElementById('due-day-input').value) || null
+        dueDay:      Number(document.getElementById('due-day-input').value) || null,
+        creditLimit: document.getElementById('credit-limit-input').value
+                        ? Number(document.getElementById('credit-limit-input').value) : null
     }
 
     $.ajax({

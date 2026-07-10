@@ -111,7 +111,7 @@ public class TransactionService {
 
             Transaction t = new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                     parcelaValue, date, req.type(), n, req.obs(),
-                    0L, LocalDateTime.now(ZONE), groupId, k + 1, applied);
+                    0L, LocalDateTime.now(ZONE), groupId, k + 1, applied, req.invoiceReference());
             t = transactionRepository.save(t);
 
             if (k == 0) {
@@ -185,7 +185,7 @@ public class TransactionService {
             Transaction t = (k == 0) ? parent
                     : new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                             parcelaValue, date, req.type(), n, req.obs(),
-                            0L, LocalDateTime.now(ZONE), parent.getId(), k + 1, applied);
+                            0L, LocalDateTime.now(ZONE), parent.getId(), k + 1, applied, req.invoiceReference());
             t.setUserId(userId);
             t.setAccount(deps.account());
             t.setCategory(deps.category());
@@ -379,7 +379,7 @@ public class TransactionService {
 
         return new Transaction(null, userId, deps.account(), deps.category(), deps.locale(),
                 req.value(), req.date(), req.type(), installmentsNumber, req.obs(),
-                transferPartnerId, LocalDateTime.now(ZONE), null, null, true);
+                transferPartnerId, LocalDateTime.now(ZONE), null, null, true, req.invoiceReference());
     }
 
     private void applyUpdateWithDeps(Transaction transaction,

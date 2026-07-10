@@ -503,13 +503,15 @@ function collectRows() {
             ? Number(localeSelect.value) : null
 
         rows.push({
-            date:        pr.date,
-            description: pr.description,
-            amount:      pr.amount,
-            type:        pr.type,
-            categoryId:  checked ? categoryId : null,
-            localeId:    checked ? localeId : null,
-            skip:        !checked
+            date:             pr.date,
+            description:      pr.description,
+            amount:           pr.amount,
+            type:             pr.type,
+            categoryId:       checked ? categoryId : null,
+            localeId:         checked ? localeId : null,
+            skip:             !checked,
+            installmentLabel: pr.installmentLabel ?? null,
+            invoiceReference: pr.invoiceReference ?? null
         })
     })
     return { rows, missingCategory }

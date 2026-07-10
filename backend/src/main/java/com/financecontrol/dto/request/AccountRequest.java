@@ -12,10 +12,11 @@ public record AccountRequest(
     String iconKey,
     AccountType type,
     Integer closingDay,
-    Integer dueDay
+    Integer dueDay,
+    Double creditLimit
 ) {
     public AccountRequest(@NonNull Long financialInstitutionId, String name, String contact,
                           String description, Double balance, String iconKey) {
-        this(financialInstitutionId, name, contact, description, balance, iconKey, null, null, null);
+        this(financialInstitutionId, name, contact, description, balance, iconKey, null, null, null, null);
     }
 }

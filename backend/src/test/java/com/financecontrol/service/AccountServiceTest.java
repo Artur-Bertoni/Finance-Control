@@ -73,7 +73,7 @@ class AccountServiceTest {
     void create_comTypeCreditCard_persisteTipo() {
         Long userId = 1L;
         AccountRequest req = new AccountRequest(1L, "Cartao", null, null, 0.0, null,
-                com.financecontrol.enums.AccountType.CREDIT_CARD, null, null);
+                com.financecontrol.enums.AccountType.CREDIT_CARD, null, null, null);
         FinancialInstitution fi = fiWith(1L, "Banco");
 
         when(accountRepository.existsByUserIdAndNameIgnoreCase(userId, "Cartao")).thenReturn(false);

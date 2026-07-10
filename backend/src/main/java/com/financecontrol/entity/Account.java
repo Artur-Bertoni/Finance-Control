@@ -24,6 +24,9 @@ public class Account {
     private String description;
     private Double balance;
 
+    @Column(name = "credit_limit")
+    private Double creditLimit;
+
     @Column(name = "icon_key")
     private String iconKey;
 
