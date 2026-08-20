@@ -6,6 +6,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
+import { resumePendingAccountDelete } from './modals/AccountDeleteFlow.js'
 
 const PAGE_SIZE   = 30
 const FILTER_KEY  = '__homeFilters'
@@ -26,6 +27,7 @@ export function init() {
     configureFilters()
     filterToggle = initFilterToggle(isFilterActive)
     populateTransactionsList()
+    resumePendingAccountDelete()
 
     I18n.onChange(() => { renderPage(); renderTotals() })
 }

@@ -5,6 +5,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
 import { IconPicker } from '../components/IconPicker.js'
+import { confirmAccountDelete } from '../modals/AccountDeleteFlow.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -84,15 +85,9 @@ function loadEditMode(accountId) {
     selectOptionByText('financial-institution-input', acc.financialInstitution)
 
     const deleteBtn = addDeleteIcon()
-    deleteBtn.addEventListener('click', () => {
-        $.ajax({
-            url:   `/api/accounts/${accountId}`,
-            type:  'DELETE',
-            async: false,
-            success: () => { clearDirtyGuard(); navigate('/pages/lists/AccountList.html') },
-            error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingAccount'), 'error')
-        })
-    })
+    deleteBtn.addEventListener('click', () =>
+        confirmAccountDelete(accountId, acc.name, { onLeave: clearDirtyGuard })
+    )
 }
 
 function handleSave(accountId) {

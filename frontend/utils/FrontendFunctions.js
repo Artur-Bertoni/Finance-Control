@@ -84,7 +84,7 @@ export function showPendingToast() {
     if (pending) {
         const { message, type, link } = JSON.parse(pending)
         sessionStorage.removeItem('pendingToast')
-        const action = link ? { label: I18n.t('view'), url: link } : null
+        const action = link ? { label: I18n.t('commonView'), url: link } : null
         setTimeout(() => showToast(message, type, action), 100)
     }
 }
@@ -163,7 +163,7 @@ export function showToast(message, type = 'info', action = null, { saveToHistory
             <span class="toast-text">${message}</span>
             ${action ? `<span class="toast-click-hint">(${I18n.t('clickToView')})</span>` : ''}
         </div>
-        <button class="toast-close" aria-label="${I18n.t('close')}">×</button>
+        <button class="toast-close" aria-label="${I18n.t('commonClose')}">×</button>
         <div class="toast-progress-bar"></div>
     `
 
@@ -259,8 +259,8 @@ export function addDeleteIcon() {
     btn.className = 'btn btn-danger btn-sm'
     btn.id = 'delete-btn'
     btn.type = 'button'
-    btn.dataset.i18n = 'delete'
-    btn.textContent = I18n.t('delete')
+    btn.dataset.i18n = 'commonDelete'
+    btn.textContent = I18n.t('commonDelete')
 
     const container = document.getElementById('header-actions')
     if (container) container.appendChild(btn)

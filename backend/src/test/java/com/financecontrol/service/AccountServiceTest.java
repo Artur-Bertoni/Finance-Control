@@ -7,10 +7,14 @@ import com.financecontrol.entity.FinancialInstitution;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.AccountRepository;
+import com.financecontrol.repository.AppNotificationRepository;
+import com.financecontrol.repository.CreditCardInvoicePaymentRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
+import com.financecontrol.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +33,9 @@ class AccountServiceTest {
 
     @Mock AccountRepository accountRepository;
     @Mock FinancialInstitutionRepository financialInstitutionRepository;
+    @Mock TransactionRepository transactionRepository;
+    @Mock CreditCardInvoicePaymentRepository invoicePaymentRepository;
+    @Mock AppNotificationRepository appNotificationRepository;
     @Mock HistoryService historyService;
 
     @InjectMocks AccountService accountService;
@@ -130,13 +137,68 @@ class AccountServiceTest {
     }
 
     @Test
-    void delete_sucesso_chamaRepository() {
+    void delete_sucesso_removeTudoQueEstaAninhadoNaConta() {
         Account account = accountWith(5L, 1L, fiWith(1L, "B"), "Test");
         when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
+        when(transactionRepository.findIdsByAccount(5L)).thenReturn(List.of(30L, 31L));
+        when(transactionRepository.findTransferPartnerIdsByAccount(5L)).thenReturn(List.of());
 
         accountService.delete(5L, 1L);
 
+        InOrder ordem = inOrder(invoicePaymentRepository, transactionRepository, accountRepository);
+        ordem.verify(invoicePaymentRepository).deleteByAccountId(5L);
+        ordem.verify(invoicePaymentRepository).clearSourceAccount(5L);
+        ordem.verify(transactionRepository).deleteByAccountId(5L);
+        ordem.verify(accountRepository).deleteById(5L);
+
+        verify(appNotificationRepository).clearTransactionRefs(List.of(30L, 31L));
+        verify(historyService).deleteHistory(HistoryService.ENTITY_TRANSACTION, List.of(30L, 31L));
+        verify(historyService).deleteHistory(HistoryService.ENTITY_ACCOUNT, List.of(5L));
+        verify(transactionRepository, never()).clearTransferPartners(any());
+    }
+
+    @Test
+    void delete_desvinculaTransferenciasDeOutrasContas() {
+        Account account = accountWith(5L, 1L, fiWith(1L, "B"), "Test");
+        when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
+        when(transactionRepository.findIdsByAccount(5L)).thenReturn(List.of(30L));
+        when(transactionRepository.findTransferPartnerIdsByAccount(5L)).thenReturn(List.of(70L, 71L));
+
+        accountService.delete(5L, 1L);
+
+        verify(transactionRepository).clearTransferPartners(List.of(70L, 71L));
         verify(accountRepository).deleteById(5L);
+    }
+
+    @Test
+    void delete_naoRemoveNada_quandoContaEDeOutroUsuario() {
+        Account account = accountWith(5L, 99L, fiWith(1L, "B"), "Test");
+        when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
+
+        assertThatThrownBy(() -> accountService.delete(5L, 1L))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(invoicePaymentRepository, never()).deleteByAccountId(any());
+        verify(transactionRepository, never()).deleteByAccountId(any());
+        verify(accountRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void countTransactions_retornaTotalDaConta() {
+        Account account = accountWith(5L, 1L, fiWith(1L, "B"), "Test");
+        when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
+        when(transactionRepository.countByAccount_Id(5L)).thenReturn(42L);
+
+        assertThat(accountService.countTransactions(5L, 1L)).isEqualTo(42L);
+    }
+
+    @Test
+    void countTransactions_contaDeOutroUsuario_lancaResourceNotFoundException() {
+        Account account = accountWith(5L, 99L, fiWith(1L, "B"), "Test");
+        when(accountRepository.findById(5L)).thenReturn(Optional.of(account));
+
+        assertThatThrownBy(() -> accountService.countTransactions(5L, 1L))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

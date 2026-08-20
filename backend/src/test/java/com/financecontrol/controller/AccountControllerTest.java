@@ -66,7 +66,7 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Carteira"));
     }
 
-    // ------------------------------------------------------------------ GET /api/accounts/{id}
+    // ------------------------------------------------------------------ GET /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)
@@ -114,7 +114,7 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.name").value("Nova Conta"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/accounts/{id}
+    // ------------------------------------------------------------------ PUT /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)
@@ -129,7 +129,28 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.name").value("Conta Atualizada"));
     }
 
-    // ------------------------------------------------------------------ DELETE /api/accounts/{id}
+    // ------------------------------------------------------------------ GET /api/accounts/:id/transactions-count
+
+    @Test
+    @WithLongPrincipal(1L)
+    void transactionsCount_retorna200ComTotal() throws Exception {
+        when(accountService.countTransactions(1L, 1L)).thenReturn(42L);
+
+        mockMvc.perform(get("/api/accounts/1/transactions-count"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("42"));
+    }
+
+    @Test
+    @WithLongPrincipal(1L)
+    void transactionsCount_naoEncontrado_retorna404() throws Exception {
+        when(accountService.countTransactions(99L, 1L)).thenThrow(new ResourceNotFoundException("not found"));
+
+        mockMvc.perform(get("/api/accounts/99/transactions-count"))
+                .andExpect(status().isNotFound());
+    }
+
+    // ------------------------------------------------------------------ DELETE /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)

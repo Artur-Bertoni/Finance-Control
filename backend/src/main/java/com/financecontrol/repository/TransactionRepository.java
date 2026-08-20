@@ -3,6 +3,7 @@ package com.financecontrol.repository;
 import com.financecontrol.entity.Transaction;
 import com.financecontrol.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -91,6 +92,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
            "AND ((:installments IS NULL AND t.installmentsNumber IS NULL) OR t.installmentsNumber = :installments) " +
            "AND ((:obs IS NULL AND t.obs IS NULL) OR t.obs = :obs) " +
            "AND (t.transferPartnerId IS NULL OR t.transferPartnerId = 0)")
+    @SuppressWarnings("java:S107")
     boolean existsDuplicate(@Param("userId") Long userId,
                             @Param("accountId") Long accountId,
                             @Param("categoryId") Long categoryId,
@@ -102,6 +104,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                             @Param("obs") String obs);
 
     long countByUserId(Long userId);
+
+    long countByAccount_Id(Long accountId);
+
+    @Query("SELECT t.transferPartnerId FROM Transaction t WHERE t.account.id = :accountId " +
+           "AND t.transferPartnerId IS NOT NULL AND t.transferPartnerId <> 0")
+    List<Long> findTransferPartnerIdsByAccount(@Param("accountId") Long accountId);
+
+    @Query("SELECT t.id FROM Transaction t WHERE t.account.id = :accountId")
+    List<Long> findIdsByAccount(@Param("accountId") Long accountId);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE Transaction t SET t.transferPartnerId = 0 WHERE t.id IN :ids")
+    void clearTransferPartners(@Param("ids") List<Long> ids);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("DELETE FROM Transaction t WHERE t.account.id = :accountId")
+    void deleteByAccountId(@Param("accountId") Long accountId);
 
     List<Transaction> findByInstallmentGroupIdOrderByInstallmentIndexAsc(Long installmentGroupId);
 

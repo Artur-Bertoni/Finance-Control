@@ -1671,7 +1671,36 @@ body.user-guest .toast-container {
 
 .modal-title   { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
 .modal-message { font-size: 14px; color: var(--text-secondary); margin-bottom: 22px; line-height: 1.6; }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+.modal-actions-start { margin-right: auto; }
+
+.confirm-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: slideUpBar .22s ease;
+}
+
+.confirm-bar-message { font-size: 14px; font-weight: 600; color: var(--text); }
+.confirm-bar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+@media (max-width: 560px) {
+  .confirm-bar { flex-direction: column; align-items: stretch; gap: 12px; left: 16px; right: 16px; transform: none; animation: fadeIn .22s ease; }
+  .confirm-bar-actions { justify-content: flex-end; }
+}
+
+@keyframes slideUpBar { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }

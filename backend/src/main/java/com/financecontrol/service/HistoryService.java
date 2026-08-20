@@ -10,11 +10,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class HistoryService {
+
+    private static final ZoneId ZONE = ZoneId.systemDefault();
 
     public static final String ENTITY_ACCOUNT = "account";
     public static final String ENTITY_TRANSACTION = "transaction";
@@ -36,7 +39,7 @@ public class HistoryService {
         if (diff == null || diff.isEmpty()) return;
 
         String groupId    = UUID.randomUUID().toString();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZONE);
 
         diff.forEach((field, values) ->
             repository.save(EntityChangeLog.of(entityType, entityId, userId, field, values[0], values[1], now, groupId))
@@ -48,13 +51,22 @@ public class HistoryService {
                                Long entityId,
                                Long userId) {
         String groupId = UUID.randomUUID().toString();
-        repository.save(EntityChangeLog.of(entityType, entityId, userId, FIELD_CREATED, null, null, LocalDateTime.now(), groupId));
+        repository.save(EntityChangeLog.of(entityType, entityId, userId, FIELD_CREATED, null, null, LocalDateTime.now(ZONE), groupId));
+    }
+
+    /** Remove o historico de alteracoes das entidades informadas. */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void deleteHistory(String entityType,
+                              List<Long> entityIds) {
+        if (entityIds == null || entityIds.isEmpty()) return;
+
+        repository.deleteByEntityTypeAndEntityIdIn(entityType, entityIds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void recordPasswordChange(Long userId) {
         String groupId = UUID.randomUUID().toString();
-        repository.save(EntityChangeLog.of(ENTITY_USER, userId, userId, FIELD_PASSWORD_CHANGED, null, null, LocalDateTime.now(), groupId));
+        repository.save(EntityChangeLog.of(ENTITY_USER, userId, userId, FIELD_PASSWORD_CHANGED, null, null, LocalDateTime.now(ZONE), groupId));
     }
 
     public List<ChangeGroupResponse> getHistory(String entityType,

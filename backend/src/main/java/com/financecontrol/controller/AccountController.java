@@ -54,6 +54,12 @@ public class AccountController extends BaseController {
         return ResponseEntity.ok(accountService.update(id, requireUserId(session), req));
     }
 
+    @GetMapping("/{id}/transactions-count")
+    public ResponseEntity<Long> transactionsCount(@PathVariable @NonNull Long id,
+                                                  HttpSession session) {
+        return ResponseEntity.ok(accountService.countTransactions(id, requireUserId(session)));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NonNull Long id,
                                        HttpSession session) {

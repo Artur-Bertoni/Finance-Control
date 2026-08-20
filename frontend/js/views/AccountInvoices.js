@@ -169,7 +169,7 @@ function openPayModal(accountId, inv, acc) {
         onSuccess: paid => {
             loadInvoices(accountId, acc)
             const action = paid?.paymentTransactionId
-                ? { label: I18n.t('view'), url: `/pages/views/TransactionView.html?id=${paid.paymentTransactionId}` }
+                ? { label: I18n.t('commonView'), url: `/pages/views/TransactionView.html?id=${paid.paymentTransactionId}` }
                 : null
             showToast(I18n.t('invoicePaidSuccess'), 'success', action)
         }

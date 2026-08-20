@@ -8,7 +8,10 @@ import com.financecontrol.enums.AccountType;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.AccountRepository;
+import com.financecontrol.repository.AppNotificationRepository;
+import com.financecontrol.repository.CreditCardInvoicePaymentRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
+import com.financecontrol.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +32,13 @@ import static com.financecontrol.service.HistoryService.*;
 @RequiredArgsConstructor
 public class AccountService {
 
+    private static final ZoneId ZONE = ZoneId.systemDefault();
+
     private final AccountRepository accountRepository;
     private final FinancialInstitutionRepository financialInstitutionRepository;
+    private final TransactionRepository transactionRepository;
+    private final CreditCardInvoicePaymentRepository invoicePaymentRepository;
+    private final AppNotificationRepository appNotificationRepository;
     private final HistoryService historyService;
 
     @Transactional(readOnly = true)
@@ -61,7 +70,7 @@ public class AccountService {
         AccountType type = req.type() != null ? req.type() : AccountType.CHECKING;
         Account account = new Account(null, userId, fi, req.name(), req.contact(), req.description(), req.balance(),
                 req.creditLimit(), req.iconKey(),
-                type, req.closingDay(), req.dueDay(), LocalDateTime.now(), false);
+                type, req.closingDay(), req.dueDay(), LocalDateTime.now(ZONE), false);
 
         AccountResponse result = AccountResponse.from(accountRepository.save(account));
 
@@ -95,11 +104,38 @@ public class AccountService {
         return result;
     }
 
+    /** Quantas transações seriam removidas junto com a conta. */
+    @Transactional(readOnly = true)
+    public long countTransactions(@NonNull Long id,
+                                  @NonNull Long userId) {
+        getOrThrow(id, userId);
+
+        return transactionRepository.countByAccount_Id(id);
+    }
+
+    /** Remove a conta e tudo que esta aninhado nela: transacoes, pagamentos de fatura e historico. */
     @Transactional
-    @CacheEvict(value = "accounts", allEntries = true)
+    @CacheEvict(value = {"accounts", "transactions"}, allEntries = true)
     public void delete(@NonNull Long id,
                        @NonNull Long userId) {
         getOrThrow(id, userId);
+
+        List<Long> transactionIds = transactionRepository.findIdsByAccount(id);
+        List<Long> partnerIds     = transactionRepository.findTransferPartnerIdsByAccount(id);
+
+        if (!partnerIds.isEmpty())
+            transactionRepository.clearTransferPartners(partnerIds);
+
+        invoicePaymentRepository.deleteByAccountId(id);
+        invoicePaymentRepository.clearSourceAccount(id);
+
+        if (!transactionIds.isEmpty())
+            appNotificationRepository.clearTransactionRefs(transactionIds);
+
+        transactionRepository.deleteByAccountId(id);
+
+        historyService.deleteHistory(ENTITY_TRANSACTION, transactionIds);
+        historyService.deleteHistory(ENTITY_ACCOUNT, List.of(id));
 
         accountRepository.deleteById(id);
     }

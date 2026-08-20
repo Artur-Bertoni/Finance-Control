@@ -14,4 +14,8 @@ public interface AppNotificationRepository extends JpaRepository<AppNotification
     @Modifying
     @Query("UPDATE AppNotification n SET n.read = true WHERE n.userId = :userId")
     void markAllAsReadByUserId(Long userId);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE AppNotification n SET n.transactionId = NULL WHERE n.transactionId IN :transactionIds")
+    void clearTransactionRefs(List<Long> transactionIds);
 }
