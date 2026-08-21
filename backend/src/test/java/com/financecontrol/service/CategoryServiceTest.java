@@ -8,6 +8,7 @@ import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.CategoryAliasRepository;
 import com.financecontrol.repository.CategoryRepository;
+import com.financecontrol.repository.TransactionRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ class CategoryServiceTest {
 
     @Mock CategoryRepository categoryRepository;
     @Mock CategoryAliasRepository categoryAliasRepository;
+    @Mock TransactionRepository transactionRepository;
     @Mock HistoryService historyService;
+    @Mock TransactionService transactionService;
     @Mock EntityManager entityManager;
 
     @InjectMocks CategoryService categoryService;
@@ -207,12 +210,15 @@ class CategoryServiceTest {
     // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
-    void delete_encontrado_deletaDoRepositorio() {
+    void delete_encontrado_removeTransacoesEDeletaDoRepositorio() {
         when(categoryRepository.findByIdWithAliases(1L))
                 .thenReturn(Optional.of(categoryWith(1L, 1L, "X", null, null)));
+        when(transactionRepository.findIdsByCategory(1L)).thenReturn(List.of(9L));
+        when(transactionRepository.existsById(9L)).thenReturn(true);
 
         categoryService.delete(1L, 1L);
 
+        verify(transactionService).delete(9L, 1L);
         verify(categoryRepository).deleteById(1L);
     }
 

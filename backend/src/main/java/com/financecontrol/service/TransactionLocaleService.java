@@ -6,6 +6,7 @@ import com.financecontrol.entity.TransactionLocale;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.TransactionLocaleRepository;
+import com.financecontrol.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,6 +21,7 @@ import java.util.List;
 public class TransactionLocaleService {
 
     private final TransactionLocaleRepository transactionLocaleRepository;
+    private final TransactionRepository transactionRepository;
 
     @Cacheable(value = "transactionLocales", key = "#userId")
     public List<TransactionLocaleResponse> findAllByUser(Long userId) {
@@ -57,10 +59,11 @@ public class TransactionLocaleService {
     }
 
     @Transactional
-    @CacheEvict(value = "transactionLocales", allEntries = true)
+    @CacheEvict(value = {"transactionLocales", "transactions"}, allEntries = true)
     public void delete(@NonNull Long id,
                        @NonNull Long userId) {
         getOrThrow(id, userId);
+        transactionRepository.clearTransactionLocales(List.of(id));
         transactionLocaleRepository.deleteById(id);
     }
 

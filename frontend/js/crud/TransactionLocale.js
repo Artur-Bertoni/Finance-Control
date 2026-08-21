@@ -3,6 +3,7 @@ import { TransactionLocale } from '../class/TransactionLocaleClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 import { IconPicker } from '../components/IconPicker.js'
 
 export function init() {
@@ -35,15 +36,20 @@ export function init() {
             ])
 
             const deleteBtn = addDeleteIcon()
-            deleteBtn.addEventListener('click', function () {
-                $.ajax({
-                    url:   `/api/transaction-locales/${localeId}`,
-                    type:  'DELETE',
-                    async: false,
-                    success: function () { clearDirtyGuard(); navigate('/pages/lists/TransactionLocaleList.html') },
-                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingLocale'), 'error') }
+            deleteBtn.addEventListener('click', () =>
+                confirmDelete({
+                    type: 'transaction-locales',
+                    id:   localeId,
+                    name: locale.name,
+                    onConfirm: () => $.ajax({
+                        url:   `/api/transaction-locales/${localeId}`,
+                        type:  'DELETE',
+                        async: false,
+                        success: function () { clearDirtyGuard(); navigate('/pages/lists/TransactionLocaleList.html') },
+                        error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingLocale'), 'error') }
+                    })
                 })
-            })
+            )
         }
     }
 

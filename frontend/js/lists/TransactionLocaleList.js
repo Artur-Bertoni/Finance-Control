@@ -4,6 +4,7 @@ import { Icons } from '../icons/IconLibrary.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
 import { I18n } from '../i18n.js'
 import { createEmptyState } from '../components/EmptyState.js'
+import { initBulkSelection } from '../components/BulkSelectionManager.js'
 
 let allLocales = []
 let searchQuery = ''
@@ -19,6 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
+    initBulkSelection({ type: 'transaction-locales', listId: 'transaction-locales-list', onDeleted: loadData })
     I18n.onChange(renderList)
 }
 
@@ -53,6 +55,7 @@ function renderList() {
 function _buildLocaleCard(loc) {
     const card = document.getElementById('tpl-locale-card').content.firstElementChild.cloneNode(true)
     card.addEventListener('click', () => navigate(`/pages/views/TransactionLocaleView.html?id=${loc.id}`))
+    card.dataset.bulkId = loc.id
 
     if (loc.iconKey) {
         const iconEl = card.querySelector('.loc-icon')

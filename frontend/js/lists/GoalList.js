@@ -3,6 +3,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { createEmptyState } from '../components/EmptyState.js'
+import { initBulkSelection } from '../components/BulkSelectionManager.js'
 
 let allGoals     = []
 let searchQuery  = ''
@@ -46,6 +47,8 @@ export function init() {
         syncClearBtn()
         renderList()
     })
+
+    initBulkSelection({ type: 'goals', listId: 'goals-list', onDeleted: loadData })
 
     I18n.onChange(() => {
         populateStatusOptions()
@@ -112,6 +115,7 @@ function renderList() {
 function buildGoalCard(g) {
     const card = document.getElementById('tpl-goal-card').content.firstElementChild.cloneNode(true)
     card.dataset.goalId = g.id
+    card.dataset.bulkId = g.id
     card.addEventListener('click', () => navigate(`/pages/views/GoalView.html?id=${g.id}`))
 
     const pct      = Math.min(g.progressPercent ?? 0, 100)

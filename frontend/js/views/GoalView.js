@@ -2,6 +2,7 @@ import { doRequest, formatDate, navigate, navigateWithToast, setBreadcrumb, show
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -73,13 +74,16 @@ export function init() {
     }
 
     document.getElementById('delete-btn').addEventListener('click', () =>
-        showConfirm(I18n.t('goalDeleteConfirm'), () => {
-            $.ajax({
+        confirmDelete({
+            type: 'goals',
+            id:   goalId,
+            name: goal.name,
+            onConfirm: () => $.ajax({
                 url: `/api/goals/${goalId}`, type: 'DELETE', async: false,
                 success: () => navigateWithToast('/pages/lists/GoalList.html', I18n.t('goalDeletedSuccess'), 'success'),
                 error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingGoal'), 'error')
             })
-        }, I18n.t('confirmAction'))
+        })
     )
 
     document.getElementById('edit-btn').addEventListener('click', () =>

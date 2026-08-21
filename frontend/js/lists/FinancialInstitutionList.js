@@ -4,6 +4,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { createEmptyState } from '../components/EmptyState.js'
+import { initBulkSelection } from '../components/BulkSelectionManager.js'
 
 let allInstitutions = []
 let searchQuery = ''
@@ -19,6 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
+    initBulkSelection({ type: 'financial-institutions', listId: 'financial-institutions-list', onDeleted: loadData })
     I18n.onChange(renderList)
 }
 
@@ -53,6 +55,7 @@ function renderList() {
 function _buildFiCard(fi) {
     const card = document.getElementById('tpl-fi-card').content.firstElementChild.cloneNode(true)
     card.addEventListener('click', () => navigate(`/pages/views/FinancialInstitutionView.html?id=${fi.id}`))
+    card.dataset.bulkId = fi.id
 
     if (fi.iconKey) {
         const iconEl = card.querySelector('.fi-icon')

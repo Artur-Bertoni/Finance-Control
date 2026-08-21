@@ -26,4 +26,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Modifying
     @Query("UPDATE Account a SET a.balance = a.balance + :delta WHERE a.id = :id")
     void patchBalance(@Param("id") Long id, @Param("delta") Double delta);
+
+    @Query("SELECT a.id FROM Account a WHERE a.financialInstitution.id IN :institutionIds")
+    List<Long> findIdsByFinancialInstitutionIdIn(@Param("institutionIds") List<Long> institutionIds);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE Account a SET a.financialInstitution = NULL WHERE a.financialInstitution.id IN :institutionIds")
+    void clearFinancialInstitutions(@Param("institutionIds") List<Long> institutionIds);
 }

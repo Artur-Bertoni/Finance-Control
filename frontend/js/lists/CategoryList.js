@@ -4,6 +4,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { createEmptyState } from '../components/EmptyState.js'
+import { initBulkSelection } from '../components/BulkSelectionManager.js'
 
 let allCategories = []
 let searchQuery = ''
@@ -19,6 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
+    initBulkSelection({ type: 'categories', listId: 'categories-list', onDeleted: loadData })
     I18n.onChange(renderList)
 }
 
@@ -53,6 +55,7 @@ function renderList() {
 function _buildCategoryCard(cat) {
     const card = document.getElementById('tpl-category-card').content.firstElementChild.cloneNode(true)
     card.addEventListener('click', () => navigate(`/pages/views/CategoryView.html?id=${cat.id}`))
+    card.dataset.bulkId = cat.id
 
     if (cat.iconKey) {
         const iconEl = card.querySelector('.cat-icon')

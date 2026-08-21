@@ -6,6 +6,7 @@ import com.financecontrol.entity.TransactionLocale;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.TransactionLocaleRepository;
+import com.financecontrol.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
 class TransactionLocaleServiceTest {
 
     @Mock TransactionLocaleRepository transactionLocaleRepository;
+    @Mock TransactionRepository transactionRepository;
 
     @InjectMocks TransactionLocaleService transactionLocaleService;
 

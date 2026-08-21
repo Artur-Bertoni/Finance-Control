@@ -8,12 +8,14 @@ import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.CategoryAliasRepository;
 import com.financecontrol.repository.CategoryRepository;
+import com.financecontrol.repository.TransactionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryAliasRepository categoryAliasRepository;
+    private final TransactionRepository transactionRepository;
     private final HistoryService historyService;
+    @Lazy private final TransactionService transactionService;
 
     private static final String CATEGORY_NOT_FOUND = "error.notFound.category";
 
@@ -152,10 +156,15 @@ public class CategoryService {
     }
 
     @Transactional
-    @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = {"categories", "transactions"}, allEntries = true)
     public void delete(@NonNull Long id,
                        @NonNull Long userId) {
         getOrThrow(id, userId);
+
+        for (Long transactionId : transactionRepository.findIdsByCategory(id)) {
+            if (transactionId != null && transactionRepository.existsById(transactionId))
+                transactionService.delete(transactionId, userId);
+        }
         categoryRepository.deleteById(id);
     }
 

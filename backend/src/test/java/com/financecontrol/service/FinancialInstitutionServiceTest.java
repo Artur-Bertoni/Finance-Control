@@ -5,6 +5,7 @@ import com.financecontrol.dto.response.FinancialInstitutionResponse;
 import com.financecontrol.entity.FinancialInstitution;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
+import com.financecontrol.repository.AccountRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
 class FinancialInstitutionServiceTest {
 
     @Mock FinancialInstitutionRepository financialInstitutionRepository;
+    @Mock AccountRepository accountRepository;
     @Mock HistoryService historyService;
 
     @InjectMocks FinancialInstitutionService financialInstitutionService;

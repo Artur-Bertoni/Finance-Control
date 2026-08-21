@@ -5,6 +5,7 @@ import { CustomSelect } from '../components/CustomSelect.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { createEmptyState } from '../components/EmptyState.js'
+import { initBulkSelection } from '../components/BulkSelectionManager.js'
 
 let allAccounts = []
 let allFinancialInstitutions = []
@@ -43,6 +44,7 @@ export function init() {
         syncClearBtn
     )
     setupFinancialInstitutionFilter()
+    initBulkSelection({ type: 'accounts', listId: 'accounts-list', onDeleted: loadData })
     I18n.onChange(renderList)
 }
 
@@ -111,6 +113,7 @@ function renderList() {
 function _buildAccountCard(acc) {
     const card = document.getElementById('tpl-account-card').content.firstElementChild.cloneNode(true)
     card.addEventListener('click', () => navigate(`/pages/views/AccountView.html?id=${acc.id}`))
+    card.dataset.bulkId = acc.id
 
     if (acc.iconKey) {
         const iconEl = card.querySelector('.ac-icon')

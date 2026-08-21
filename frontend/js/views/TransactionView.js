@@ -1,8 +1,9 @@
-import { doRequest, formatMoney, formatDate, navigate, setBreadcrumb, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, formatDate, navigate, setBreadcrumb, showToast } from '../../utils/FrontendFunctions.js'
 import { Transaction } from '../class/TransactionClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -73,12 +74,12 @@ export function init() {
         navigate(`/pages/crud/Transaction.html?id=${editTargetId}`)
     )
 
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        const deleteMsg = isInstallmentGroup
-            ? I18n.t('installmentDeleteConfirm', { count: tx.installmentsNumber })
-            : I18n.t('deleteConfirm')
-        showConfirm(deleteMsg, () => {
-            $.ajax({
+    document.getElementById('delete-btn').addEventListener('click', () =>
+        confirmDelete({
+            type:     'transactions',
+            id:       transactionId,
+            question: I18n.t('deleteConfirmQuestionTransaction'),
+            onConfirm: () => $.ajax({
                 url:   `/api/transactions/${transactionId}`,
                 type:  'DELETE',
                 async: false,
@@ -86,7 +87,7 @@ export function init() {
                 error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
             })
         })
-    })
+    )
 
     let historyLoaded = false
     document.querySelectorAll('.view-tab').forEach(btn => {

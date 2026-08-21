@@ -6,6 +6,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { InputMasks } from '../utils/InputMasks.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 
 const REQUIRED = ['name-input', 'type-select', 'target-input', 'start-date-input']
 
@@ -114,15 +115,18 @@ function loadGoal(goalId) {
     renderMultiCheckList('locales-multi',    locales,    selectedLocIds)
 
     const deleteBtn = addDeleteIcon()
-    deleteBtn.addEventListener('click', () => {
-        showConfirm(I18n.t('goalDeleteConfirm'), () => {
-            $.ajax({
+    deleteBtn.addEventListener('click', () =>
+        confirmDelete({
+            type: 'goals',
+            id:   goalId,
+            name: goal.name,
+            onConfirm: () => $.ajax({
                 url: `/api/goals/${goalId}`, type: 'DELETE', async: false,
                 success: () => { clearDirtyGuard(); navigateWithToast('/pages/lists/GoalList.html', I18n.t('goalDeletedSuccess'), 'success') },
                 error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingGoal'), 'error')
             })
-        }, I18n.t('confirmAction'))
-    })
+        })
+    )
 
     const archiveBtn = document.createElement('button')
     archiveBtn.className    = 'btn btn-secondary btn-sm'

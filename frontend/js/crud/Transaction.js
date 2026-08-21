@@ -6,6 +6,7 @@ import { Transaction } from '../class/TransactionClass.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 
 export function init() {
     SidebarManager.initialize()
@@ -114,15 +115,20 @@ function loadEditMode(transactionId) {
         openMoreOptions()
 
     const deleteBtn = addDeleteIcon()
-    deleteBtn.addEventListener('click', () => {
-        $.ajax({
-            url:   `/api/transactions/${transactionId}`,
-            type:  'DELETE',
-            async: false,
-            success: () => { clearDirtyGuard(); navigate('/pages/HomePage.html') },
-            error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
+    deleteBtn.addEventListener('click', () =>
+        confirmDelete({
+            type:     'transactions',
+            id:       transactionId,
+            question: I18n.t('deleteConfirmQuestionTransaction'),
+            onConfirm: () => $.ajax({
+                url:   `/api/transactions/${transactionId}`,
+                type:  'DELETE',
+                async: false,
+                success: () => { clearDirtyGuard(); navigate('/pages/HomePage.html') },
+                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingTransaction'), 'error')
+            })
         })
-    })
+    )
 }
 
 async function handleSave(transactionId, force = false) {

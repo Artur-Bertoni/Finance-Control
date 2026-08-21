@@ -1,6 +1,8 @@
-import { doRequest, formatMoney, showToast, showConfirm, initFilterToggle } from '../utils/FrontendFunctions.js'
+import { doRequest, formatMoney, showToast, initFilterToggle } from '../utils/FrontendFunctions.js'
 import { SidebarManager } from './components/SidebarManager.js'
 import { I18n } from './i18n.js'
+import { initBulkSelection } from './components/BulkSelectionManager.js'
+import { confirmDelete } from './modals/DeleteFlow.js'
 
 let budgets    = []
 let categories = []
@@ -11,6 +13,7 @@ export function init() {
     loadData()
     document.getElementById('budget-save-btn')?.addEventListener('click', saveBudget)
     initFilterToggle(() => false)
+    initBulkSelection({ type: 'budgets', listId: 'budget-list', onDeleted: loadData })
     I18n.onChange(renderAll)
 }
 
@@ -91,6 +94,7 @@ function renderList() {
 
 function buildItem(b) {
     const item = document.getElementById('tpl-budget-item').content.firstElementChild.cloneNode(true)
+    item.dataset.bulkId = b.id
 
     const icon = item.querySelector('.budget-item-icon')
     if (b.categoryIconKey) { icon.classList.add(b.categoryIconKey); icon.hidden = false }
@@ -130,13 +134,16 @@ function startEdit(b) {
 }
 
 function removeBudget(b) {
-    showConfirm(I18n.t('budgetDeleteConfirm', { category: b.categoryName }), () => {
-        $.ajax({
+    confirmDelete({
+        type: 'budgets',
+        id:   b.id,
+        name: b.categoryName,
+        onConfirm: () => $.ajax({
             url: `/api/budgets/${b.id}`, type: 'DELETE', async: false,
             success: () => { showToast(I18n.t('budgetDeletedSuccess'), 'success'); loadData() },
             error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorGeneric'), 'error')
         })
-    }, I18n.t('confirmAction'))
+    })
 }
 
 if (!globalThis.__appRouter) init()

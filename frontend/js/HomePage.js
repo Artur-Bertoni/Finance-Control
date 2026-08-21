@@ -7,6 +7,7 @@ import { CustomSelect } from './components/CustomSelect.js'
 import { Icons } from './icons/IconLibrary.js'
 import { I18n } from './i18n.js'
 import { resumePendingAccountDelete } from './modals/AccountDeleteFlow.js'
+import { initBulkSelection } from './components/BulkSelectionManager.js'
 
 const PAGE_SIZE   = 30
 const FILTER_KEY  = '__homeFilters'
@@ -28,6 +29,12 @@ export function init() {
     filterToggle = initFilterToggle(isFilterActive)
     populateTransactionsList()
     resumePendingAccountDelete()
+    initBulkSelection({
+        type: 'transactions',
+        listId: 'last-transaction-list',
+        allIds: () => allTransactions.map(tx => tx.id),
+        onDeleted: populateTransactionsList,
+    })
 
     I18n.onChange(() => { renderPage(); renderTotals() })
 }
@@ -225,6 +232,7 @@ function createTransactionItem(tx) {
     const item = document.getElementById('tpl-transaction-item').content.firstElementChild.cloneNode(true)
     item.classList.add(typeClass)
     item.addEventListener('click', () => navigate(`/pages/views/TransactionView.html?id=${tx.id}`))
+    item.dataset.bulkId = tx.id
 
     item.querySelector('.tx-indicator').classList.add(typeClass)
 

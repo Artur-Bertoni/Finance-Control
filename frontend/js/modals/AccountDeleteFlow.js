@@ -1,5 +1,6 @@
-import { doRequest, navigate, navigateWithToast, showToast } from '../../utils/FrontendFunctions.js'
+import { navigate, navigateWithToast, showToast } from '../../utils/FrontendFunctions.js'
 import { showConfirm, showConfirmBar } from './ConfirmModal.js'
+import { buildDeleteMessage, fetchDeleteImpact } from './DeleteFlow.js'
 import { I18n } from '../i18n.js'
 
 const PENDING_KEY = '__pendingAccountDelete'
@@ -7,15 +8,11 @@ const FILTER_KEY  = '__homeFilters'
 const ACCOUNTS_URL = '/pages/lists/AccountList.html'
 
 export function confirmAccountDelete(accountId, accountName, opts = {}) {
-    const count = fetchTransactionCount(accountId)
-    const name  = escapeHtml(accountName)
+    const impact  = fetchDeleteImpact('accounts', [Number(accountId)])
+    const message = buildDeleteMessage('accounts', { count: 1, name: accountName, impact })
+    const count   = impact?.deletedTransactions ?? 0
 
-    let message
-    if (count === null)   message = I18n.t('accountDeleteConfirmUnknown', { name })
-    else if (count === 0) message = I18n.t('accountDeleteConfirmEmpty', { name })
-    else                  message = I18n.t('accountDeleteConfirmWithTransactions', { name, count })
-
-    showConfirm(message, () => deleteAccount(accountId, opts), I18n.t('accountDeleteTitle'), {
+    showConfirm(message, () => deleteAccount(accountId, opts), I18n.t('deleteConfirmTitle'), {
         confirmLabel: I18n.t('commonDelete'),
         extraAction: count === 0
             ? null
@@ -64,15 +61,6 @@ function deleteAccount(accountId, opts = {}) {
     })
 }
 
-function fetchTransactionCount(accountId) {
-    try {
-        const total = doRequest(`/api/accounts/${accountId}/transactions-count`, 'GET')
-        return Number.isFinite(Number(total)) && total !== null ? Number(total) : null
-    } catch {
-        return null
-    }
-}
-
 function clearAccountFilter() {
     const filters = readJson(FILTER_KEY)
     if (!filters?.account) return
@@ -83,10 +71,4 @@ function clearAccountFilter() {
 function readJson(key) {
     try { return JSON.parse(sessionStorage.getItem(key)) }
     catch { return null }
-}
-
-function escapeHtml(value) {
-    const div = document.createElement('div')
-    div.textContent = value ?? ''
-    return div.innerHTML
 }

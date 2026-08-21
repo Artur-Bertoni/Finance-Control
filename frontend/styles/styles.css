@@ -4803,3 +4803,59 @@ main.page-content {
 
   .pagination-row { gap: 8px; padding: 12px 0; font-size: 12px; flex-wrap: wrap; }
 }
+
+.bulk-toggle-btn.active {
+  color: var(--primary);
+  background-color: var(--primary-50);
+}
+
+.bulk-mode .item-card--add { display: none; }
+
+.bulk-mode [data-bulk-id].bulk-selectable {
+  position: relative;
+  padding-left: 48px;
+  user-select: none;
+}
+
+.bulk-mode [data-bulk-id].bulk-selectable:focus-visible {
+  outline: 2px solid var(--primary-400);
+  outline-offset: 2px;
+}
+
+.bulk-mode .budget-item-actions,
+.bulk-mode .item-card-actions {
+  pointer-events: none;
+  opacity: .35;
+}
+
+.bulk-check {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: transparent;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  transition: all var(--t);
+}
+
+.item-card .bulk-check { top: 20px; transform: none; }
+
+.bulk-selectable:hover .bulk-check { border-color: var(--primary-400); }
+
+.bulk-selected { border-color: var(--primary) !important; }
+.bulk-selected .bulk-check {
+  color: #FFFFFF;
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.bulk-action-bar .bulk-count { white-space: nowrap; }

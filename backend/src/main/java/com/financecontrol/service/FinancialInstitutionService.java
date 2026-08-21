@@ -5,6 +5,7 @@ import com.financecontrol.dto.response.FinancialInstitutionResponse;
 import com.financecontrol.entity.FinancialInstitution;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
+import com.financecontrol.repository.AccountRepository;
 import com.financecontrol.repository.FinancialInstitutionRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ import static com.financecontrol.service.HistoryService.*;
 public class FinancialInstitutionService {
 
     private final FinancialInstitutionRepository financialInstitutionRepository;
+    private final AccountRepository accountRepository;
     private final HistoryService historyService;
 
     @Cacheable(value = "financialInstitutions", key = "#userId")
@@ -83,10 +85,11 @@ public class FinancialInstitutionService {
     }
 
     @Transactional
-    @CacheEvict(value = "financialInstitutions", allEntries = true)
+    @CacheEvict(value = {"financialInstitutions", "accounts"}, allEntries = true)
     public void delete(@NonNull Long id,
                        @NonNull Long userId) {
         getOrThrow(id, userId);
+        accountRepository.clearFinancialInstitutions(List.of(id));
         financialInstitutionRepository.deleteById(id);
     }
 

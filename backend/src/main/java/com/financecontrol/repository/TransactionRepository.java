@@ -114,6 +114,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t.id FROM Transaction t WHERE t.account.id = :accountId")
     List<Long> findIdsByAccount(@Param("accountId") Long accountId);
 
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.account.id IN :accountIds")
+    long countByAccountIdIn(@Param("accountIds") List<Long> accountIds);
+
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.category.id IN :categoryIds")
+    long countByCategoryIdIn(@Param("categoryIds") List<Long> categoryIds);
+
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.transactionLocale.id IN :localeIds")
+    long countByTransactionLocaleIdIn(@Param("localeIds") List<Long> localeIds);
+
+    @Query("SELECT t.id FROM Transaction t WHERE t.installmentGroupId IN :groupIds")
+    List<Long> findIdsByInstallmentGroupIdIn(@Param("groupIds") List<Long> groupIds);
+
+    @Query("SELECT t.id FROM Transaction t WHERE t.category.id = :categoryId")
+    List<Long> findIdsByCategory(@Param("categoryId") Long categoryId);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE Transaction t SET t.transactionLocale = NULL WHERE t.transactionLocale.id IN :localeIds")
+    void clearTransactionLocales(@Param("localeIds") List<Long> localeIds);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("UPDATE Transaction t SET t.transferPartnerId = 0 WHERE t.id IN :ids")
     void clearTransferPartners(@Param("ids") List<Long> ids);

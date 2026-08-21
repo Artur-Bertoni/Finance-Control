@@ -4,6 +4,7 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { IconPicker } from '../components/IconPicker.js'
 import { I18n } from '../i18n.js'
+import { confirmDelete } from '../modals/DeleteFlow.js'
 
 let aliases = []
 
@@ -43,15 +44,20 @@ export function init() {
             ])
 
             const deleteBtn = addDeleteIcon()
-            deleteBtn.addEventListener('click', function () {
-                $.ajax({
-                    url:   `/api/categories/${categoryId}`,
-                    type:  'DELETE',
-                    async: false,
-                    success: function () { clearDirtyGuard(); navigate('/pages/lists/CategoryList.html') },
-                    error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingCategory'), 'error') }
+            deleteBtn.addEventListener('click', () =>
+                confirmDelete({
+                    type: 'categories',
+                    id:   categoryId,
+                    name: cat.name,
+                    onConfirm: () => $.ajax({
+                        url:   `/api/categories/${categoryId}`,
+                        type:  'DELETE',
+                        async: false,
+                        success: function () { clearDirtyGuard(); navigate('/pages/lists/CategoryList.html') },
+                        error:   function (xhr) { showToast(xhr.responseJSON?.message ?? I18n.t('errorDeletingCategory'), 'error') }
+                    })
                 })
-            })
+            )
         }
     } else {
         aliases = ['']
