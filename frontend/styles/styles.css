@@ -2313,6 +2313,12 @@ body.page-finny .transactions-list {
   box-sizing: border-box;
 }
 
+.cs-disabled .cs-trigger {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .cs-trigger > span {
   overflow: hidden;
   text-overflow: ellipsis;

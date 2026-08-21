@@ -33,7 +33,7 @@ export class CustomSelect {
 
     static syncAll() {
         CustomSelect._instances = CustomSelect._instances.filter(cs => document.contains(cs.wrapper))
-        CustomSelect._instances.forEach(cs => cs._syncDisplay())
+        CustomSelect._instances.forEach(cs => { cs._syncDisplay(); cs._syncDisabled() })
     }
 
     _build() {
@@ -62,6 +62,7 @@ export class CustomSelect {
         this.dropdown = dropdown
 
         this._syncDisplay()
+        this._syncDisabled()
 
         trigger.addEventListener('click', () => this._toggle())
         trigger.addEventListener('keydown', e => {
@@ -236,11 +237,21 @@ export class CustomSelect {
         return [...this.dropdown.querySelectorAll('.cs-options .cs-option')].filter(i => i.style.display !== 'none')
     }
 
+    _syncDisabled() {
+        const disabled = this.select.disabled
+        this.wrapper.classList.toggle('cs-disabled', disabled)
+        this.trigger.tabIndex = disabled ? -1 : 0
+        this.trigger.setAttribute('aria-disabled', String(disabled))
+        if (disabled) this._close()
+    }
+
     _toggle() {
+        if (this.select.disabled) return
         this.wrapper.classList.contains('cs-open') ? this._close() : this._open()
     }
 
     _open() {
+        if (this.select.disabled) return
         if (this.wrapper.classList.contains('cs-open')) return
         this._buildOptions()
         document.querySelectorAll('.cs-wrapper.cs-open').forEach(w => w.classList.remove('cs-open'))
@@ -309,12 +320,13 @@ export class CustomSelect {
             if (childChanged) this._patchOptions()
             if (childChanged || attrChanged) {
                 this._syncDisplay()
+                this._syncDisabled()
                 if (this.wrapper.classList.contains('cs-open')) this._buildOptions()
             }
         }).observe(this.select, {
             childList: true,
             attributes: true,
-            attributeFilter: ['class']
+            attributeFilter: ['class', 'disabled']
         })
     }
 }
