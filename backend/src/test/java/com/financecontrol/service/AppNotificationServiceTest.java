@@ -32,8 +32,14 @@ class AppNotificationServiceTest {
     @Mock GoalRepository                 goalRepository;
     @Mock GoalNotificationLogRepository  goalNotificationLogRepository;
     @Mock GoalService                    goalService;
+    @Mock UserSettingsService            userSettingsService;
 
     @InjectMocks AppNotificationService appNotificationService;
+
+    @org.junit.jupiter.api.BeforeEach
+    void allowGoals() {
+        lenient().when(userSettingsService.goalsEnabled(any())).thenReturn(true);
+    }
 
     // ── checkGoalImpact – sem metas ativas ───────────────────────────────────
 

@@ -37,6 +37,7 @@ class UserServiceTest {
     @Mock EmailService emailService;
     @Mock OnboardingService onboardingService;
     @Mock org.springframework.beans.factory.ObjectProvider<UserService> selfProvider;
+    @Mock UserSettingsService userSettingsService;
 
     @InjectMocks UserService userService;
 

@@ -1,17 +1,21 @@
 import { I18n } from '../i18n.js'
 import { FinnySvg } from '../utils/FinnySvg.js'
+import { UserSettings } from '../utils/UserSettings.js'
+import { FEATURE_ROWS, PROFILE_PRESETS } from '../utils/FeatureCatalog.js'
+import { SidebarManager } from './SidebarManager.js'
 
-const STEPS = [
+const ALL_STEPS = [
     { route: '/pages/HomePage.html',         target: '.sidebar-link[href="/pages/HomePage.html"]',       textKey: 'tour_home',      sidebar: true },
     { route: '/pages/Dashboard.html',        target: '.sidebar-link[href="/pages/Dashboard.html"]',      textKey: 'tour_dashboard', sidebar: true },
-    { route: '/pages/Budget.html',           target: '.sidebar-link[href="/pages/Budget.html"]',         textKey: 'tour_budget',    sidebar: true },
-    { route: '/pages/lists/GoalList.html',   target: '.sidebar-link[href="/pages/lists/GoalList.html"]', textKey: 'tour_goals',     sidebar: true },
-    { route: '/pages/FinnyCenter.html',      target: '#notifications-link',                               textKey: 'tour_finny',     sidebar: true },
+    { route: '/pages/Budget.html',           target: '.sidebar-link[href="/pages/Budget.html"]',         textKey: 'tour_budget',    sidebar: true, setting: 'budgetsEnabled' },
+    { route: '/pages/lists/GoalList.html',   target: '.sidebar-link[href="/pages/lists/GoalList.html"]', textKey: 'tour_goals',     sidebar: true, setting: 'goalsEnabled' },
+    { route: '/pages/FinnyCenter.html',      target: '#notifications-link',                               textKey: 'tour_finny',     sidebar: true, setting: 'finnyEnabled' },
     { route: '/pages/crud/Transaction.html', target: '#account-input',  textKey: 'tour_txAccount' },
     { target: '#category-input', textKey: 'tour_txCategory' },
     { target: '.radio-group',    textKey: 'tour_txType' },
     { target: '#value-input',    textKey: 'tour_txValue' },
     { target: '#save-btn',       textKey: 'tour_txSave' },
+    { route: '/pages/views/UserView.html', target: '.sidebar-footer .sidebar-link[href="/pages/views/UserView.html"]', textKey: 'tour_profileSettings', sidebar: true },
 ]
 
 export class OnboardingTour {
@@ -38,8 +42,120 @@ export class OnboardingTour {
         this._running = true
         this._step = 0
         this._busy = false
+        this._steps = ALL_STEPS
         this._buildDom()
+        this._renderProfileChoice()
+    }
+
+    /** Primeira etapa: o usuario escolhe um perfil de uso e o tour se ajusta ao que ficou ativo. */
+    static _renderProfileChoice() {
+        this._choosing = true
+        this._currentTarget = null
+        this._spotlight.hidden = true
+        this._blocker.classList.add('tour-blocker--dim')
+        this._bubble.classList.add('tour-bubble--center', 'tour-bubble--choice')
+        this._dotsEl.innerHTML = ''
+        this._backBtn.style.visibility = 'hidden'
+        this._nextBtn.hidden = true
+
+        this._textEl.textContent = I18n.t('onboardingProfileQuestion')
+
+        const choices = document.createElement('div')
+        choices.className = 'tour-profiles'
+        for (const id of ['simple', 'complete', 'custom']) {
+            const card = document.createElement('button')
+            card.type = 'button'
+            card.className = 'tour-profile-card'
+            card.innerHTML = `
+                <span class="tour-profile-name">${I18n.t(`onboardingProfile_${id}`)}</span>
+                <span class="tour-profile-desc">${I18n.t(`onboardingProfile_${id}_desc`)}</span>
+            `
+            card.addEventListener('click', () => {
+                if (id === 'custom') this._renderCustomProfile()
+                else this._applyProfile(PROFILE_PRESETS[id])
+            })
+            choices.appendChild(card)
+        }
+
+        this._textEl.insertAdjacentElement('afterend', choices)
+        this._choiceEl = choices
+        this._positionFor(null)
+    }
+
+    static _renderCustomProfile() {
+        this._choiceEl?.remove()
+        this._textEl.textContent = I18n.t('onboardingProfileCustomIntro')
+
+        const list = document.createElement('div')
+        list.className = 'tour-profile-toggles'
+        const inputs = {}
+
+        for (const row of FEATURE_ROWS) {
+            const label = document.createElement('label')
+            label.className = 'tour-profile-toggle'
+            const title = I18n.t(row.titleKey)
+            label.innerHTML = `
+                <input type="checkbox" checked aria-label="${title}">
+                <span class="tour-profile-toggle-text">
+                    <span class="tour-profile-toggle-name">${title}</span>
+                    <span class="tour-profile-toggle-desc">${I18n.t(row.descKey)}</span>
+                </span>
+            `
+            inputs[row.key] = label.querySelector('input')
+            list.appendChild(label)
+        }
+
+        this._textEl.insertAdjacentElement('afterend', list)
+        this._choiceEl = list
+
+        this._nextBtn.hidden = false
+        this._nextBtn.textContent = I18n.t('onboardingContinue')
+        this._nextBtn.onclick = () => {
+            const chosen = {}
+            for (const [key, input] of Object.entries(inputs)) chosen[key] = input.checked
+            this._applyProfile(chosen)
+        }
+        this._positionFor(null)
+    }
+
+    static _applyProfile(settings) {
+        this._nextBtn.disabled = true
+
+        $.ajax({
+            url:         '/api/user-settings',
+            type:        'PUT',
+            contentType: 'application/json',
+            data:        JSON.stringify(settings),
+            complete: xhr => {
+                if (xhr.status >= 200 && xhr.status < 300 && xhr.responseJSON) {
+                    UserSettings.store(xhr.responseJSON)
+                    SidebarManager.applyFeatureVisibility()
+                    SidebarManager.applyFinnyLink()
+                }
+                this._startGuidedSteps()
+            }
+        })
+    }
+
+    static _startGuidedSteps() {
+        this._choosing = false
+        this._choiceEl?.remove()
+        this._choiceEl = null
+        this._bubble.classList.remove('tour-bubble--choice')
+        this._nextBtn.hidden   = false
+        this._nextBtn.disabled = false
+        this._nextBtn.onclick  = null
+        this._applyFinnyBranding()
+
+        this._steps = ALL_STEPS.filter(s => !s.setting || UserSettings.isEnabled(s.setting))
         this._goToStep(0)
+    }
+
+    static _applyFinnyBranding() {
+        if (UserSettings.finny) return
+        this._bubble.querySelector('.tour-finny')?.remove()
+        const name = this._bubble.querySelector('.tour-bubble-name')
+        if (name) name.textContent = 'Finance Control'
     }
 
     static _buildDom() {
@@ -76,7 +192,8 @@ export class OnboardingTour {
         overlay.querySelector('.tour-skip').addEventListener('click', () => this._finish())
         this._backBtn.addEventListener('click', () => this._goToStep(this._step - 1))
         this._nextBtn.addEventListener('click', () => {
-            if (this._step >= STEPS.length - 1) this._finish()
+            if (this._choosing) return
+            if (this._step >= this._steps.length - 1) this._finish()
             else this._goToStep(this._step + 1)
         })
 
@@ -86,10 +203,10 @@ export class OnboardingTour {
     }
 
     static async _goToStep(i) {
-        if (this._busy || i < 0 || i >= STEPS.length) return
+        if (this._busy || i < 0 || i >= this._steps.length) return
         this._busy = true
         this._step = i
-        const step = STEPS[i]
+        const step = this._steps[i]
         this._nextBtn.disabled = true
         this._backBtn.disabled = true
 
@@ -128,13 +245,13 @@ export class OnboardingTour {
     }
 
     static _renderText() {
-        const step = STEPS[this._step]
+        const step = this._steps[this._step]
         this._textEl.textContent = I18n.t(step.textKey)
-        this._dotsEl.innerHTML = STEPS
+        this._dotsEl.innerHTML = this._steps
             .map((_, i) => `<span class="tour-dot${i === this._step ? ' tour-dot--active' : ''}"></span>`)
             .join('')
         this._backBtn.style.visibility = this._step === 0 ? 'hidden' : 'visible'
-        this._nextBtn.textContent = this._step >= STEPS.length - 1
+        this._nextBtn.textContent = this._step >= this._steps.length - 1
             ? I18n.t('onboardingFinish')
             : I18n.t('onboardingNext')
     }

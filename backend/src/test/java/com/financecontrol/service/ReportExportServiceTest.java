@@ -31,6 +31,7 @@ class ReportExportServiceTest {
     @Mock ReportService         reportService;
     @Mock TransactionRepository transactionRepository;
     @Mock AccountRepository     accountRepository;
+    @Mock UserSettingsService   userSettingsService;
 
     @InjectMocks ReportExportService service;
 
@@ -38,6 +39,7 @@ class ReportExportServiceTest {
     private static final LocalDate END   = LocalDate.of(2025, 1, 31);
 
     private void stubData() {
+        when(userSettingsService.localesEnabled(any())).thenReturn(true);
         DashboardResponse dashboard = new DashboardResponse(
                 List.of(new DashboardResponse.MonthlyDataPoint("2025-01", 4000.0, 1500.0)),
                 List.of(new DashboardResponse.CategoryDataPoint(1L, "Alimentação", null, 1500.0)),

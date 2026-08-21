@@ -30,10 +30,13 @@ public class AppNotificationService {
     private final GoalRepository goalRepository;
     private final GoalNotificationLogRepository goalNotificationLogRepository;
     private final GoalService goalService;
+    private final UserSettingsService userSettingsService;
 
     @Transactional
     public List<AppNotificationResponse> checkGoalImpact(Long userId,
                                                          Long transactionId) {
+        if (!userSettingsService.goalsEnabled(userId)) return List.of();
+
         List<Goal> activeGoals = goalRepository.findByUserIdAndStatus(userId, GoalStatus.ACTIVE);
         List<AppNotificationResponse> result = new ArrayList<>();
 

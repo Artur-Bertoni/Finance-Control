@@ -76,11 +76,12 @@ public final class PdfReportWriter {
             categorySection(c, lbl(lang, "incomeByCategory"),   lbl(lang, "category"), lbl(lang, "total"), data.incomeByCategory(),   BrandAssets.SUCCESS);
 
             section(c, lbl(lang, "transactions"));
-            txHeader(c, lang);
+            boolean showLoc = data.showLocation();
+            txHeader(c, lang, showLoc);
             alt = false;
             for (ReportData.TxRow tx : data.transactions()) {
-                if (c.ensure(15)) txHeader(c, lang);
-                txRow(c, tx, lang, alt = !alt);
+                if (c.ensure(15)) txHeader(c, lang, showLoc);
+                txRow(c, tx, lang, alt = !alt, showLoc);
             }
 
             c.close();
@@ -131,31 +132,35 @@ public final class PdfReportWriter {
         c.advance(15);
     }
 
-    private static void txHeader(Cursor c, String lang) {
+    private static void txHeader(Cursor c, String lang, boolean showLoc) {
         c.ensure(17);
         c.band(BrandAssets.PRIMARY_50, 14);
         c.at(FONT_BOLD, 9, COL_DATE, lbl(lang, "date"), BrandAssets.PRIMARY);
         c.at(FONT_BOLD, 9, COL_CAT,  lbl(lang, "category"), BrandAssets.PRIMARY);
-        c.at(FONT_BOLD, 9, COL_LOC,  lbl(lang, "location"), BrandAssets.PRIMARY);
-        c.at(FONT_BOLD, 9, COL_DESC, lbl(lang, "description"), BrandAssets.PRIMARY);
+        if (showLoc) c.at(FONT_BOLD, 9, COL_LOC, lbl(lang, "location"), BrandAssets.PRIMARY);
+        c.at(FONT_BOLD, 9, descX(showLoc), lbl(lang, "description"), BrandAssets.PRIMARY);
         c.at(FONT_BOLD, 9, COL_TYPE, lbl(lang, "type"), BrandAssets.PRIMARY);
         c.atRight(FONT_BOLD, 9, RIGHT, lbl(lang, "value"), BrandAssets.PRIMARY);
         c.advance(15);
     }
 
-    private static void txRow(Cursor c, ReportData.TxRow tx, String lang, boolean alt) {
+    private static void txRow(Cursor c, ReportData.TxRow tx, String lang, boolean alt, boolean showLoc) {
         boolean credit = "CREDIT".equals(tx.type().name());
         double signed = credit ? tx.value() : -tx.value();
         Color valueColor = credit ? BrandAssets.SUCCESS : BrandAssets.DANGER;
 
         c.rowStart(alt);
         c.at(FONT, 8, COL_DATE, tx.date().format(DATE), BrandAssets.TEXT_SECONDARY);
-        c.at(FONT, 8, COL_CAT,  fit(tx.category(),    COL_LOC  - COL_CAT  - 4, 8), BrandAssets.TEXT);
-        c.at(FONT, 8, COL_LOC,  fit(tx.location(),    COL_DESC - COL_LOC  - 4, 8), BrandAssets.TEXT);
-        c.at(FONT, 8, COL_DESC, fit(tx.description(), COL_TYPE - COL_DESC - 4, 8), BrandAssets.TEXT);
+        c.at(FONT, 8, COL_CAT,  fit(tx.category(), descX(showLoc) - COL_CAT - 4, 8), BrandAssets.TEXT);
+        if (showLoc) c.at(FONT, 8, COL_LOC, fit(tx.location(), COL_DESC - COL_LOC - 4, 8), BrandAssets.TEXT);
+        c.at(FONT, 8, descX(showLoc), fit(tx.description(), COL_TYPE - descX(showLoc) - 4, 8), BrandAssets.TEXT);
         c.at(FONT, 8, COL_TYPE, lbl(lang, tx.type().name().toLowerCase()), valueColor);
         c.atRight(FONT, 8, RIGHT, MONEY.format(signed), valueColor);
         c.advance(13);
+    }
+
+    private static float descX(boolean showLoc) {
+        return showLoc ? COL_DESC : COL_LOC;
     }
 
     private static String lbl(String lang, String key) {

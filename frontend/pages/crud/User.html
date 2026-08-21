@@ -62,7 +62,7 @@
                 <span class="toggle-track" id="guest-toggle-track" role="presentation">
                   <span class="toggle-thumb"></span>
                 </span>
-                <span class="toggle-label" id="guest-notification-enabled-label" data-i18n="commonDisabled">Desativado</span>
+                <span class="toggle-label" id="guest-notification-enabled-label" data-i18n="commonDisabled">Desabilitado</span>
               </div>
             </div>
             <div class="field" id="field-guest-notification-day" style="display:none">
@@ -81,10 +81,10 @@
         </div>
 
         <div id="notification-section" style="display:none">
-          <div class="section-divider">
+          <div class="section-divider" data-feature="emails">
             <span data-i18n="emailNotifications">Notificações por E-mail</span>
           </div>
-          <div class="form-grid">
+          <div class="form-grid" data-feature="emails">
             <div class="field">
               <div style="display:flex;align-items:flex-start;gap:0">
                 <div style="display:flex;flex-direction:column;gap:6px">
@@ -94,7 +94,7 @@
                     <span class="toggle-track" role="presentation">
                       <span class="toggle-thumb"></span>
                     </span>
-                    <span class="toggle-label" id="notification-enabled-label" data-i18n="commonEnabled">Ativado</span>
+                    <span class="toggle-label" id="notification-enabled-label" data-i18n="commonEnabled">Habilitado</span>
                   </div>
                 </div>
                 <div style="width:1px;background:var(--border);margin:0 20px;align-self:stretch"></div>
@@ -112,14 +112,14 @@
                 </div>
               </div>
             </div>
-            <div class="field">
+            <div class="field" data-feature="goals">
               <span data-i18n="goalNotificationsLabel">Notificações de metas financeiras</span>
               <div class="toggle-switch">
                 <input type="checkbox" id="goal-notification-enabled-input" class="toggle-input">
                 <span class="toggle-track" id="goal-notification-track" role="presentation">
                   <span class="toggle-thumb"></span>
                 </span>
-                <span class="toggle-label" id="goal-notification-enabled-label" data-i18n="commonEnabled">Ativado</span>
+                <span class="toggle-label" id="goal-notification-enabled-label" data-i18n="commonEnabled">Habilitado</span>
               </div>
             </div>
           </div>

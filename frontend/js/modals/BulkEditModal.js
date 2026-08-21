@@ -6,6 +6,7 @@ import { IconPicker } from '../components/IconPicker.js'
 import { createIconPickerField } from '../components/IconPickerField.js'
 import { InputMasks } from '../utils/InputMasks.js'
 import { I18n } from '../i18n.js'
+import { UserSettings } from '../utils/UserSettings.js'
 
 const BOOL_OPTIONS = [['true', 'commonYes'], ['false', 'commonNo']]
 
@@ -13,7 +14,7 @@ const SCHEMAS = {
     'transactions': [
         { key: 'accountId',           label: 'transactionAccount', kind: 'ref',  source: '/api/accounts' },
         { key: 'categoryId',          label: 'category',           kind: 'ref',  source: '/api/categories' },
-        { key: 'transactionLocaleId', label: 'location',           kind: 'ref',  source: '/api/transaction-locales', clearable: true },
+        { key: 'transactionLocaleId', label: 'location',           kind: 'ref',  source: '/api/transaction-locales', clearable: true, setting: 'localesEnabled' },
         { key: 'transactionType',     label: 'transactionType',    kind: 'enum', options: [['DEBIT', 'debit'], ['CREDIT', 'credit']] },
         { key: 'date',                label: 'transactionDate',    kind: 'date' },
         { key: 'value',               label: 'transactionValue',   kind: 'money', placeholder: 'valueZero', hint: 'bulkEditInstallmentHint' },
@@ -24,7 +25,7 @@ const SCHEMAS = {
         { key: 'iconKey',     label: 'categoryIcon', kind: 'icon' },
     ],
     'accounts': [
-        { key: 'financialInstitutionId', label: 'financialInstitution', kind: 'ref', source: '/api/financial-institutions', clearable: true },
+        { key: 'financialInstitutionId', label: 'financialInstitution', kind: 'ref', source: '/api/financial-institutions', clearable: true, setting: 'institutionsEnabled' },
         { key: 'accountType',            label: 'accountType',          kind: 'enum', options: [['CHECKING', 'accountTypeChecking'], ['CREDIT_CARD', 'accountTypeCreditCard']] },
         { key: 'contact',                label: 'contact',              kind: 'text', placeholder: 'contactPlaceholder', clearable: true },
         { key: 'description',            label: 'description',          kind: 'textarea', placeholder: 'descriptionPlaceholder', clearable: true },
@@ -56,13 +57,17 @@ const SCHEMAS = {
     ],
 }
 
+function schemaFor(type) {
+    return (SCHEMAS[type] ?? []).filter(f => !f.setting || UserSettings.isEnabled(f.setting))
+}
+
 export function hasBulkEditSchema(type) {
-    return (SCHEMAS[type] ?? []).length > 0
+    return schemaFor(type).length > 0
 }
 
 export function openBulkEditModal({ type, ids, onDone }) {
-    const schema = SCHEMAS[type]
-    if (!schema?.length) return
+    const schema = schemaFor(type)
+    if (!schema.length) return
 
     const container = document.createElement('div')
     container.className = 'bulk-edit-fields'

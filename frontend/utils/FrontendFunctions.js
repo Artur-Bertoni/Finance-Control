@@ -1,9 +1,22 @@
 import { I18n } from '../js/i18n.js'
 import { FinnySvg } from '../js/utils/FinnySvg.js'
+import { UserSettings } from '../js/utils/UserSettings.js'
 export { showConfirm, showConfirmAsync } from '../js/modals/ConfirmModal.js'
 export { showQuickAdd } from '../js/modals/QuickAddModal.js'
 
 const FINNY_FACE_SVG = FinnySvg.faceSvg('toast-finny')
+
+const TOAST_PLAIN_ICONS = {
+    success: 'ph-check-circle',
+    error:   'ph-x-circle',
+    warning: 'ph-warning',
+    info:    'ph-info',
+}
+
+function toastIcon(type) {
+    if (UserSettings.finny) return FINNY_FACE_SVG
+    return `<i class="ph ${TOAST_PLAIN_ICONS[type] ?? TOAST_PLAIN_ICONS.info}" aria-hidden="true"></i>`
+}
 
 const CURRENCY_LOCALE_MAP = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
 const CURRENCY_SYMBOL_MAP = { pt: 'R$', en: '$', es: '$' }
@@ -158,7 +171,7 @@ export function showToast(message, type = 'info', action = null, { saveToHistory
     const toast = document.createElement('div')
     toast.className = `toast ${type}${action ? ' toast--clickable' : ''}`
     toast.innerHTML = `
-        <span class="toast-icon">${FINNY_FACE_SVG}</span>
+        <span class="toast-icon">${toastIcon(type)}</span>
         <div class="toast-body">
             <span class="toast-text">${message}</span>
             ${action ? `<span class="toast-click-hint">(${I18n.t('clickToView')})</span>` : ''}

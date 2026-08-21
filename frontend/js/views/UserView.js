@@ -3,6 +3,9 @@ import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
+import { UserSettings } from '../utils/UserSettings.js'
+
+import { FEATURE_ROWS } from '../utils/FeatureCatalog.js'
 
 
 export function init() {
@@ -85,19 +88,72 @@ export function init() {
         }, I18n.t('deleteAccountTitle'))
     })
 
+    renderSettings()
+    I18n.onChange(renderSettings)
+
     let historyLoaded = false
     document.querySelectorAll('.view-tab').forEach(btn => {
         btn.addEventListener('click', () => {
             const tab = btn.dataset.tab
             document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
             btn.classList.add('view-tab--active')
-            document.getElementById('tab-details').style.display = tab === 'details' ? '' : 'none'
+            document.getElementById('tab-details').style.display  = tab === 'details'  ? '' : 'none'
             document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
+            document.getElementById('tab-settings').style.display = tab === 'settings' ? '' : 'none'
             if (tab === 'history' && !historyLoaded) {
                 historyLoaded = true
                 ChangeHistoryManager.loadAndRender('user', user.id, user.createdAt, 'history-container')
             }
         })
+    })
+}
+
+function renderSettings() {
+    const list = document.getElementById('settings-list')
+    const tpl  = document.getElementById('tpl-settings-row')
+    if (!list || !tpl) return
+
+    const settings = UserSettings.all()
+    list.innerHTML = ''
+
+    for (const row of FEATURE_ROWS) {
+        const el    = tpl.content.firstElementChild.cloneNode(true)
+        const title = I18n.t(row.titleKey)
+        const input = el.querySelector('input')
+        const info  = el.querySelector('.settings-row-info')
+
+        el.querySelector('.settings-row-name').textContent = title
+        el.querySelector('.settings-row-desc').textContent = I18n.t(row.descKey)
+        info.dataset.tooltip = I18n.t(row.offKey)
+        info.setAttribute('aria-label', title)
+        input.checked = settings[row.key] !== false
+        input.setAttribute('aria-label', title)
+        input.addEventListener('change', () => saveSetting(row.key, input))
+
+        list.appendChild(el)
+    }
+}
+
+function saveSetting(key, input) {
+    const desired = input.checked
+    input.disabled = true
+
+    $.ajax({
+        url:         '/api/user-settings',
+        type:        'PUT',
+        contentType: 'application/json',
+        data:        JSON.stringify({ [key]: desired }),
+        success: settings => {
+            UserSettings.store(settings)
+            SidebarManager.applyFeatureVisibility()
+            SidebarManager.applyFinnyLink()
+            showToast(I18n.t('settingsSaved'), 'success', null, { saveToHistory: false })
+        },
+        error: () => {
+            input.checked = !desired
+            showToast(I18n.t('errorGeneric'), 'error')
+        },
+        complete: () => { input.disabled = false }
     })
 }
 

@@ -16,9 +16,14 @@ public record UserResponse(
     boolean googleLinked,
     boolean hasPassword,
     boolean emailVerified,
-    boolean onboardingCompleted
+    boolean onboardingCompleted,
+    UserSettingsResponse settings
 ) {
     public static UserResponse from(User u) {
+        return from(u, UserSettingsResponse.defaults());
+    }
+
+    public static UserResponse from(User u, UserSettingsResponse settings) {
         return new UserResponse(u.getId(), u.getUsername(), u.getEmail(),
                 u.isEmailNotificationEnabled(), u.getEmailNotificationDay(),
                 u.isGoalEmailNotificationEnabled(),
@@ -26,6 +31,7 @@ public record UserResponse(
                 "google".equals(u.getProvider()),
                 u.getPassword() != null && !u.getPassword().isBlank(),
                 u.isEmailVerified(),
-                u.isOnboardingCompleted());
+                u.isOnboardingCompleted(),
+                settings);
     }
 }

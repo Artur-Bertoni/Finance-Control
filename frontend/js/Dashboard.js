@@ -4,6 +4,7 @@ import { SidebarManager } from './components/SidebarManager.js'
 import { MascotManager } from './components/MascotManager.js'
 import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
+import { UserSettings } from './utils/UserSettings.js'
 
 const CHART_CDN = '/vendor/chart.umd.min.js'
 const FILTERS_KEY = '__dashboardFilters'
@@ -183,7 +184,9 @@ function loadAndRender() {
     const data = doRequest(`/api/reports/dashboard?${params}`, 'GET')
     if (!data) return
 
-    const goals = (() => { try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] } })()
+    const goals = UserSettings.goals
+        ? (() => { try { return doRequest('/api/goals', 'GET') ?? [] } catch { return [] } })()
+        : []
 
     updateStatCards(data)
     renderMonthlyChart(data.monthlyData)

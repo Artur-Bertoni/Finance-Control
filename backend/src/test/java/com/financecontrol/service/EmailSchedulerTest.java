@@ -19,12 +19,18 @@ class EmailSchedulerTest {
 
     @Mock UserRepository userRepository;
     @Mock EmailService   emailService;
+    @Mock UserSettingsService userSettingsService;
+
+    @org.junit.jupiter.api.BeforeEach
+    void allowEmails() {
+        lenient().when(userSettingsService.emailsEnabled(any())).thenReturn(true);
+    }
 
     // ── sendWeeklyReminders – com usuários ───────────────────────────────────
 
     @Test
     void sendWeeklyReminders_comUsuariosNodia_enviEmails() {
-        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, "UTC");
+        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, userSettingsService, "UTC");
 
         User user = userWith(1L, "joao", "joao@test.com");
         int today = LocalDate.now(ZoneId.of("UTC")).getDayOfWeek().getValue();
@@ -38,7 +44,7 @@ class EmailSchedulerTest {
 
     @Test
     void sendWeeklyReminders_semUsuariosNodia_naoEnviaEmail() {
-        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, "UTC");
+        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, userSettingsService, "UTC");
 
         int today = LocalDate.now(ZoneId.of("UTC")).getDayOfWeek().getValue();
         when(userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDayAndActiveTrue(today))
@@ -51,7 +57,7 @@ class EmailSchedulerTest {
 
     @Test
     void sendWeeklyReminders_variosUsuarios_enviaTodosEmails() {
-        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, "America/Sao_Paulo");
+        EmailScheduler scheduler = new EmailScheduler(userRepository, emailService, userSettingsService, "America/Sao_Paulo");
 
         int today = LocalDate.now(ZoneId.of("America/Sao_Paulo")).getDayOfWeek().getValue();
         User u1 = userWith(1L, "u1", "u1@test.com");

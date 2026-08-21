@@ -17,7 +17,8 @@ public record ReportData(
     List<DashboardResponse.MonthlyDataPoint> monthly,
     List<DashboardResponse.CategoryDataPoint> expensesByCategory,
     List<DashboardResponse.CategoryDataPoint> incomeByCategory,
-    List<TxRow> transactions
+    List<TxRow> transactions,
+    boolean showLocation
 ) {
     public record TxRow(
         LocalDate date,

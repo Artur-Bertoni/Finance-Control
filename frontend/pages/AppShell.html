@@ -42,15 +42,15 @@
     <nav class="sidebar-nav" aria-label="Menu principal">
       <a href="/pages/HomePage.html" class="sidebar-link" data-i18n="home">Início</a>
       <a href="/pages/Dashboard.html" class="sidebar-link" data-i18n="dashboard">Dashboard</a>
-      <a href="/pages/Reports.html" class="sidebar-link" data-i18n="reports">Relatórios</a>
-      <a href="/pages/Budget.html" class="sidebar-link" data-i18n="budget">Orçamento</a>
-      <a href="/pages/lists/GoalList.html" class="sidebar-link" data-i18n="goals">Metas Financeiras</a>
+      <a href="/pages/Reports.html" class="sidebar-link" data-feature="reports" data-i18n="reports">Relatórios</a>
+      <a href="/pages/Budget.html" class="sidebar-link" data-feature="budgets" data-i18n="budget">Orçamento</a>
+      <a href="/pages/lists/GoalList.html" class="sidebar-link" data-feature="goals" data-i18n="goals">Metas Financeiras</a>
       <a href="/pages/lists/AchievementList.html" class="sidebar-link" data-i18n="achievements">Conquistas</a>
       <a href="/pages/FinnyCenter.html" class="sidebar-link sidebar-link--finny" id="notifications-link"><span data-i18n="finnyLink">Finny</a>
       <div class="sidebar-section" data-i18n="movements">Movimentações</div>
       <a href="/pages/crud/Transaction.html" class="sidebar-link" data-i18n="newTransaction">Nova Transação</a>
       <a href="/pages/crud/Transfer.html" class="sidebar-link" data-i18n="transfer">Transferência</a>
-      <a href="/pages/StatementImport.html" class="sidebar-link" data-i18n="statementImport">Importar Extrato</a>
+      <a href="/pages/StatementImport.html" class="sidebar-link" data-feature="statementImport" data-i18n="statementImport">Importar Extrato</a>
       <div class="sidebar-section" data-i18n="settings">Configurações</div>
       <a href="/pages/lists/CategoryList.html" class="sidebar-link" data-i18n="categories">Categorias</a>
       <a href="/pages/lists/AccountList.html" class="sidebar-link" data-i18n="accounts">Contas</a>
@@ -60,8 +60,8 @@
         <i class="ph ph-caret-down sidebar-advanced-caret" aria-hidden="true"></i>
       </button>
       <div class="sidebar-advanced" id="advanced-nav" hidden>
-        <a href="/pages/lists/FinancialInstitutionList.html" class="sidebar-link" data-i18n="financialInstitutions">Instituições Financeiras</a>
-        <a href="/pages/lists/TransactionLocaleList.html" class="sidebar-link" data-i18n="locations">Locais</a>
+        <a href="/pages/lists/FinancialInstitutionList.html" class="sidebar-link" data-feature="institutions" data-i18n="financialInstitutions">Instituições Financeiras</a>
+        <a href="/pages/lists/TransactionLocaleList.html" class="sidebar-link" data-feature="locales" data-i18n="locations">Locais</a>
       </div>
       <div class="sidebar-section" data-i18n="feedbackSection">Feedback</div>
       <a href="/pages/Feedback.html" class="sidebar-link" data-i18n="sendFeedback">Enviar Feedback</a>
@@ -87,11 +87,11 @@
 
 </div>
 
-<button id="mascot-fab" class="mascot-fab" type="button" aria-label="Finny" title="Finny - dicas e notificações">
+<button id="mascot-fab" class="mascot-fab" data-feature="finny" type="button" aria-label="Finny" title="Finny - dicas e notificações">
   <span data-finny-svg=""></span>
 </button>
 
-<div id="mascot-panel" class="mascot-panel" hidden>
+<div id="mascot-panel" class="mascot-panel" data-feature="finny" hidden>
 
   <div class="mascot-panel-header">
     <span class="mascot-panel-title">

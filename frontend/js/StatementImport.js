@@ -285,6 +285,7 @@ function buildReviewTable(rows) {
 
         const tdLocale = document.createElement('td')
         tdLocale.className = 'review-cell-locale'
+        tdLocale.dataset.feature = 'locales'
         tdLocale.dataset.label = I18n.t('transactionLocale')
         tdLocale.style.padding = '6px'
         tdLocale.appendChild(buildLocaleCell(row, index))

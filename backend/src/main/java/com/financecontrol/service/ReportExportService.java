@@ -23,6 +23,7 @@ public class ReportExportService {
     private final ReportService reportService;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final UserSettingsService userSettingsService;
 
     @Transactional(readOnly = true)
     public byte[] exportPdf(Long userId, LocalDate startDate, LocalDate endDate, Long accountId, String lang) {
@@ -36,6 +37,7 @@ public class ReportExportService {
 
     private ReportData gather(Long userId, LocalDate startDate, LocalDate endDate, Long accountId, String lang) {
         DashboardResponse dashboard = reportService.getDashboard(userId, startDate, endDate, accountId);
+        boolean showLocation = userSettingsService.localesEnabled(userId);
 
         double income = dashboard.monthlyData().stream().mapToDouble(DashboardResponse.MonthlyDataPoint::income).sum();
         double expenses = dashboard.monthlyData().stream().mapToDouble(DashboardResponse.MonthlyDataPoint::expenses).sum();
@@ -50,7 +52,7 @@ public class ReportExportService {
             rows.add(new ReportData.TxRow(
                     t.getDate(),
                     t.getCategory() != null ? t.getCategory().getName() : "",
-                    t.getTransactionLocale() != null ? t.getTransactionLocale().getName() : "",
+                    showLocation && t.getTransactionLocale() != null ? t.getTransactionLocale().getName() : "",
                     t.getObs() != null ? t.getObs() : "",
                     t.getType(),
                     t.getValue() != null ? t.getValue() : 0.0
@@ -63,7 +65,8 @@ public class ReportExportService {
                 dashboard.monthlyData(),
                 dashboard.categoryExpenses(),
                 dashboard.categoryIncomes(),
-                rows
+                rows,
+                showLocation
         );
     }
 }

@@ -11,6 +11,7 @@ import com.financecontrol.enums.FinnyTipStatus;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.FinnyTipPreferenceRepository;
 import com.financecontrol.repository.FinnyTipRepository;
+import com.financecontrol.service.UserSettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ class FinnyAgentServiceTest {
     @Mock FinancialProfileService profileService;
     @Mock FinnyTipRepository tipRepository;
     @Mock FinnyTipPreferenceRepository preferenceRepository;
+    @Mock UserSettingsService userSettingsService;
 
     private FinnyAgentService service;
     private final List<FinnyTip> saved = new ArrayList<>();
@@ -44,9 +46,11 @@ class FinnyAgentServiceTest {
     }
 
     private void buildWith(TipCandidate... candidates) {
+        lenient().when(userSettingsService.finnyEnabled(any())).thenReturn(true);
+        lenient().when(userSettingsService.goalsEnabled(any())).thenReturn(true);
         service = new FinnyAgentService(
                 List.of(new FakeRule(List.of(candidates))),
-                profileService, tipRepository, preferenceRepository, new ObjectMapper());
+                profileService, tipRepository, preferenceRepository, new ObjectMapper(), userSettingsService);
     }
 
     private void stubSave() {

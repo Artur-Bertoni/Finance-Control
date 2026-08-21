@@ -9,6 +9,7 @@ import com.financecontrol.config.JwtUtil;
 import com.financecontrol.config.OAuth2AuthenticationSuccessHandler;
 import com.financecontrol.dto.request.LoginRequest;
 import com.financecontrol.dto.response.UserResponse;
+import com.financecontrol.dto.response.UserSettingsResponse;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.service.OAuth2UserService;
 import com.financecontrol.service.UserService;
@@ -44,7 +45,8 @@ class AuthControllerTest {
 
     private static UserResponse userResp(Long id) {
         return new UserResponse(id, "testuser", "test@test.com",
-                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false);
+                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false,
+                UserSettingsResponse.defaults());
     }
 
     @Test

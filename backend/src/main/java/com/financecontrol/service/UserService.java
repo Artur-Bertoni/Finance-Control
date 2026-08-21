@@ -44,6 +44,7 @@ public class UserService {
     private final EmailService emailService;
     private final OnboardingService onboardingService;
     private final ObjectProvider<UserService> selfProvider;
+    private final UserSettingsService userSettingsService;
 
     public UserResponse login(String identifier,
                               String password) {
@@ -58,7 +59,7 @@ public class UserService {
     }
 
     public UserResponse findById(@NonNull Long id) {
-        return UserResponse.from(findEntityById(id));
+        return UserResponse.from(findEntityById(id), userSettingsService.find(id));
     }
 
     public User findEntityById(@NonNull Long id) {

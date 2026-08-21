@@ -1,13 +1,21 @@
 import { I18n } from '../i18n.js'
 import { formatMoney, formatDateTime } from '../../utils/FrontendFunctions.js'
+import { UserSettings } from '../utils/UserSettings.js'
 
-const MONEY_FIELDS   = new Set(['balance', 'value', 'targetAmount'])
-const DATE_FIELDS    = new Set(['date', 'startDate', 'endDate'])
-const BOOLEAN_FIELDS = new Set([
-    'emailNotificationEnabled', 'goalEmailNotificationEnabled',
-    'notifyAt50', 'notifyAt75', 'notifyAt90',
-    'notifyOnComplete', 'notifyOnDeadline', 'notifyOnExceed'
-])
+const HIDDEN_WHEN_OFF = {
+    financialInstitution: 'institutionsEnabled',
+    transactionLocale:    'localesEnabled',
+    locales:              'localesEnabled',
+}
+
+const MONEY_FIELDS = new Set(['balance', 'value', 'targetAmount'])
+const DATE_FIELDS  = new Set(['date', 'startDate', 'endDate'])
+
+const BOOLEAN_FIELD_PATTERN = /^notify|Enabled$/
+
+function isBooleanField(fieldName) {
+    return BOOLEAN_FIELD_PATTERN.test(fieldName)
+}
 
 const ENUM_I18N = {
     debit:         'debit',
@@ -56,6 +64,14 @@ const FIELD_I18N = {
     notifyOnDeadline:           'histFieldNotifyOnDeadline',
     notifyOnExceed:             'histFieldNotifyOnExceed',
     address:                    'histFieldAddress',
+    reportsEnabled:             'featureReports',
+    budgetsEnabled:             'featureBudgets',
+    goalsEnabled:               'featureGoals',
+    finnyEnabled:               'featureFinny',
+    statementImportEnabled:     'featureStatementImport',
+    institutionsEnabled:        'featureInstitutions',
+    localesEnabled:             'featureLocales',
+    emailsEnabled:              'featureEmails',
 }
 
 function getFieldLabel(fieldName) {
@@ -91,7 +107,7 @@ function _setValue(span, fieldName, raw) {
     } else if (DATE_FIELDS.has(fieldName)) {
         const parts = raw.split('-')
         text = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : raw
-    } else if (BOOLEAN_FIELDS.has(fieldName)) {
+    } else if (isBooleanField(fieldName)) {
         text = I18n.t(raw === 'true' ? 'enabled' : 'disabled')
     } else if (fieldName === 'emailNotificationDay') {
         const days = ['', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
@@ -181,11 +197,12 @@ function _groupElement(group) {
         g.querySelector('.history-field-name').textContent = I18n.t('histPasswordChanged')
         return g
     }
-    if (group.changes && group.changes.length > 0) {
+    const changes = (group.changes ?? []).filter(ch => !HIDDEN_WHEN_OFF[ch.fieldName] || UserSettings.isEnabled(HIDDEN_WHEN_OFF[ch.fieldName]))
+    if (changes.length > 0) {
         const g = _clone('tpl-hist-change-group')
         g.querySelector('.history-group-label').textContent = `${I18n.t('histChange')} - ${dateStr}`
         const ul = g.querySelector('.history-changes')
-        for (const ch of group.changes) {
+        for (const ch of changes) {
             const li = _clone('tpl-hist-change-item')
             li.querySelector('.history-field-name').textContent = `${getFieldLabel(ch.fieldName)}:`
             _setValue(li.querySelector('.history-value-old'), ch.fieldName, ch.oldValue)

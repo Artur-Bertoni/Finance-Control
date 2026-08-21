@@ -38,7 +38,8 @@ public final class ExcelReportWriter {
                 fillSummary(wb.getSheetAt(SH_SUMMARY), styles, data);
                 fillMonthly(wb.getSheetAt(SH_MONTHLY), styles, data.monthly());
                 fillCategories(wb.getSheetAt(SH_CATEGORIES), styles, data);
-                fillTransactions(wb.getSheetAt(SH_TRANSACTIONS), styles, data.transactions(), lang);
+                if (!data.showLocation()) hideLocationColumn(wb.getSheetAt(SH_TRANSACTIONS), lang);
+                fillTransactions(wb.getSheetAt(SH_TRANSACTIONS), styles, data.transactions(), lang, data.showLocation());
 
                 wb.write(out);
                 return out.toByteArray();
@@ -96,6 +97,13 @@ public final class ExcelReportWriter {
         for (int i = 0; i < heads.length; i++) relabel(tx, 0, i, lbl(lang, heads[i]));
     }
 
+    /** Reescreve o cabecalho de lancamentos sem a coluna de local, usada quando o usuario desabilita locais. */
+    private static void hideLocationColumn(XSSFSheet tx, String lang) {
+        String[] heads = {"date", "category", "description", "type", "value"};
+        for (int i = 0; i < heads.length; i++) relabel(tx, 0, i, lbl(lang, heads[i]));
+        relabel(tx, 0, heads.length, "");
+    }
+
     private static void fillSummary(XSSFSheet s, Map<String, CellStyle> st, ReportData d) {
         value(s, 3, 1, d.startDate().format(DATE) + " - " + d.endDate().format(DATE), st.get("label"));
         value(s, 4, 1, d.accountName(), st.get("label"));
@@ -132,16 +140,18 @@ public final class ExcelReportWriter {
     }
 
     private static void fillTransactions(XSSFSheet s, Map<String, CellStyle> st,
-                                         List<ReportData.TxRow> rows, String lang) {
+                                         List<ReportData.TxRow> rows, String lang, boolean showLocation) {
         int r = 1;
         for (ReportData.TxRow tx : rows) {
             boolean credit = "CREDIT".equals(tx.type().name());
-            value(s, r, 0, tx.date().format(DATE), st.get("label"));
-            value(s, r, 1, tx.category(), st.get("label"));
-            value(s, r, 2, tx.location(), st.get("label"));
-            value(s, r, 3, tx.description(), st.get("label"));
-            value(s, r, 4, lbl(lang, tx.type().name().toLowerCase()), credit ? st.get("green") : st.get("red"));
-            money(s, r, 5, credit ? tx.value() : -tx.value(), credit ? st.get("moneyGreen") : st.get("moneyRed"));
+            int c = 0;
+            value(s, r, c++, tx.date().format(DATE), st.get("label"));
+            value(s, r, c++, tx.category(), st.get("label"));
+            if (showLocation) value(s, r, c++, tx.location(), st.get("label"));
+            value(s, r, c++, tx.description(), st.get("label"));
+            value(s, r, c++, lbl(lang, tx.type().name().toLowerCase()), credit ? st.get("green") : st.get("red"));
+            money(s, r, c++, credit ? tx.value() : -tx.value(), credit ? st.get("moneyGreen") : st.get("moneyRed"));
+            if (!showLocation) value(s, r, c, "", st.get("label"));
             r++;
         }
     }

@@ -6,13 +6,21 @@ import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/F
 import { I18n } from '../i18n.js'
 import { IconPicker } from '../components/IconPicker.js'
 import { confirmAccountDelete } from '../modals/AccountDeleteFlow.js'
+import { UserSettings } from '../utils/UserSettings.js'
+
+function requiredFields() {
+    return UserSettings.institutions
+        ? ['name-input', 'financial-institution-input', 'balance-input']
+        : ['name-input', 'balance-input']
+}
 
 export function init() {
     SidebarManager.initialize()
     FinancialInstitution.addFinancialInstitutions()
     IconPicker.init(iconKey => IconPicker.setValue(iconKey))
 
-    setupRequiredFieldValidation(['name-input', 'financial-institution-input', 'balance-input'])
+    if (!UserSettings.institutions) document.getElementById('financial-institution-input').required = false
+    setupRequiredFieldValidation(requiredFields())
 
     const typeInput = document.getElementById('type-input')
     typeInput.addEventListener('change', toggleCreditCardFields)
@@ -101,10 +109,7 @@ function handleSave(accountId) {
         'balance-input':               I18n.t('currentBalance')
     }
 
-    const emptyFields = validateRequiredFields(
-        ['name-input', 'financial-institution-input', 'balance-input'],
-        fieldLabels
-    )
+    const emptyFields = validateRequiredFields(requiredFields(), fieldLabels)
 
     if (emptyFields.length > 0) {
         showToast(I18n.t('commonFillRequired', { fields: emptyFields.join(', ') }), 'warning')
@@ -113,7 +118,7 @@ function handleSave(accountId) {
 
     const body = {
         name,
-        financialInstitutionId: Number(financialInstitutionId),
+        financialInstitutionId: financialInstitutionId ? Number(financialInstitutionId) : null,
         contact:     document.getElementById('contact-input').value     || null,
         description: document.getElementById('description-input').value || null,
         balance:     Number(balance),

@@ -1,5 +1,6 @@
 import { doRequest, navigate, showToast, isWindowActive } from '../../utils/FrontendFunctions.js'
 import { I18n } from '../i18n.js'
+import { UserSettings } from '../utils/UserSettings.js'
 
 const STATIC_TIPS = {
     pt: [
@@ -95,6 +96,8 @@ export class MascotManager {
     static _STORAGE_NEXT   = 'fc_finny_next'
 
     static initFloating() {
+        if (!UserSettings.finny) return
+
         const fab      = document.getElementById('mascot-fab')
         const panel    = document.getElementById('mascot-panel')
         const closeBtn = document.getElementById('mascot-close')

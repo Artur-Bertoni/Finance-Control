@@ -7,6 +7,7 @@ import { InputMasks } from '../utils/InputMasks.js'
 import { NumberSpinner } from '../utils/NumberSpinner.js'
 import { rerenderBreadcrumb, showToast, navigate } from '../../utils/FrontendFunctions.js'
 import { SearchManager } from './SearchManager.js'
+import { UserSettings } from '../utils/UserSettings.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 
@@ -19,7 +20,9 @@ export class SidebarManager {
         await I18n.initialize()
         SidebarManager.checkAuth()
         SidebarManager.applyAdminVisibility()
+        SidebarManager.applyFeatureVisibility()
         SidebarManager.renderIcons()
+        SidebarManager.applyFinnyLink()
         SidebarManager.renderDataIcons()
         SidebarManager.setupActiveLink()
         SidebarManager.setupAdvancedNav()
@@ -33,7 +36,7 @@ export class SidebarManager {
         SidebarManager.initDatePickers()
         LanguageSwitcher.initialize()
         SearchManager.initialize()
-        I18n.onChange(() => { SidebarManager.initTranslations(); InputMasks.reformatAll(); rerenderBreadcrumb(); SidebarManager.updateDatePickerLocales() })
+        I18n.onChange(() => { SidebarManager.initTranslations(); SidebarManager.applyFinnyLink(); InputMasks.reformatAll(); rerenderBreadcrumb(); SidebarManager.updateDatePickerLocales() })
         SidebarManager.checkAchievements()
         SidebarManager.checkGoalCompletions()
         SidebarManager.refreshNotificationBadge()
@@ -44,6 +47,7 @@ export class SidebarManager {
     static onNavigate() {
         document.body.classList.remove('review-mode')
         SidebarManager.closeSidebar()
+        SidebarManager.applyFeatureVisibility()
         SidebarManager.setupActiveLink()
         SidebarManager.setupAdvancedNav()
         SidebarManager.renderDataIcons()
@@ -213,6 +217,29 @@ export class SidebarManager {
         if (section) section.hidden = !isAdmin
     }
 
+    /** Esconde do menu e das telas tudo que o usuario desabilitou em Configuracoes. */
+    static applyFeatureVisibility() {
+        UserSettings.applyFlags()
+
+        const toggle = document.getElementById('advanced-nav-toggle')
+        const panel  = document.getElementById('advanced-nav')
+        if (!toggle || !panel) return
+
+        const advancedEmpty = !UserSettings.institutions && !UserSettings.locales
+        toggle.hidden = advancedEmpty
+        if (advancedEmpty) panel.hidden = true
+    }
+
+    /** Com o Finny desligado o atalho do menu vira apenas a central de notificacoes. */
+    static applyFinnyLink() {
+        const link = document.getElementById('notifications-link')
+        if (!link) return
+
+        const finny = UserSettings.finny
+        link.classList.toggle('sidebar-link--finny', finny)
+        link.innerHTML = `${finny ? Icons.finny() : Icons.notifications()} ${I18n.t(finny ? 'finnyLink' : 'notifications')}`
+    }
+
     static refreshImportBadge() {
         const hasReview = !!sessionStorage.getItem('__statementReview')
         const link = document.querySelector('.sidebar-link[href*="StatementImport.html"]')
@@ -346,6 +373,7 @@ export class SidebarManager {
     static checkGoalCompletions() {
         const pendingUrl = sessionStorage.getItem('__spa_url') ?? ''
         if (pendingUrl.includes('?guest=true')) return
+        if (!UserSettings.goals) return
         try {
             let goals = null
             $.ajax({ url: '/api/goals', type: 'GET', async: false, success: data => { goals = data } })

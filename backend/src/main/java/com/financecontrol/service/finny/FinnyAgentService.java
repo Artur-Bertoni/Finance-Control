@@ -12,6 +12,7 @@ import com.financecontrol.enums.FinnyTipStatus;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.repository.FinnyTipPreferenceRepository;
 import com.financecontrol.repository.FinnyTipRepository;
+import com.financecontrol.service.UserSettingsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -42,16 +43,22 @@ public class FinnyAgentService {
     private final FinnyTipRepository tipRepository;
     private final FinnyTipPreferenceRepository preferenceRepository;
     private final ObjectMapper objectMapper;
+    private final UserSettingsService userSettingsService;
 
     @Transactional
     public List<FinnyTipResponse> generateTips(Long userId, String lang) {
+        if (!userSettingsService.finnyEnabled(userId)) return List.of();
+
         FinancialProfile profile = profileService.build(userId);
         Map<FinnyTipCategory, Double> weights = loadWeights(userId);
         LocalDateTime suppressSince = LocalDateTime.now(ZONE).minusDays(FEEDBACK_SUPPRESS_DAYS);
 
+        boolean goalsEnabled = userSettingsService.goalsEnabled(userId);
+
         List<Scored> scored = new ArrayList<>();
         for (TipRule rule : rules) {
             for (TipCandidate c : rule.evaluate(profile)) {
+                if (!goalsEnabled && c.category() == FinnyTipCategory.GOAL) continue;
                 if (tipRepository.existsByUserIdAndRuleKeyAndFeedbackAtAfter(userId, c.ruleKey(), suppressSince)) {
                     continue;
                 }

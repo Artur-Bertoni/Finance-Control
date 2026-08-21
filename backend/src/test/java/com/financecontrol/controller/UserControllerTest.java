@@ -10,6 +10,7 @@ import com.financecontrol.config.OAuth2AuthenticationSuccessHandler;
 import com.financecontrol.dto.request.PasswordChangeRequest;
 import com.financecontrol.dto.request.UserRequest;
 import com.financecontrol.dto.response.UserResponse;
+import com.financecontrol.dto.response.UserSettingsResponse;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.exception.ResourceNotFoundException;
 import com.financecontrol.service.OAuth2UserService;
@@ -46,7 +47,8 @@ class UserControllerTest {
 
     private static UserResponse userResp(Long id, String username) {
         return new UserResponse(id, username, username + "@test.com",
-                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false);
+                false, 1, false, "pt", false, LocalDateTime.now(), false, true, true, false,
+                UserSettingsResponse.defaults());
     }
 
     @Test

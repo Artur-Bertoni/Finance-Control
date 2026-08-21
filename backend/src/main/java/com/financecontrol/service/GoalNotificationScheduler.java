@@ -30,6 +30,7 @@ public class GoalNotificationScheduler {
     private final GoalService goalService;
     private final AppNotificationService appNotificationService;
     private final UserRepository userRepository;
+    private final UserSettingsService userSettingsService;
     private final ZoneId zoneId;
 
     public GoalNotificationScheduler(GoalRepository goalRepository,
@@ -37,12 +38,14 @@ public class GoalNotificationScheduler {
                                      GoalService goalService,
                                      AppNotificationService appNotificationService,
                                      UserRepository userRepository,
+                                     UserSettingsService userSettingsService,
                                      @Value("${app.scheduler.timezone:America/Sao_Paulo}") String timezone) {
         this.goalRepository = goalRepository;
         this.goalNotificationLogRepository = goalNotificationLogRepository;
         this.goalService = goalService;
         this.appNotificationService = appNotificationService;
         this.userRepository = userRepository;
+        this.userSettingsService = userSettingsService;
         this.zoneId = ZoneId.of(timezone);
     }
 
@@ -96,6 +99,7 @@ public class GoalNotificationScheduler {
     private void checkDeadlineWarning(Goal goal,
                                       User user,
                                       LocalDate today) {
+        if (!userSettingsService.goalsEnabled(user.getId())) return;
         if (!Boolean.TRUE.equals(goal.getNotifyOnDeadline())) return;
         if (goal.getEndDate() == null) return;
         if (today.isBefore(goal.getEndDate().minusDays(7))) return;
@@ -118,6 +122,7 @@ public class GoalNotificationScheduler {
                                     User user,
                                     GoalNotificationType logType,
                                     AppNotificationType appType) {
+        if (!userSettingsService.goalsEnabled(user.getId())) return;
         if (goalNotificationLogRepository.existsByGoalIdAndNotificationType(goal.getId(), logType)) return;
 
         appNotificationService.createGoalNotification(

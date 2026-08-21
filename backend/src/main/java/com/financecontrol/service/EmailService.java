@@ -34,17 +34,20 @@ public class EmailService {
 
     private final BrevoMailClient brevoClient;
     private final MessageSource messageSource;
+    private final UserSettingsService userSettingsService;
     private final String baseUrl;
     private final String mailFrom;
     private final String mailFromName;
 
     public EmailService(BrevoMailClient brevoClient,
                         MessageSource messageSource,
+                        UserSettingsService userSettingsService,
                         @Value("${app.base-url}") String baseUrl,
                         @Value("${app.mail.from}") String mailFrom,
                         @Value("${app.mail.from-name:Finance Control}") String mailFromName) {
         this.brevoClient = brevoClient;
         this.messageSource = messageSource;
+        this.userSettingsService = userSettingsService;
         this.baseUrl = Objects.requireNonNull(baseUrl,  "app.base-url must be configured");
         this.mailFrom = Objects.requireNonNull(mailFrom, "app.mail.from must be configured");
         this.mailFromName = Objects.requireNonNull(mailFromName, "app.mail.from-name must be configured");
@@ -89,6 +92,8 @@ public class EmailService {
 
     @Async("emailTaskExecutor")
     public void sendWeeklyReminder(User user) {
+        if (!userSettingsService.emailsEnabled(user.getId())) return;
+
         try {
             doSendWeekly(user);
             log.info("Email semanal enviado para userId={} (lang={})", user.getId(), user.getLanguage());
@@ -172,6 +177,8 @@ public class EmailService {
 
     @Async("emailTaskExecutor")
     public void sendFeedbackNotification(User admin, User sender, UserFeedback feedback) {
+        if (!userSettingsService.emailsEnabled(admin.getId())) return;
+
         try {
             doSendFeedback(admin, sender, feedback);
             log.info("Notificação de feedback enviada para adminId={}", admin.getId());

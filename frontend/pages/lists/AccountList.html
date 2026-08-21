@@ -36,7 +36,7 @@
             <label for="search-input" data-i18n="searchByName">Buscar por nome</label>
             <input type="text" id="search-input" autocomplete="off" data-i18n-placeholder="searchByNamePlaceholder" placeholder="Digite o nome...">
           </div>
-          <div class="field">
+          <div class="field" data-feature="institutions">
             <label for="fi-filter" data-i18n="financialInstitution">Instituição Financeira</label>
             <select id="fi-filter">
               <option value="" data-i18n="allInstitutions">Todas as instituições</option>
@@ -65,7 +65,7 @@
     </div>
     <div class="item-card-meta">
       <div class="item-card-row ac-type"></div>
-      <div class="item-card-row ac-institution"></div>
+      <div class="item-card-row ac-institution" data-feature="institutions"></div>
       <div class="item-card-row ac-contact" hidden></div>
     </div>
     <div class="item-balance"></div>

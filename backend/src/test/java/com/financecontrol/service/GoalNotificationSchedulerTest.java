@@ -30,10 +30,12 @@ class GoalNotificationSchedulerTest {
     @Mock GoalService                   goalService;
     @Mock AppNotificationService        appNotificationService;
     @Mock UserRepository                userRepository;
+    @Mock UserSettingsService           userSettingsService;
 
     private GoalNotificationScheduler scheduler() {
+        lenient().when(userSettingsService.goalsEnabled(any())).thenReturn(true);
         return new GoalNotificationScheduler(goalRepository, goalNotificationLogRepository,
-                goalService, appNotificationService, userRepository, "UTC");
+                goalService, appNotificationService, userRepository, userSettingsService, "UTC");
     }
 
     // ── processGoals – sem metas ativas ──────────────────────────────────────

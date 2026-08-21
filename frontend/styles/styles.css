@@ -1606,6 +1606,7 @@ body.user-guest .toast-container {
 .toast-icon { display: flex; align-items: center; flex-shrink: 0; }
 .toast-icon svg { width: 18px; height: 18px; }
 .toast-icon .toast-finny { width: 28px; height: 28px; }
+.toast-icon .ph { font-size: 20px; line-height: 1; }
 
 .toast-body { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .toast-text { color: var(--text); font-size: 13.5px; }
@@ -4932,3 +4933,161 @@ main.page-content {
 .bulk-edit-control .icon-picker-trigger:disabled { opacity: .5; cursor: not-allowed; }
 
 .bulk-edit-hint { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+/* ==========================================================================
+   Funcionalidades desabilitadas nas configuracoes do usuario
+   ========================================================================== */
+
+.feature-reports-off         [data-feature~="reports"],
+.feature-budgets-off         [data-feature~="budgets"],
+.feature-goals-off           [data-feature~="goals"],
+.feature-finny-off           [data-feature~="finny"],
+.feature-statementImport-off [data-feature~="statementImport"],
+.feature-institutions-off    [data-feature~="institutions"],
+.feature-locales-off         [data-feature~="locales"],
+.feature-emails-off          [data-feature~="emails"] { display: none !important; }
+
+.settings-list { display: flex; flex-direction: column; gap: 4px; }
+
+.settings-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child { border-bottom: none; }
+
+.settings-row-text { min-width: 0; }
+
+.settings-row-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.settings-row-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.settings-row-control { flex-shrink: 0; padding-top: 2px; }
+
+.settings-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.settings-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.settings-switch-track {
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--border);
+  transition: background .18s ease;
+  pointer-events: none;
+}
+
+.settings-switch-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+  transition: transform .18s ease;
+}
+
+.settings-switch input:checked + .settings-switch-track { background: var(--primary); }
+.settings-switch input:checked + .settings-switch-track::after { transform: translateX(20px); }
+.settings-switch input:focus-visible + .settings-switch-track { outline: 2px solid var(--primary); outline-offset: 2px; }
+.settings-switch input:disabled { cursor: progress; }
+.settings-switch input:disabled + .settings-switch-track { opacity: .6; }
+
+@media (max-width: 600px) {
+  .settings-row { flex-direction: column; gap: 10px; }
+  .settings-row-control { padding-top: 0; }
+}
+
+/* Etapa de perfil no onboarding */
+
+.tour-bubble--choice { width: min(520px, calc(100vw - 24px)); max-width: none; }
+
+.tour-profiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+
+.tour-profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.tour-profile-card:hover {
+  border-color: var(--primary);
+  background: var(--primary-50, var(--surface));
+}
+
+.tour-profile-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.tour-profile-desc { font-size: 12px; line-height: 1.4; color: var(--text-muted); }
+
+.tour-profile-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0 4px;
+  max-height: min(46vh, 340px);
+  overflow-y: auto;
+}
+
+.tour-profile-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.tour-profile-toggle:last-child { border-bottom: none; }
+.tour-profile-toggle input { margin-top: 3px; flex-shrink: 0; }
+.tour-profile-toggle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tour-profile-toggle-name { font-weight: 600; font-size: 13px; color: var(--text); }
+.tour-profile-toggle-desc { font-size: 12px; line-height: 1.4; color: var(--text-muted); }
+
+@media (max-width: 600px) {
+  .tour-profiles { grid-template-columns: 1fr; }
+}

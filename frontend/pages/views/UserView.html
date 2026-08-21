@@ -29,6 +29,7 @@
         <div class="view-tabs" role="tablist">
           <button class="view-tab view-tab--active" data-tab="details" role="tab" data-i18n="tabDetails">Detalhes</button>
           <button class="view-tab" data-tab="history" role="tab" data-i18n="tabHistory">Histórico</button>
+          <button class="view-tab" data-tab="settings" role="tab" data-i18n="tabSettings">Configurações</button>
         </div>
 
         <div id="tab-details" class="view-tab-content">
@@ -50,10 +51,10 @@
           </div>
         </div>
 
-        <div class="section-divider">
+        <div class="section-divider" data-feature="emails">
           <span data-i18n="emailNotifications">Notificações por E-mail</span>
         </div>
-        <div class="detail-grid">
+        <div class="detail-grid" data-feature="emails">
           <div class="detail-field">
             <div style="display:flex;align-items:flex-start;gap:0">
               <div>
@@ -67,7 +68,7 @@
               </div>
             </div>
           </div>
-          <div class="detail-field">
+          <div class="detail-field" data-feature="goals">
             <label for="detail-goal-notification-status" data-i18n="goalNotificationsLabel">Notificações de metas financeiras</label>
             <p><span id="detail-goal-notification-status" class="tx-badge">-</span></p>
           </div>
@@ -90,9 +91,37 @@
         <div id="tab-history" class="view-tab-content" style="display:none">
           <div id="history-container"></div>
         </div>
+
+        <div id="tab-settings" class="view-tab-content" style="display:none">
+          <div class="section-divider section-divider--first">
+            <span data-i18n="featuresSection">Funcionalidades</span>
+          </div>
+          <p class="settings-row-desc" style="margin-bottom:8px" data-i18n="featuresSectionHint">
+            Desligue o que você não pretende usar. Nada é apagado: os dados continuam salvos e voltam a aparecer se você reativar.
+          </p>
+          <div id="settings-list" class="settings-list"></div>
+        </div>
       </div>
     </main>
   </div>
 </div>
+
+<template id="tpl-settings-row">
+  <div class="settings-row">
+    <div class="settings-row-text">
+      <span class="settings-row-title">
+        <span class="settings-row-name"></span>
+        <button type="button" class="info-hint-btn settings-row-info" title=""><i class="ph ph-info" aria-hidden="true"></i></button>
+      </span>
+      <p class="settings-row-desc"></p>
+    </div>
+    <div class="settings-row-control">
+      <span class="settings-switch">
+        <input type="checkbox" aria-label="toggle">
+        <span class="settings-switch-track"></span>
+      </span>
+    </div>
+  </div>
+</template>
 </body>
 </html>

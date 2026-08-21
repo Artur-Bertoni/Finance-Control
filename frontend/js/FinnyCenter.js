@@ -3,6 +3,7 @@ import { I18n } from './i18n.js'
 import { FinnySvg } from './utils/FinnySvg.js'
 import { CustomSelect } from './components/CustomSelect.js'
 import { SidebarManager } from './components/SidebarManager.js'
+import { UserSettings } from './utils/UserSettings.js'
 
 const FLATPICKR_LOCALES = { pt: 'pt', es: 'es' }
 const NOTIF_PAGE_SIZE   = 10
@@ -56,7 +57,20 @@ export function init() {
     _fpStart = null
     _fpEnd = null
     _setupTabs()
-    _switchTab('tips')
+    _applyFinnyMode()
+    _switchTab(UserSettings.finny ? 'tips' : 'messages')
+}
+
+/** Sem o Finny a pagina fica sendo so a central de notificacoes. */
+function _applyFinnyMode() {
+    if (UserSettings.finny) return
+
+    document.body.classList.remove('page-finny')
+    const title = document.getElementById('page-title-text')
+    if (title) {
+        title.dataset.i18n = 'notifications'
+        title.textContent  = I18n.t('notifications')
+    }
 }
 
 function _setupTabs() {

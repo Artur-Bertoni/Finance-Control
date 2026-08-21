@@ -17,20 +17,26 @@ public class EmailScheduler {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final UserSettingsService userSettingsService;
     private final ZoneId zoneId;
 
     public EmailScheduler(UserRepository userRepository,
                           EmailService emailService,
+                          UserSettingsService userSettingsService,
                           @Value("${app.scheduler.timezone:America/Sao_Paulo}") String timezone) {
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.userSettingsService = userSettingsService;
         this.zoneId = ZoneId.of(timezone);
     }
 
     @Scheduled(cron = "0 0 8 * * *", zone = "${app.scheduler.timezone:America/Sao_Paulo}")
     public void sendWeeklyReminders() {
         int today = LocalDate.now(zoneId).getDayOfWeek().getValue();
-        List<User> users = userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDayAndActiveTrue(today);
+        List<User> users = userRepository.findByEmailNotificationEnabledTrueAndEmailNotificationDayAndActiveTrue(today)
+                .stream()
+                .filter(u -> userSettingsService.emailsEnabled(u.getId()))
+                .toList();
 
         if (users.isEmpty()) return;
 

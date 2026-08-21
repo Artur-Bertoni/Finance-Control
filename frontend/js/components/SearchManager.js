@@ -1,13 +1,18 @@
 import { doRequest, navigate } from '../../utils/FrontendFunctions.js'
 import { I18n } from '../i18n.js'
+import { UserSettings } from '../utils/UserSettings.js'
 
-const ENTITY_TYPES = [
+const ALL_ENTITY_TYPES = [
     { key: 'accounts',     shortcut: 'A', api: '/api/accounts',              viewPath: '/pages/views/AccountView.html',              dashboardPath: '/pages/lists/AccountList.html',              i18nKey: 'accounts' },
-    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/views/GoalView.html',                 dashboardPath: '/pages/lists/GoalList.html',                 i18nKey: 'goals' },
+    { key: 'goals',        shortcut: 'G', api: '/api/goals',                 viewPath: '/pages/views/GoalView.html',                 dashboardPath: '/pages/lists/GoalList.html',                 i18nKey: 'goals',                setting: 'goalsEnabled' },
     { key: 'categories',   shortcut: 'C', api: '/api/categories',            viewPath: '/pages/views/CategoryView.html',             dashboardPath: '/pages/lists/CategoryList.html',             i18nKey: 'categories' },
-    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/views/FinancialInstitutionView.html', dashboardPath: '/pages/lists/FinancialInstitutionList.html', i18nKey: 'financialInstitutions' },
-    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/views/TransactionLocaleView.html',    dashboardPath: '/pages/lists/TransactionLocaleList.html',    i18nKey: 'locations' },
+    { key: 'institutions', shortcut: 'I', api: '/api/financial-institutions', viewPath: '/pages/views/FinancialInstitutionView.html', dashboardPath: '/pages/lists/FinancialInstitutionList.html', i18nKey: 'financialInstitutions', setting: 'institutionsEnabled' },
+    { key: 'locales',      shortcut: 'L', api: '/api/transaction-locales',   viewPath: '/pages/views/TransactionLocaleView.html',    dashboardPath: '/pages/lists/TransactionLocaleList.html',    i18nKey: 'locations',            setting: 'localesEnabled' },
 ]
+
+function entityTypes() {
+    return ALL_ENTITY_TYPES.filter(t => !t.setting || UserSettings.isEnabled(t.setting))
+}
 
 let _open    = false
 let _data    = {}
@@ -67,7 +72,7 @@ export class SearchManager {
                 (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return
 
             const key    = e.key.toUpperCase()
-            const entity = ENTITY_TYPES.find(t => t.shortcut === key)
+            const entity = entityTypes().find(t => t.shortcut === key)
             if (!entity) return
 
             if (isSearchInput) {
@@ -119,7 +124,7 @@ export class SearchManager {
 
 function _loadData() {
     if (Object.keys(_data).length > 0) return
-    for (const type of ENTITY_TYPES) {
+    for (const type of entityTypes()) {
         try { _data[type.key] = doRequest(type.api, 'GET') ?? [] }
         catch { _data[type.key] = [] }
     }
@@ -129,7 +134,7 @@ function _search() {
     _results = {}
     const q = _query.toLowerCase()
     if (!q) { _renderResults(); return }
-    for (const type of ENTITY_TYPES) {
+    for (const type of entityTypes()) {
         const items = _data[type.key] ?? []
         _results[type.key] = items.filter(item =>
             (item.name ?? item.alias ?? '').toLowerCase().includes(q)
@@ -147,7 +152,7 @@ function _renderResults() {
     let html = ''
     let any  = false
 
-    for (const type of ENTITY_TYPES) {
+    for (const type of entityTypes()) {
         const hits = _results[type.key] ?? []
         if (!hits.length) continue
         any = true
@@ -178,7 +183,7 @@ function _renderResults() {
 function _renderShortcutsHint() {
     const hint = document.getElementById('search-shortcuts-hint')
     if (!hint) return
-    hint.innerHTML = ENTITY_TYPES.map(t =>
+    hint.innerHTML = entityTypes().map(t =>
         `<div class="shortcut-hint-row">
             <kbd class="search-kbd">Shift+${t.shortcut}</kbd>
             <span>${I18n.t(t.i18nKey)}</span>

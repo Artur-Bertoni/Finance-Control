@@ -27,12 +27,14 @@ class EmailServiceTest {
 
     @Mock BrevoMailClient brevoClient;
     @Mock MessageSource messageSource;
+    @Mock UserSettingsService userSettingsService;
 
     EmailService service;
 
     @BeforeEach
     void setUp() {
-        service = new EmailService(brevoClient, messageSource, "http://localhost:8080", "test@test.com", "Finance Control");
+        service = new EmailService(brevoClient, messageSource, userSettingsService, "http://localhost:8080", "test@test.com", "Finance Control");
+        when(userSettingsService.emailsEnabled(any())).thenReturn(true);
         when(messageSource.getMessage(any(String.class), any(), any(Locale.class))).thenReturn("msg");
     }
 
