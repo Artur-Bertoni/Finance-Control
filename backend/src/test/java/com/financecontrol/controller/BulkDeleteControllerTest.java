@@ -8,7 +8,7 @@ import com.financecontrol.config.JwtAuthFilter;
 import com.financecontrol.config.OAuth2AuthenticationSuccessHandler;
 import com.financecontrol.dto.response.BulkDeletePreviewResponse;
 import com.financecontrol.dto.response.BulkDeleteResponse;
-import com.financecontrol.enums.BulkDeleteType;
+import com.financecontrol.enums.BulkEntityType;
 import com.financecontrol.service.BulkDeleteService;
 import com.financecontrol.service.OAuth2UserService;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class BulkDeleteControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void preview_retorna200ComImpacto() throws Exception {
-        when(bulkDeleteService.preview(eq(BulkDeleteType.CATEGORIES), anyList(), eq(1L)))
+        when(bulkDeleteService.preview(eq(BulkEntityType.CATEGORIES), anyList(), eq(1L)))
                 .thenReturn(new BulkDeletePreviewResponse(2, 15, 0, 0));
 
         mockMvc.perform(post("/api/bulk-delete/preview")
@@ -58,7 +58,7 @@ class BulkDeleteControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void delete_retorna200ComTotais() throws Exception {
-        when(bulkDeleteService.delete(eq(BulkDeleteType.TRANSACTIONS), anyList(), eq(1L)))
+        when(bulkDeleteService.delete(eq(BulkEntityType.TRANSACTIONS), anyList(), eq(1L)))
                 .thenReturn(new BulkDeleteResponse(3, 3, 0));
 
         mockMvc.perform(post("/api/bulk-delete")

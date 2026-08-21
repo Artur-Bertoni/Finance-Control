@@ -1,10 +1,9 @@
 package com.financecontrol.dto.request;
 
 import com.financecontrol.enums.AccountType;
-import org.jspecify.annotations.NonNull;
 
 public record AccountRequest(
-    @NonNull Long financialInstitutionId,
+    Long financialInstitutionId,
     String name,
     String contact,
     String description,
@@ -15,7 +14,7 @@ public record AccountRequest(
     Integer dueDay,
     Double creditLimit
 ) {
-    public AccountRequest(@NonNull Long financialInstitutionId, String name, String contact,
+    public AccountRequest(Long financialInstitutionId, String name, String contact,
                           String description, Double balance, String iconKey) {
         this(financialInstitutionId, name, contact, description, balance, iconKey, null, null, null, null);
     }

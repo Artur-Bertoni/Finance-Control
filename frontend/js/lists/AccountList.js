@@ -44,7 +44,7 @@ export function init() {
         syncClearBtn
     )
     setupFinancialInstitutionFilter()
-    initBulkSelection({ type: 'accounts', listId: 'accounts-list', onDeleted: loadData })
+    initBulkSelection({ type: 'accounts', listId: 'accounts-list', onChanged: loadData })
     I18n.onChange(renderList)
 }
 

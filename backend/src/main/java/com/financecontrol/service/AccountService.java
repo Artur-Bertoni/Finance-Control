@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,8 +166,11 @@ public class AccountService {
         return account;
     }
 
-    private FinancialInstitution requireInstitution(@NonNull Long id,
+    @Nullable
+    private FinancialInstitution requireInstitution(@Nullable Long id,
                                                     @NonNull Long userId) {
+        if (id == null || id.equals(0L)) return null;
+
         FinancialInstitution fi = financialInstitutionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.notFound.financialInstitution"));
         if (!userId.equals(fi.getUserId()))
@@ -184,7 +188,7 @@ public class AccountService {
 
         String oldFiName = account.getFinancialInstitution() != null ? account.getFinancialInstitution().getName() : null;
         if (differs(account.getFinancialInstitution() != null ? account.getFinancialInstitution().getId() : null, req.financialInstitutionId()))
-            diff.put("financialInstitution", diff(oldFiName, newFi.getName()));
+            diff.put("financialInstitution", diff(oldFiName, newFi != null ? newFi.getName() : null));
         if (differs(account.getContact(), req.contact()))
             diff.put("contact", diff(account.getContact(), req.contact()));
         if (differs(account.getDescription(), req.description()))

@@ -20,7 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
-    initBulkSelection({ type: 'categories', listId: 'categories-list', onDeleted: loadData })
+    initBulkSelection({ type: 'categories', listId: 'categories-list', onChanged: loadData })
     I18n.onChange(renderList)
 }
 

@@ -13,7 +13,7 @@ export function init() {
     loadData()
     document.getElementById('budget-save-btn')?.addEventListener('click', saveBudget)
     initFilterToggle(() => false)
-    initBulkSelection({ type: 'budgets', listId: 'budget-list', onDeleted: loadData })
+    initBulkSelection({ type: 'budgets', listId: 'budget-list', onChanged: loadData })
     I18n.onChange(renderAll)
 }
 

@@ -1,6 +1,8 @@
 import { showToast } from '../../utils/FrontendFunctions.js'
 import { showConfirm } from '../modals/ConfirmModal.js'
 import { buildDeleteMessage, fetchDeleteImpact } from '../modals/DeleteFlow.js'
+import { hasBulkEditSchema, openBulkEditModal } from '../modals/BulkEditModal.js'
+import { createActionBar } from './ActionBar.js'
 import { I18n } from '../i18n.js'
 
 const BAR_ID = 'bulk-action-bar'
@@ -36,12 +38,12 @@ function bindGlobalListeners() {
 
 class BulkSelection {
 
-    constructor({ type, listId, actionsHostId = 'header-actions', allIds = null, onDeleted = null }) {
+    constructor({ type, listId, actionsHostId = 'header-actions', allIds = null, onChanged = null }) {
         this.type      = type
         this.listId    = listId
         this.hostId    = actionsHostId
         this.allIdsFn  = allIds
-        this.onDeleted = onDeleted
+        this.onChanged = onChanged
         this.selected  = new Set()
         this.active    = false
         this.bar       = null
@@ -95,7 +97,7 @@ class BulkSelection {
         this._undecorateItems()
         this.list?.classList.remove('bulk-mode')
         this.toggleBtn?.classList.remove('active')
-        this.bar?.remove()
+        this.bar?.close()
         this.bar = null
         this.syncLabels()
 
@@ -147,7 +149,6 @@ class BulkSelection {
             if (!item.querySelector(':scope > .bulk-check')) {
                 const check = document.createElement('span')
                 check.className = 'bulk-check'
-                check.innerHTML = '<i class="ph ph-check"></i>'
                 item.prepend(check)
             }
             item.classList.add('bulk-selectable')
@@ -199,25 +200,17 @@ class BulkSelection {
     }
 
     _renderBar() {
-        document.getElementById(BAR_ID)?.remove()
-
-        const bar = document.createElement('div')
-        bar.className = 'confirm-bar bulk-action-bar'
-        bar.id        = BAR_ID
-        bar.innerHTML = `
-            <p class="confirm-bar-message bulk-count"></p>
-            <div class="confirm-bar-actions">
-                <button class="btn btn-ghost btn-sm"     type="button" id="bulk-select-all-btn"></button>
-                <button class="btn btn-secondary btn-sm" type="button" id="bulk-cancel-btn"></button>
-                <button class="btn btn-danger btn-sm"    type="button" id="bulk-delete-btn"></button>
-            </div>
-        `
-        document.body.appendChild(bar)
-        this.bar = bar
-
-        bar.querySelector('#bulk-select-all-btn').addEventListener('click', () => this._onSelectAllClick())
-        bar.querySelector('#bulk-cancel-btn').addEventListener('click', () => this.exitMode())
-        bar.querySelector('#bulk-delete-btn').addEventListener('click', () => this._confirmDelete())
+        this.bar = createActionBar({
+            id: BAR_ID,
+            barClass: 'bulk-action-bar',
+            actions: [
+                { id: 'bulk-select-all-btn', variant: 'ghost',     closes: false, onClick: () => this._onSelectAllClick() },
+                { id: 'bulk-cancel-btn',     variant: 'secondary', closes: false, onClick: () => this.exitMode() },
+                hasBulkEditSchema(this.type)
+                    && { id: 'bulk-edit-btn', variant: 'primary', closes: false, onClick: () => this._openEdit() },
+                { id: 'bulk-delete-btn',     variant: 'danger',    closes: false, onClick: () => this._confirmDelete() },
+            ],
+        })
 
         this._syncBar()
     }
@@ -234,14 +227,27 @@ class BulkSelection {
 
     _syncBar() {
         if (!this.bar) return
-        this.bar.querySelector('.bulk-count').textContent = I18n.t('bulkSelectedCount', { count: this.selected.size })
-        this.bar.querySelector('#bulk-select-all-btn').textContent =
-            this._allSelected() ? I18n.t('bulkClearSelection') : I18n.t('bulkSelectAll')
-        this.bar.querySelector('#bulk-cancel-btn').textContent = I18n.t('commonCancel')
+        const empty = this.selected.size === 0
 
-        const deleteBtn = this.bar.querySelector('#bulk-delete-btn')
-        deleteBtn.textContent = I18n.t('bulkDeleteBtn')
-        deleteBtn.disabled    = this.selected.size === 0
+        this.bar.setMessage(I18n.t('bulkSelectedCount', { count: this.selected.size }))
+        this.bar.setAction('bulk-select-all-btn', { label: I18n.t(this._allSelected() ? 'bulkClearSelection' : 'bulkSelectAll') })
+        this.bar.setAction('bulk-cancel-btn', { label: I18n.t('commonCancel') })
+        this.bar.setAction('bulk-edit-btn', { label: I18n.t('bulkEditBtn'), disabled: empty })
+        this.bar.setAction('bulk-delete-btn', { label: I18n.t('bulkDeleteBtn'), disabled: empty })
+    }
+
+    _openEdit() {
+        const ids = [...this.selected].map(Number).filter(Number.isFinite)
+        if (ids.length === 0) {
+            showToast(I18n.t('bulkEditNothingSelected'), 'warning')
+            return
+        }
+
+        openBulkEditModal({
+            type: this.type,
+            ids,
+            onDone: () => { this.exitMode(); this.onChanged?.() },
+        })
     }
 
     _confirmDelete() {
@@ -268,7 +274,7 @@ class BulkSelection {
         if (result.deleted > 0) showToast(I18n.t('bulkDeleteSuccess', { count: result.deleted }), 'success')
         else                    showToast(I18n.t('bulkDeleteNone'), 'warning')
 
-        this.onDeleted?.()
+        this.onChanged?.()
     }
 
     _post(url, ids, reportError = false) {

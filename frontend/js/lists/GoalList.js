@@ -48,7 +48,7 @@ export function init() {
         renderList()
     })
 
-    initBulkSelection({ type: 'goals', listId: 'goals-list', onDeleted: loadData })
+    initBulkSelection({ type: 'goals', listId: 'goals-list', onChanged: loadData })
 
     I18n.onChange(() => {
         populateStatusOptions()

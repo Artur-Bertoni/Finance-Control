@@ -2,11 +2,9 @@ import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
 import { CATEGORY_ICONS } from '../components/IconPicker.js'
+import { createModal } from '../components/Modal.js'
 
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, successToast = true }) {
-    const overlay = document.createElement('div')
-    overlay.className = 'modal-overlay'
-
     const renderInput = (f) => {
         if (f.type === 'icon-picker') {
             return (
@@ -49,17 +47,20 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
         return '<div class="field"><label>' + labelText + marker + '</label>' + inputHtml + '</div>'
     }).join('')
 
-    overlay.innerHTML = `
-        <div class="modal-card quick-add-card">
-            <p class="modal-title">${title}</p>
-            <div class="quick-add-fields">${fieldsHtml}</div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" id="qa-cancel">${I18n.t('commonCancel')}</button>
-                <button class="btn btn-primary"   id="qa-save">${I18n.t('commonSave')}</button>
-            </div>
-        </div>
-    `
-    document.body.appendChild(overlay)
+    const body = document.createElement('div')
+    body.className = 'quick-add-fields'
+    body.innerHTML = fieldsHtml
+
+    const modal = createModal({
+        title,
+        cardClass: 'quick-add-card',
+        body,
+        actions: [
+            { id: 'qa-cancel', label: I18n.t('commonCancel') },
+            { id: 'qa-save',   label: I18n.t('commonSave'), variant: 'primary', closes: false },
+        ],
+    })
+    const overlay = modal.overlay
 
     fields.filter(f => f.type === 'select' && f.addBtn).forEach(f => {
         const addBtn = overlay.querySelector('#qaf-' + f.id + '-add-btn')
@@ -144,15 +145,6 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
         overlay.querySelector('#qa-cancel').addEventListener('click', () => document.removeEventListener('click', closeOnOutside), { once: true })
     })
 
-    overlay.querySelector('#qa-cancel').addEventListener('click', () => overlay.remove())
-
-    let pressedOnOverlay = false
-    overlay.addEventListener('mousedown', e => { pressedOnOverlay = e.target === overlay })
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay && pressedOnOverlay) overlay.remove()
-        pressedOnOverlay = false
-    })
-
     fields.filter(f => f.required).forEach(f => {
         const el = overlay.querySelector('#qaf-' + f.id)
         if (el) el.addEventListener('input',  () => el.classList.remove('field-error'))
@@ -201,7 +193,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
             }
         }
 
-        overlay.remove()
+        modal.close()
         onSuccess(result.item)
         if (successToast) showToast(I18n.t('createdSuccess'), 'success')
     })

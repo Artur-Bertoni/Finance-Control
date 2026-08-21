@@ -33,7 +33,7 @@ export function init() {
         type: 'transactions',
         listId: 'last-transaction-list',
         allIds: () => allTransactions.map(tx => tx.id),
-        onDeleted: populateTransactionsList,
+        onChanged: populateTransactionsList,
     })
 
     I18n.onChange(() => { renderPage(); renderTotals() })

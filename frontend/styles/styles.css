@@ -4833,18 +4833,27 @@ main.page-content {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-content: center;
   flex-shrink: 0;
-  font-size: 13px;
-  color: transparent;
+  cursor: pointer;
   border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   background-color: var(--surface);
-  transition: all var(--t);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.bulk-check::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: #fff;
+  transform: scale(0);
+  transform-origin: bottom left;
+  transition: transform 0.1s ease-in-out;
 }
 
 .item-card .bulk-check { top: 20px; transform: none; }
@@ -4852,10 +4861,68 @@ main.page-content {
 .bulk-selectable:hover .bulk-check { border-color: var(--primary-400); }
 
 .bulk-selected { border-color: var(--primary) !important; }
+
 .bulk-selected .bulk-check {
-  color: #FFFFFF;
-  border-color: var(--primary);
-  background-color: var(--primary);
+  border-color: var(--primary-500);
+  background-color: var(--primary-500);
 }
 
-.bulk-action-bar .bulk-count { white-space: nowrap; }
+.bulk-selected .bulk-check::before { transform: scale(1); }
+
+.bulk-action-bar .confirm-bar-message { white-space: nowrap; }
+
+.modal-card--form {
+  max-width: 520px;
+  max-height: min(80vh, 720px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-card--form .modal-actions { flex-shrink: 0; padding-top: 16px; }
+
+.bulk-edit-help { color: var(--text-secondary); font-size: 13px; }
+
+.bulk-edit-fields {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 4px 4px 0;
+  margin-top: 8px;
+}
+
+.bulk-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--t);
+}
+
+.bulk-edit-field--on { border-color: var(--primary); }
+
+.bulk-edit-toggle {
+  font-weight: 600;
+  user-select: none;
+  margin: 0;
+}
+
+.bulk-edit-field--on .bulk-edit-toggle { color: var(--text); }
+
+.bulk-edit-control input,
+.bulk-edit-control select,
+.bulk-edit-control textarea,
+.bulk-edit-control .icon-picker-trigger { width: 100%; }
+
+.bulk-edit-control textarea { min-height: 66px; resize: vertical; }
+
+.bulk-edit-control input:disabled,
+.bulk-edit-control select:disabled,
+.bulk-edit-control textarea:disabled,
+.bulk-edit-control .icon-picker-trigger:disabled { opacity: .5; cursor: not-allowed; }
+
+.bulk-edit-hint { font-size: 12px; color: var(--text-muted); margin: 0; }

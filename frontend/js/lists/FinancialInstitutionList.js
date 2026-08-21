@@ -20,7 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
-    initBulkSelection({ type: 'financial-institutions', listId: 'financial-institutions-list', onDeleted: loadData })
+    initBulkSelection({ type: 'financial-institutions', listId: 'financial-institutions-list', onChanged: loadData })
     I18n.onChange(renderList)
 }
 

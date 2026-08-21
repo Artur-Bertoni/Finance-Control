@@ -3,7 +3,7 @@ package com.financecontrol.controller;
 import com.financecontrol.dto.request.BulkDeleteRequest;
 import com.financecontrol.dto.response.BulkDeletePreviewResponse;
 import com.financecontrol.dto.response.BulkDeleteResponse;
-import com.financecontrol.enums.BulkDeleteType;
+import com.financecontrol.enums.BulkEntityType;
 import com.financecontrol.exception.BusinessException;
 import com.financecontrol.service.BulkDeleteService;
 import jakarta.servlet.http.HttpSession;
@@ -35,9 +35,9 @@ public class BulkDeleteController extends BaseController {
     }
 
     @NonNull
-    private BulkDeleteType requireType(BulkDeleteRequest req) {
+    private BulkEntityType requireType(BulkDeleteRequest req) {
         if (req == null || req.type() == null)
-            throw new BusinessException("error.bulkDelete.invalidType");
+            throw new BusinessException("error.bulk.invalidType");
         return req.type();
     }
 }

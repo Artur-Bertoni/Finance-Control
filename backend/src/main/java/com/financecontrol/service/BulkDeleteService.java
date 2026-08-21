@@ -2,10 +2,10 @@ package com.financecontrol.service;
 
 import com.financecontrol.dto.response.BulkDeletePreviewResponse;
 import com.financecontrol.dto.response.BulkDeleteResponse;
-import com.financecontrol.entity.*;
-import com.financecontrol.enums.BulkDeleteType;
-import com.financecontrol.exception.BusinessException;
-import com.financecontrol.repository.*;
+import com.financecontrol.entity.Transaction;
+import com.financecontrol.enums.BulkEntityType;
+import com.financecontrol.repository.AccountRepository;
+import com.financecontrol.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -14,23 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class BulkDeleteService {
 
-    private static final int MAX_IDS = 500;
-
+    private final BulkOwnershipResolver ownershipResolver;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private final CategoryRepository categoryRepository;
-    private final TransactionLocaleRepository transactionLocaleRepository;
-    private final FinancialInstitutionRepository financialInstitutionRepository;
-    private final GoalRepository goalRepository;
-    private final BudgetRepository budgetRepository;
 
     private final TransactionService transactionService;
     private final AccountService accountService;
@@ -41,10 +33,10 @@ public class BulkDeleteService {
     private final BudgetService budgetService;
 
     @Transactional(readOnly = true)
-    public BulkDeletePreviewResponse preview(@NonNull BulkDeleteType type,
+    public BulkDeletePreviewResponse preview(@NonNull BulkEntityType type,
                                              List<Long> ids,
                                              @NonNull Long userId) {
-        List<Long> owned = ownedIds(type, ids, userId);
+        List<Long> owned = ownershipResolver.ownedIds(type, ids, userId);
         if (owned.isEmpty())
             return BulkDeletePreviewResponse.empty();
 
@@ -60,15 +52,15 @@ public class BulkDeleteService {
     }
 
     @Transactional
-    public BulkDeleteResponse delete(@NonNull BulkDeleteType type,
+    public BulkDeleteResponse delete(@NonNull BulkEntityType type,
                                      List<Long> ids,
                                      @NonNull Long userId) {
-        List<Long> owned = ownedIds(type, ids, userId);
+        List<Long> owned = ownershipResolver.ownedIds(type, ids, userId);
         int deleted = 0;
 
         for (Long id : owned) {
             if (id == null) continue;
-            if (BulkDeleteType.TRANSACTIONS == type && !transactionRepository.existsById(id)) continue;
+            if (BulkEntityType.TRANSACTIONS == type && !transactionRepository.existsById(id)) continue;
             deleteOne(type, id, userId);
             deleted++;
         }
@@ -77,7 +69,7 @@ public class BulkDeleteService {
         return new BulkDeleteResponse(requested, deleted, requested - deleted);
     }
 
-    private void deleteOne(@NonNull BulkDeleteType type,
+    private void deleteOne(@NonNull BulkEntityType type,
                            @NonNull Long id,
                            @NonNull Long userId) {
         switch (type) {
@@ -106,35 +98,5 @@ public class BulkDeleteService {
             expanded.addAll(transactionRepository.findIdsByInstallmentGroupIdIn(groupIds));
 
         return expanded;
-    }
-
-    private List<Long> ownedIds(@NonNull BulkDeleteType type,
-                                List<Long> ids,
-                                @NonNull Long userId) {
-        if (ids == null || ids.isEmpty()) return List.of();
-        if (ids.size() > MAX_IDS) throw new BusinessException("error.bulkDelete.tooManyItems");
-
-        List<Long> distinct = ids.stream().filter(Objects::nonNull).distinct().toList();
-
-        return switch (type) {
-            case TRANSACTIONS           -> filterOwned(transactionRepository.findAllById(distinct), Transaction::getId, Transaction::getUserId, userId);
-            case ACCOUNTS               -> filterOwned(accountRepository.findAllById(distinct), Account::getId, Account::getUserId, userId);
-            case CATEGORIES             -> filterOwned(categoryRepository.findAllById(distinct), Category::getId, Category::getUserId, userId);
-            case TRANSACTION_LOCALES    -> filterOwned(transactionLocaleRepository.findAllById(distinct), TransactionLocale::getId, TransactionLocale::getUserId, userId);
-            case FINANCIAL_INSTITUTIONS -> filterOwned(financialInstitutionRepository.findAllById(distinct), FinancialInstitution::getId, FinancialInstitution::getUserId, userId);
-            case GOALS                  -> filterOwned(goalRepository.findAllById(distinct), Goal::getId, Goal::getUserId, userId);
-            case BUDGETS                -> filterOwned(budgetRepository.findAllById(distinct), Budget::getId, Budget::getUserId, userId);
-        };
-    }
-
-    private <T> List<Long> filterOwned(List<T> entities,
-                                       Function<T, Long> idFn,
-                                       Function<T, Long> userIdFn,
-                                       @NonNull Long userId) {
-        return entities.stream()
-                .filter(e -> userId.equals(userIdFn.apply(e)))
-                .map(idFn)
-                .filter(Objects::nonNull)
-                .toList();
     }
 }

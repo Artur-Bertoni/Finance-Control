@@ -20,7 +20,7 @@ export function init() {
         q => { searchQuery = q; renderList(); filterToggle?.syncActive() },
         () => { searchQuery = ''; renderList(); filterToggle?.syncActive() }
     )
-    initBulkSelection({ type: 'transaction-locales', listId: 'transaction-locales-list', onDeleted: loadData })
+    initBulkSelection({ type: 'transaction-locales', listId: 'transaction-locales-list', onChanged: loadData })
     I18n.onChange(renderList)
 }
 
