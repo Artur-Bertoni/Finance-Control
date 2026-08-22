@@ -28,6 +28,10 @@ export function init() {
 
     const accountId = new URLSearchParams(globalThis.location.search).get('id')
     if (accountId) loadEditMode(accountId)
+    else setBreadcrumb([
+        { i18nKey: 'accounts', url: '/pages/lists/AccountList.html' },
+        { i18nKey: 'newAccount' }
+    ])
 
     document.getElementById('cancel-btn').addEventListener('click', () =>
         navigate(accountId ? `/pages/views/AccountView.html?id=${accountId}` : '/pages/lists/AccountList.html')

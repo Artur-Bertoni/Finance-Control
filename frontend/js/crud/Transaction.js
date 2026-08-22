@@ -22,6 +22,10 @@ export function init() {
 
     const transactionId = new URLSearchParams(globalThis.location.search).get('id')
     if (transactionId) loadEditMode(transactionId)
+    else setBreadcrumb([
+        { i18nKey: 'movements', url: '/pages/HomePage.html' },
+        { i18nKey: 'newTransaction' }
+    ])
 
     document.querySelectorAll('input[name="typeRadio"]').forEach(r =>
         r.addEventListener('change', updateRadioStyle)

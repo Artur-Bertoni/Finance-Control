@@ -52,6 +52,11 @@ export function init() {
                 })
             )
         }
+    } else {
+        setBreadcrumb([
+            { i18nKey: 'financialInstitutions', url: '/pages/lists/FinancialInstitutionList.html' },
+            { i18nKey: 'newFinancialInstitution' }
+        ])
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>

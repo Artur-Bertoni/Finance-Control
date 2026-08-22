@@ -60,6 +60,11 @@ export function init() {
             )
         }
     } else {
+        setBreadcrumb([
+            { i18nKey: 'categories', url: '/pages/lists/CategoryList.html' },
+            { i18nKey: 'newCategory' }
+        ])
+
         aliases = ['']
         renderAliases()
 

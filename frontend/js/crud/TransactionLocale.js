@@ -51,6 +51,11 @@ export function init() {
                 })
             )
         }
+    } else {
+        setBreadcrumb([
+            { i18nKey: 'locations', url: '/pages/lists/TransactionLocaleList.html' },
+            { i18nKey: 'newLocale' }
+        ])
     }
 
     document.getElementById('cancel-btn').addEventListener('click', () =>

@@ -24,6 +24,11 @@ export function init() {
 
     if (goalId) {
         loadGoal(goalId)
+    } else {
+        setBreadcrumb([
+            { i18nKey: 'goals', url: '/pages/lists/GoalList.html' },
+            { i18nKey: 'newGoal' }
+        ])
     }
 
     document.getElementById('type-select')?.addEventListener('change', () => { toggleExceedRow(); updateGoalTypeHint() })
