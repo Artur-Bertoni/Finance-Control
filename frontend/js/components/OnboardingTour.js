@@ -1,7 +1,7 @@
 import { I18n } from '../i18n.js'
 import { FinnySvg } from '../utils/FinnySvg.js'
 import { UserSettings } from '../utils/UserSettings.js'
-import { FEATURE_ROWS, PROFILE_PRESETS } from '../utils/FeatureCatalog.js'
+import { FEATURE_ROWS, PROFILE_PRESETS, ALL_DISABLED } from '../utils/FeatureCatalog.js'
 import { SidebarManager } from './SidebarManager.js'
 
 const ALL_STEPS = [
@@ -48,7 +48,6 @@ export class OnboardingTour {
         this._renderProfileChoice()
     }
 
-    /** Zera as funcionalidades para o tour comecar num app limpo; se o usuario pular sem escolher, o estado anterior volta. */
     static _clearFeatures() {
         this._settingsBefore  = UserSettings.all()
         this._profileChosen   = false
@@ -77,7 +76,6 @@ export class OnboardingTour {
         })
     }
 
-    /** Primeira etapa: o usuario escolhe um perfil de uso e a tela atras vai refletindo a escolha antes de confirmar. */
     static _renderProfileChoice() {
         this._choosing = true
         this._currentTarget = null
@@ -170,7 +168,6 @@ export class OnboardingTour {
         return chosen
     }
 
-    /** Reflete a escolha na tela de fundo sem gravar: so o Continuar persiste. */
     static _previewSettings(settings) {
         UserSettings.store(settings)
         SidebarManager.applyFeatureVisibility()
