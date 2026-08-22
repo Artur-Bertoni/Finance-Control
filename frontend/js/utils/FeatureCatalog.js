@@ -9,6 +9,8 @@ export const FEATURE_ROWS = [
     { key: 'emailsEnabled',          titleKey: 'featureEmails',          descKey: 'featureEmailsDesc',          offKey: 'featureEmailsOff' },
 ]
 
+export const ALL_DISABLED = Object.fromEntries(FEATURE_ROWS.map(r => [r.key, false]))
+
 export const PROFILE_PRESETS = {
     simple: {
         reportsEnabled:         false,

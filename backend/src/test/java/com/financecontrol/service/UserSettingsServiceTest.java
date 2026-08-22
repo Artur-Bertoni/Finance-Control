@@ -64,6 +64,38 @@ class UserSettingsServiceTest {
         verify(repository, never()).save(any());
     }
 
+    // ── seedDisabled ─────────────────────────────────────────────────────────
+
+    @Test
+    void seedDisabled_usuarioNovo_criaComTudoDesabilitado() {
+        when(repository.findByUserId(1L)).thenReturn(Optional.empty());
+
+        service.seedDisabled(1L);
+
+        ArgumentCaptor<UserSettings> captor = ArgumentCaptor.forClass(UserSettings.class);
+        verify(repository).save(captor.capture());
+
+        UserSettings created = captor.getValue();
+        assertThat(created.getUserId()).isEqualTo(1L);
+        assertThat(created.isReportsEnabled()).isFalse();
+        assertThat(created.isBudgetsEnabled()).isFalse();
+        assertThat(created.isGoalsEnabled()).isFalse();
+        assertThat(created.isFinnyEnabled()).isFalse();
+        assertThat(created.isStatementImportEnabled()).isFalse();
+        assertThat(created.isInstitutionsEnabled()).isFalse();
+        assertThat(created.isLocalesEnabled()).isFalse();
+        assertThat(created.isEmailsEnabled()).isFalse();
+    }
+
+    @Test
+    void seedDisabled_jaTemRegistro_naoSobrescreve() {
+        when(repository.findByUserId(1L)).thenReturn(Optional.of(existing()));
+
+        service.seedDisabled(1L);
+
+        verify(repository, never()).save(any());
+    }
+
     // ── update ───────────────────────────────────────────────────────────────
 
     @Test

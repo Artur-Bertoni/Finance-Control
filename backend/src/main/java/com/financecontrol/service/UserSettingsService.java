@@ -42,6 +42,26 @@ public class UserSettingsService {
         return UserSettingsResponse.from(getOrCreate(userId));
     }
 
+    /** Usuario novo comeca com tudo desligado: quem liga as funcionalidades e a escolha de perfil no onboarding. */
+    @Transactional
+    public void seedDisabled(@NonNull Long userId) {
+        if (repository.findByUserId(userId).isPresent()) return;
+
+        UserSettings settings = new UserSettings();
+        settings.setUserId(userId);
+        settings.setReportsEnabled(false);
+        settings.setBudgetsEnabled(false);
+        settings.setGoalsEnabled(false);
+        settings.setFinnyEnabled(false);
+        settings.setStatementImportEnabled(false);
+        settings.setInstitutionsEnabled(false);
+        settings.setLocalesEnabled(false);
+        settings.setEmailsEnabled(false);
+        settings.setUpdatedAt(LocalDateTime.now(ZONE));
+
+        repository.save(settings);
+    }
+
     /** Aplica os toggles informados, registrando as mudancas no historico do usuario. */
     @Transactional
     public UserSettingsResponse update(@NonNull Long userId,

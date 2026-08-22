@@ -20,6 +20,7 @@ public class OnboardingService {
 
     private final CategoryRepository categoryRepository;
     private final AccountRepository accountRepository;
+    private final UserSettingsService userSettingsService;
 
     private record SeedCategory(String pt, String en, String es, String icon) {
         String name(String lang) {
@@ -54,6 +55,8 @@ public class OnboardingService {
     public void seedDefaults(Long userId, String language) {
         if (userId == null) return;
         if (categoryRepository.countByUserId(userId) > 0 || accountRepository.countByUserId(userId) > 0) return;
+
+        userSettingsService.seedDisabled(userId);
 
         String lang = normalizeLang(language);
         LocalDateTime now = LocalDateTime.now();

@@ -44,10 +44,40 @@ export class OnboardingTour {
         this._busy = false
         this._steps = ALL_STEPS
         this._buildDom()
+        this._clearFeatures()
         this._renderProfileChoice()
     }
 
-    /** Primeira etapa: o usuario escolhe um perfil de uso e o tour se ajusta ao que ficou ativo. */
+    /** Zera as funcionalidades para o tour comecar num app limpo; se o usuario pular sem escolher, o estado anterior volta. */
+    static _clearFeatures() {
+        this._settingsBefore  = UserSettings.all()
+        this._profileChosen   = false
+        this._selectedProfile = null
+        this._previewSettings(ALL_DISABLED)
+        this._persist(ALL_DISABLED)
+    }
+
+    static _saveSettings(settings, onDone) {
+        this._previewSettings(settings)
+        this._persist(settings, xhr => {
+            if (xhr.status >= 200 && xhr.status < 300 && xhr.responseJSON) {
+                this._previewSettings(xhr.responseJSON)
+            }
+            onDone?.()
+        })
+    }
+
+    static _persist(settings, onComplete) {
+        $.ajax({
+            url:         '/api/user-settings',
+            type:        'PUT',
+            contentType: 'application/json',
+            data:        JSON.stringify(settings),
+            complete:    xhr => onComplete?.(xhr)
+        })
+    }
+
+    /** Primeira etapa: o usuario escolhe um perfil de uso e a tela atras vai refletindo a escolha antes de confirmar. */
     static _renderProfileChoice() {
         this._choosing = true
         this._currentTarget = null
@@ -56,85 +86,107 @@ export class OnboardingTour {
         this._bubble.classList.add('tour-bubble--center', 'tour-bubble--choice')
         this._dotsEl.innerHTML = ''
         this._backBtn.style.visibility = 'hidden'
-        this._nextBtn.hidden = true
+        this._showNext(false)
 
         this._textEl.textContent = I18n.t('onboardingProfileQuestion')
 
-        const choices = document.createElement('div')
-        choices.className = 'tour-profiles'
+        const wrap = document.createElement('div')
+        wrap.className = 'tour-choice'
+
+        const cards = document.createElement('div')
+        cards.className = 'tour-profiles'
         for (const id of ['simple', 'complete', 'custom']) {
             const card = document.createElement('button')
             card.type = 'button'
             card.className = 'tour-profile-card'
+            card.dataset.profile = id
+            card.setAttribute('aria-pressed', 'false')
             card.innerHTML = `
                 <span class="tour-profile-name">${I18n.t(`onboardingProfile_${id}`)}</span>
                 <span class="tour-profile-desc">${I18n.t(`onboardingProfile_${id}_desc`)}</span>
             `
-            card.addEventListener('click', () => {
-                if (id === 'custom') this._renderCustomProfile()
-                else this._applyProfile(PROFILE_PRESETS[id])
-            })
-            choices.appendChild(card)
+            card.addEventListener('click', () => this._selectProfile(id))
+            cards.appendChild(card)
         }
 
-        this._textEl.insertAdjacentElement('afterend', choices)
-        this._choiceEl = choices
-        this._positionFor(null)
-    }
+        const toggles = document.createElement('div')
+        toggles.className = 'tour-profile-toggles'
+        toggles.hidden = true
 
-    static _renderCustomProfile() {
-        this._choiceEl?.remove()
-        this._textEl.textContent = I18n.t('onboardingProfileCustomIntro')
-
-        const list = document.createElement('div')
-        list.className = 'tour-profile-toggles'
-        const inputs = {}
-
+        this._profileInputs = {}
         for (const row of FEATURE_ROWS) {
             const label = document.createElement('label')
             label.className = 'tour-profile-toggle'
             const title = I18n.t(row.titleKey)
             label.innerHTML = `
-                <input type="checkbox" checked aria-label="${title}">
+                <input type="checkbox" aria-label="${title}">
                 <span class="tour-profile-toggle-text">
                     <span class="tour-profile-toggle-name">${title}</span>
                     <span class="tour-profile-toggle-desc">${I18n.t(row.descKey)}</span>
                 </span>
             `
-            inputs[row.key] = label.querySelector('input')
-            list.appendChild(label)
+            const input = label.querySelector('input')
+            input.checked = UserSettings.isEnabled(row.key)
+            input.addEventListener('change', () => this._previewSettings(this._readToggles()))
+            this._profileInputs[row.key] = input
+            toggles.appendChild(label)
         }
 
-        this._textEl.insertAdjacentElement('afterend', list)
-        this._choiceEl = list
+        wrap.append(cards, toggles)
+        this._textEl.insertAdjacentElement('afterend', wrap)
 
-        this._nextBtn.hidden = false
-        this._nextBtn.textContent = I18n.t('onboardingContinue')
-        this._nextBtn.onclick = () => {
-            const chosen = {}
-            for (const [key, input] of Object.entries(inputs)) chosen[key] = input.checked
-            this._applyProfile(chosen)
-        }
+        this._choiceEl    = wrap
+        this._cardsEl     = cards
+        this._togglesEl   = toggles
+        this._profileHint = null
         this._positionFor(null)
+    }
+
+    static _selectProfile(id) {
+        this._selectedProfile = id
+        for (const card of this._cardsEl.querySelectorAll('.tour-profile-card')) {
+            const active = card.dataset.profile === id
+            card.classList.toggle('tour-profile-card--active', active)
+            card.setAttribute('aria-pressed', String(active))
+        }
+
+        const custom = id === 'custom'
+        this._togglesEl.hidden = !custom
+        this._textEl.textContent = I18n.t(custom ? 'onboardingProfileCustomIntro' : 'onboardingProfileQuestion')
+
+        if (!custom) {
+            const preset = PROFILE_PRESETS[id]
+            for (const [key, input] of Object.entries(this._profileInputs)) input.checked = preset[key] !== false
+            this._previewSettings(preset)
+        }
+
+        this._showNext(true, () => this._applyProfile(this._readToggles()))
+        this._positionFor(null)
+    }
+
+    static _readToggles() {
+        const chosen = {}
+        for (const [key, input] of Object.entries(this._profileInputs)) chosen[key] = input.checked
+        return chosen
+    }
+
+    /** Reflete a escolha na tela de fundo sem gravar: so o Continuar persiste. */
+    static _previewSettings(settings) {
+        UserSettings.store(settings)
+        SidebarManager.applyFeatureVisibility()
+        SidebarManager.applyFinnyLink()
+    }
+
+    static _showNext(visible, onClick = null) {
+        this._nextBtn.style.display = visible ? '' : 'none'
+        this._nextBtn.textContent   = visible ? I18n.t('onboardingContinue') : ''
+        this._nextBtn.onclick       = onClick
     }
 
     static _applyProfile(settings) {
         this._nextBtn.disabled = true
-
-        $.ajax({
-            url:         '/api/user-settings',
-            type:        'PUT',
-            contentType: 'application/json',
-            data:        JSON.stringify(settings),
-            complete: xhr => {
-                if (xhr.status >= 200 && xhr.status < 300 && xhr.responseJSON) {
-                    UserSettings.store(xhr.responseJSON)
-                    SidebarManager.applyFeatureVisibility()
-                    SidebarManager.applyFinnyLink()
-                }
-                this._startGuidedSteps()
-            }
-        })
+        this._profileChosen    = true
+        this._saveSettings(settings, () => this._startGuidedSteps())
     }
 
     static _startGuidedSteps() {
@@ -142,9 +194,9 @@ export class OnboardingTour {
         this._choiceEl?.remove()
         this._choiceEl = null
         this._bubble.classList.remove('tour-bubble--choice')
-        this._nextBtn.hidden   = false
-        this._nextBtn.disabled = false
-        this._nextBtn.onclick  = null
+        this._nextBtn.style.display = ''
+        this._nextBtn.disabled      = false
+        this._nextBtn.onclick       = null
         this._applyFinnyBranding()
 
         this._steps = ALL_STEPS.filter(s => !s.setting || UserSettings.isEnabled(s.setting))
@@ -322,6 +374,9 @@ export class OnboardingTour {
     }
 
     static _finish() {
+        if (!this._profileChosen && this._settingsBefore) this._saveSettings(this._settingsBefore)
+        this._settingsBefore = null
+
         OnboardingTour.markDone()
         globalThis.removeEventListener('resize', this._reposition)
         globalThis.removeEventListener('scroll', this._reposition, true)

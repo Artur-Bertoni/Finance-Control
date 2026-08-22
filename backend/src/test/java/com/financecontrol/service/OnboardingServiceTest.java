@@ -20,6 +20,7 @@ class OnboardingServiceTest {
 
     @Mock CategoryRepository categoryRepository;
     @Mock AccountRepository accountRepository;
+    @Mock UserSettingsService userSettingsService;
 
     @InjectMocks OnboardingService onboardingService;
 
