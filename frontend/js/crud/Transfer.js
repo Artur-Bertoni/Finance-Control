@@ -1,17 +1,12 @@
 import { Account } from '../class/AccountClass.js'
 import { TransactionLocale } from '../class/TransactionLocaleClass.js'
-import { addOptionToSelect, clearDirtyGuard, doRequest, formatCurrency, navigate, navigateWithToast, setBreadcrumb, setupDirtyGuard, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
+import { addOptionToSelect, clearDirtyGuard, doRequest, formatCurrency, navigate, navigateWithToast, setupDirtyGuard, showQuickAdd, showToast } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
 
 export function init() {
     SidebarManager.initialize()
-
-    setBreadcrumb([
-        { i18nKey: 'accounts', url: '/pages/lists/AccountList.html' },
-        { i18nKey: 'newTransfer' }
-    ])
 
     setupRequiredFieldValidation([
         'origin-account-input',

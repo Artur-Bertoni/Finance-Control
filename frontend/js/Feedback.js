@@ -1,13 +1,12 @@
 import { I18n }      from './i18n.js'
 import { SidebarManager } from './components/SidebarManager.js'
-import { setBreadcrumb, doRequest, showToast } from '../utils/FrontendFunctions.js'
+import { doRequest, showToast } from '../utils/FrontendFunctions.js'
 
 let _selectedNps = null
 let _npsSkipped  = false
 
 export async function init() {
     await SidebarManager.initialize()
-    setBreadcrumb([{ label: I18n.t('feedback'), url: '/pages/Feedback.html' }])
 
     _renderNpsButtons()
     _bindEvents()
