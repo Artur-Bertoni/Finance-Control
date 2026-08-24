@@ -32,7 +32,6 @@ export const Icons = {
     upload:          () => ph('upload'),
     statementImport: () => ph('file-arrow-up'),
     goals:           () => ph('flag'),
-    achievements:    () => ph('trophy'),
     notifications:   () => ph('bell'),
     finny:           () => ph('piggy-bank'),
     feedback:        () => ph('chat-text'),

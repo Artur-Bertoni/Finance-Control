@@ -272,7 +272,6 @@ export class SidebarManager {
             'FinancialInstitutionList.html': 'institutions',
             'TransactionLocaleList.html': 'locations',
             'StatementImport.html': 'statementImport',
-            'AchievementList.html': 'achievements',
             'FinnyCenter.html':    'finny',
             'Feedback.html':      'feedback',
             'Admin.html':         'adminPanel',
@@ -433,7 +432,7 @@ export class SidebarManager {
                 const title = I18n.t(`achievement_${a.type}_title`)
                 showToast(`🏆 ${I18n.t('achievementUnlocked')}: ${title}`, 'success', {
                     label: I18n.t('commonView'),
-                    url:   `/pages/lists/AchievementList.html?highlight=${a.type}`
+                    url:   `/pages/views/UserView.html?tab=achievements&highlight=${a.type}`
                 })
             }
         } catch {}

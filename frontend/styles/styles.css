@@ -4487,6 +4487,10 @@ main.page-content {
   padding-top: 20px;
 }
 
+.view-tab-content--fill {
+  align-self: stretch;
+}
+
 
 .form-page-container {
   margin: 0 auto;

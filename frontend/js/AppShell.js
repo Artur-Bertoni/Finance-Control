@@ -33,7 +33,6 @@ const routes = {
     '/pages/crud/Transfer.html':                      () => import('./crud/Transfer.js'),
     '/pages/crud/User.html':                          () => import('./crud/User.js'),
     '/pages/lists/AccountList.html':                  () => import('./lists/AccountList.js'),
-    '/pages/lists/AchievementList.html':              () => import('./lists/AchievementList.js'),
     '/pages/lists/CategoryList.html':                 () => import('./lists/CategoryList.js'),
     '/pages/lists/FinancialInstitutionList.html':     () => import('./lists/FinancialInstitutionList.js'),
     '/pages/lists/GoalList.html':                     () => import('./lists/GoalList.js'),
@@ -93,11 +92,18 @@ async function confirmLeave(fromPopstate) {
     return confirmed
 }
 
+function rewriteLegacyUrl(rawUrl) {
+    if (!rawUrl.includes('/pages/lists/AchievementList.html')) return rawUrl
+    const target = new URL(rawUrl, location.href)
+    target.searchParams.set('tab', 'achievements')
+    return `/pages/views/UserView.html${target.search}`
+}
+
 async function navigate(rawUrl, { _fromPopstate = false } = {}) {
     if (!await confirmLeave(_fromPopstate)) return
     globalThis.__dirtyGuard = null
 
-    const url  = new URL(rawUrl, location.href)
+    const url  = new URL(rewriteLegacyUrl(rawUrl), location.href)
     const path = url.pathname
     const full = url.pathname + url.search
 

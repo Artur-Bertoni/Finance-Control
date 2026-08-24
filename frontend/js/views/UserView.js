@@ -1,12 +1,15 @@
 import { navigate, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
+import { AchievementsPanel } from '../components/AchievementsPanel.js'
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { UserSettings } from '../utils/UserSettings.js'
 
 import { FEATURE_ROWS } from '../utils/FeatureCatalog.js'
 
+
+const TAB_IDS = new Set(['details', 'achievements', 'history', 'settings'])
 
 let historyDirty = false
 
@@ -93,23 +96,41 @@ export function init() {
     renderSettings()
     I18n.onChange(renderSettings)
 
-    let historyLoaded = false
+    let historyLoaded      = false
+    let achievementsLoaded = false
     historyDirty = false
-    document.querySelectorAll('.view-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tab = btn.dataset.tab
-            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('view-tab--active'))
-            btn.classList.add('view-tab--active')
-            document.getElementById('tab-details').style.display  = tab === 'details'  ? '' : 'none'
-            document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
-            document.getElementById('tab-settings').style.display = tab === 'settings' ? '' : 'none'
-            if (tab === 'history' && (!historyLoaded || historyDirty)) {
-                historyLoaded = true
-                historyDirty  = false
-                ChangeHistoryManager.loadAndRender('user', user.id, user.createdAt, 'history-container')
-            }
-        })
+
+    const params    = new URLSearchParams(location.search)
+    const highlight = params.get('highlight')
+
+    const activateTab = tab => {
+        document.querySelectorAll('.view-tab').forEach(b =>
+            b.classList.toggle('view-tab--active', b.dataset.tab === tab)
+        )
+        for (const id of TAB_IDS) {
+            document.getElementById(`tab-${id}`).style.display = id === tab ? '' : 'none'
+        }
+        if (tab === 'history' && (!historyLoaded || historyDirty)) {
+            historyLoaded = true
+            historyDirty  = false
+            ChangeHistoryManager.loadAndRender('user', user.id, user.createdAt, 'history-container')
+        }
+        if (tab === 'achievements' && !achievementsLoaded) {
+            achievementsLoaded = true
+            AchievementsPanel.render('achievements-grid', highlight)
+        }
+    }
+
+    document.querySelectorAll('.view-tab').forEach(btn =>
+        btn.addEventListener('click', () => activateTab(btn.dataset.tab))
+    )
+
+    I18n.onChange(() => {
+        if (achievementsLoaded) AchievementsPanel.render('achievements-grid')
     })
+
+    const initialTab = params.get('tab')
+    if (initialTab && TAB_IDS.has(initialTab)) activateTab(initialTab)
 }
 
 function renderSettings() {
