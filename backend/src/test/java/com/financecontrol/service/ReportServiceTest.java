@@ -36,7 +36,6 @@ class ReportServiceTest {
         return list;
     }
 
-    // ── getDashboard – caso básico sem dados ─────────────────────────────────
 
     @Test
     void getDashboard_semDados_retornaEstruturaVazia() {
@@ -57,7 +56,6 @@ class ReportServiceTest {
         assertThat(result.balanceEvolution()).isNotEmpty();
     }
 
-    // ── getDashboard – dados mensais com CREDIT e DEBIT ──────────────────────
 
     @Test
     void getDashboard_comLancamentos_preencheMonthlyData() {
@@ -82,7 +80,6 @@ class ReportServiceTest {
         assertThat(pt.expenses()).isEqualTo(500.0);
     }
 
-    // ── getDashboard – dados de categoria ────────────────────────────────────
 
     @Test
     void getDashboard_comCategoria_preencheCategoryExpensesEIncomes() {
@@ -106,7 +103,6 @@ class ReportServiceTest {
         assertThat(result.categoryIncomes().get(0).categoryName()).isEqualTo("Salário");
     }
 
-    // ── getDashboard – balanceEvolution retrocede meses ──────────────────────
 
     @Test
     void getDashboard_balanceEvolution_retrocedeMesesAteStart() {
@@ -125,7 +121,6 @@ class ReportServiceTest {
         assertThat(result.balanceEvolution().get(0).month()).isLessThanOrEqualTo("2025-01");
     }
 
-    // ── getDashboard – tipo como código numérico (nativeQuery) ───────────────
 
     @Test
     void getDashboard_tipoComoNumero_tratadoCorretamente() {
@@ -146,7 +141,6 @@ class ReportServiceTest {
         assertThat(result.monthlyData().get(0).expenses()).isEqualTo(200.0);
     }
 
-    // ── getDashboard – com accountId filtrado ────────────────────────────────
 
     @Test
     void getDashboard_comAccountId_passaFiltroParaRepositorios() {
@@ -165,7 +159,6 @@ class ReportServiceTest {
         verify(transactionRepository).findCategoryTotals(eq(1L), any(), any(), eq(5L));
     }
 
-    // ── getDashboard – startDate no futuro usa fallback para wealthStart ──────
 
     @Test
     void getDashboard_startDateNoFuturo_usaFallbackParaWealthStart() {

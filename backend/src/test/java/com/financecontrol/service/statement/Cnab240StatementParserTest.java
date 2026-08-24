@@ -11,17 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class Cnab240StatementParserTest {
 
-    /** Constrói um registro de detalhe Segmento E com 240 chars usando os offsets do parser. */
     private static String segmentE(String dateDDMMYYYY, long cents, char dc, String desc) {
         char[] rec = new char[240];
         java.util.Arrays.fill(rec, ' ');
-        put(rec, 1, "756");                                 // código do banco
-        put(rec, 8, "3");                                   // tipo registro
-        put(rec, 14, "E");                                  // segmento
-        put(rec, 143, dateDDMMYYYY);                        // pos 143-150
-        put(rec, 151, String.format("%018d", cents));      // pos 151-168
-        put(rec, 169, String.valueOf(dc));                 // pos 169
-        put(rec, 170, desc);                               // pos 170-194
+        put(rec, 1, "756");
+        put(rec, 8, "3");
+        put(rec, 14, "E");
+        put(rec, 143, dateDDMMYYYY);
+        put(rec, 151, String.format("%018d", cents));
+        put(rec, 169, String.valueOf(dc));
+        put(rec, 170, desc);
         return new String(rec);
     }
 
@@ -65,7 +64,7 @@ class Cnab240StatementParserTest {
     void parse_ignoraRegistrosQueNaoSaoSegmentoE() {
         char[] header = new char[240];
         java.util.Arrays.fill(header, ' ');
-        header[7] = '0'; // tipo registro = header de arquivo
+        header[7] = '0';
         String file = new String(header) + "\n" + segmentE("15012025", 15050, 'D', "COMPRA");
 
         List<RawTransaction> rows = Cnab240StatementParser.parse(file.getBytes(StandardCharsets.ISO_8859_1));

@@ -41,13 +41,11 @@ class CategoryControllerTest {
     @MockitoBean CookieOAuth2AuthorizationRequestRepository      cookieAuthRepo;
     @MockitoBean CustomOAuth2AuthorizationRequestResolver        customAuthResolver;
 
-    // ------------------------------------------------------------------ helpers
 
     private static CategoryResponse catResp(Long id, String name) {
         return new CategoryResponse(id, name, null, null, List.of(), LocalDateTime.now());
     }
 
-    // ------------------------------------------------------------------ GET /api/categories
 
     @Test
     @WithLongPrincipal(1L)
@@ -59,7 +57,6 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Alimentação"));
     }
 
-    // ------------------------------------------------------------------ GET /api/categories/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -80,7 +77,6 @@ class CategoryControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ POST /api/categories
 
     @Test
     @WithLongPrincipal(1L)
@@ -95,7 +91,6 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value("Lazer"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/categories/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -110,7 +105,6 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value("Lazer Atualizado"));
     }
 
-    // ------------------------------------------------------------------ DELETE /api/categories/{id}
 
     @Test
     @WithLongPrincipal(1L)

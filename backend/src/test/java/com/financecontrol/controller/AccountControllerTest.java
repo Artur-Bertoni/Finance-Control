@@ -44,7 +44,6 @@ class AccountControllerTest {
     @MockitoBean CookieOAuth2AuthorizationRequestRepository      cookieAuthRepo;
     @MockitoBean CustomOAuth2AuthorizationRequestResolver        customAuthResolver;
 
-    // ------------------------------------------------------------------ helpers
 
     private static FinancialInstitutionResponse fiResp() {
         return new FinancialInstitutionResponse(1L, "Nubank", null, null, null, LocalDateTime.now());
@@ -54,7 +53,6 @@ class AccountControllerTest {
         return new AccountResponse(id, fiResp(), name, null, null, 500.0, null, null, null, null, null, LocalDateTime.now());
     }
 
-    // ------------------------------------------------------------------ GET /api/accounts
 
     @Test
     @WithLongPrincipal(1L)
@@ -66,7 +64,6 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Carteira"));
     }
 
-    // ------------------------------------------------------------------ GET /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)
@@ -87,7 +84,6 @@ class AccountControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ GET /api/accounts/total-value
 
     @Test
     @WithLongPrincipal(1L)
@@ -99,7 +95,6 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$").value(1500.0));
     }
 
-    // ------------------------------------------------------------------ POST /api/accounts
 
     @Test
     @WithLongPrincipal(1L)
@@ -114,7 +109,6 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.name").value("Nova Conta"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)
@@ -129,7 +123,6 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.name").value("Conta Atualizada"));
     }
 
-    // ------------------------------------------------------------------ GET /api/accounts/:id/transactions-count
 
     @Test
     @WithLongPrincipal(1L)
@@ -150,7 +143,6 @@ class AccountControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ DELETE /api/accounts/:id
 
     @Test
     @WithLongPrincipal(1L)

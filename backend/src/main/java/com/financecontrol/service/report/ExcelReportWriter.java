@@ -97,7 +97,6 @@ public final class ExcelReportWriter {
         for (int i = 0; i < heads.length; i++) relabel(tx, 0, i, lbl(lang, heads[i]));
     }
 
-    /** Reescreve o cabecalho de lancamentos sem a coluna de local, usada quando o usuario desabilita locais. */
     private static void hideLocationColumn(XSSFSheet tx, String lang) {
         String[] heads = {"date", "category", "description", "type", "value"};
         for (int i = 0; i < heads.length; i++) relabel(tx, 0, i, lbl(lang, heads[i]));

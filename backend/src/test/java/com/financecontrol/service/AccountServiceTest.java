@@ -277,7 +277,6 @@ class AccountServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── buildDiff per-field branch coverage ──────────────────────────────────
 
     private Account fullAccount() {
         FinancialInstitution fi = fiWith(1L, "Nubank");

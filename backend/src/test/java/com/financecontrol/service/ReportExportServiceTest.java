@@ -80,11 +80,9 @@ class ReportExportServiceTest {
         assertThat(xlsx).isNotEmpty();
 
         try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(xlsx))) {
-            // Resumo, Por mês, Por categoria, Transações (a aba oculta "_estilos" é removida).
             assertThat(wb.getNumberOfSheets()).isEqualTo(4);
             assertThat(wb.getSheet("_estilos")).isNull();
             assertThat(wb.getSheetAt(3).getRow(0).getCell(0).getStringCellValue()).isNotBlank();
-            // logo embutido vindo do template
             assertThat(wb.getAllPictures()).isNotEmpty();
         }
     }

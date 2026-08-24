@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.*;
 
 class EnumsTest {
 
-    // ── TransactionType.fromCode ─────────────────────────────────────────────
 
     @Test
     void transactionType_fromCode_1_retornaDebit() {
@@ -30,7 +29,6 @@ class EnumsTest {
                 .hasMessageContaining("99");
     }
 
-    // ── TransactionType.fromValue ────────────────────────────────────────────
 
     @Test
     void transactionType_fromValue_debit_retornaDebit() {
@@ -67,7 +65,6 @@ class EnumsTest {
         assertThat(TransactionType.CREDIT.getCode()).isEqualTo(2);
     }
 
-    // ── GoalType.fromValue ───────────────────────────────────────────────────
 
     @Test
     void goalType_fromValue_expense_limit_retornaExpenseLimit() {
@@ -98,7 +95,6 @@ class EnumsTest {
         assertThat(GoalType.INCOME.getValue()).isEqualTo("income");
     }
 
-    // ── GoalStatus.fromValue ─────────────────────────────────────────────────
 
     @Test
     void goalStatus_fromValue_active_retornaActive() {
@@ -135,7 +131,6 @@ class EnumsTest {
         assertThat(GoalStatus.ARCHIVED.getValue()).isEqualTo("archived");
     }
 
-    // ── FeedbackType values ───────────────────────────────────────────────────
 
     @Test
     void feedbackType_valoresEsperados() {

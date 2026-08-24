@@ -253,7 +253,6 @@ class GoalServiceTest {
                 .containsExactly(GoalType.SAVINGS, GoalType.EXPENSE_LIMIT);
     }
 
-    // ── new coverage tests ───────────────────────────────────────────────────
 
     @Test
     void create_comCategoriasELocais_carregaEntidades() {
@@ -466,7 +465,6 @@ class GoalServiceTest {
         verify(transactionRepository).sumForGoal(eq(1L), any(), eq(past), eq(TransactionType.CREDIT));
     }
 
-    // ── update per-field buildDiff branch coverage ──────────────────────────
 
     private Goal baselineGoal() {
         Goal g = goalWith(1L, 1L, "Reserva", GoalType.SAVINGS, 1000.0, GoalStatus.ACTIVE);

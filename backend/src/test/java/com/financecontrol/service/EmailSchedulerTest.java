@@ -26,7 +26,6 @@ class EmailSchedulerTest {
         lenient().when(userSettingsService.emailsEnabled(any())).thenReturn(true);
     }
 
-    // ── sendWeeklyReminders – com usuários ───────────────────────────────────
 
     @Test
     void sendWeeklyReminders_comUsuariosNodia_enviEmails() {
@@ -71,7 +70,6 @@ class EmailSchedulerTest {
         verify(emailService).sendWeeklyReminder(u2);
     }
 
-    // ── helper ───────────────────────────────────────────────────────────────
 
     private static User userWith(Long id, String username, String email) {
         User u = new User();

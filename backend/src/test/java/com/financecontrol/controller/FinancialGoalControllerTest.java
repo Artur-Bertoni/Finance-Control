@@ -44,7 +44,6 @@ class FinancialGoalControllerTest {
     @MockitoBean CookieOAuth2AuthorizationRequestRepository      cookieAuthRepo;
     @MockitoBean CustomOAuth2AuthorizationRequestResolver        customAuthResolver;
 
-    // ------------------------------------------------------------------ helpers
 
     private static GoalResponse goalResp(Long id, String name) {
         return new GoalResponse(id, name, null, GoalType.SAVINGS, GoalStatus.ACTIVE,
@@ -61,7 +60,6 @@ class FinancialGoalControllerTest {
                 false, false, false, true, false, false);
     }
 
-    // ------------------------------------------------------------------ GET /api/goals
 
     @Test
     @WithLongPrincipal(1L)
@@ -73,7 +71,6 @@ class FinancialGoalControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Meta Viagem"));
     }
 
-    // ------------------------------------------------------------------ GET /api/goals/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -94,7 +91,6 @@ class FinancialGoalControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ POST /api/goals
 
     @Test
     @WithLongPrincipal(1L)
@@ -108,7 +104,6 @@ class FinancialGoalControllerTest {
                 .andExpect(jsonPath("$.name").value("Meta Viagem"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/goals/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -122,7 +117,6 @@ class FinancialGoalControllerTest {
                 .andExpect(jsonPath("$.name").value("Meta Viagem Atualizada"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/goals/{id}/archive
 
     @Test
     @WithLongPrincipal(1L)
@@ -142,7 +136,6 @@ class FinancialGoalControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ DELETE /api/goals/{id}
 
     @Test
     @WithLongPrincipal(1L)

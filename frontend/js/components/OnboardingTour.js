@@ -114,7 +114,7 @@ export class OnboardingTour {
         this._profileInputs = {}
         for (const row of FEATURE_ROWS) {
             const label = document.createElement('label')
-            label.className = 'tour-profile-toggle'
+            label.className = 'checkbox-label tour-profile-toggle'
             const title = I18n.t(row.titleKey)
             label.innerHTML = `
                 <input type="checkbox" aria-label="${title}">

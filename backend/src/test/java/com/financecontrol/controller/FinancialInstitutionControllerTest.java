@@ -41,13 +41,11 @@ class FinancialInstitutionControllerTest {
     @MockitoBean CookieOAuth2AuthorizationRequestRepository      cookieAuthRepo;
     @MockitoBean CustomOAuth2AuthorizationRequestResolver        customAuthResolver;
 
-    // ------------------------------------------------------------------ helpers
 
     private static FinancialInstitutionResponse fiResp(Long id, String name) {
         return new FinancialInstitutionResponse(id, name, null, null, null, LocalDateTime.now());
     }
 
-    // ------------------------------------------------------------------ GET /api/financial-institutions
 
     @Test
     @WithLongPrincipal(1L)
@@ -59,7 +57,6 @@ class FinancialInstitutionControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Nubank"));
     }
 
-    // ------------------------------------------------------------------ GET /api/financial-institutions/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -80,7 +77,6 @@ class FinancialInstitutionControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ POST /api/financial-institutions
 
     @Test
     @WithLongPrincipal(1L)
@@ -95,7 +91,6 @@ class FinancialInstitutionControllerTest {
                 .andExpect(jsonPath("$.name").value("Itaú"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/financial-institutions/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -110,7 +105,6 @@ class FinancialInstitutionControllerTest {
                 .andExpect(jsonPath("$.name").value("Itaú Atualizado"));
     }
 
-    // ------------------------------------------------------------------ DELETE /api/financial-institutions/{id}
 
     @Test
     @WithLongPrincipal(1L)

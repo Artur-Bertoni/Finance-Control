@@ -42,7 +42,6 @@ class StatementImportServiceTest {
 
     @InjectMocks StatementImportService statementImportService;
 
-    // ── previewStatement ─────────────────────────────────────────────────────
 
     @Test
     void previewStatement_arquivoNaoPdf_lancaUncheckedIOException() {
@@ -63,7 +62,6 @@ class StatementImportServiceTest {
                 .isInstanceOf(UncheckedIOException.class);
     }
 
-    // ── confirmImport ────────────────────────────────────────────────────────
 
     @Test
     void confirmImport_listaVazia_retornaResultadoZeradoSemDatas() {
@@ -140,7 +138,6 @@ class StatementImportServiceTest {
         verify(transactionService, times(1)).create(eq(1L), any(TransactionRequest.class), eq(true));
     }
 
-    // ── previewStatement happy path (real PDF) ───────────────────────────────
 
     private MultipartFile pdfWithLines(String... lines) throws IOException {
         try (PDDocument doc = new PDDocument()) {

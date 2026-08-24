@@ -41,7 +41,6 @@ class UserServiceTest {
 
     @InjectMocks UserService userService;
 
-    // ── login ────────────────────────────────────────────────────────────────
 
     @Test
     void login_porEmail_sucesso() {
@@ -83,7 +82,6 @@ class UserServiceTest {
                 .isInstanceOf(UnauthorizedException.class);
     }
 
-    // ── findById ─────────────────────────────────────────────────────────────
 
     @Test
     void findById_encontrado_retornaResponse() {
@@ -102,7 +100,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── findEntityById ───────────────────────────────────────────────────────
 
     @Test
     void findEntityById_naoEncontrado_lancaResourceNotFoundException() {
@@ -111,7 +108,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── create ───────────────────────────────────────────────────────────────
 
     @Test
     void create_sucesso_salvaUsuarioEEnviaEmail() {
@@ -170,7 +166,6 @@ class UserServiceTest {
                 .hasMessageContaining("passwordMismatch");
     }
 
-    // ── verifyEmail ──────────────────────────────────────────────────────────
 
     @Test
     void verifyEmail_tokenValido_marcaEmailComoVerificado() {
@@ -207,7 +202,6 @@ class UserServiceTest {
                 .hasMessageContaining("expiredVerificationToken");
     }
 
-    // ── resendVerification ───────────────────────────────────────────────────
 
     @Test
     void resendVerification_emailNaoVerificado_enviaNovamenteEToken() throws Exception {
@@ -264,7 +258,6 @@ class UserServiceTest {
         verify(emailService, never()).sendVerificationEmailNow(any(), any());
     }
 
-    // ── markEmailUnverified ──────────────────────────────────────────────────
 
     @Test
     void markEmailUnverified_marcaFalseELimpaTokens() {
@@ -279,7 +272,6 @@ class UserServiceTest {
         verify(emailVerificationTokenRepository).deleteByUserId(1L);
     }
 
-    // ── unlinkGoogle ─────────────────────────────────────────────────────────
 
     @Test
     void unlinkGoogle_sucesso_removeDadosProvider() {
@@ -312,7 +304,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── resolveOAuth2Login ───────────────────────────────────────────────────
 
     @Test
     void resolveOAuth2Login_existePorProvider_retornaIdExistente() {
@@ -359,7 +350,6 @@ class UserServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
-    // ── linkGoogleAccount ────────────────────────────────────────────────────
 
     @Test
     void linkGoogleAccount_sucesso_vinculaProvider() {
@@ -397,7 +387,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── update ───────────────────────────────────────────────────────────────
 
     @Test
     void update_sucesso_alteraDadosERegistraDiff() {
@@ -434,7 +423,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── changePassword ───────────────────────────────────────────────────────
 
     @Test
     void changePassword_sucesso_encriptaESalva() {
@@ -494,7 +482,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_encontrado_marcaComoInativoSemRemoverFisicamente() {
@@ -527,7 +514,6 @@ class UserServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── new coverage tests ───────────────────────────────────────────────────
 
     @Test
     void resolveOAuth2Login_novoUsuarioComUsernameColidindo_geraSufixo() {
@@ -594,7 +580,6 @@ class UserServiceTest {
                 .containsKeys("emailNotificationEnabled", "emailNotificationDay", "goalEmailNotificationEnabled");
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
 
     private static User userWith(Long id, String username, String email, String password) {
         User u = new User();

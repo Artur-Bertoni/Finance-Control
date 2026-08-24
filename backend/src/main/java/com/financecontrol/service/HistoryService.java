@@ -54,7 +54,6 @@ public class HistoryService {
         repository.save(EntityChangeLog.of(entityType, entityId, userId, FIELD_CREATED, null, null, LocalDateTime.now(ZONE), groupId));
     }
 
-    /** Remove o historico de alteracoes das entidades informadas. */
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteHistory(String entityType,
                               List<Long> entityIds) {

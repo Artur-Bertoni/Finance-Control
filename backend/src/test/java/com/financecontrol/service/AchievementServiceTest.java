@@ -32,7 +32,6 @@ class AchievementServiceTest {
 
     @InjectMocks AchievementService achievementService;
 
-    // ── checkAndList – nenhuma conquista ainda desbloqueada ─────────────────
 
     @Test
     void checkAndList_semNenhumaConquista_retornaListaCompleta() {
@@ -45,7 +44,6 @@ class AchievementServiceTest {
         assertThat(result).allMatch(r -> !r.earned());
     }
 
-    // ── FIRST_ACCOUNT ────────────────────────────────────────────────────────
 
     @Test
     void checkAndList_primeiraContaCriada_desbloqueia_FIRST_ACCOUNT() {
@@ -60,7 +58,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.FIRST_ACCOUNT));
     }
 
-    // ── FIRST_TRANSACTION ────────────────────────────────────────────────────
 
     @Test
     void checkAndList_primeiraTransacao_desbloqueia_FIRST_TRANSACTION() {
@@ -75,7 +72,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.FIRST_TRANSACTION));
     }
 
-    // ── FIRST_GOAL ───────────────────────────────────────────────────────────
 
     @Test
     void checkAndList_primeiraMetaCriada_desbloqueia_FIRST_GOAL() {
@@ -90,7 +86,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.FIRST_GOAL));
     }
 
-    // ── GOAL_COMPLETED ───────────────────────────────────────────────────────
 
     @Test
     void checkAndList_umaMetaConcluida_desbloqueia_GOAL_COMPLETED() {
@@ -105,7 +100,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.GOAL_COMPLETED));
     }
 
-    // ── FIVE_GOALS_COMPLETED ─────────────────────────────────────────────────
 
     @Test
     void checkAndList_cincoMetasConcluidas_desbloqueia_FIVE_GOALS_COMPLETED() {
@@ -120,7 +114,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.FIVE_GOALS_COMPLETED));
     }
 
-    // ── TEN_GOALS_COMPLETED ──────────────────────────────────────────────────
 
     @Test
     void checkAndList_dezMetasConcluidas_desbloqueia_TEN_GOALS_COMPLETED() {
@@ -135,7 +128,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.TEN_GOALS_COMPLETED));
     }
 
-    // ── GOAL_EARLY_COMPLETION ────────────────────────────────────────────────
 
     @Test
     void checkAndList_metaConcluidaAntesDoFim_desbloqueia_GOAL_EARLY_COMPLETION() {
@@ -151,7 +143,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.GOAL_EARLY_COMPLETION));
     }
 
-    // ── STATEMENT_IMPORTED ───────────────────────────────────────────────────
 
     @Test
     void checkAndList_cincoTransacoesNomesmoDia_desbloqueia_STATEMENT_IMPORTED() {
@@ -166,7 +157,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.STATEMENT_IMPORTED));
     }
 
-    // ── THREE_INSTITUTIONS ───────────────────────────────────────────────────
 
     @Test
     void checkAndList_tresInstituicoes_desbloqueia_THREE_INSTITUTIONS() {
@@ -181,7 +171,6 @@ class AchievementServiceTest {
                 ua -> ua.getAchievementType() == AchievementType.THREE_INSTITUTIONS));
     }
 
-    // ── conquista já obtida não duplica ──────────────────────────────────────
 
     @Test
     void checkAndList_conquistaJaObtida_naoSalvaNovamente() {
@@ -199,7 +188,6 @@ class AchievementServiceTest {
                 u -> u.getAchievementType() == AchievementType.FIRST_ACCOUNT));
     }
 
-    // ── notified: conquista recem-desbloqueada volta como justUnlocked e é marcada ──
 
     @Test
     void checkAndList_conquistaRecemDesbloqueada_marcaComoJustUnlockedENotified() {
@@ -219,7 +207,6 @@ class AchievementServiceTest {
         verify(achievementRepository, atLeastOnce()).save(argThat(UserAchievement::isNotified));
     }
 
-    // ── ALL_TRANSACTIONS_CATEGORIZED ─────────────────────────────────────────
 
     @Test
     void checkAndList_todasCategorizadas_desbloqueia_ALL_TRANSACTIONS_CATEGORIZED() {
@@ -236,7 +223,6 @@ class AchievementServiceTest {
                 u -> u.getAchievementType() == AchievementType.ALL_TRANSACTIONS_CATEGORIZED));
     }
 
-    // ── FIVE_CATEGORIES_USED ─────────────────────────────────────────────────
 
     @Test
     void checkAndList_cincoCategorias_desbloqueia_FIVE_CATEGORIES_USED() {
@@ -251,7 +237,6 @@ class AchievementServiceTest {
                 u -> u.getAchievementType() == AchievementType.FIVE_CATEGORIES_USED));
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
 
     private void stubNoAchievements() {
         when(achievementRepository.findByUserId(1L)).thenReturn(List.of());

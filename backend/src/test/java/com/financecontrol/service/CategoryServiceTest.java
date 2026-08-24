@@ -42,7 +42,6 @@ class CategoryServiceTest {
         ReflectionTestUtils.setField(categoryService, "entityManager", entityManager);
     }
 
-    // ── findAllByUser ────────────────────────────────────────────────────────
 
     @Test
     void findAllByUser_retornaCategorias() {
@@ -55,7 +54,6 @@ class CategoryServiceTest {
         assertThat(result.get(0).name()).isEqualTo("Alimentação");
     }
 
-    // ── findById ─────────────────────────────────────────────────────────────
 
     @Test
     void findById_encontrado_retornaResponse() {
@@ -75,7 +73,6 @@ class CategoryServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── create ───────────────────────────────────────────────────────────────
 
     @Test
     void create_semAliases_usaNomeComoAlias() {
@@ -124,7 +121,6 @@ class CategoryServiceTest {
         verify(categoryRepository, never()).existsByUserIdAndNameIgnoreCase(any(), any());
     }
 
-    // ── update ───────────────────────────────────────────────────────────────
 
     @Test
     void update_encontrado_atualizaERegistraDiff() {
@@ -149,7 +145,6 @@ class CategoryServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── findByAlias ──────────────────────────────────────────────────────────
 
     @Test
     void findByAlias_retornaCategorias() {
@@ -164,7 +159,6 @@ class CategoryServiceTest {
         assertThat(result.get(0).getName()).isEqualTo("Alimentação");
     }
 
-    // ── learnAlias ───────────────────────────────────────────────────────────
 
     @Test
     void learnAlias_novaMapeamento_salvaNoBanco() {
@@ -207,7 +201,6 @@ class CategoryServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_encontrado_removeTransacoesEDeletaDoRepositorio() {
@@ -229,7 +222,6 @@ class CategoryServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── helper ───────────────────────────────────────────────────────────────
 
     private static Category categoryWith(Long id, Long userId, String name,
                                          String description, String iconKey) {

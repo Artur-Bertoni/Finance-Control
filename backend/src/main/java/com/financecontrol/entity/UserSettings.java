@@ -42,6 +42,18 @@ public class UserSettings {
     @Column(name = "emails_enabled")
     private boolean emailsEnabled = true;
 
+    @Column(name = "chart_expense_pinned_categories", length = 2000)
+    private String chartExpensePinnedCategories;
+
+    @Column(name = "chart_expense_grouped_categories", length = 2000)
+    private String chartExpenseGroupedCategories;
+
+    @Column(name = "chart_income_pinned_categories", length = 2000)
+    private String chartIncomePinnedCategories;
+
+    @Column(name = "chart_income_grouped_categories", length = 2000)
+    private String chartIncomeGroupedCategories;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

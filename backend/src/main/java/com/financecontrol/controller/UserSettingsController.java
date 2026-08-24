@@ -1,5 +1,6 @@
 package com.financecontrol.controller;
 
+import com.financecontrol.dto.request.ChartCategoriesRequest;
 import com.financecontrol.dto.request.UserSettingsRequest;
 import com.financecontrol.dto.response.UserSettingsResponse;
 import com.financecontrol.service.UserSettingsService;
@@ -22,5 +23,10 @@ public class UserSettingsController extends BaseController {
     @PutMapping
     public ResponseEntity<UserSettingsResponse> update(@RequestBody UserSettingsRequest req) {
         return ResponseEntity.ok(userSettingsService.update(requireUserId(), req));
+    }
+
+    @PutMapping("/chart-categories")
+    public ResponseEntity<UserSettingsResponse> updateChartCategories(@RequestBody ChartCategoriesRequest req) {
+        return ResponseEntity.ok(userSettingsService.updateChartCategories(requireUserId(), req));
     }
 }

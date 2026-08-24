@@ -217,7 +217,6 @@ export class SidebarManager {
         if (section) section.hidden = !isAdmin
     }
 
-    /** Esconde do menu e das telas tudo que o usuario desabilitou em Configuracoes. */
     static applyFeatureVisibility() {
         UserSettings.applyFlags()
 
@@ -230,7 +229,6 @@ export class SidebarManager {
         if (advancedEmpty) panel.hidden = true
     }
 
-    /** Com o Finny desligado o atalho do menu vira apenas a central de notificacoes. */
     static applyFinnyLink() {
         const link = document.getElementById('notifications-link')
         if (!link) return

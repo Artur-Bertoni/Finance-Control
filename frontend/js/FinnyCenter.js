@@ -61,7 +61,6 @@ export function init() {
     _switchTab(UserSettings.finny ? 'tips' : 'messages')
 }
 
-/** Sem o Finny a pagina fica sendo so a central de notificacoes. */
 function _applyFinnyMode() {
     if (UserSettings.finny) return
 

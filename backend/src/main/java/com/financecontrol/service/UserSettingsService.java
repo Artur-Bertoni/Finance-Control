@@ -1,5 +1,6 @@
 package com.financecontrol.service;
 
+import com.financecontrol.dto.request.ChartCategoriesRequest;
 import com.financecontrol.dto.request.UserSettingsRequest;
 import com.financecontrol.dto.response.UserSettingsResponse;
 import com.financecontrol.entity.UserSettings;
@@ -12,9 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.financecontrol.service.HistoryService.ENTITY_USER;
 
@@ -27,9 +31,7 @@ public class UserSettingsService {
     private final UserSettingsRepository repository;
     private final HistoryService historyService;
 
-    /** Retorna as configuracoes do usuario, criando o registro padrao na primeira leitura. */
-    @Transactional
-    public UserSettings getOrCreate(@NonNull Long userId) {
+    UserSettings getOrCreate(@NonNull Long userId) {
         return repository.findByUserId(userId).orElseGet(() -> {
             UserSettings settings = new UserSettings();
             settings.setUserId(userId);
@@ -38,11 +40,11 @@ public class UserSettingsService {
         });
     }
 
+    @Transactional
     public UserSettingsResponse find(@NonNull Long userId) {
         return UserSettingsResponse.from(getOrCreate(userId));
     }
 
-    /** Usuario novo comeca com tudo desligado: quem liga as funcionalidades e a escolha de perfil no onboarding. */
     @Transactional
     public void seedDisabled(@NonNull Long userId) {
         if (repository.findByUserId(userId).isPresent()) return;
@@ -62,7 +64,6 @@ public class UserSettingsService {
         repository.save(settings);
     }
 
-    /** Aplica os toggles informados, registrando as mudancas no historico do usuario. */
     @Transactional
     public UserSettingsResponse update(@NonNull Long userId,
                                        UserSettingsRequest req) {
@@ -87,10 +88,34 @@ public class UserSettingsService {
         return UserSettingsResponse.from(saved);
     }
 
-    /** Le um toggle sem criar registro: usuario sem configuracoes salvas mantem tudo habilitado. */
+    @Transactional
+    public UserSettingsResponse updateChartCategories(@NonNull Long userId,
+                                                      ChartCategoriesRequest req) {
+        UserSettings settings = getOrCreate(userId);
+        settings.setChartExpensePinnedCategories(joinIds(req.expensePinned()));
+        settings.setChartExpenseGroupedCategories(joinIds(req.expenseGrouped()));
+        settings.setChartIncomePinnedCategories(joinIds(req.incomePinned()));
+        settings.setChartIncomeGroupedCategories(joinIds(req.incomeGrouped()));
+        settings.setUpdatedAt(LocalDateTime.now(ZONE));
+
+        return UserSettingsResponse.from(repository.save(settings));
+    }
+
+    private String joinIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return null;
+
+        String joined = ids.stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return joined.isEmpty() ? null : joined;
+    }
+
     public boolean isEnabled(Long userId,
-                             Function<UserSettings, Boolean> getter) {
-        return repository.findByUserId(userId).map(getter).orElse(Boolean.TRUE);
+                             Predicate<UserSettings> getter) {
+        return repository.findByUserId(userId).map(getter::test).orElse(Boolean.TRUE);
     }
 
     public boolean goalsEnabled(Long userId)   { return isEnabled(userId, UserSettings::isGoalsEnabled); }
@@ -100,16 +125,15 @@ public class UserSettingsService {
     public boolean localesEnabled(Long userId) { return isEnabled(userId, UserSettings::isLocalesEnabled); }
     public boolean institutionsEnabled(Long userId) { return isEnabled(userId, UserSettings::isInstitutionsEnabled); }
 
-    @SuppressWarnings("null")
     private void apply(Map<String, String[]> diff,
                        String field,
                        Boolean requested,
                        UserSettings settings,
-                       Function<UserSettings, Boolean> getter,
+                       Predicate<UserSettings> getter,
                        BiConsumer<UserSettings, Boolean> setter) {
         if (requested == null) return;
 
-        boolean current = Boolean.TRUE.equals(getter.apply(settings));
+        boolean current = getter.test(settings);
         if (current == requested) return;
 
         diff.put(field, new String[] { String.valueOf(current), String.valueOf(requested) });

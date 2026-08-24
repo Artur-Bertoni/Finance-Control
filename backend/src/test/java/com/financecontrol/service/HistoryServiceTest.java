@@ -25,7 +25,6 @@ class HistoryServiceTest {
 
     @InjectMocks HistoryService historyService;
 
-    // ── static helper tests ──────────────────────────────────────────────────
 
     @Test
     void differs_valoresIguais_retornaFalse() {
@@ -79,7 +78,6 @@ class HistoryServiceTest {
         assertThat(result[1]).isEqualTo("5");
     }
 
-    // ── recordCreation ───────────────────────────────────────────────────────
 
     @Test
     void recordCreation_salvaNoBanco() {
@@ -94,7 +92,6 @@ class HistoryServiceTest {
         assertThat(cap.getValue().getEntityId()).isEqualTo(1L);
     }
 
-    // ── recordChanges ────────────────────────────────────────────────────────
 
     @Test
     void recordChanges_comDiff_salvaUmaEntradaPorCampo() {
@@ -121,7 +118,6 @@ class HistoryServiceTest {
         verify(repository, never()).save(any());
     }
 
-    // ── recordPasswordChange ─────────────────────────────────────────────────
 
     @Test
     void recordPasswordChange_salvaNoBanco() {
@@ -135,7 +131,6 @@ class HistoryServiceTest {
         assertThat(cap.getValue().getEntityType()).isEqualTo("user");
     }
 
-    // ── getHistory ───────────────────────────────────────────────────────────
 
     @Test
     void getHistory_logDeCriacao_retornaIsCreationTrue() {

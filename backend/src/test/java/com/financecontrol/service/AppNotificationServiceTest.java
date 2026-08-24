@@ -41,7 +41,6 @@ class AppNotificationServiceTest {
         lenient().when(userSettingsService.goalsEnabled(any())).thenReturn(true);
     }
 
-    // ── checkGoalImpact – sem metas ativas ───────────────────────────────────
 
     @Test
     void checkGoalImpact_semMetasAtivas_retornaListaVazia() {
@@ -53,7 +52,6 @@ class AppNotificationServiceTest {
         verifyNoInteractions(appNotificationRepository);
     }
 
-    // ── checkGoalImpact – alvo zero ignorado ─────────────────────────────────
 
     @Test
     void checkGoalImpact_targetZero_ignoraMeta() {
@@ -66,7 +64,6 @@ class AppNotificationServiceTest {
         verifyNoInteractions(goalNotificationLogRepository);
     }
 
-    // ── checkGoalImpact – 100% poupança → GOAL_COMPLETED ────────────────────
 
     @Test
     void checkGoalImpact_cem_porcento_poupanca_criaNotificacao_GOAL_COMPLETED() {
@@ -87,7 +84,6 @@ class AppNotificationServiceTest {
         verify(goalNotificationLogRepository).save(any());
     }
 
-    // ── checkGoalImpact – já notificado → não duplica ────────────────────────
 
     @Test
     void checkGoalImpact_jaNotificado_naoduplicaNotificacao() {
@@ -105,7 +101,6 @@ class AppNotificationServiceTest {
         verify(appNotificationRepository, never()).save(any());
     }
 
-    // ── checkGoalImpact – EXPENSE_LIMIT 100% → GOAL_EXCEEDED ─────────────────
 
     @Test
     void checkGoalImpact_expenseLimit_excedido_criaNotificacao_GOAL_EXCEEDED() {
@@ -125,7 +120,6 @@ class AppNotificationServiceTest {
         assertThat(result.get(0).type()).isEqualTo(AppNotificationType.GOAL_EXCEEDED);
     }
 
-    // ── checkGoalImpact – milestone 90% ──────────────────────────────────────
 
     @Test
     void checkGoalImpact_noventa_porcento_criaNotificacao_MILESTONE_90() {
@@ -146,7 +140,6 @@ class AppNotificationServiceTest {
         assertThat(result.get(0).type()).isEqualTo(AppNotificationType.GOAL_MILESTONE_90);
     }
 
-    // ── checkGoalImpact – milestone 75% ──────────────────────────────────────
 
     @Test
     void checkGoalImpact_setentaECinco_porcento_criaNotificacao_MILESTONE_75() {
@@ -166,7 +159,6 @@ class AppNotificationServiceTest {
         assertThat(result.get(0).type()).isEqualTo(AppNotificationType.GOAL_MILESTONE_75);
     }
 
-    // ── checkGoalImpact – milestone 50% ──────────────────────────────────────
 
     @Test
     void checkGoalImpact_cinquenta_porcento_criaNotificacao_MILESTONE_50() {
@@ -186,7 +178,6 @@ class AppNotificationServiceTest {
         assertThat(result.get(0).type()).isEqualTo(AppNotificationType.GOAL_MILESTONE_50);
     }
 
-    // ── checkGoalImpact – múltiplos milestones em uma única transação ────────
 
     @Test
     void checkGoalImpact_cem_porcento_todosFlags_criaTodasNotificacoes() {
@@ -209,7 +200,6 @@ class AppNotificationServiceTest {
         verify(goalNotificationLogRepository, times(4)).save(any());
     }
 
-    // ── checkGoalImpact – expense limit abaixo do limite não notifica ────────
 
     @Test
     void checkGoalImpact_expenseLimit_abaixoDoLimite_naoNotifica() {
@@ -226,7 +216,6 @@ class AppNotificationServiceTest {
         verify(appNotificationRepository, never()).save(any());
     }
 
-    // ── createGoalNotification ────────────────────────────────────────────────
 
     @Test
     void createGoalNotification_salvaERetornaResponse() {
@@ -240,7 +229,6 @@ class AppNotificationServiceTest {
         assertThat(result.id()).isEqualTo(99L);
     }
 
-    // ── findAll ───────────────────────────────────────────────────────────────
 
     @Test
     void findAll_retornaNotificacoesDoUsuario() {
@@ -253,7 +241,6 @@ class AppNotificationServiceTest {
         assertThat(result.get(0).type()).isEqualTo(AppNotificationType.GOAL_COMPLETED);
     }
 
-    // ── getUnreadCount ────────────────────────────────────────────────────────
 
     @Test
     void getUnreadCount_retornaContagem() {
@@ -261,7 +248,6 @@ class AppNotificationServiceTest {
         assertThat(appNotificationService.getUnreadCount(1L)).isEqualTo(3L);
     }
 
-    // ── markAsRead ────────────────────────────────────────────────────────────
 
     @Test
     void markAsRead_pertenceAoUsuario_marcaComoLida() {
@@ -292,7 +278,6 @@ class AppNotificationServiceTest {
         assertThatCode(() -> appNotificationService.markAsRead(1L, 99L)).doesNotThrowAnyException();
     }
 
-    // ── markAllAsRead ─────────────────────────────────────────────────────────
 
     @Test
     void markAllAsRead_chamaBulkUpdate() {
@@ -300,7 +285,6 @@ class AppNotificationServiceTest {
         verify(appNotificationRepository).markAllAsReadByUserId(1L);
     }
 
-    // ── saveUserAction ────────────────────────────────────────────────────────
 
     @Test
     void saveUserAction_salvaComSeveridadeInfo() {
@@ -334,7 +318,6 @@ class AppNotificationServiceTest {
         assertThat(result.severity()).isEqualTo("warning");
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
 
     private static Goal savingsGoal(Long id, Long userId, String name, Double target) {
         Goal g = new Goal();

@@ -30,7 +30,6 @@ class FinancialInstitutionServiceTest {
 
     @InjectMocks FinancialInstitutionService financialInstitutionService;
 
-    // ── findAllByUser ────────────────────────────────────────────────────────
 
     @Test
     void findAllByUser_retornaInstituicoes() {
@@ -43,7 +42,6 @@ class FinancialInstitutionServiceTest {
         assertThat(result.get(0).name()).isEqualTo("Nubank");
     }
 
-    // ── findById ─────────────────────────────────────────────────────────────
 
     @Test
     void findById_encontrado_retornaResponse() {
@@ -63,7 +61,6 @@ class FinancialInstitutionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── create ───────────────────────────────────────────────────────────────
 
     @Test
     void create_sucesso_registraHistoricoERetornaResponse() {
@@ -99,7 +96,6 @@ class FinancialInstitutionServiceTest {
         verify(financialInstitutionRepository, never()).existsByUserIdAndNameIgnoreCase(any(), any());
     }
 
-    // ── update ───────────────────────────────────────────────────────────────
 
     @Test
     void update_alteraNome_registraDiffERetornaResponse() {
@@ -135,7 +131,6 @@ class FinancialInstitutionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_encontrado_deletaDoRepositorio() {
@@ -154,7 +149,6 @@ class FinancialInstitutionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── update per-field buildDiff branch coverage ──────────────────────────
 
     @Test
     void update_mudaApenasEndereco_registraDiffAddress() {
@@ -206,7 +200,6 @@ class FinancialInstitutionServiceTest {
         assertThat(result.iconKey()).isEqualTo("ph-wallet");
     }
 
-    // ── helper ───────────────────────────────────────────────────────────────
 
     private static FinancialInstitution fi(Long id, Long userId, String name,
                                            String address, String contact, String iconKey) {

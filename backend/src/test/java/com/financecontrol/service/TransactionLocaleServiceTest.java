@@ -28,7 +28,6 @@ class TransactionLocaleServiceTest {
 
     @InjectMocks TransactionLocaleService transactionLocaleService;
 
-    // ── findAllByUser ────────────────────────────────────────────────────────
 
     @Test
     void findAllByUser_retornaLocais() {
@@ -47,7 +46,6 @@ class TransactionLocaleServiceTest {
         assertThat(transactionLocaleService.findAllByUser(1L)).isEmpty();
     }
 
-    // ── findById ─────────────────────────────────────────────────────────────
 
     @Test
     void findById_encontrado_retornaResponse() {
@@ -67,7 +65,6 @@ class TransactionLocaleServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── create ───────────────────────────────────────────────────────────────
 
     @Test
     void create_sucesso_retornaResponse() {
@@ -102,7 +99,6 @@ class TransactionLocaleServiceTest {
         verify(transactionLocaleRepository, never()).existsByUserIdAndNameIgnoreCase(any(), any());
     }
 
-    // ── update ───────────────────────────────────────────────────────────────
 
     @Test
     void update_encontrado_atualizaCampos() {
@@ -127,7 +123,6 @@ class TransactionLocaleServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── delete ───────────────────────────────────────────────────────────────
 
     @Test
     void delete_encontrado_deletaDoRepositorio() {
@@ -146,7 +141,6 @@ class TransactionLocaleServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ── helper ───────────────────────────────────────────────────────────────
 
     private static TransactionLocale locale(Long id, Long userId, String name, String address, String iconKey) {
         return new TransactionLocale(id, userId, name, address, iconKey);

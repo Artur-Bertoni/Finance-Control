@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.*;
 
 class ExceptionsTest {
 
-    // ── BusinessException ────────────────────────────────────────────────────
 
     @Test
     void businessException_mensagem_guardada() {
@@ -15,7 +14,6 @@ class ExceptionsTest {
         assertThat(ex.getMessage()).isEqualTo("error.duplicate.name");
     }
 
-    // ── ResourceNotFoundException ────────────────────────────────────────────
 
     @Test
     void resourceNotFoundException_mensagem_guardada() {
@@ -24,7 +22,6 @@ class ExceptionsTest {
         assertThat(ex.getMessage()).isEqualTo("error.notFound.account");
     }
 
-    // ── UnauthorizedException ────────────────────────────────────────────────
 
     @Test
     void unauthorizedException_mensagem_guardada() {
@@ -33,7 +30,6 @@ class ExceptionsTest {
         assertThat(ex.getMessage()).isEqualTo("error.auth.invalidCredentials");
     }
 
-    // ── hierarquia não interfere entre si ────────────────────────────────────
 
     @Test
     void excecoes_saoTiposDistintos() {

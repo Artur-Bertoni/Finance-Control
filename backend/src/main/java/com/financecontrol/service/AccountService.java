@@ -105,7 +105,6 @@ public class AccountService {
         return result;
     }
 
-    /** Quantas transações seriam removidas junto com a conta. */
     @Transactional(readOnly = true)
     public long countTransactions(@NonNull Long id,
                                   @NonNull Long userId) {
@@ -114,7 +113,6 @@ public class AccountService {
         return transactionRepository.countByAccount_Id(id);
     }
 
-    /** Remove a conta e tudo que esta aninhado nela: transacoes, pagamentos de fatura e historico. */
     @Transactional
     @CacheEvict(value = {"accounts", "transactions"}, allEntries = true)
     public void delete(@NonNull Long id,

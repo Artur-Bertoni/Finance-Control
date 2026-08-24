@@ -1,5 +1,6 @@
 package com.financecontrol.service;
 
+import com.financecontrol.dto.request.ChartCategoriesRequest;
 import com.financecontrol.dto.request.UserSettingsRequest;
 import com.financecontrol.dto.response.UserSettingsResponse;
 import com.financecontrol.entity.UserSettings;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +36,6 @@ class UserSettingsServiceTest {
         return s;
     }
 
-    // ── getOrCreate ──────────────────────────────────────────────────────────
 
     @Test
     void getOrCreate_semRegistro_criaComTudoHabilitado() {
@@ -64,7 +65,6 @@ class UserSettingsServiceTest {
         verify(repository, never()).save(any());
     }
 
-    // ── seedDisabled ─────────────────────────────────────────────────────────
 
     @Test
     void seedDisabled_usuarioNovo_criaComTudoDesabilitado() {
@@ -96,7 +96,6 @@ class UserSettingsServiceTest {
         verify(repository, never()).save(any());
     }
 
-    // ── update ───────────────────────────────────────────────────────────────
 
     @Test
     void update_desligaFuncionalidades_persisteERegistraHistorico() {
@@ -143,7 +142,6 @@ class UserSettingsServiceTest {
         verify(repository, never()).save(any());
     }
 
-    // ── leitura dos toggles ──────────────────────────────────────────────────
 
     @Test
     void toggles_usuarioSemRegistro_tudoHabilitadoPorPadrao() {
@@ -169,7 +167,6 @@ class UserSettingsServiceTest {
         assertThat(service.goalsEnabled(1L)).isTrue();
     }
 
-    // ── find ─────────────────────────────────────────────────────────────────
 
     @Test
     void find_devolveResponseComOsValoresSalvos() {
@@ -181,5 +178,56 @@ class UserSettingsServiceTest {
 
         assertThat(result.budgetsEnabled()).isFalse();
         assertThat(result.reportsEnabled()).isTrue();
+    }
+
+
+    @Test
+    void updateChartCategories_salvaIdsSeparadosPorVirgulaSemDuplicados() {
+        UserSettings settings = existing();
+        when(repository.findByUserId(1L)).thenReturn(Optional.of(settings));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        UserSettingsResponse result = service.updateChartCategories(1L,
+                new ChartCategoriesRequest(List.of(3L, 1L, 3L), List.of(9L), List.of(5L), List.of(7L)));
+
+        assertThat(settings.getChartExpensePinnedCategories()).isEqualTo("3,1");
+        assertThat(settings.getChartExpenseGroupedCategories()).isEqualTo("9");
+        assertThat(settings.getChartIncomePinnedCategories()).isEqualTo("5");
+        assertThat(settings.getChartIncomeGroupedCategories()).isEqualTo("7");
+        assertThat(result.chartExpensePinnedCategories()).containsExactly(3L, 1L);
+        assertThat(result.chartIncomeGroupedCategories()).containsExactly(7L);
+    }
+
+    @Test
+    void updateChartCategories_despesasEReceitasSaoIndependentes() {
+        UserSettings settings = existing();
+        settings.setChartIncomePinnedCategories("5");
+        settings.setChartIncomeGroupedCategories("7");
+        when(repository.findByUserId(1L)).thenReturn(Optional.of(settings));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.updateChartCategories(1L,
+                new ChartCategoriesRequest(List.of(3L), List.of(9L), List.of(5L), List.of(7L)));
+
+        assertThat(settings.getChartExpensePinnedCategories()).isEqualTo("3");
+        assertThat(settings.getChartIncomePinnedCategories()).isEqualTo("5");
+        assertThat(settings.getChartIncomeGroupedCategories()).isEqualTo("7");
+    }
+
+    @Test
+    void updateChartCategories_listasVazias_limpamAConfiguracao() {
+        UserSettings settings = existing();
+        settings.setChartExpensePinnedCategories("3,1");
+        settings.setChartExpenseGroupedCategories("9");
+        when(repository.findByUserId(1L)).thenReturn(Optional.of(settings));
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        UserSettingsResponse result = service.updateChartCategories(1L,
+                new ChartCategoriesRequest(List.of(), null, null, null));
+
+        assertThat(settings.getChartExpensePinnedCategories()).isNull();
+        assertThat(settings.getChartExpenseGroupedCategories()).isNull();
+        assertThat(result.chartExpensePinnedCategories()).isEmpty();
+        assertThat(result.chartExpenseGroupedCategories()).isEmpty();
     }
 }

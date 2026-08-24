@@ -40,13 +40,11 @@ class TransactionLocaleControllerTest {
     @MockitoBean CookieOAuth2AuthorizationRequestRepository      cookieAuthRepo;
     @MockitoBean CustomOAuth2AuthorizationRequestResolver        customAuthResolver;
 
-    // ------------------------------------------------------------------ helpers
 
     private static TransactionLocaleResponse localeResp(Long id, String name) {
         return new TransactionLocaleResponse(id, name, null, null);
     }
 
-    // ------------------------------------------------------------------ GET /api/transaction-locales
 
     @Test
     @WithLongPrincipal(1L)
@@ -58,7 +56,6 @@ class TransactionLocaleControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Mercado"));
     }
 
-    // ------------------------------------------------------------------ GET /api/transaction-locales/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -79,7 +76,6 @@ class TransactionLocaleControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ------------------------------------------------------------------ POST /api/transaction-locales
 
     @Test
     @WithLongPrincipal(1L)
@@ -94,7 +90,6 @@ class TransactionLocaleControllerTest {
                 .andExpect(jsonPath("$.name").value("Restaurante"));
     }
 
-    // ------------------------------------------------------------------ PUT /api/transaction-locales/{id}
 
     @Test
     @WithLongPrincipal(1L)
@@ -109,7 +104,6 @@ class TransactionLocaleControllerTest {
                 .andExpect(jsonPath("$.name").value("Restaurante VIP"));
     }
 
-    // ------------------------------------------------------------------ DELETE /api/transaction-locales/{id}
 
     @Test
     @WithLongPrincipal(1L)

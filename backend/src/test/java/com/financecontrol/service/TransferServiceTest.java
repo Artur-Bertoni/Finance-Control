@@ -29,7 +29,6 @@ class TransferServiceTest {
 
     @InjectMocks TransferService transferService;
 
-    // ── create ───────────────────────────────────────────────────────────────
 
     @Test
     void create_sucesso_criaDuasTransacoesEPatcheaParcerias() {
@@ -105,7 +104,6 @@ class TransferServiceTest {
         verify(transactionService, never()).patchTransferPartner(any(), any());
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
 
     private static Account accountWith(Long id, Double balance) {
         Account a = new Account();

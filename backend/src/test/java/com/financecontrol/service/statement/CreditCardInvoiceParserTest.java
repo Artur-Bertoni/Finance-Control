@@ -35,7 +35,6 @@ class CreditCardInvoiceParserTest {
     void parseText_extraiComprasIgnorandoCabecalhosTotaisEPagamentoDeFatura() {
         List<RawTransaction> txs = CreditCardInvoiceParser.parseText(FATURA);
 
-        // 5 compras; linha "Total cartão", cabecalhos e "Pagamento De Fatura" sao ignorados
         assertThat(txs).hasSize(5);
         assertThat(txs).noneMatch(t -> t.description().startsWith("Total"));
     }

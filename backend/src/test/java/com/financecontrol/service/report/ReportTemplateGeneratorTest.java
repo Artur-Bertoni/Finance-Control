@@ -16,16 +16,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Gera src/main/resources/templates/report-template.xlsx: um template PT completo
- * (abas Resumo / Por mês / Por categoria / Transações) com logo, colunas, labels e
- * formatações fixas. O {@link ExcelReportWriter} apenas injeta os dados (e traduz os
- * labels quando o idioma != pt). A paleta de estilos das células de dados fica na aba
- * oculta "_estilos".
- *
- * Não roda na suíte (bootstrap). Para regerar, remova o @Disabled e rode:
- *   mvn -o test -Dtest=ReportTemplateGeneratorTest -Dmaven-surefire-plugin.version=3.5.5 -Djunit.jupiter.conditions.deactivate=*
- */
 @Disabled("Bootstrap manual do template de relatório Excel")
 class ReportTemplateGeneratorTest {
 

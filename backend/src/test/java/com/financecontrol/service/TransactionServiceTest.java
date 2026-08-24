@@ -45,7 +45,6 @@ class TransactionServiceTest {
 
     @InjectMocks TransactionService transactionService;
 
-    // ------------------------------------------------------------------ helpers
 
     private static FinancialInstitution fi(Long id) {
         FinancialInstitution fi = new FinancialInstitution();
@@ -83,7 +82,6 @@ class TransactionServiceTest {
                 LocalDate.of(2025, 1, 15), TransactionType.DEBIT, 0, null, null);
     }
 
-    // ------------------------------------------------------------------ findAllByUser
 
     @Test
     void findAllByUser_retornaListaDoRepositorio() {
@@ -115,7 +113,6 @@ class TransactionServiceTest {
                 LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31), 5L, null);
     }
 
-    // ------------------------------------------------------------------ findById
 
     @Test
     void findById_encontrado_retornaResponse() {
@@ -139,7 +136,6 @@ class TransactionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ------------------------------------------------------------------ create
 
     @Test
     void create_sucesso_salvaERegistraHistorico() {
@@ -208,7 +204,6 @@ class TransactionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ------------------------------------------------------------------ update
 
     @Test
     void update_sucesso_atualizaERetornaResponse() {
@@ -237,7 +232,6 @@ class TransactionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ------------------------------------------------------------------ delete
 
     @Test
     void delete_sucesso_removeDoBanco() {
@@ -282,7 +276,6 @@ class TransactionServiceTest {
         verify(transactionRepository).deleteById(11L);
     }
 
-    // ------------------------------------------------------------------ patchTransferPartner
 
     @Test
     void patchTransferPartner_atualizaParceiroId() {
@@ -322,7 +315,6 @@ class TransactionServiceTest {
         assertThat(resp.transferPartnerId()).isNull();
     }
 
-    // ------------------------------------------------------------------ new coverage
 
     private static TransactionLocale locale(Long id) {
         TransactionLocale l = new TransactionLocale();
@@ -446,7 +438,6 @@ class TransactionServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ------------------------------------------------------------------ buildDiff per-field branches
 
     private Map<String, String[]> captureUpdateDiff(Transaction existing, TransactionRequest req) {
         Account acc = existing.getAccount();
@@ -527,7 +518,6 @@ class TransactionServiceTest {
         assertThat(diff.getValue()).containsOnlyKeys("transactionLocale");
     }
 
-    // ------------------------------------------------------------------ parcelamento (installments)
 
     @Test
     void create_parcelado_geraUmaTransacaoPorParcelaLigadasPorGrupo() {

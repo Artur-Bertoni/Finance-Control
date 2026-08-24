@@ -38,7 +38,6 @@ class GoalNotificationSchedulerTest {
                 goalService, appNotificationService, userRepository, userSettingsService, "UTC");
     }
 
-    // ── processGoals – sem metas ativas ──────────────────────────────────────
 
     @Test
     void processGoals_semMetasAtivas_naoFazNada() {
@@ -49,7 +48,6 @@ class GoalNotificationSchedulerTest {
         verifyNoInteractions(goalService, appNotificationService);
     }
 
-    // ── processGoals – usuário não encontrado ────────────────────────────────
 
     @Test
     void processGoals_usuarioNaoEncontrado_pulaMeta() {
@@ -64,7 +62,6 @@ class GoalNotificationSchedulerTest {
         verifyNoInteractions(appNotificationService);
     }
 
-    // ── processGoals – meta expirou + poupança abaixo do alvo → EXPIRED ──────
 
     @Test
     void processGoals_metaExpirada_poupancaIncompleta_marcaExpired() {
@@ -82,7 +79,6 @@ class GoalNotificationSchedulerTest {
         assertThat(goal.getStatus()).isEqualTo(GoalStatus.EXPIRED);
     }
 
-    // ── processGoals – meta expirou + poupança completa → COMPLETED ──────────
 
     @Test
     void processGoals_metaExpirada_poupancaCompleta_marcaCompleted() {
@@ -104,7 +100,6 @@ class GoalNotificationSchedulerTest {
                 eq(1L), eq(1L), eq("Viagem"), eq(AppNotificationType.GOAL_COMPLETED), isNull());
     }
 
-    // ── processGoals – expense limit expirou, ficou abaixo → COMPLETED ───────
 
     @Test
     void processGoals_expenseLimit_abaixoDoAlvo_marcaCompleted() {
@@ -124,7 +119,6 @@ class GoalNotificationSchedulerTest {
         assertThat(goal.getStatus()).isEqualTo(GoalStatus.COMPLETED);
     }
 
-    // ── processGoals – prazo se aproxima, aviso de deadline ──────────────────
 
     @Test
     void processGoals_prazoProximo_criaAvisoDeadline() {
@@ -149,7 +143,6 @@ class GoalNotificationSchedulerTest {
         verify(goalNotificationLogRepository).save(any());
     }
 
-    // ── processGoals – prazo já notificado, não duplica ──────────────────────
 
     @Test
     void processGoals_deadlineJaNotificado_naoEnviaDeNovo() {
@@ -170,7 +163,6 @@ class GoalNotificationSchedulerTest {
         verifyNoInteractions(appNotificationService);
     }
 
-    // ── processGoals – prazo ainda distante, não envia aviso ─────────────────
 
     @Test
     void processGoals_prazoAindaDistante_naoEnviaAviso() {
@@ -189,7 +181,6 @@ class GoalNotificationSchedulerTest {
         verifyNoInteractions(appNotificationService);
     }
 
-    // ── processGoals – exceção em meta individual não interrompe o loop ───────
 
     @Test
     void processGoals_excecaoEmUmaMeta_continuaProcessandoOutras() {
@@ -207,7 +198,6 @@ class GoalNotificationSchedulerTest {
         verify(userRepository).findById(2L);
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
 
     private static Goal activeGoal(Long id, Long userId, String name, GoalType type,
                                    Double target, LocalDate start, LocalDate end) {
