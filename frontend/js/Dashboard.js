@@ -437,6 +437,11 @@ const DONUT_MAX_SLICES = 9
 const OTHERS_COLOR = '#9CA3AF'
 
 const DONUT_CANVAS = { expense: 'chart-cat-expenses', income: 'chart-cat-income' }
+const CONFIG_COLUMN_KEYS = {
+    separate: 'legendConfigSeparate',
+    grouped:  'legendConfigGrouped',
+    excluded: 'legendConfigHidden',
+}
 
 function donutKind(canvasId) {
     return canvasId === DONUT_CANVAS.income ? 'income' : 'expense'
@@ -444,10 +449,15 @@ function donutKind(canvasId) {
 
 function chartCategoryConfig(canvasId) {
     const settings = globalThis.__currentUser?.settings ?? {}
-    const kind     = donutKind(canvasId)
-    const pinned   = kind === 'income' ? settings.chartIncomePinnedCategories  : settings.chartExpensePinnedCategories
-    const grouped  = kind === 'income' ? settings.chartIncomeGroupedCategories : settings.chartExpenseGroupedCategories
-    return { pinned: new Set(pinned ?? []), grouped: new Set(grouped ?? []) }
+    const income   = donutKind(canvasId) === 'income'
+    const pinned   = income ? settings.chartIncomePinnedCategories  : settings.chartExpensePinnedCategories
+    const grouped  = income ? settings.chartIncomeGroupedCategories : settings.chartExpenseGroupedCategories
+    const hidden   = income ? settings.chartIncomeHiddenCategories  : settings.chartExpenseHiddenCategories
+    return {
+        pinned:  new Set(pinned ?? []),
+        grouped: new Set(grouped ?? []),
+        hidden:  new Set(hidden ?? []),
+    }
 }
 
 function donutKey(categoryIds, othersIndex, i) {
@@ -522,11 +532,12 @@ function applyDonutVisibility(canvasId, categoryIds, othersIndex) {
 }
 
 function splitDonutData(categoryData, canvasId) {
-    const { pinned, grouped } = chartCategoryConfig(canvasId)
-    const forcedIn = [], automatic = [], forcedOut = []
+    const { pinned, grouped, hidden } = chartCategoryConfig(canvasId)
+    const forcedIn = [], automatic = [], forcedOut = [], excluded = []
 
     for (const d of categoryData) {
-        if      (grouped.has(d.categoryId)) forcedOut.push(d)
+        if      (hidden.has(d.categoryId))  excluded.push(d)
+        else if (grouped.has(d.categoryId)) forcedOut.push(d)
         else if (pinned.has(d.categoryId))  forcedIn.push(d)
         else                                automatic.push(d)
     }
@@ -538,18 +549,25 @@ function splitDonutData(categoryData, canvasId) {
     return {
         separate: [...forcedIn, ...automatic.slice(0, slots)].sort(byTotalDesc),
         others:   [...forcedOut, ...automatic.slice(slots)].sort(byTotalDesc),
+        excluded: excluded.sort(byTotalDesc),
     }
 }
 
 function renderDonutChart(canvasId, categoryData) {
-    const hasData = categoryData?.length > 0
-    donutData[canvasId] = categoryData ?? []
+    const data = categoryData ?? []
+    donutData[canvasId] = data
+
+    const { separate, others } = splitDonutData(data, canvasId)
+    const hasData = separate.length > 0 || others.length > 0
+
     setChartVisibility(canvasId, hasData)
-    if (!hasData) { destroyChart(canvasId); return }
+    if (!hasData) {
+        destroyChart(canvasId)
+        renderEmptyDonutLegend(canvasId, data.length > 0)
+        return
+    }
 
     const c = themeColors()
-
-    const { separate, others } = splitDonutData(categoryData, canvasId)
 
     const othersDetails = others.map(d => ({
         categoryId: d.categoryId,
@@ -757,6 +775,14 @@ function renderDonutLegend(canvasId, { labels, colors, iconKeys, categoryIds, ot
     syncLegendState()
 }
 
+function renderEmptyDonutLegend(canvasId, keepToolbar) {
+    const container = document.getElementById(`${canvasId}-legend`)
+    if (!container) return
+
+    container.innerHTML = ''
+    if (keepToolbar) container.appendChild(buildLegendToolbar(canvasId))
+}
+
 function buildLegendToolbar(canvasId) {
     const toolbar = document.createElement('div')
     toolbar.className = 'donut-legend-toolbar'
@@ -823,15 +849,18 @@ function openLegendConfigModal(canvasId) {
     const categoryData = donutData[canvasId] ?? []
     if (!categoryData.length) return
 
-    const { separate, others } = splitDonutData(categoryData, canvasId)
+    const { separate, others, excluded } = splitDonutData(categoryData, canvasId)
 
     const board = document.createElement('div')
     board.className = 'legend-config-board'
 
     const columns = {
-        separate: buildConfigColumn('legendConfigSeparate', 'ph-chart-pie-slice'),
-        grouped:  buildConfigColumn('legendConfigGrouped',  'ph-stack'),
+        separate: buildConfigColumn(CONFIG_COLUMN_KEYS.separate, 'ph-chart-pie-slice'),
+        grouped:  buildConfigColumn(CONFIG_COLUMN_KEYS.grouped,  'ph-stack'),
+        excluded: buildConfigColumn(CONFIG_COLUMN_KEYS.excluded, 'ph-eye-slash'),
     }
+
+    const sides = Object.keys(columns)
 
     const moveChip = (chip, targetList) => {
         targetList.appendChild(chip)
@@ -855,17 +884,26 @@ function openLegendConfigModal(canvasId) {
         name.className = 'category-chip-name'
         name.textContent = data.categoryName
 
-        const move = document.createElement('button')
-        move.type = 'button'
-        move.className = 'category-chip-move'
-        move.title = I18n.t(side === 'separate' ? 'legendConfigGrouped' : 'legendConfigSeparate')
-        move.innerHTML = `<i class="ph ${side === 'separate' ? 'ph-arrow-right' : 'ph-arrow-left'}"></i>`
-        move.addEventListener('click', () => {
-            const target = side === 'separate' ? columns.grouped.list : columns.separate.list
-            moveChip(rebuildChip(chip, data, side === 'separate' ? 'grouped' : 'separate'), target)
-        })
+        const moves = document.createElement('span')
+        moves.className = 'category-chip-moves'
 
-        chip.append(categoryIcon(data.iconKey), name, move)
+        const addMove = (target, icon) => {
+            const label = I18n.t(CONFIG_COLUMN_KEYS[target])
+            const move  = document.createElement('button')
+            move.type = 'button'
+            move.className = 'category-chip-move'
+            move.title = label
+            move.setAttribute('aria-label', label)
+            move.innerHTML = `<i class="ph ${icon}"></i>`
+            move.addEventListener('click', () => moveChip(rebuildChip(chip, data, target), columns[target].list))
+            moves.appendChild(move)
+        }
+
+        const sideIndex = sides.indexOf(side)
+        if (sideIndex > 0)                 addMove(sides[sideIndex - 1], 'ph-arrow-left')
+        if (sideIndex < sides.length - 1)  addMove(sides[sideIndex + 1], 'ph-arrow-right')
+
+        chip.append(categoryIcon(data.iconKey), name, moves)
         chip.addEventListener('dragstart', event => {
             chip.classList.add('dragging')
             event.dataTransfer.effectAllowed = 'move'
@@ -886,6 +924,7 @@ function openLegendConfigModal(canvasId) {
 
     separate.forEach(d => columns.separate.list.appendChild(buildChip(d, 'separate')))
     others.forEach(d => columns.grouped.list.appendChild(buildChip(d, 'grouped')))
+    excluded.forEach(d => columns.excluded.list.appendChild(buildChip(d, 'excluded')))
     refreshColumnCounts()
 
     for (const [side, column] of Object.entries(columns)) {
@@ -915,11 +954,17 @@ function openLegendConfigModal(canvasId) {
 
     const otherConfig = chartCategoryConfig(otherCanvasId)
 
+    const importedSide = (id, side) => {
+        if (otherConfig.hidden.has(id))  return 'excluded'
+        if (otherConfig.grouped.has(id)) return 'grouped'
+        if (otherConfig.pinned.has(id))  return 'separate'
+        return side
+    }
+
     const importOtherConfig = () => {
         for (const [side, column] of Object.entries(columns)) {
             for (const chip of [...column.list.children]) {
-                const id     = Number(chip.dataset.categoryId)
-                const target = otherConfig.grouped.has(id) ? 'grouped' : otherConfig.pinned.has(id) ? 'separate' : side
+                const target = importedSide(Number(chip.dataset.categoryId), side)
                 if (target === side) continue
                 moveChip(rebuildChip(chip, chipData.get(chip.dataset.categoryId), target), columns[target].list)
             }
@@ -937,14 +982,18 @@ function openLegendConfigModal(canvasId) {
                 variant:  'ghost',
                 align:    'start',
                 closes:   false,
-                disabled: !otherConfig.pinned.size && !otherConfig.grouped.size,
+                disabled: !otherConfig.pinned.size && !otherConfig.grouped.size && !otherConfig.hidden.size,
                 onClick:  importOtherConfig,
             },
             { label: I18n.t('commonCancel'), variant: 'secondary' },
             {
                 label: I18n.t('commonSave'),
                 variant: 'primary',
-                onClick: () => saveLegendConfig(canvasId, idsOf(columns.separate.list), idsOf(columns.grouped.list)),
+                onClick: () => saveLegendConfig(canvasId, {
+                    pinned:  idsOf(columns.separate.list),
+                    grouped: idsOf(columns.grouped.list),
+                    hidden:  idsOf(columns.excluded.list),
+                }),
             },
         ],
     })
@@ -969,16 +1018,25 @@ function buildConfigColumn(titleKey, iconKey) {
     return { wrapper, list, count }
 }
 
-function saveLegendConfig(canvasId, separateIds, groupedIds) {
-    const expense = chartCategoryConfig(DONUT_CANVAS.expense)
-    const income  = chartCategoryConfig(DONUT_CANVAS.income)
-    const edited  = donutKind(canvasId)
+function saveLegendConfig(canvasId, edited) {
+    const current = {
+        expense: chartCategoryConfig(DONUT_CANVAS.expense),
+        income:  chartCategoryConfig(DONUT_CANVAS.income),
+    }
+    const kept = kind => kind === donutKind(canvasId)
+        ? edited
+        : { pinned: [...current[kind].pinned], grouped: [...current[kind].grouped], hidden: [...current[kind].hidden] }
+
+    const expense = kept('expense')
+    const income  = kept('income')
 
     const payload = {
-        expensePinned:  edited === 'expense' ? separateIds : [...expense.pinned],
-        expenseGrouped: edited === 'expense' ? groupedIds  : [...expense.grouped],
-        incomePinned:   edited === 'income'  ? separateIds : [...income.pinned],
-        incomeGrouped:  edited === 'income'  ? groupedIds  : [...income.grouped],
+        expensePinned:  expense.pinned,
+        expenseGrouped: expense.grouped,
+        expenseHidden:  expense.hidden,
+        incomePinned:   income.pinned,
+        incomeGrouped:  income.grouped,
+        incomeHidden:   income.hidden,
     }
 
     const settings = doRequest('/api/user-settings/chart-categories', 'PUT', payload)

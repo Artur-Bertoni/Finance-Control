@@ -94,8 +94,10 @@ public class UserSettingsService {
         UserSettings settings = getOrCreate(userId);
         settings.setChartExpensePinnedCategories(joinIds(req.expensePinned()));
         settings.setChartExpenseGroupedCategories(joinIds(req.expenseGrouped()));
+        settings.setChartExpenseHiddenCategories(joinIds(req.expenseHidden()));
         settings.setChartIncomePinnedCategories(joinIds(req.incomePinned()));
         settings.setChartIncomeGroupedCategories(joinIds(req.incomeGrouped()));
+        settings.setChartIncomeHiddenCategories(joinIds(req.incomeHidden()));
         settings.setUpdatedAt(LocalDateTime.now(ZONE));
 
         return UserSettingsResponse.from(repository.save(settings));

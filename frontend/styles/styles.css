@@ -4932,7 +4932,7 @@ main.page-content {
 }
 .modal-card--list .modal-message { margin-bottom: 14px; }
 .modal-card--list .modal-actions { flex-shrink: 0; padding-top: 16px; }
-.modal-card--wide { max-width: 720px; }
+.modal-card--wide { max-width: 900px; }
 
 .others-modal-list {
   flex: 1;
@@ -4968,7 +4968,7 @@ main.page-content {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -5025,6 +5025,12 @@ main.page-content {
 }
 .category-chip.dragging { opacity: .4; }
 .category-chip-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.category-chip-moves {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
 
 .category-chip-move {
   background: none;

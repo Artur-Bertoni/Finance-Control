@@ -54,6 +54,12 @@ public class UserSettings {
     @Column(name = "chart_income_grouped_categories", length = 2000)
     private String chartIncomeGroupedCategories;
 
+    @Column(name = "chart_expense_hidden_categories", length = 2000)
+    private String chartExpenseHiddenCategories;
+
+    @Column(name = "chart_income_hidden_categories", length = 2000)
+    private String chartIncomeHiddenCategories;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

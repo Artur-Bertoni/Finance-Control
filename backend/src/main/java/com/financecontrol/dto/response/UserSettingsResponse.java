@@ -17,11 +17,13 @@ public record UserSettingsResponse(
     List<Long> chartExpensePinnedCategories,
     List<Long> chartExpenseGroupedCategories,
     List<Long> chartIncomePinnedCategories,
-    List<Long> chartIncomeGroupedCategories
+    List<Long> chartIncomeGroupedCategories,
+    List<Long> chartExpenseHiddenCategories,
+    List<Long> chartIncomeHiddenCategories
 ) {
     public static UserSettingsResponse defaults() {
         return new UserSettingsResponse(true, true, true, true, true, true, true, true,
-                List.of(), List.of(), List.of(), List.of());
+                List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
     }
 
     public static UserSettingsResponse from(UserSettings s) {
@@ -30,7 +32,8 @@ public record UserSettingsResponse(
                 s.isGoalsEnabled(), s.isFinnyEnabled(), s.isStatementImportEnabled(),
                 s.isInstitutionsEnabled(), s.isLocalesEnabled(), s.isEmailsEnabled(),
                 parseIds(s.getChartExpensePinnedCategories()), parseIds(s.getChartExpenseGroupedCategories()),
-                parseIds(s.getChartIncomePinnedCategories()), parseIds(s.getChartIncomeGroupedCategories()));
+                parseIds(s.getChartIncomePinnedCategories()), parseIds(s.getChartIncomeGroupedCategories()),
+                parseIds(s.getChartExpenseHiddenCategories()), parseIds(s.getChartIncomeHiddenCategories()));
     }
 
     private static List<Long> parseIds(String csv) {

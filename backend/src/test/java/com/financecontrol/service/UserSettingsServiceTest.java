@@ -188,14 +188,18 @@ class UserSettingsServiceTest {
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         UserSettingsResponse result = service.updateChartCategories(1L,
-                new ChartCategoriesRequest(List.of(3L, 1L, 3L), List.of(9L), List.of(5L), List.of(7L)));
+                new ChartCategoriesRequest(List.of(3L, 1L, 3L), List.of(9L), List.of(4L),
+                                           List.of(5L), List.of(7L), List.of(8L)));
 
         assertThat(settings.getChartExpensePinnedCategories()).isEqualTo("3,1");
         assertThat(settings.getChartExpenseGroupedCategories()).isEqualTo("9");
+        assertThat(settings.getChartExpenseHiddenCategories()).isEqualTo("4");
         assertThat(settings.getChartIncomePinnedCategories()).isEqualTo("5");
         assertThat(settings.getChartIncomeGroupedCategories()).isEqualTo("7");
+        assertThat(settings.getChartIncomeHiddenCategories()).isEqualTo("8");
         assertThat(result.chartExpensePinnedCategories()).containsExactly(3L, 1L);
-        assertThat(result.chartIncomeGroupedCategories()).containsExactly(7L);
+        assertThat(result.chartExpenseHiddenCategories()).containsExactly(4L);
+        assertThat(result.chartIncomeHiddenCategories()).containsExactly(8L);
     }
 
     @Test
@@ -207,7 +211,8 @@ class UserSettingsServiceTest {
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.updateChartCategories(1L,
-                new ChartCategoriesRequest(List.of(3L), List.of(9L), List.of(5L), List.of(7L)));
+                new ChartCategoriesRequest(List.of(3L), List.of(9L), List.of(),
+                                           List.of(5L), List.of(7L), List.of()));
 
         assertThat(settings.getChartExpensePinnedCategories()).isEqualTo("3");
         assertThat(settings.getChartIncomePinnedCategories()).isEqualTo("5");
@@ -219,15 +224,17 @@ class UserSettingsServiceTest {
         UserSettings settings = existing();
         settings.setChartExpensePinnedCategories("3,1");
         settings.setChartExpenseGroupedCategories("9");
+        settings.setChartExpenseHiddenCategories("4");
         when(repository.findByUserId(1L)).thenReturn(Optional.of(settings));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         UserSettingsResponse result = service.updateChartCategories(1L,
-                new ChartCategoriesRequest(List.of(), null, null, null));
+                new ChartCategoriesRequest(List.of(), null, null, null, null, null));
 
         assertThat(settings.getChartExpensePinnedCategories()).isNull();
         assertThat(settings.getChartExpenseGroupedCategories()).isNull();
+        assertThat(settings.getChartExpenseHiddenCategories()).isNull();
         assertThat(result.chartExpensePinnedCategories()).isEmpty();
-        assertThat(result.chartExpenseGroupedCategories()).isEmpty();
+        assertThat(result.chartExpenseHiddenCategories()).isEmpty();
     }
 }

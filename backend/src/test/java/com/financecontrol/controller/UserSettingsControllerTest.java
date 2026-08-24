@@ -65,7 +65,7 @@ class UserSettingsControllerTest {
         UserSettingsRequest req = new UserSettingsRequest(false, null, false, null, null, null, null, null);
         when(userSettingsService.update(eq(1L), any()))
                 .thenReturn(new UserSettingsResponse(false, true, false, true, true, true, true, true,
-                        List.of(), List.of(), List.of(), List.of()));
+                        List.of(), List.of(), List.of(), List.of(), List.of(), List.of()));
 
         mockMvc.perform(put("/api/user-settings")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,10 +79,11 @@ class UserSettingsControllerTest {
     @Test
     @WithLongPrincipal(1L)
     void updateChartCategories_salvaAsListasDoUsuarioLogado() throws Exception {
-        ChartCategoriesRequest req = new ChartCategoriesRequest(List.of(3L, 1L), List.of(9L), List.of(5L), List.of());
+        ChartCategoriesRequest req = new ChartCategoriesRequest(List.of(3L, 1L), List.of(9L), List.of(4L),
+                                                                List.of(5L), List.of(), List.of());
         when(userSettingsService.updateChartCategories(eq(1L), any()))
                 .thenReturn(new UserSettingsResponse(true, true, true, true, true, true, true, true,
-                        List.of(3L, 1L), List.of(9L), List.of(5L), List.of()));
+                        List.of(3L, 1L), List.of(9L), List.of(5L), List.of(), List.of(4L), List.of()));
 
         mockMvc.perform(put("/api/user-settings/chart-categories")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,6 +91,7 @@ class UserSettingsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.chartExpensePinnedCategories[0]").value(3))
                 .andExpect(jsonPath("$.chartExpenseGroupedCategories[0]").value(9))
+                .andExpect(jsonPath("$.chartExpenseHiddenCategories[0]").value(4))
                 .andExpect(jsonPath("$.chartIncomePinnedCategories[0]").value(5));
     }
 }
