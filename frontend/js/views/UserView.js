@@ -8,6 +8,8 @@ import { UserSettings } from '../utils/UserSettings.js'
 import { FEATURE_ROWS } from '../utils/FeatureCatalog.js'
 
 
+let historyDirty = false
+
 export function init() {
     let user = null
 
@@ -92,6 +94,7 @@ export function init() {
     I18n.onChange(renderSettings)
 
     let historyLoaded = false
+    historyDirty = false
     document.querySelectorAll('.view-tab').forEach(btn => {
         btn.addEventListener('click', () => {
             const tab = btn.dataset.tab
@@ -100,8 +103,9 @@ export function init() {
             document.getElementById('tab-details').style.display  = tab === 'details'  ? '' : 'none'
             document.getElementById('tab-history').style.display  = tab === 'history'  ? '' : 'none'
             document.getElementById('tab-settings').style.display = tab === 'settings' ? '' : 'none'
-            if (tab === 'history' && !historyLoaded) {
+            if (tab === 'history' && (!historyLoaded || historyDirty)) {
                 historyLoaded = true
+                historyDirty  = false
                 ChangeHistoryManager.loadAndRender('user', user.id, user.createdAt, 'history-container')
             }
         })
@@ -145,6 +149,7 @@ function saveSetting(key, input) {
         data:        JSON.stringify({ [key]: desired }),
         success: settings => {
             UserSettings.store(settings)
+            historyDirty = true
             SidebarManager.applyFeatureVisibility()
             SidebarManager.applyFinnyLink()
             showToast(I18n.t('settingsSaved'), 'success', null, { saveToHistory: false })
