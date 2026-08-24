@@ -5110,6 +5110,8 @@ main.page-content {
 .feature-locales-off         [data-feature~="locales"],
 .feature-emails-off          [data-feature~="emails"] { display: none !important; }
 
+.feature-reports-off.feature-statementImport-off #files-section { display: none !important; }
+
 .settings-list { display: flex; flex-direction: column; gap: 4px; }
 
 .settings-row {
