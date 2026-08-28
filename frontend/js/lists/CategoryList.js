@@ -64,15 +64,11 @@ function _buildCategoryCard(cat) {
     }
     card.querySelector('.item-card-name').textContent = cat.name
 
-    const aliasText = cat.aliases.length > 0 ? cat.aliases.join(', ') : ''
-    if (aliasText) {
-        const a = card.querySelector('.cat-aliases')
-        a.querySelector('.item-card-row').textContent = aliasText
-        a.hidden = false
-    }
     if (cat.description) {
         const d = card.querySelector('.cat-desc')
-        d.querySelector('.item-card-row').textContent = cat.description
+        const row = d.querySelector('.item-card-row')
+        row.innerHTML = Icons.description()
+        row.appendChild(document.createTextNode(cat.description))
         d.hidden = false
     }
     return card

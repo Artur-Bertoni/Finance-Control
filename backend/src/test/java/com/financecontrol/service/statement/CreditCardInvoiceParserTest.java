@@ -110,6 +110,22 @@ class CreditCardInvoiceParserTest {
     }
 
     @Test
+    void parseText_descricaoNaoCarregaValoresNemMoedas() {
+        List<RawTransaction> txs = CreditCardInvoiceParser.parseText(FATURA_JULHO_COMPLETA);
+
+        assertThat(txs).noneMatch(t -> t.description().contains("R$"));
+        assertThat(txs).noneMatch(t -> t.description().contains("BRL"));
+        assertThat(txs).noneMatch(t -> t.description().matches(".*\\d,\\d\\d.*"));
+
+        assertThat(find(txs, "Zafari").description()).isEqualTo("Porto Alegre Presencial Zafari Higienop");
+        assertThat(find(txs, "Gpa Bar").description()).isEqualTo("Porto Alegre Presencial Gpa Bar E Restaurante");
+        assertThat(find(txs, "Railway").description()).isEqualTo("Railway Railway Com Ca");
+        assertThat(find(txs, "Anthropic").description()).isEqualTo("Online Anthropic Claude Sub Anthropic Com");
+        assertThat(find(txs, "G R Comercio").description()).isEqualTo("Curitiba Presencial G R Comercio De Me");
+        assertThat(find(txs, "Amazon Prime Br").description()).isEqualTo("Online Amazon Prime Br");
+    }
+
+    @Test
     void parseText_carimbaReferenciaDaFatura() {
         List<RawTransaction> txs = CreditCardInvoiceParser.parseText(FATURA_JULHO_COMPLETA);
         assertThat(txs).allMatch(t -> "2026-06".equals(t.invoiceReference()));

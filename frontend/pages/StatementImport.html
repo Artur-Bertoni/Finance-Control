@@ -39,15 +39,15 @@
             
             <div class="field">
               <div style="display:flex;align-items:center;gap:6px">
-                <label for="file-input" data-i18n="importFile">Selecione o Arquivo (PDF, OFX ou CNAB240)</label>
-                <button type="button" class="info-hint-btn" id="import-info-btn" data-i18n-title="statementImportHint">
+                <label for="file-input" data-i18n="importFile">Selecione o Arquivo (PDF, OFX, CSV ou CNAB240)</label>
+                <button type="button" class="info-hint-btn tooltip-wide" id="import-info-btn" data-i18n-title="statementImportHint">
                     <i class="ph ph-info" aria-hidden="true"></i>
                   </button>
               </div>
               <div class="file-drop-zone" id="file-drop-zone">
                 <span data-icon="upload"></span>
                 <span class="file-drop-text" id="file-drop-text" data-i18n="dragDropFile">Arraste e solte o arquivo aqui, ou clique para selecionar</span>
-                <input type="file" id="file-input" accept=".pdf,.ofx,.cnab,.ret,.rem,.txt" style="display:none" required>
+                <input type="file" id="file-input" accept=".pdf,.ofx,.csv,.cnab,.ret,.rem,.txt" style="display:none" required>
               </div>
             </div>
 

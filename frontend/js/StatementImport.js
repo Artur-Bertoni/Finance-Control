@@ -14,7 +14,7 @@ let allLocales    = []
 let confirmedConflicts = new Set()
 
 const REVIEW_STATE_KEY = '__statementReview'
-const SUPPORTED_EXT = ['.pdf', '.ofx', '.cnab', '.ret', '.rem', '.txt']
+const SUPPORTED_EXT = ['.pdf', '.ofx', '.csv', '.cnab', '.ret', '.rem', '.txt']
 
 function isSupportedStatement(file) {
     const name = (file?.name ?? '').toLowerCase()
@@ -40,9 +40,8 @@ export function init() {
 
     fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
-            selectedFile = fileInput.files[0]
-            dropZone.classList.remove('field-error')
-            setFileSelected(dropZone, dropText, selectedFile.name)
+            acceptFile(fileInput.files[0], dropZone, dropText)
+            fileInput.value = ''
         }
     })
 
@@ -55,11 +54,7 @@ export function init() {
         e.preventDefault()
         dropZone.classList.remove('drag-over')
         const files = e.dataTransfer.files
-        if (files.length > 0 && isSupportedStatement(files[0])) {
-            selectedFile = files[0]
-            dropZone.classList.remove('field-error')
-            setFileSelected(dropZone, dropText, selectedFile.name)
-        }
+        if (files.length > 0) acceptFile(files[0], dropZone, dropText)
     })
 
     document.getElementById('account-add-btn').addEventListener('click', () => {
@@ -156,6 +151,20 @@ function loadLocales() {
 function setFileSelected(dropZone, dropText, name) {
     dropZone.classList.add('has-file')
     dropText.textContent = I18n.t('fileSelected', { name })
+}
+
+function acceptFile(file, dropZone, dropText) {
+    if (!isSupportedStatement(file)) {
+        selectedFile = null
+        dropZone.classList.add('field-error')
+        dropZone.classList.remove('has-file')
+        dropText.textContent = I18n.t('dragDropFile')
+        showToast(I18n.t('unsupportedFileType', { formats: SUPPORTED_EXT.join(', ') }), 'error')
+        return
+    }
+    selectedFile = file
+    dropZone.classList.remove('field-error')
+    setFileSelected(dropZone, dropText, file.name)
 }
 
 

@@ -1,4 +1,4 @@
-import { navigate, showConfirm, showToast } from '../../utils/FrontendFunctions.js'
+import { navigate, showToast } from '../../utils/FrontendFunctions.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ChangeHistoryManager } from '../components/ChangeHistoryManager.js'
 import { AchievementsPanel } from '../components/AchievementsPanel.js'
@@ -80,18 +80,6 @@ export function init() {
     document.getElementById('edit-btn').addEventListener('click', () =>
         navigate('/pages/crud/User.html')
     )
-
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        showConfirm(I18n.t('deleteAccountConfirm'), () => {
-            $.ajax({
-                url:   `/api/users/${user.id}`,
-                type:  'DELETE',
-                async: false,
-                success: () => { globalThis.location.href = '/pages/Login.html' },
-                error:   xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error')
-            })
-        }, I18n.t('deleteAccountTitle'))
-    })
 
     renderSettings()
     I18n.onChange(renderSettings)

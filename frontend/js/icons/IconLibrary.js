@@ -28,6 +28,7 @@ export const Icons = {
     sun:             () => ph('sun'),
     moon:            () => ph('moon'),
     phone:           () => ph('phone'),
+    description:     () => ph('note'),
     wallet:          () => ph('wallet'),
     upload:          () => ph('upload'),
     statementImport: () => ph('file-arrow-up'),

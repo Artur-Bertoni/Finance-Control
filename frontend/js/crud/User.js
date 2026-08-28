@@ -1,8 +1,10 @@
-import { clearDirtyGuard, navigate, setBreadcrumb, setupDirtyGuard, showToast } from '../../utils/FrontendFunctions.js'
+import { addDeleteIcon, clearDirtyGuard, navigate, setBreadcrumb, setupDirtyGuard, showToast } from '../../utils/FrontendFunctions.js'
 import { PasswordInput } from '../components/PasswordInput.js'
 import { SidebarManager } from '../components/SidebarManager.js'
 import { ThemeManager } from '../ThemeManager.js'
 import { Icons } from '../icons/IconLibrary.js'
+import { createModal } from '../components/Modal.js'
+import { setActionButton } from '../components/ActionButtons.js'
 
 import { setupRequiredFieldValidation, validateRequiredFields } from '../utils/FieldValidation.js'
 import { I18n } from '../i18n.js'
@@ -181,20 +183,7 @@ function loadUserData() {
             setupNotificationSection(user)
             setupSocialLinkSection(user)
 
-            const logoutBtn = document.createElement('button')
-            logoutBtn.className = 'btn btn-ghost btn-sm'
-            logoutBtn.type = 'button'
-            logoutBtn.innerHTML = `${Icons.logout()}<span style="margin-left:5px" data-i18n="logout">${I18n.t('logout')}</span>`
-            logoutBtn.addEventListener('click', () => {
-                $.ajax({
-                    url: '/api/auth/logout', type: 'POST', async: false,
-                    complete: () => {
-                        sessionStorage.removeItem('authToken')
-                        globalThis.location.href = '/pages/Login.html'
-                    }
-                })
-            })
-            document.getElementById('header-actions').appendChild(logoutBtn)
+            addDeleteIcon().addEventListener('click', () => showAccountDeleteModal(user))
 
             setBreadcrumb([
                 { i18nKey: 'myProfile', url: '/pages/views/UserView.html' },
@@ -303,6 +292,61 @@ function setupSocialLinkSection(user) {
 function updateNotificationLabel(label, checked) {
     label.dataset.i18n = checked ? 'enabled' : 'disabled'
     label.textContent  = I18n.t(checked ? 'enabled' : 'disabled')
+}
+
+function showAccountDeleteModal(user) {
+    const body = document.createElement('div')
+    body.className = 'quick-add-fields'
+    body.innerHTML = `
+        <div class="field">
+            <input type="text" id="delete-account-confirm-input" autocomplete="off" aria-label="${escapeHtml(I18n.t('username'))}">
+        </div>
+    `
+
+    const { card, close } = createModal({
+        title: I18n.t('deleteAccountTitle'),
+        cardClass: 'modal-card--danger',
+        messageHtml: `${I18n.t('deleteAccountConfirm')} ${I18n.t('deleteAccountConfirmType', { username: escapeHtml(user.username) })}`,
+        body,
+        actions: [
+            { id: 'modal-cancel-btn',  label: I18n.t('commonCancel') },
+            { id: 'modal-confirm-btn', label: I18n.t('commonConfirm'), variant: 'danger', disabled: true, onClick: () => deleteAccount(user.id) },
+        ],
+    })
+
+    const input = body.querySelector('#delete-account-confirm-input')
+    input.addEventListener('input', () =>
+        setActionButton(card, 'modal-confirm-btn', { disabled: input.value.trim() !== user.username })
+    )
+    for (const evt of ['paste', 'drop']) {
+        input.addEventListener(evt, e => e.preventDefault())
+    }
+    input.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' || input.value.trim() !== user.username) return
+        close()
+        deleteAccount(user.id)
+    })
+    input.focus()
+}
+
+function deleteAccount(userId) {
+    $.ajax({
+        url:   `/api/users/${userId}`,
+        type:  'DELETE',
+        async: false,
+        success: () => {
+            clearDirtyGuard()
+            sessionStorage.removeItem('authToken')
+            globalThis.location.href = '/pages/Login.html'
+        },
+        error: xhr => showToast(xhr.responseJSON?.message ?? I18n.t('errorSavingUser'), 'error')
+    })
+}
+
+function escapeHtml(value) {
+    const div = document.createElement('div')
+    div.textContent = value ?? ''
+    return div.innerHTML
 }
 
 function showPasswordChangeModal(userId, hasPassword) {

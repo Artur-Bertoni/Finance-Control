@@ -27,7 +27,8 @@ public final class CreditCardInvoiceParser {
     private static final Pattern DATE_HEAD  = Pattern.compile("^(\\d{2})/([a-z]{3})", Pattern.CASE_INSENSITIVE);
     private static final Pattern AMOUNT     = Pattern.compile("(-?)\\s*R\\$\\s*([\\d.]*\\d,\\d{2})");
     private static final Pattern INSTALLMENT = Pattern.compile("(?<!\\d)(\\d{2}/\\d{2})(?!\\d)");
-    private static final Pattern DESC_CUT   = Pattern.compile("\\s+(-?\\s*R\\$|US\\$|BRL)\\b");
+    private static final Pattern DESC_CUT   = Pattern.compile("\\s+-?\\s*(R\\$|US\\$|BRL|=)\\s*-?\\s*[\\d.,]");
+    private static final Pattern TRAILING_AMOUNT = Pattern.compile("\\s+-?\\s*[\\d.]*\\d[.,]\\d{2}\\s*$");
     private static final Pattern ANY_FULL_DATE = Pattern.compile("\\b(\\d{2}/\\d{2}/\\d{4})\\b");
     private static final Pattern NEXT_CLOSING = Pattern.compile("Fechamento da pr\\p{L}xima fatura\\s+(\\d{2}/\\d{2}/\\d{4})", Pattern.CASE_INSENSITIVE);
     private static final Pattern DUE_DATE     = Pattern.compile("Vencimento\\s+(\\d{2}/\\d{2}/\\d{4})", Pattern.CASE_INSENSITIVE);
@@ -128,6 +129,7 @@ public final class CreditCardInvoiceParser {
         Matcher cut = DESC_CUT.matcher(desc);
         if (cut.find()) desc = desc.substring(0, cut.start());
         if (installment != null) desc = desc.replace(installment, " ");
+        desc = TRAILING_AMOUNT.matcher(desc).replaceAll("");
         desc = desc.replaceAll("\\s+", " ").trim();
         return desc.isBlank() ? "Lancamento" : desc;
     }

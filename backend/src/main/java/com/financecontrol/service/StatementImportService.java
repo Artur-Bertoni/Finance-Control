@@ -6,8 +6,10 @@ import com.financecontrol.dto.response.CategorySuggestionDto;
 import com.financecontrol.dto.response.ImportResult;
 import com.financecontrol.dto.response.ParsedTransactionResponse;
 import com.financecontrol.entity.Category;
+import com.financecontrol.exception.BusinessException;
 import com.financecontrol.service.statement.Cnab240StatementParser;
 import com.financecontrol.service.statement.CreditCardInvoiceParser;
+import com.financecontrol.service.statement.CsvStatementParser;
 import com.financecontrol.service.statement.OfxStatementParser;
 import com.financecontrol.service.statement.PdfStatementParser;
 import com.financecontrol.service.statement.RawTransaction;
@@ -22,10 +24,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 public class StatementImportService {
+
+    private static final List<String> SUPPORTED_EXTENSIONS =
+        List.of(".pdf", ".ofx", ".csv", ".cnab", ".ret", ".rem", ".txt");
 
     private final TransactionService transactionService;
     private final CategoryService categoryService;
@@ -80,11 +86,19 @@ public class StatementImportService {
             throw new UncheckedIOException("Failed to read statement file", e);
         }
         String filename = file.getOriginalFilename();
+        requireSupportedExtension(filename);
 
         if (OfxStatementParser.looksLikeOfx(filename, bytes))      return OfxStatementParser.parse(bytes);
         if (Cnab240StatementParser.looksLikeCnab240(filename, bytes)) return Cnab240StatementParser.parse(bytes);
+        if (CsvStatementParser.looksLikeCsv(filename, bytes)) return CsvStatementParser.parse(bytes);
         if (CreditCardInvoiceParser.looksLikeCreditCardInvoice(filename, bytes)) return CreditCardInvoiceParser.parse(bytes);
         return PdfStatementParser.parse(bytes);
+    }
+
+    private void requireSupportedExtension(String filename) {
+        String name = filename != null ? filename.toLowerCase(Locale.ROOT) : "";
+        boolean supported = SUPPORTED_EXTENSIONS.stream().anyMatch(name::endsWith);
+        if (!supported) throw new BusinessException("error.statement.unsupportedFile");
     }
 
     private ParsedTransactionResponse toResponse(RawTransaction tx,

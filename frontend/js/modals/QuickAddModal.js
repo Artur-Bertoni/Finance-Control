@@ -1,7 +1,7 @@
 import { Icons } from '../icons/IconLibrary.js'
 import { I18n } from '../i18n.js'
 import { showConfirmAsync, showToast } from '../../utils/FrontendFunctions.js'
-import { CATEGORY_ICONS } from '../components/IconPicker.js'
+import { filterIconGroups, renderIconGroups } from '../components/IconPicker.js'
 import { createModal } from '../components/Modal.js'
 
 export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, successToast = true }) {
@@ -95,33 +95,21 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
         const label    = overlay.querySelector(`#qaf-${f.id}-label`)
         if (!trigger || !dropdown || !grid) return
 
-        function renderGrid(icons) {
-            grid.innerHTML = ''
-            if (!icons.length) {
-                const empty = document.createElement('span')
-                empty.className = 'qa-icon-empty'
-                empty.textContent = I18n.t('commonNoResults')
-                grid.appendChild(empty)
-                return
-            }
-            for (const ic of icons) {
-                const btn = document.createElement('button')
-                btn.type = 'button'
-                btn.className = 'qa-icon-item'
-                btn.title = ic.label
-                btn.setAttribute('aria-label', ic.label)
-                btn.innerHTML = `<i class="ph ${ic.key}"></i>`
-                btn.addEventListener('click', () => {
-                    hidden.value = ic.key
-                    preview.innerHTML = `<i class="ph ${ic.key}"></i>`
-                    label.textContent = ic.label
+        function renderGrid(groups) {
+            renderIconGroups(grid, groups, {
+                groupClass: 'qa-icon-group',
+                itemClass: 'qa-icon-item',
+                emptyClass: 'qa-icon-empty',
+                onSelect: (icon, iconLabelText) => {
+                    hidden.value = icon.key
+                    preview.innerHTML = `<i class="ph ${icon.key}"></i>`
+                    label.textContent = iconLabelText
                     dropdown.style.display = 'none'
-                })
-                grid.appendChild(btn)
-            }
+                }
+            })
         }
 
-        renderGrid(CATEGORY_ICONS)
+        renderGrid(filterIconGroups(''))
 
         trigger.addEventListener('click', e => {
             e.stopPropagation()
@@ -131,11 +119,7 @@ export function showQuickAdd({ title, fields, apiUrl, buildBody, onSuccess, succ
         })
 
         search?.addEventListener('input', () => {
-            const q = search.value.trim().toLowerCase()
-            const filtered = q
-                ? CATEGORY_ICONS.filter(ic => ic.key.replace('ph-', '').includes(q) || ic.label.toLowerCase().includes(q))
-                : CATEGORY_ICONS
-            renderGrid(filtered)
+            renderGrid(filterIconGroups(search.value))
         })
 
         const closeOnOutside = e => {

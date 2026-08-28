@@ -268,6 +268,27 @@ class StatementImportServiceTest {
     }
 
     @Test
+    void previewStatement_arquivoCsv_eDetectadoEParseado() {
+        when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
+
+        String csv = "Data;Descricao;CodTransacao;Identificador;Tipo;Valor;Saldo\n"
+                + "28/08/2026;CARTAO DEBITO - ARMAZEM FAZOLIN - BR;138;TRA-576;DEBITO;- R$ 46,11;R$ 822,21\n"
+                + "20/08/2026;SALARIO EMPRESA;220;E433;CREDITO;R$ 3.450,00;R$ 4.272,21\n";
+        MultipartFile file = new MockMultipartFile("file", "Sicredi_Extrato.csv", "text/csv",
+                csv.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        List<ParsedTransactionResponse> rows = statementImportService.previewStatement(1L, file);
+
+        assertThat(rows).hasSize(2);
+        assertThat(rows.get(0).date()).isEqualTo("2026-08-28");
+        assertThat(rows.get(0).description()).isEqualTo("CARTAO DEBITO - ARMAZEM FAZOLIN - BR");
+        assertThat(rows.get(0).amount()).isEqualTo(46.11);
+        assertThat(rows.get(0).type()).isEqualTo(TransactionType.DEBIT);
+        assertThat(rows.get(1).amount()).isEqualTo(3450.00);
+        assertThat(rows.get(1).type()).isEqualTo(TransactionType.CREDIT);
+    }
+
+    @Test
     void previewStatement_lancamentosIdenticosNoMesmoDia_saoPreservados() throws IOException {
         when(categoryService.findByAlias(anyLong(), anyString())).thenReturn(List.of());
 
