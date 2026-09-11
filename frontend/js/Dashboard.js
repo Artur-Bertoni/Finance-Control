@@ -67,42 +67,67 @@ function startReveal(chart) {
     requestAnimationFrame(frame)
 }
 
+function defaultFilters() {
+    const today = new Date()
+    return {
+        startDate: toDateStr(new Date(today.getFullYear(), today.getMonth() - 1, 1)),
+        endDate:   toDateStr(new Date(today.getFullYear(), today.getMonth(), 0)),
+        account:   '',
+    }
+}
+
+function currentFilters() {
+    const defaults = defaultFilters()
+    return {
+        startDate: document.getElementById('start-date-input')?.value || defaults.startDate,
+        endDate:   document.getElementById('end-date-input')?.value   || defaults.endDate,
+        account:   document.getElementById('account-input')?.value    ?? '',
+    }
+}
+
+function applyFilters({ startDate, endDate, account }) {
+    const startEl   = document.getElementById('start-date-input')
+    const endEl     = document.getElementById('end-date-input')
+    const accountEl = document.getElementById('account-input')
+    if (startEl)   startEl.value   = startDate
+    if (endEl)     endEl.value     = endDate
+    if (accountEl) accountEl.value = account
+}
+
 function saveFilters() {
-    const period  = document.getElementById('period-input')?.value  ?? '1m'
-    const account = document.getElementById('account-input')?.value ?? ''
-    localStorage.setItem(FILTERS_KEY, JSON.stringify({ period, account }))
+    localStorage.setItem(FILTERS_KEY, JSON.stringify(currentFilters()))
 }
 
 function restoreFilters() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(FILTERS_KEY) ?? 'null')
-        if (!saved) return
-        const periodEl  = document.getElementById('period-input')
-        const accountEl = document.getElementById('account-input')
-        if (periodEl  && saved.period  !== undefined) periodEl.value  = saved.period
-        if (accountEl && saved.account !== undefined) accountEl.value = saved.account
-    } catch { }
+    const defaults = defaultFilters()
+    let saved = null
+    try { saved = JSON.parse(localStorage.getItem(FILTERS_KEY) ?? 'null') } catch { }
+    applyFilters({
+        startDate: saved?.startDate || defaults.startDate,
+        endDate:   saved?.endDate   || defaults.endDate,
+        account:   saved?.account   ?? defaults.account,
+    })
 }
 
 function isFilterActive() {
-    const period  = document.getElementById('period-input')?.value  ?? '1m'
-    const account = document.getElementById('account-input')?.value ?? ''
-    return !(period === '1m' && account === '')
+    const defaults = defaultFilters()
+    const current  = currentFilters()
+    return !(current.startDate === defaults.startDate
+        && current.endDate === defaults.endDate
+        && current.account === defaults.account)
 }
 
 function syncClearBtn() {
-    const btn = document.getElementById('clear-filters-btn')
-    if (!btn) return
-    btn.style.display = isFilterActive() ? '' : 'none'
+    const btn     = document.getElementById('clear-filters-btn')
+    const wrapper = btn?.closest('.filter-clear-field') ?? btn
+    if (!wrapper) return
+    wrapper.style.display = isFilterActive() ? 'flex' : 'none'
     filterToggle?.syncActive()
 }
 
 function clearFilters() {
     localStorage.removeItem(FILTERS_KEY)
-    const periodEl  = document.getElementById('period-input')
-    const accountEl = document.getElementById('account-input')
-    if (periodEl)  periodEl.value  = '1m'
-    if (accountEl) accountEl.value = ''
+    applyFilters(defaultFilters())
     syncClearBtn()
     loadAndRender()
 }
@@ -122,7 +147,8 @@ export async function init() {
     showPendingToast()
     Account.addAccounts('account-input')
 
-    document.getElementById('period-input').addEventListener('change', onFilterChange)
+    document.getElementById('start-date-input').addEventListener('change', onFilterChange)
+    document.getElementById('end-date-input').addEventListener('change', onFilterChange)
     document.getElementById('account-input').addEventListener('change', onFilterChange)
     document.getElementById('clear-filters-btn')?.addEventListener('click', clearFilters)
     I18n.onChange(() => loadAndRender())
@@ -155,20 +181,6 @@ function loadChartJs() {
     })
 }
 
-function getPeriodDates() {
-    const period = document.getElementById('period-input')?.value ?? '6m'
-    const today = new Date()
-    const todayStr = toDateStr(today)
-
-    if (period === 'ytd') {
-        return { startDate: `${today.getFullYear()}-01-01`, endDate: todayStr }
-    }
-
-    const months = period === '1m' ? 1 : period === '3m' ? 3 : period === '6m' ? 6 : 12
-    const start = new Date(today.getFullYear(), today.getMonth() - months, 1)
-    return { startDate: toDateStr(start), endDate: todayStr }
-}
-
 function toDateStr(d) {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0]
 }
@@ -176,8 +188,7 @@ function toDateStr(d) {
 function loadAndRender() {
     if (!globalThis.Chart || !document.getElementById('chart-monthly')) return
 
-    const { startDate, endDate } = getPeriodDates()
-    const accountId = document.getElementById('account-input')?.value ?? ''
+    const { startDate, endDate, account: accountId } = currentFilters()
 
     const params = new URLSearchParams({ startDate, endDate })
     if (accountId) params.append('accountId', accountId)

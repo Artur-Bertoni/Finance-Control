@@ -3190,7 +3190,7 @@ body.page-charts .page-content {
   padding: 12px 20px 14px;
 }
 
-body.page-charts .filter-bar { margin-bottom: 0; padding: 10px 14px; flex-shrink: 0; animation: chart-card-enter 0.35s ease both; position: relative; z-index: 10; }
+body.page-charts .filter-bar { margin-bottom: 0; padding: 10px 14px; flex-shrink: 0; animation: chart-card-enter 0.35s ease both; position: relative; z-index: 30; }
 body.page-charts .filter-section { margin-bottom: 0; }
 body.page-charts .filter-toggle-btn { margin-bottom: 0; }
 body.page-charts .stat-cards { margin-bottom: 0; flex-shrink: 0; }
